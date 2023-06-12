@@ -70,6 +70,12 @@ h6 a {
   color: inherit;
 }
 
+.sidebar-nav :is(ul,ol) {
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+}
+
 p {
   font-size: 16px;
   font-weight: 400;
