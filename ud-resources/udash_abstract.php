@@ -1174,16 +1174,9 @@ abstract class udash_abstract {
 	public static function load( string $uripath, string $filepath, $__arg = null ) {
 		
 		/**
-		 * Running Ajax?
-		 */
-		$isAjax = $_SERVER['REQUEST_METHOD'] === 'POST' 
-			&& ( core::rslash($_SERVER['SCRIPT_FILENAME']) === core::rslash(udash::AJAX_DIR . "/@ajax.php") )
-				&& !empty($_POST['route']);
-		
-		/**
 		 * Focus Route
 		 */
-		$uripath = array_filter(array_map('trim', explode("/", core::rslash($uripath))));
+		$uripath = array_filter( array_map('trim', explode("/", core::rslash($uripath))) );
 		$match = array_slice(uss::query(), 0, count($uripath));
 		
 		$isFocused = ( $uripath === $match );
@@ -1191,7 +1184,7 @@ abstract class udash_abstract {
 		/**
 		 * Load Required Resource
 		 */
-		if( $isFocused || $isAjax ) {
+		if( $isFocused || self::is_ajax_mode() ) {
 			/**
 			 * Get Class Attributes
 			 */
@@ -1209,6 +1202,20 @@ abstract class udash_abstract {
 			return ( require $filepath );
 			
 		};
+		
+	}
+	
+	public static function is_ajax_mode() {
+		
+		/**
+		 * Verify Ajax Mode
+		 * Check if current page or file is @ajax.php
+		 */
+		$is_ajax_file = core::rslash($_SERVER['SCRIPT_FILENAME']) === core::rslash(udash::AJAX_DIR . "/@ajax.php");
+		$is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
+		$has_route_param = !empty($_POST['route']);
+		
+		return $is_ajax_file && $is_post_request && $has_route_param;
 		
 	}
 	
