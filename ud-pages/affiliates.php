@@ -21,7 +21,7 @@ call_user_func(function() use($profileFocus) {
 	uss::$global['menu']->get('profile')->add('team', array(
 		"label" => "My Team",
 		"href" => core::url( ROOT_DIR . "/{$teamFocus}" ),
-		"active" => $_GET[ uss::QueryKey ] == $teamFocus
+		"active" => implode("/", uss::query()) === $teamFocus
 	));
 	
 	/**

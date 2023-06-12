@@ -19,7 +19,7 @@ call_user_func(function() use($profileFocus) {
 	uss::$global['menu']->get('profile')->add('team-tree', array(
 		'label' => "Hierarchy",
 		'href' => core::url( ROOT_DIR . "/{$hierFocus}" ),
-		"active" => $_GET[ uss::QueryKey ] == $hierFocus
+		"active" => implode("/", uss::query()) === $hierFocus
 	));
 	
 	/**
