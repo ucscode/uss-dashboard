@@ -17,8 +17,8 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 						<form method='POST' enctype='multipart/form-data'>
 							<fieldset>
 							
-								<div class="d-flex align-items-center mb-30">
-									<div class="profile-image">
+								<div class="d-flex flex-wrap align-items-center mb-30">
+									<div class="profile-image mb-3">
 										<img src="%{user.avatar}" alt="image" class='img-thumbnail' id='profile-image'>
 										<div class="update-image">
 											<label for=""><i class="bi bi-cloud-arrow-up"></i></label>
