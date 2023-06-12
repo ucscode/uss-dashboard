@@ -1,0 +1,67 @@
+@import url('treeData.css');
+
+.tree-container {
+	border: 1px solid var(--bs-gray-200);
+	background-color: var(--bs-white);
+	padding: 1.5rem;
+}
+
+#hierarchy {
+	padding-bottom: 1rem;
+}
+
+.tree-container .tree {
+	text-align: center;
+}
+
+.tree li a {
+	font-size: 12px;
+}
+
+.tree li a.node {
+	width: 146px;
+	background-color: var(--bs-gray-100);
+	position: relative;
+}
+
+.tree li a.node.root {
+	background-color: #f1f7fb;
+}
+
+.tree li a.node:hover {
+	background-color: #eef9e9;
+}
+
+.tree li a.node .depth {
+	position: absolute;
+    left: 4px;
+    top: 4px;
+    font-size: 9px;
+    font-weight: 700;
+	color: var(--bs-success);
+	display: inline-block;
+}
+
+.tree li a.node .depth .children {
+	border: 1px solid transparent;
+    padding: 1px 3px;
+    border-radius: 3px;
+    min-width: 22px;
+    line-height: 1;
+    display: inline-block;
+    background-color: var(--bs-gray-100);
+}
+
+.tree li a.node .depth .root-icon {
+	font-size: 12px;
+    color: var(--bs-gray-100);
+	text-shadow: 0 0 2px var(--bs-dark);
+}
+
+.tree li a.node img {
+	width: 32px;
+}
+
+.tree li a:hover, .tree li a:hover + ul li a {
+    background: #e0eff9;
+}

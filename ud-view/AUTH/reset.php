@@ -1,0 +1,106 @@
+<?php 
+
+defined( 'UDASH_MOD_DIR' ) OR DIE;
+
+uss::eTag( 'reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2' );
+
+
+/** Create a reset password form */
+
+events::addListener('@auth//right', function() use($reset) { ?>
+	
+	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='%{reset.type}' enctype='multipart/form-data'>
+		<div class="row py-3">
+			<div class="col-sm-10 col-md-9 m-auto">
+				
+				<?php 
+					if( empty($reset) ): 
+						
+						/**
+						 * Display a reset password form
+						 * The form contains only an email input 
+						 * After submitting the form, the system checks for account existence and send a password
+						 * reset email to the associated user
+						 */
+				?>
+				
+					
+					<?php events::addListener('@auth//form//reset', function() { ?>
+						<div class='text-center mb-3'>
+							<small>You'll receive an email to continue the process</small>
+						</div>
+					<?php }, EVENT_ID . 'detail'); ?>
+					
+					
+					<?php events::addListener('@auth//form//reset', function() { ?>
+						<div class="mb-3">
+							<input type="email" name='email' placeholder="Email" class='form-control' required>
+						</div>
+					<?php }, EVENT_ID . 'email'); ?>
+					
+					
+					<?php events::addListener('@auth//form//reset', function() { ?>
+						<button class="btn btn-primary w-100">
+							Reset Password
+						</button>
+					<?php }, EVENT_ID . 'submit'); ?>
+				
+				
+				<?php 
+					else: 
+					
+						/**
+						 * After filling the form above, a password reset link will be sent to the user
+						 * If user clicks the link, a password check will be carried out
+						 * The context below will then display if the reset code is approved
+						 */
+				?>
+				
+					<?php events::addListener('@auth//form//reset', function() { ?>
+						<div class='text-center mb-3'>
+							<small>Please enter your new password</small>
+						</div>
+					<?php }, EVENT_ID . 'detail'); ?>
+					
+					
+					<?php events::addListener('@auth//form//reset', function() use($reset) { ?>
+					
+						<div class="mb-3">
+							<input type="password" name='password' placeholder="Password" class='form-control' pattern='^.{4,}$' required>
+						</div>
+						
+						<div class="mb-3">
+							<input type="password" name='confirm_password' placeholder="Confirm Password" class='form-control' pattern='^.{4,}$' required>
+						</div>
+						
+						<input type='hidden' name='passport' value='<?php echo $reset; ?>'>
+						<input type='hidden' name='nonce' value='<?php echo uss::nonce( $_SESSION['resetter'] ); ?>'>
+						
+					<?php }, EVENT_ID . 'password-group' ); ?>
+					
+					<?php events::addListener('@auth//form//reset', function() { ?>
+						<button class="btn btn-primary w-100">
+							Change Password
+						</button>
+					<?php }, EVENT_ID . 'submit' ); ?>
+				
+				<?php endif; ?>
+				
+				<?php events::exec('@auth//form//reset', [$reset]); ?>
+				
+			</div>
+		</div>
+		<!-- end row -->
+	</form>
+
+<?php }, EVENT_ID . 'reset-form' ); ?>
+
+
+<?php events::addListener('@auth//right', function() { ?>
+	<div class="mt-4">
+		<p class="text-sm text-medium text-dark text-center">
+			Back To <a href="%{udash.url}">Login</a>
+		</p>
+	</div>
+<?php }, EVENT_ID . 'reset-signin'); ?>
+
