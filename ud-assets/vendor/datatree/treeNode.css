@@ -14,6 +14,10 @@
 	text-align: center;
 }
 
+.tree ul {
+	padding-left: 0;
+}
+
 .tree li a {
 	font-size: 12px;
 }

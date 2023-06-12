@@ -895,7 +895,7 @@ abstract class udash_abstract {
 		$request = is_null($id) ? "deliver" : "update";
 		
 		foreach( $required as $key ) {
-			if( !in_array($key, array_keys($data)) ) {
+			if( !in_array($key, array_keys($data)) && empty($id) ) {
 				throw new Exception( $key . " is required to {$request} notification" );
 			};
 		};
