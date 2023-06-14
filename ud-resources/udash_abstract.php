@@ -1214,8 +1214,9 @@ abstract class udash_abstract {
 		$is_ajax_file = core::rslash($_SERVER['SCRIPT_FILENAME']) === core::rslash(udash::AJAX_DIR . "/@ajax.php");
 		$is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
 		$has_route_param = !empty($_POST['route']);
+		$is_defined_ajax = defined("UDASH_AJAX");
 		
-		return $is_ajax_file && $is_post_request && $has_route_param;
+		return $is_ajax_file && $is_post_request && $has_route_param && $is_defined_ajax;
 		
 	}
 	
