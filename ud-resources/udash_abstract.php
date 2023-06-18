@@ -1171,35 +1171,36 @@ abstract class udash_abstract {
 	 * @param mixed $__arg An argument to be used within the loaded file (use array for multiple values)
 	 *
 	 */
-	public static function load( string $uripath, string $filepath, $__arg = null ) {
+	public static function load( string $uripath, $project, $__arg = null ) {
 		
-		/**
-		 * Focus Route
-		 */
+		# Focus Route
+		
 		$uripath = array_filter( array_map('trim', explode("/", core::rslash($uripath))) );
 		$match = array_slice(uss::query(), 0, count($uripath));
 		
-		$isFocused = ( $uripath === $match );
+		$type = getType($project);
 		
-		/**
-		 * Load Required Resource
-		 */
-		if( $isFocused || self::is_ajax_mode() ) {
-			/**
-			 * Get Class Attributes
-			 */
-			$class = get_called_class();
-			$method = __FUNCTION__;
+		$Exception = new \Exception( __METHOD__ . " — Parameter 2 must be a Callable or a valid File Path. ({$type}) given instead " );
+		
+		# Load Required Resource
+		
+		if( $uripath === $match || self::is_ajax_mode() ) {
 			
-			if( !is_file($filepath) ) {
-				/**
-				 * Throw Exception On File Not Found
-				 */
-				throw new \Exception( "The loaded file '{$filepath}' could not be found" );
+			if( is_callable($project) ) {
+				
+				# Process callable
+				
+				return call_user_func($project, $__arg);
+				
+			} else if( is_string($project) ) {
+				
+				if( !is_file($project) ) throw $Exception;
+				
+				return require $filepath;
+				
 			};
 			
-			/** Require File */
-			return ( require $filepath );
+			throw $Exception;
 			
 		};
 		
@@ -1207,16 +1208,16 @@ abstract class udash_abstract {
 	
 	public static function is_ajax_mode() {
 		
-		/**
-		 * Verify Ajax Mode
-		 * Check if current page or file is @ajax.php
-		 */
+		# verify script filename
 		$is_ajax_file = core::rslash($_SERVER['SCRIPT_FILENAME']) === core::rslash(udash::AJAX_DIR . "/@ajax.php");
+		# verify request method
 		$is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
-		$has_route_param = !empty($_POST['route']);
+		# verify route index
+		$is_routed = !empty($_POST['route']) && is_scalar($_POST['route']);
+		# verify ajax definition
 		$is_defined_ajax = defined("UDASH_AJAX");
 		
-		return $is_ajax_file && $is_post_request && $has_route_param && $is_defined_ajax;
+		return $is_ajax_file && $is_post_request && $is_routed && $is_defined_ajax;
 		
 	}
 	
