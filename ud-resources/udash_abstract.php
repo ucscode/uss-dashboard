@@ -1196,7 +1196,7 @@ abstract class udash_abstract {
 				
 				if( !is_file($project) ) throw $Exception;
 				
-				return require $filepath;
+				return require $project;
 				
 			};
 			
