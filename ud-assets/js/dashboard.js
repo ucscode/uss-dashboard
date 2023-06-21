@@ -105,7 +105,7 @@ new class {
 			data: { 
 				nx: indexes,
 				remark: remark,
-				nonce: uss.Nonce,
+				nonce: Uss.Nonce,
 				route: 'ud-notification'
 			},
 			success: function( response ) {

@@ -115,7 +115,7 @@ new class {
 							Notiflix.Loading.remove();
 							let result = JSON.parse(response);
 							bootbox.alert({
-								title: uss.platform,
+								title: Uss.platform,
 								message: result.message 
 							});
 						}
