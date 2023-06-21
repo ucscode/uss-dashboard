@@ -84,13 +84,13 @@ if( DB_CONNECT ) {
 	 *
 	 * The User Synthetics (uss) dashboard interface is rendered after all modules are loaded,
 	 * allowing any existing module to seamlessly add new features and enhance the dashboard's functionality.
-	 * To ensure proper integration with the uss dashboard, modules should listen to the `Udash::ready` event.
+	 * To ensure proper integration with the uss dashboard, modules should listen to the `udash::ready` event.
 	 * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
 	 * into the dashboard, ensuring a smooth and cohesive user experience.
 	 */
 	Events::addListener('modules-loaded', function() {
 		
-		Events::exec( 'Udash::ready' );
+		Events::exec( 'udash::ready' );
 		
 		/**
 		 * Finalizing User Synthetics Dashboard

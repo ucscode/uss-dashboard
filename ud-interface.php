@@ -6,17 +6,17 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
  * Focus on the dashboard path
  *
  * Include every file that is required to build the dashboard interface
- * Note: The `Udash::ready` event can be overridden by modules that need custom functionality. 
+ * Note: The `udash::ready` event can be overridden by modules that need custom functionality. 
  * For example: If you do not want the dashboard interface to exist and would rather prefer to create yours.
  *
- * Attaching a listener to `Udash::ready` event is the appropriate way to modify content on uss dashboard
- * Do not try to modify dashboard content without using the `Udash::ready` event
+ * Attaching a listener to `udash::ready` event is the appropriate way to modify content on uss dashboard
+ * Do not try to modify dashboard content without using the `udash::ready` event
  * as it is possible that your code will run even before the dashboard module is loaded
  *
  * In other case, your code may be called after the dashboard has loaded but will not be properly handled
- * Hence, it highly recommended to bind your dashboard function to the `Udash::ready` event
+ * Hence, it highly recommended to bind your dashboard function to the `udash::ready` event
  */
-Events::addListener('Udash::ready', function() {
+Events::addListener('udash::ready', function() {
 	
 	require Udash::PAGES_DIR . '/index.php'; # visible immediately after login
 	require Udash::PAGES_DIR . '/account.php';
