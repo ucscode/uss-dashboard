@@ -1148,8 +1148,8 @@ abstract class udash_abstract {
 	 *
 	 *  - `/dashboard` = will not work
 	 * 	- `/dashboard/users` = will not work (users contained [s] at the end)
-	 * 	- `/dashboard/user/profile/picture` = will work (::load works for all descendants)
-	 *	- `path/to/@ajax.php` = will work (::load works on uss dashboard ajax file)
+	 * 	- `/dashboard/user/profile/picture` = will work (including for all descendants)
+	 *	- `path/to/@ajax.php` = will work (on ajax file)
 	 *
 	 *
 	 * When should you use load and focus?
@@ -1167,18 +1167,18 @@ abstract class udash_abstract {
 	 * 	- But you can also extend the focus using the expression `profile(/?\w+)?` to capture a username
 	 *
 	 * @param string $uriPath
-	 * @param string $filepath
-	 * @param mixed $__arg An argument to be used within the loaded file (use array for multiple values)
+	 * @param string $resource
+	 * @param mixed $__arg An argument to be used within the loaded file or callable (use array for multiple values)
 	 *
 	 */
-	public static function load( string $uripath, $project, $__arg = null ) {
+	public static function load( string $uripath, $resource, $__arg = null ) {
 		
 		# Focus Route
 		
 		$uripath = array_filter( array_map('trim', explode("/", Core::rslash($uripath))) );
 		$match = array_slice(Uss::query(), 0, count($uripath));
 		
-		$type = getType($project);
+		$type = getType($resource);
 		
 		$Exception = new \Exception( __METHOD__ . " — Parameter 2 must be a Callable or a valid File Path. ({$type}) given instead " );
 		
@@ -1186,17 +1186,17 @@ abstract class udash_abstract {
 		
 		if( $uripath === $match || self::is_ajax_mode() ) {
 			
-			if( is_callable($project) ) {
+			if( is_callable($resource) ) {
 				
 				# Process callable
 				
-				return call_user_func($project, $__arg);
+				return call_user_func($resource, $__arg);
 				
-			} else if( is_string($project) ) {
+			} else if( is_string($resource) ) {
 				
-				if( !is_file($project) ) throw $Exception;
+				if( !is_file($resource) ) throw $Exception;
 				
-				return require $project;
+				return require $resource;
 				
 			};
 			
