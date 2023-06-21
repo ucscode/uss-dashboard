@@ -65,7 +65,7 @@ Uss::focus( $profileFocus, function( $e ) {
 	/**
 	 * DISPLAY PROFILE CONTENT
 	 */
-	udash::view(function() use( $nonce ) { 
+	Udash::view(function() use( $nonce ) { 
 	
 		/**
 		 * Get Configuration Option: {lock-email}
@@ -85,7 +85,7 @@ Uss::focus( $profileFocus, function( $e ) {
 		 * @param 3 == false; Tag is editable
 		 */
 		Uss::eTag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
-		Uss::eTag('user.avatar', udash::user_avatar( Uss::$global['user']['id'] ), false);
+		Uss::eTag('user.avatar', Udash::user_avatar( Uss::$global['user']['id'] ), false);
 		
 		Uss::eTag('profile.col-left', 'col-lg-5', false);
 		Uss::eTag('profile.col-right', 'col-lg-7', false);
@@ -144,6 +144,6 @@ Uss::focus( $profileFocus, function( $e ) {
 			</div> <!-- end container -->
 		</section>
 		
-	<?php }); // udash::view
+	<?php }); // Udash::view
 	
 }, NULL); // Uss::focus

@@ -30,7 +30,7 @@ call_user_func(function() {
 			Get the user by email;
 		*/
 		
-		$user = udash::fetch_assoc( DB_TABLE_PREFIX . "_users", $data[2], 'email' );
+		$user = Udash::fetch_assoc( DB_TABLE_PREFIX . "_users", $data[2], 'email' );
 		
 		if( !$user ) return Uss::console( '@alert', "Confirmation link is forbidden" );
 		

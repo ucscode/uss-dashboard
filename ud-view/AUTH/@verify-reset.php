@@ -23,7 +23,7 @@ $reset = call_user_func(function() {
 			
 			$prefix = DB_TABLE_PREFIX;
 			
-			$user = udash::fetch_assoc( "{$prefix}_users", $rcode[1], 'email' );
+			$user = Udash::fetch_assoc( "{$prefix}_users", $rcode[1], 'email' );
 			
 			if( !$user ) {
 				

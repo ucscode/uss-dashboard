@@ -1,11 +1,11 @@
 <?php 
 
-class udash extends udash_abstract {
+class Udash extends udash_abstract {
 	
 	/**
 	 * Dynamic configuration storage for uss dashboard
 	 *
-	 * The dashboard configuration is updated or retrieved by using the `udash::config()` method
+	 * The dashboard configuration is updated or retrieved by using the `Udash::config()` method
 	 * Temporary data can also be save into the configuration file and used globally
 	 * 
 	 * @var array $config
@@ -54,14 +54,14 @@ class udash extends udash_abstract {
 	/**
 	 * A temporary storage medium for uss dashboard
 	 *
-	 * This method saves and retrieve data from the private `udash::$config` property
+	 * This method saves and retrieve data from the private `Udash::$config` property
 	 * Data saved with this method are used to alter the behaviour and appearance of the dashboard
 	 * 
 	 * Usage:
 	 * - If $property is a string and $value is supplied, the information is saved
 	 * - If $property is a string and $value is not supplied, the value that matches the key will be returned
 	 * - If $property is null, an array containing a list of all configurations will be returned
-	 * - If $property is an array, the private `udash::$config` data will be loaded with the key and values available in the array
+	 * - If $property is an array, the private `Udash::$config` data will be loaded with the key and values available in the array
 	 * 
 	 * @param array|string|null $property 
 	 * @param mixed $value
@@ -109,7 +109,7 @@ class udash extends udash_abstract {
 	 * Display the dashboard
 	 * 
 	 * Within this method is the `Uss::view()` method which is responsible for displaying output
-	 * Therefore, `Uss::view()` and `udash::view()` cannot be called together as only the first executed method will render output
+	 * Therefore, `Uss::view()` and `Udash::view()` cannot be called together as only the first executed method will render output
 	 * After uss dashboard has been completely configured, use this method to display the output
 	 *
 	 * @param callable $func A callable to display content within the dashboard page
@@ -136,7 +136,7 @@ class udash extends udash_abstract {
 			
 			/**
 			 * If `auth-page` is not supplied or is not a valid callable
-			 * Then, user synthetics private `udash::defaultAuthPages()` method will be used instead 
+			 * Then, user synthetics private `Udash::defaultAuthPages()` method will be used instead 
 			 */
 			if( !is_callable($func) ) $func = \Closure::fromCallable([ __CLASS__, "defaultAuthPages" ]);
 			
@@ -162,7 +162,7 @@ class udash extends udash_abstract {
 		 * Configure Basic Template Engine Tags
 		 */
 		Uss::eTag('udash.url', Core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ));
-		Uss::eTag('udash.ajax', Core::url( udash::AJAX_DIR . '/@ajax.php', true ));
+		Uss::eTag('udash.ajax', Core::url( Udash::AJAX_DIR . '/@ajax.php', true ));
 		
 		
 		// Modify Interface & Render Content
@@ -258,7 +258,7 @@ class udash extends udash_abstract {
 		 * - Registration page
 		 * - Reset Password Page
 		 */
-		$auth_dir = udash::VIEW_DIR . "/AUTH";
+		$auth_dir = Udash::VIEW_DIR . "/AUTH";
 		
 		/**
 		 * Default Tags

@@ -18,7 +18,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
  * and many other platform requires a "logout page" and even a "login page".
  * 
  * Such pages in uss dashboard are known as `Universal Pages` because they can be used across multiple channel
- * Therefore, the focus expression for universal pages are handled by `udash::config`
+ * Therefore, the focus expression for universal pages are handled by `Udash::config`
  * 
  */
 
@@ -45,11 +45,11 @@ $defaultPagesExpr = array(
 // ------------ [{ Add pages to configuration }] -----------
 
 foreach( $defaultPagesExpr as $key => $value ) {
-	if( !udash::config( $key ) ) udash::config( $key, $value );
+	if( !Udash::config( $key ) ) Udash::config( $key, $value );
 };
 
 
 // ------------- [{ Get all Global Pages }] ----------------
 
-require udash::PAGES_DIR . '/notifications.php';
-require udash::PAGES_DIR . '/signout.php';
+require Udash::PAGES_DIR . '/notifications.php';
+require Udash::PAGES_DIR . '/signout.php';

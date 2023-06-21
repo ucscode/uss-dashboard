@@ -133,7 +133,7 @@ foreach( $udash_config as $key => $value ) {
  * Authenticate user Login 
  * @see \udash_abstract::getAccessTokenUser()
  */
-Uss::$global['user'] = udash::getAccessTokenUser();
+Uss::$global['user'] = Udash::getAccessTokenUser();
 
 /**
  * Update `Uss::$global` Variables
@@ -141,7 +141,7 @@ Uss::$global['user'] = udash::getAccessTokenUser();
  * This function updates certain `Uss::$global` variables.
  * Refreshing the site variable can be useful when a configuration setting is updated after the default settings have already been loaded. This ensures that users view the most up-to-date settings without having to manually reload the page.
  */
-udash::refresh_site_vars();
+Udash::refresh_site_vars();
 
 /**
  * Check Affiliation Status and Capture Referral Code
@@ -150,6 +150,6 @@ udash::refresh_site_vars();
  * If it is enabled, it captures the referral code from the URL or from the last cookie session.
  * This is useful for tracking and attributing referrals in the application.
  */
-if( Uss::$global['options']->get('user:affiliation') ) udash::get_sponsor();
+if( Uss::$global['options']->get('user:affiliation') ) Udash::get_sponsor();
 
 

@@ -76,7 +76,7 @@ if( DB_CONNECT ) {
 	 * The pages will be loaded only when the dashboard URI is accessed
 	 * @see \udash_abstract::load()
 	 */
-	udash::load( UDASH_FOCUS_URI, UDASH_MOD_DIR . '/ud-interface.php' );
+	Udash::load( UDASH_FOCUS_URI, UDASH_MOD_DIR . '/ud-interface.php' );
 	
 	
 	/**
@@ -84,13 +84,13 @@ if( DB_CONNECT ) {
 	 *
 	 * The User Synthetics (uss) dashboard interface is rendered after all modules are loaded,
 	 * allowing any existing module to seamlessly add new features and enhance the dashboard's functionality.
-	 * To ensure proper integration with the uss dashboard, modules should listen to the `udash::ready` event.
+	 * To ensure proper integration with the uss dashboard, modules should listen to the `Udash::ready` event.
 	 * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
 	 * into the dashboard, ensuring a smooth and cohesive user experience.
 	 */
 	Events::addListener('modules-loaded', function() {
 		
-		Events::exec( 'udash::ready' );
+		Events::exec( 'Udash::ready' );
 		
 		/**
 		 * Finalizing User Synthetics Dashboard
@@ -111,7 +111,7 @@ if( DB_CONNECT ) {
 		 * The `//udash//view` event is a system-level event used internally by the User Synthetics Dashboard module. 
 		 * Listening to this event directly will not propably not render anything
 		 
-		 * The module is only intended to be used by the `udash::view()` method to render final output after all other module has
+		 * The module is only intended to be used by the `Udash::view()` method to render final output after all other module has
 		 * been integrated into the dashboard module
 		 */
 		Events::exec('//udash//view', null, null, function($debug) {

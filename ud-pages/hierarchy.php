@@ -34,7 +34,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Get CSS that will style the nodes
 			 */
-			$dir = Core::url( udash::ASSETS_DIR . "/vendor/datatree" );
+			$dir = Core::url( Udash::ASSETS_DIR . "/vendor/datatree" );
 			echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
 		});
 		
@@ -43,7 +43,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Get JavaScript the will render the nodes
 			 */
-			$dir = Core::url( udash::ASSETS_DIR . "/vendor/datatree" );
+			$dir = Core::url( Udash::ASSETS_DIR . "/vendor/datatree" );
 			echo "\t<script src='{$dir}/treeData.js'></script>\n";
 			
 			/**
@@ -56,7 +56,7 @@ call_user_func(function() use($profileFocus) {
 		/**
 		 * Display the hierarchy tree
 		 */
-		udash::view(function() { 
+		Udash::view(function() { 
 			/**
 			 * Create Event
 			 */

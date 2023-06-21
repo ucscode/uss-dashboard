@@ -2,7 +2,7 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
-Uss::focus( udash::config('page:notification'), function() {
+Uss::focus( Udash::config('page:notification'), function() {
 	
 	
 	/**
@@ -22,7 +22,7 @@ Uss::focus( udash::config('page:notification'), function() {
 	 * Now let's render the output
 	 * By using the variable which contains information about the notification
 	 */
-	udash::view(function() use($notify) { ?>
+	Udash::view(function() use($notify) { ?>
 		
 		<div class='container-fluid'>
 			<div class='row'>
@@ -96,7 +96,7 @@ Uss::focus( udash::config('page:notification'), function() {
 											
 											$image = $notification['image'];
 											
-											if( empty($image) ) $image = udash::user_avatar( $notification['origin'] );
+											if( empty($image) ) $image = Udash::user_avatar( $notification['origin'] );
 											
 											/**
 											 * uss dashboard notification uses markdown language
@@ -200,7 +200,7 @@ Uss::focus( udash::config('page:notification'), function() {
 											
 											<div class='row'>
 												<div class='col-sm-8 m-auto col-lg-6'>
-													<img src='<?php echo Core::url( udash::ASSETS_DIR . '/images/notification-empty.webp' ); ?>' class='img-fluid'>
+													<img src='<?php echo Core::url( Udash::ASSETS_DIR . '/images/notification-empty.webp' ); ?>' class='img-fluid'>
 												</div>
 											</div>
 											

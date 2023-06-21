@@ -57,7 +57,7 @@ Events::addListener('@auth//right', function() { ?>
 								<input class="form-check-input" type="checkbox" value="" id="tos" required>
 								<label class="form-check-label" for="tos">
 									<small>
-										I agree to the <a href='<?php echo udash::config('tos-page') ?? 'javascript:void(0)'; ?>'>Terms Of Service</a> &amp; <a href='<?php echo udash::config('privacy-page') ?? 'javascript:void(0)'; ?>'>Privacy Policy</a>
+										I agree to the <a href='<?php echo Udash::config('tos-page') ?? 'javascript:void(0)'; ?>'>Terms Of Service</a> &amp; <a href='<?php echo Udash::config('privacy-page') ?? 'javascript:void(0)'; ?>'>Privacy Policy</a>
 									</small>
 								</label>
 							</div>
@@ -68,7 +68,7 @@ Events::addListener('@auth//right', function() { ?>
 				<?php 
 					Events::addListener('@auth//form//signup', function() {
 						if( empty(Uss::$global['options']->get('user:affiliation')) ) return;
-						$parent = udash::get_sponsor();
+						$parent = Udash::get_sponsor();
 						if( !$parent ) return;
 				?>
 						<input type='hidden' name='parent' value='<?php echo $parent['id']; ?>'>

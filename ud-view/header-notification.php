@@ -71,7 +71,7 @@
 	 * The notification url is the page where a full list notifications will be displayed
 	 */
 	
-	$notify_url = Core::url( ROOT_DIR ) . "/" . udash::config('page:notification');
+	$notify_url = Core::url( ROOT_DIR ) . "/" . Udash::config('page:notification');
 	
 ?>
 	<div class="notification-box ml-15" data-nxurl='%{udash.ajax}'>
@@ -153,8 +153,8 @@
 							$image = $notification['image'];
 							
 							if( empty($image) ) {
-								$image = udash::user_avatar( $notification['origin'] );
-								if( empty($image) ) $image = udash::user_avatar( $notification['userid']);
+								$image = Udash::user_avatar( $notification['origin'] );
+								if( empty($image) ) $image = Udash::user_avatar( $notification['userid']);
 							};
 							
 							/**

@@ -29,7 +29,7 @@ call_user_func(function() use($profileFocus) {
 	 */
 	Uss::focus( $teamFocus, function() { 
 		
-		udash::view(function() { 
+		Udash::view(function() { 
 			
 			$userid = Uss::$global['user']['id'];
 			

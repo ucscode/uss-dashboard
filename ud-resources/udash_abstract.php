@@ -431,7 +431,7 @@ abstract class udash_abstract {
 	 * $data = udash_abstract::fetch_assoc( 'my_table', 'ucscode', 'username' );
 	 * ```
 	 * 
-	 * Please keep in mind that you cannot call `udash_abstract::fetch_assoc` directly as `udash_abstract` is an abstract class and needs to be extended. Use the `udash::fetch_assoc` instead.
+	 * Please keep in mind that you cannot call `udash_abstract::fetch_assoc` directly as `udash_abstract` is an abstract class and needs to be extended. Use the `Udash::fetch_assoc` instead.
 	 * 
 	 * @param string $tablename The name of the database table
 	 * @param string|null $value The value of a column you want to retreive
@@ -644,7 +644,7 @@ abstract class udash_abstract {
 		/**
 		 * Return the relative path
 		 * 
-		 * The default parent (:root) path for uploaded file is the `udash::ASSETS_DIR`
+		 * The default parent (:root) path for uploaded file is the `Udash::ASSETS_DIR`
 		 * Hence, the relative path returned make you always point correctly to the right file
 		 * Even if the $_SERVER domain name is changed
 		 */
@@ -800,10 +800,10 @@ abstract class udash_abstract {
 	 * 
 	 * ```php
 	 * // example:
-	 * echo "text-" . udash::get_color('approved'); // text-success
+	 * echo "text-" . Udash::get_color('approved'); // text-success
 	 * 
 	 * // example2:
-	 * echo "bg-" . udash::get_color('failed'); // bg-danger
+	 * echo "bg-" . Udash::get_color('failed'); // bg-danger
 	 * ```
 	 *
 	 * @param string|null $word
@@ -1209,7 +1209,7 @@ abstract class udash_abstract {
 	public static function is_ajax_mode() {
 		
 		# verify script filename
-		$is_ajax_file = Core::rslash($_SERVER['SCRIPT_FILENAME']) === Core::rslash(udash::AJAX_DIR . "/@ajax.php");
+		$is_ajax_file = Core::rslash($_SERVER['SCRIPT_FILENAME']) === Core::rslash(Udash::AJAX_DIR . "/@ajax.php");
 		# verify request method
 		$is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
 		# verify route index

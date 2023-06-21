@@ -49,7 +49,7 @@ Events::addListener('@udash//ajax', function() {
 				 */
 				$passport = explode( "-", str_rot13( base64_decode( $_POST['passport'] ) ) );
 				
-				$user = udash::fetch_assoc( "{$prefix}_users", $passport[1] );
+				$user = Udash::fetch_assoc( "{$prefix}_users", $passport[1] );
 				
 				
 				/**
@@ -73,7 +73,7 @@ Events::addListener('@udash//ajax', function() {
 						 * If the reset key is valid
 						 * Update the user password
 						 */
-						$_POST['password'] = udash::password( $_POST['password'] );
+						$_POST['password'] = Udash::password( $_POST['password'] );
 						
 						/** The SQL Query */
 						

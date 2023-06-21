@@ -237,7 +237,7 @@ class roles {
 		
 		if( $userid ) {
 		
-			self::$user = udash::fetch_assoc( DB_TABLE_PREFIX . "_users", $userid );
+			self::$user = Udash::fetch_assoc( DB_TABLE_PREFIX . "_users", $userid );
 			
 			if( self::$user ) self::$user['id'] = abs( self::$user['id'] );
 			

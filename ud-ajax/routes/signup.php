@@ -11,7 +11,7 @@ Events::addListener('@udash//ajax', function() {
 	 * The URL that user will be redirected to after a successful registration
 	 */
 	 
-	$redirect = udash::config('signup:redirect') ?? Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
+	$redirect = Udash::config('signup:redirect') ?? Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
 	
 	
 	/**
@@ -59,7 +59,7 @@ Events::addListener('@udash//ajax', function() {
 		 * Check if the email address already exists;
 		 */
 		
-		$user = udash::fetch_assoc( "{$prefix}_users", $_POST['email'], 'email' );
+		$user = Udash::fetch_assoc( "{$prefix}_users", $_POST['email'], 'email' );
 		
 		/**
 		 * If a user if found
@@ -75,7 +75,7 @@ Events::addListener('@udash//ajax', function() {
 			 */
 			
 			$username = $_POST['username'] ?? null;
-			$user = udash::fetch_assoc( "{$prefix}_users", $username, 'username' );
+			$user = Udash::fetch_assoc( "{$prefix}_users", $username, 'username' );
 			
 			/**
 			 * If username is set &
@@ -92,7 +92,7 @@ Events::addListener('@udash//ajax', function() {
 				*/
 				
 				if( isset($_POST['parent']) && !empty(Uss::$global['options']->get('user:affiliation')) ) {
-					$parent = udash::fetch_assoc("{$prefix}_users", $_POST['parent']);
+					$parent = Udash::fetch_assoc("{$prefix}_users", $_POST['parent']);
 					if( $parent ) $parent = $parent['id'];
 				} else $parent = null;
 				
@@ -103,7 +103,7 @@ Events::addListener('@udash//ajax', function() {
 				
 				$data = array(
 					"email" => $_POST['email'],
-					"password" => udash::password( $_POST['password'] ),
+					"password" => Udash::password( $_POST['password'] ),
 					"username" => $username,
 					"usercode" => Core::keygen(mt_rand(5,7)),
 					"parent" => $parent
@@ -140,7 +140,7 @@ Events::addListener('@udash//ajax', function() {
 					/**
 					 * Clear Access Token!
 					 */
-					udash::setAccessToken( null );
+					Udash::setAccessToken( null );
 					
 					/**
 					 * The success message
@@ -160,7 +160,7 @@ Events::addListener('@udash//ajax', function() {
 						 * Send a new confirmation link to the user
 						 * The user will be able to login on after verifying the link
 						 */
-						$sent = udash::send_confirmation_email( $data['email'] );
+						$sent = Udash::send_confirmation_email( $data['email'] );
 						
 						$className = 'mt-3 pt-3 border-top fs-14px';
 						

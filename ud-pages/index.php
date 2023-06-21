@@ -22,9 +22,9 @@ Uss::focus( UDASH_FOCUS_URI, function() {
 	
 	// Authenticate Email Requests
 	
-	require udash::VIEW_DIR . "/AUTH/@verify-email.php";
+	require Udash::VIEW_DIR . "/AUTH/@verify-email.php";
 	
-	udash::view(function() {
+	Udash::view(function() {
 		
 		/**
 		 * The index page is empty

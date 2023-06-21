@@ -47,7 +47,7 @@ $notify['size'] = $all ? $all['_all'] : 0;
  * By identifying the number of notification per page, we can be able to know how many pages we have
  */
 
-$max_list = udash::config( "notifications_per_page" ) ?? 20;
+$max_list = Udash::config( "notifications_per_page" ) ?? 20;
 
 
 /**

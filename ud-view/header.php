@@ -59,11 +59,11 @@
 							 * Let create a mini notification box
 							 * User will need to click "view all" to see the main notification page
 							 * 
-							 * The location (focus path) of the main notification page can also be changed through the `udash::config()` method
+							 * The location (focus path) of the main notification page can also be changed through the `Udash::config()` method
 							 *
 							 * Example:
 							 * ```php
-							 * udash::config('page:notification', "/path/to/notification");
+							 * Udash::config('page:notification', "/path/to/notification");
 							 * ```
 							 */
 							Events::addListener('@udash//header//right', function() {
@@ -84,7 +84,7 @@
 								<div class="profile-info">
 									<div class="info">
 										<div class="image">
-											<img src="<?php echo udash::user_avatar( Uss::$global['user']['id'] ); ?>" alt=""/>
+											<img src="<?php echo Udash::user_avatar( Uss::$global['user']['id'] ); ?>" alt=""/>
 											<span class="status"></span>
 										</div>
 									</div>
@@ -113,7 +113,7 @@
 									Events::addListener('@auth//header//userdrop', function() {
 								?>
 									<li data-auth='logout'>
-										<a href="<?php echo Core::url( ROOT_DIR . '/' . udash::config('page:signout') ); ?>"> 
+										<a href="<?php echo Core::url( ROOT_DIR . '/' . Udash::config('page:signout') ); ?>"> 
 											<i class="bi bi-power"></i> Sign Out 
 										</a>
 									</li>

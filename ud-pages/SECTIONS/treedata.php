@@ -19,7 +19,7 @@ if( empty($usercode) ) $usercode = $user['usercode'];
  * Get the owner of the `usercode`
  * We'll be referring to this owner as `prospect`
  */
-$prospect = udash::fetch_assoc( "{$prefix}_users", $usercode, "usercode" );
+$prospect = Udash::fetch_assoc( "{$prefix}_users", $usercode, "usercode" );
 
 /**
  * If there is no such account,
@@ -51,7 +51,7 @@ else $approved = !!$hierarchy->descendants_of( $user['id'], "id = '{$prospect['i
 */
 
 $value_of = function( $prospect, $info = '' ) {
-	$avatar = udash::user_avatar( $prospect['id'] );
+	$avatar = Udash::user_avatar( $prospect['id'] );
 	$title = $prospect['username'] ?: $prospect['email'];
 	$value = "
 		<div data-node='{$prospect['usercode']}''>
@@ -66,7 +66,7 @@ $value_of = function( $prospect, $info = '' ) {
 /** 
  * Get the parent of the prospect
  */
-$parent = udash::fetch_assoc( "{$prefix}_users", $prospect['parent'] );
+$parent = Udash::fetch_assoc( "{$prefix}_users", $prospect['parent'] );
 
 /**
  * Now find all descendants of the prospect!
