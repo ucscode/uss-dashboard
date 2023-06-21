@@ -3,7 +3,7 @@
 defined( "UDASH_AJAX" ) OR DIE;
 
 
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 	
 	/**
 	 * Verify Password Update Security
@@ -12,7 +12,7 @@ events::addListener('@udash//ajax', function() {
 	 * We need to do some crafty things to minimize the chances of resetting password by unauthorized entity
 	 */
 	 
-	 if( empty($_POST['passport']) || empty($_POST['nonce']) ) uss::stop( false, "Suspicious Request" );
+	 if( empty($_POST['passport']) || empty($_POST['nonce']) ) Uss::stop( false, "Suspicious Request" );
 	 
 	 
 	 /**
@@ -35,7 +35,7 @@ events::addListener('@udash//ajax', function() {
 		 * Let's confirm the nonce
 		 * This ensures that the end-user is from a reliable source
 		 */
-		if( !uss::nonce( $_SESSION['resetter'], $_POST['nonce'] ) ) {
+		if( !Uss::nonce( $_SESSION['resetter'], $_POST['nonce'] ) ) {
 			
 			$message = "The request could not be completed! <br> Please contact the support team";
 			
@@ -63,7 +63,7 @@ events::addListener('@udash//ajax', function() {
 					 * With the same passport
 					 * Reconfirm the password reset key
 					 */
-					$r_code = uss::$global['usermeta']->get( "r-code", $user['id'] );
+					$r_code = Uss::$global['usermeta']->get( "r-code", $user['id'] );
 					
 					if( empty($r_code) || $r_code !== $passport[0] ) $message = 'Invalid client to server request combination';
 						
@@ -83,7 +83,7 @@ events::addListener('@udash//ajax', function() {
 						
 						/** Update Password */
 						
-						$status = uss::$global['mysqli']->query( $SQL );
+						$status = Uss::$global['mysqli']->query( $SQL );
 						
 						if( $status ) {
 							
@@ -91,7 +91,7 @@ events::addListener('@udash//ajax', function() {
 							 * Remove the reset password confirmation key
 							 */
 							 
-							uss::$global['usermeta']->remove( 'r-code', $user['id'] );
+							Uss::$global['usermeta']->remove( 'r-code', $user['id'] );
 							
 							$message = "Password successfully updated! <br> You can login with your new password now";
 							
@@ -114,13 +114,13 @@ events::addListener('@udash//ajax', function() {
 	/**
 	 * Define the login page
 	 */
-	$loginPage = core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
+	$loginPage = Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
 	
 	
 	/**
 	 * Print the output and end the script
 	 */
-	uss::stop( $status ?? false, $message, array( 'redirect' => $loginPage ) );
+	Uss::stop( $status ?? false, $message, array( 'redirect' => $loginPage ) );
 
 }, 'ajax-reset-v2' );
 

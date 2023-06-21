@@ -6,7 +6,7 @@ defined( 'UDASH_AJAX' ) OR DIE;
  * Add new ajax event
  */
  
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 
 	/**
 	 * Database prefix
@@ -17,7 +17,7 @@ events::addListener('@udash//ajax', function() {
 	 * Sanitize the login
 	 * Prevent SQL Injection by escaping unwanted inputs
 	 */
-	$_POST['login'] = uss::$global['mysqli']->real_escape_string($_POST['login']);
+	$_POST['login'] = Uss::$global['mysqli']->real_escape_string($_POST['login']);
 	
 	
 	/**
@@ -30,7 +30,7 @@ events::addListener('@udash//ajax', function() {
 	 *
 	 * If the login input does not match an email, then it is assumed to be a username
 	 */
-	$column = preg_match( core::regex('email'), $_POST['login'] ) ? 'email' : 'username';
+	$column = preg_match( Core::regex('email'), $_POST['login'] ) ? 'email' : 'username';
 	
 	
 	/**
@@ -81,7 +81,7 @@ events::addListener('@udash//ajax', function() {
 			 * This means, there should be no `v-code` key existing for the user in the usermeta table
 			*/
 			
-			$vcode = uss::$global['usermeta']->get('v-code', $user['id']);
+			$vcode = Uss::$global['usermeta']->get('v-code', $user['id']);
 			
 			/**
 			 * If the `v-code` data exists
@@ -107,7 +107,7 @@ events::addListener('@udash//ajax', function() {
 				*/
 				
 				if( empty( roles::user( $user['id'] )::get_user_roles() ) ) {
-					roles::user( $user['id'] )::assign( uss::$global['options']->get('user:default-role') );
+					roles::user( $user['id'] )::assign( Uss::$global['options']->get('user:default-role') );
 				};
 				
 			};
@@ -121,7 +121,7 @@ events::addListener('@udash//ajax', function() {
 	 * Print Output and end the script
 	*/
 	
-	uss::stop( $status ?? false, $message, array(
+	Uss::stop( $status ?? false, $message, array(
 		'redirect' => udash::config('signin:redirect') 
 	));
 

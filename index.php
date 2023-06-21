@@ -88,9 +88,9 @@ if( DB_CONNECT ) {
 	 * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
 	 * into the dashboard, ensuring a smooth and cohesive user experience.
 	 */
-	events::addListener('modules-loaded', function() {
+	Events::addListener('modules-loaded', function() {
 		
-		events::exec( 'udash::ready' );
+		Events::exec( 'udash::ready' );
 		
 		/**
 		 * Finalizing User Synthetics Dashboard
@@ -114,7 +114,7 @@ if( DB_CONNECT ) {
 		 * The module is only intended to be used by the `udash::view()` method to render final output after all other module has
 		 * been integrated into the dashboard module
 		 */
-		events::exec('//udash//view', null, null, function($debug) {
+		Events::exec('//udash//view', null, null, function($debug) {
 			return ( $debug[0]['file'] === (new ReflectionClass('udash'))->getFilename() );
 		});
 		
@@ -126,12 +126,12 @@ if( DB_CONNECT ) {
 	 * Restrict Access to Dashboard
 	 * If the dashboard path is accessed, display a notice to user
 	 */
-	uss::focus( UDASH_FOCUS_URI, function() {
+	Uss::focus( UDASH_FOCUS_URI, function() {
 		
 		/**
 		 * Prepare the user synthetics interface
 		 */
-		uss::view(function() {
+		Uss::view(function() {
 			
 			/**
 			 * Display the notification content;

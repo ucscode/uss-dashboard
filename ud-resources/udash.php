@@ -108,8 +108,8 @@ class udash extends udash_abstract {
 	/**
 	 * Display the dashboard
 	 * 
-	 * Within this method is the `uss::view()` method which is responsible for displaying output
-	 * Therefore, `uss::view()` and `udash::view()` cannot be called together as only the first executed method will render output
+	 * Within this method is the `Uss::view()` method which is responsible for displaying output
+	 * Therefore, `Uss::view()` and `udash::view()` cannot be called together as only the first executed method will render output
 	 * After uss dashboard has been completely configured, use this method to display the output
 	 *
 	 * @param callable $func A callable to display content within the dashboard page
@@ -121,7 +121,7 @@ class udash extends udash_abstract {
 		 * Before a user can see the dashboard,
 		 * self::$config['auth'] must be set to `TRUE`
 		 */
-		if( !uss::$global['user'] || !self::$config['auth'] ) { // If authentication is disapproved
+		if( !Uss::$global['user'] || !self::$config['auth'] ) { // If authentication is disapproved
 			
 			/** 
 			 * Prepare a page blank 
@@ -148,21 +148,21 @@ class udash extends udash_abstract {
 			 * The nonce can be accessed through javascript and be used securely to prevent malicious attact. 
 			 * However, it may be even more secure to create a custom nonce for your platform
 			 */
-			uss::console( 'Nonce', uss::nonce( $_SESSION['uss_session_id'] ) );
+			Uss::console( 'Nonce', Uss::nonce( $_SESSION['uss_session_id'] ) );
 			
 			/**
 			 * The user title
 			 * This is a name displayed at point `%{user.title}` on the dashboard to reference user
 			 */
-			uss::eTag('user.title', uss::$global['user']['username'] ?: uss::$global['user']['email'], false);
+			Uss::eTag('user.title', Uss::$global['user']['username'] ?: Uss::$global['user']['email'], false);
 			
 		}
 		
 		/**
 		 * Configure Basic Template Engine Tags
 		 */
-		uss::eTag('udash.url', core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ));
-		uss::eTag('udash.ajax', core::url( udash::AJAX_DIR . '/@ajax.php', true ));
+		Uss::eTag('udash.url', Core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ));
+		Uss::eTag('udash.ajax', Core::url( udash::AJAX_DIR . '/@ajax.php', true ));
 		
 		
 		// Modify Interface & Render Content
@@ -175,7 +175,7 @@ class udash extends udash_abstract {
 		
 		# >> HEAD SECTION
 		
-		events::addListener('@head::before', function() {
+		Events::addListener('@head::before', function() {
 			
 			//Implement SEO information
 			require_once self::VIEW_DIR . '/meta.php';
@@ -183,7 +183,7 @@ class udash extends udash_abstract {
 		}, EVENT_ID . self::view_id );
 			
 			
-		events::addListener('@head::after', function() {
+		Events::addListener('@head::after', function() {
 			
 			//Require HTML <head/> scripts
 			require_once self::VIEW_DIR . '/bundle.head.php';
@@ -193,7 +193,7 @@ class udash extends udash_abstract {
 		
 		# >> BODY SECTION
 		
-		events::addListener('@body::before', function() {
+		Events::addListener('@body::before', function() {
 			
 			// Automatically remove sidebar if blank page is enabled
 			
@@ -204,8 +204,8 @@ class udash extends udash_abstract {
 			if( self::$config['sidebar'] ) require_once self::VIEW_DIR . '/sidebar.php';
 			else {
 				// Update template to fill screen width
-				$mainclass = uss::eTag('udash.main.class');
-				uss::eTag('udash.main.class', trim("full-width {$mainclass}"));
+				$mainclass = Uss::eTag('udash.main.class');
+				Uss::eTag('udash.main.class', trim("full-width {$mainclass}"));
 			};
 			
 			// Get the template header
@@ -215,7 +215,7 @@ class udash extends udash_abstract {
 		}, -(self::view_id));
 		
 		
-		events::addListener('@body::beforeAfter', function() {
+		Events::addListener('@body::beforeAfter', function() {
 			
 			// Get the template footer
 			require_once self::VIEW_DIR . '/footer.php';
@@ -223,7 +223,7 @@ class udash extends udash_abstract {
 		}, self::view_id );
 		
 		
-		events::addListener('@body::after', function() {
+		Events::addListener('@body::after', function() {
 			
 			// Require HTML <body/> scripts
 			require_once self::VIEW_DIR . '/bundle.body.php';
@@ -234,9 +234,9 @@ class udash extends udash_abstract {
 		/**
 		 * Render the content to browser
 		 */
-		events::addListener('//udash//view', function() use($func) {
-			uss::console('@RE-POST', self::$config['debug']);
-			uss::view($func);
+		Events::addListener('//udash//view', function() use($func) {
+			Uss::console('@RE-POST', self::$config['debug']);
+			Uss::view($func);
 		});
 		
 	}
@@ -266,23 +266,23 @@ class udash extends udash_abstract {
 		 * Prepare the template tags
 		 * In contrast, do not overwrite any tag if it has already been declared by a module
 		 */
-		uss::eTag('col.row', 'row g-0 auth-row', false);
-		uss::eTag('col.left', 'col-lg-6', false);
-		uss::eTag('col.right', 'col-lg-6', false);
-		uss::eTag('auth.container', 'auth-wrapper', false);
+		Uss::eTag('col.row', 'row g-0 auth-row', false);
+		Uss::eTag('col.left', 'col-lg-6', false);
+		Uss::eTag('col.right', 'col-lg-6', false);
+		Uss::eTag('auth.container', 'auth-wrapper', false);
 		
 		/**
 		 * Now create the Interface
 		 * Based on the URI path
 		 */
-		switch( uss::query(1) ) {
+		switch( Uss::query(1) ) {
 			
 			case 'signup':
 					
 					/**
 					 * Check if signup page is disabled
 					 */
-					$enabled = empty(uss::$global['options']->get('user:disable-signup'));
+					$enabled = empty(Uss::$global['options']->get('user:disable-signup'));
 					
 					/**
 					 * Require page based on signup configuration

@@ -4,18 +4,18 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 
 /** Create signup form */
 
-events::addListener('@auth//right', function() { ?>
+Events::addListener('@auth//right', function() { ?>
 
 	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='ud-signup' enctype='multipart/form-data'>
 		<div class="row py-3">
 			<div class="col-sm-10 col-md-9 m-auto">
 				
 				<?php
-					events::addListener('@auth//form//signup', function() {
+					Events::addListener('@auth//form//signup', function() {
 						/**
 						 * Check if username collection is disabled
 						 */
-						if( empty( uss::$global['options']->get( "user:collect-username" ) ) ) return;
+						if( empty( Uss::$global['options']->get( "user:collect-username" ) ) ) return;
 				?>
 					<div class="mb-3">
 						<input type="text" placeholder="Username" class='form-control' name='username' required pattern="^\s*\w+\s*$">
@@ -24,7 +24,7 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php 
-					events::addListener('@auth//form//signup', function() { ?>
+					Events::addListener('@auth//form//signup', function() { ?>
 						<div class="mb-3">
 							<input type="email" placeholder="Email" class='form-control' name='email' required>
 						</div>
@@ -32,7 +32,7 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php 
-					events::addListener('@auth//form//signup', function() { ?>
+					Events::addListener('@auth//form//signup', function() { ?>
 						<!-- end col -->
 						<div class="mb-3">
 							<input type="password" placeholder="Password" class='form-control' name='password' required pattern='^.{4,}$'>
@@ -41,7 +41,7 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php 
-					events::addListener('@auth//form//signup', function() { ?>
+					Events::addListener('@auth//form//signup', function() { ?>
 						<!-- end col -->
 						<div class="mb-4">
 							<input type="password" placeholder="Confirm Password" class='form-control' name='confirm_password' pattern='^.{4,}$' required>
@@ -50,7 +50,7 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php 
-					events::addListener('@auth//form//signup', function() { ?>
+					Events::addListener('@auth//form//signup', function() { ?>
 						<!-- end col -->
 						<div class='mb-4'>
 							<div class="form-check user-select-none">
@@ -66,8 +66,8 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php 
-					events::addListener('@auth//form//signup', function() {
-						if( empty(uss::$global['options']->get('user:affiliation')) ) return;
+					Events::addListener('@auth//form//signup', function() {
+						if( empty(Uss::$global['options']->get('user:affiliation')) ) return;
 						$parent = udash::get_sponsor();
 						if( !$parent ) return;
 				?>
@@ -76,7 +76,7 @@ events::addListener('@auth//right', function() { ?>
 				
 				
 				<?php
-					events::addListener('@auth//form//signup', function() { ?>
+					Events::addListener('@auth//form//signup', function() { ?>
 						<!-- end col -->
 						<div class="button-group d-flex justify-content-center flex-wrap">
 							<button class="btn btn-primary w-100" type='submit'>
@@ -87,7 +87,7 @@ events::addListener('@auth//right', function() { ?>
 				?>
 				
 				
-				<?php events::exec('@auth//form//signup'); ?>
+				<?php Events::exec('@auth//form//signup'); ?>
 				
 			</div>
 		</div>
@@ -98,7 +98,7 @@ events::addListener('@auth//right', function() { ?>
 
 
 <?php 
-	events::addListener('@auth//right', function() { ?>
+	Events::addListener('@auth//right', function() { ?>
 		<div class='mt-4'>
 			<p class="text-sm text-medium text-dark text-center">
 				Already have an account? 

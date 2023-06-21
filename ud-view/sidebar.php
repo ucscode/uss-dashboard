@@ -6,7 +6,7 @@
 
 	<div class="navbar-logo">
 		<a href="%{udash.url}">
-			<img src="<?php echo uss::$global['icon']; ?>" height='50px' alt="logo" />
+			<img src="<?php echo Uss::$global['icon']; ?>" height='50px' alt="logo" />
 		</a>
 	</div>
 	
@@ -143,9 +143,9 @@
 
 					?>
 
-				<li <?php echo core::array_to_html_attrs($li_attr); ?>>
+				<li <?php echo Core::array_to_html_attrs($li_attr); ?>>
 				
-					<a <?php echo core::array_to_html_attrs($anchor_attr); ?>>
+					<a <?php echo Core::array_to_html_attrs($anchor_attr); ?>>
 						<?php 
 						
 							if( empty($menu->level) ): 
@@ -219,7 +219,7 @@
 				 
 				}; // end menu;
 				
-				$renderMenu( uss::$global['menu'], $renderMenu );
+				$renderMenu( Uss::$global['menu'], $renderMenu );
 				
 			?>
 			

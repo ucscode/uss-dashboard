@@ -7,4 +7,4 @@
  
 defined( 'UDASH_MOD_DIR' ) OR DIE; 
 
-?>	<link rel="stylesheet" href="<?php echo core::url( udash::ASSETS_DIR . "/css/default.css" ); ?>" />
+?>	<link rel="stylesheet" href="<?php echo Core::url( udash::ASSETS_DIR . "/css/default.css" ); ?>" />

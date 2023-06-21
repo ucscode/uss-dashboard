@@ -16,7 +16,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
  * In other case, your code may be called after the dashboard has loaded but will not be properly handled
  * Hence, it highly recommended to bind your dashboard function to the `udash::ready` event
  */
-events::addListener('udash::ready', function() {
+Events::addListener('udash::ready', function() {
 	
 	require udash::PAGES_DIR . '/index.php'; # visible immediately after login
 	require udash::PAGES_DIR . '/account.php';
@@ -31,7 +31,7 @@ events::addListener('udash::ready', function() {
 	 * It take account of the dashboard configuration setting and the user authentication before determining 
 	 * whether to display the actual content or the login page
 	 */
-	uss::focus( UDASH_FOCUS_URI . '/(?:signup|reset)', function() {
+	Uss::focus( UDASH_FOCUS_URI . '/(?:signup|reset)', function() {
 		
 		/**
 		 * Forcefully disable authentication for signup and reset password page
@@ -42,7 +42,7 @@ events::addListener('udash::ready', function() {
 		 * To add a custom authentication page through module, add a callable to the `auth-page` offset
 		 * ```php
 		 * 	udash::config('auth-page', function() {
-		 * 		if( uss::query(1) == 'signup' ) // your custom signup content here 
+		 * 		if( Uss::query(1) == 'signup' ) // your custom signup content here 
 		 *  });
 		 * ```
 		 */
@@ -63,7 +63,7 @@ events::addListener('udash::ready', function() {
  * User must be logged-in (with a role that has permission to view the dashboard)
  * The code below will run immediately since it's not attached to an event
  */
-$user = uss::$global['user'];
+$user = Uss::$global['user'];
 
 /** 
  * If user is logged-in
@@ -80,7 +80,7 @@ if( $user )  {
 		/**
 		 * Render a 403 Error Page
 		 */
-		uss::view(function() {
+		Uss::view(function() {
 			require VIEW_DIR . "/error-403.php";
 		});
 		

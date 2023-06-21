@@ -15,7 +15,7 @@ $reset = call_user_func(function() {
 		
 		if( count($rcode) < 2 ) {
 			
-			uss::console('@alert', "Invalid password reset link" );
+			Uss::console('@alert', "Invalid password reset link" );
 			
 			return false;
 			
@@ -27,29 +27,29 @@ $reset = call_user_func(function() {
 			
 			if( !$user ) {
 				
-				uss::console('@alert', "The reset link is inappropriate");
+				Uss::console('@alert', "The reset link is inappropriate");
 				
 				return false;
 				
 			} else {
 				
-				$epoch = uss::$global['usermeta']->get( 'r-code', $user['id'], true );
+				$epoch = Uss::$global['usermeta']->get( 'r-code', $user['id'], true );
 				
 				$hour = ( time() - $epoch ) / 3600;
 				
 				if( $hour > 1 ) {
 					
-					uss::console('@alert', "The password reset link has expired. <br> Please try requesting for a new link to proceed" );
+					Uss::console('@alert', "The password reset link has expired. <br> Please try requesting for a new link to proceed" );
 					
 					return false;
 					
 				} else {
 					
-					$reset_code = uss::$global['usermeta']->get( 'r-code', $user['id'] );
+					$reset_code = Uss::$global['usermeta']->get( 'r-code', $user['id'] );
 					
 					if( $reset_code !== $rcode[0] ) {
 						
-						uss::console('@alert', "The reset link could not be approved! <br> Please try requesting for a new link" );
+						Uss::console('@alert', "The reset link could not be approved! <br> Please try requesting for a new link" );
 						
 						return false;
 						
@@ -71,7 +71,7 @@ $reset = call_user_func(function() {
 		
 	} catch( Exception $e ) {
 		
-		uss::console('@alert', "The reset link is forbidden!" );
+		Uss::console('@alert', "The reset link is forbidden!" );
 		
 		return false;
 		

@@ -8,17 +8,17 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
  * It is recommended to create menu outside a focus path
  * This will make it possible for users to access the menu outside the path
 */
-uss::$global['menu']->add('homepage', array(
+Uss::$global['menu']->add('homepage', array(
 	'label' => "Dashboard",
 	"icon" => "<i class='bi bi-speedometer2'></i>",
-	'href' => core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ),
-	'active' => implode("/", uss::query()) === UDASH_FOCUS_URI
+	'href' => Core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ),
+	'active' => implode("/", Uss::query()) === UDASH_FOCUS_URI
 ));
 
 
 // Focus Path;
 
-uss::focus( UDASH_FOCUS_URI, function() {
+Uss::focus( UDASH_FOCUS_URI, function() {
 	
 	// Authenticate Email Requests
 	
@@ -31,7 +31,7 @@ uss::focus( UDASH_FOCUS_URI, function() {
 		 * A module needs to fill it up by adding an event listener;
 		*/
 		
-		events::exec('@udash//page//index');
+		Events::exec('@udash//page//index');
 		
 	});
 	

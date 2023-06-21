@@ -7,28 +7,28 @@ call_user_func(function() {
 	/**
 	 * VERIFY REQUEST_METHOD
 	 */
-	if( $_SERVER['REQUEST_METHOD'] !== 'POST' || empty(uss::$global['user']) ) return;
+	if( $_SERVER['REQUEST_METHOD'] !== 'POST' || empty(Uss::$global['user']) ) return;
 	
 	/**
 	 * VERIFY NONCE
 	 */
-	if( !uss::nonce( 'profile', $_POST['nonce'] ) )
+	if( !Uss::nonce( 'profile', $_POST['nonce'] ) )
 		
 		/**
 		 * IN-SECURITY MESSAGE
 		 */
-		uss::console( '@alert', "<i class='bi bi-shield-slash-fill me-1'></i> Security check failed" );
+		Uss::console( '@alert', "<i class='bi bi-shield-slash-fill me-1'></i> Security check failed" );
 	
 	else {
 		
 		/**
 		 * PROCESS PROFILE DETAIL
 		 */
-		events::addListener('@udash//page//profile::submit', function() {
+		Events::addListener('@udash//page//profile::submit', function() {
 			
 			if( $_POST['route'] !== 'profile' ) return;
 			
-			$user = &uss::$global['user'];
+			$user = &Uss::$global['user'];
 			
 			$prefix = DB_TABLE_PREFIX;
 			
@@ -57,7 +57,7 @@ call_user_func(function() {
 				array_walk_recursive($_POST, function($value, $key) use(&$data) {
 					if( in_array($key, ['username', 'email']) ) {
 						$value = strtolower($value);
-						$data[$key] = uss::$global['mysqli']->real_escape_string( $value );
+						$data[$key] = Uss::$global['mysqli']->real_escape_string( $value );
 					}
 				});
 				
@@ -67,7 +67,7 @@ call_user_func(function() {
 				 */
 				if( !isset($data['email']) ) $data['email'] = $user['email'];
 				
-				if( !preg_match(core::regex('email'), $data['email']) ) throw new Exception("Invalid email address");
+				if( !preg_match(Core::regex('email'), $data['email']) ) throw new Exception("Invalid email address");
 				
 				
 				/**
@@ -82,7 +82,7 @@ call_user_func(function() {
 				 * Hence, it's recommeded to force users to reconfirm their new email!
 				*/
 				
-				$reconfirm = !empty(uss::$global['options']->get('user:reconfirm-email'));
+				$reconfirm = !empty(Uss::$global['options']->get('user:reconfirm-email'));
 				
 				if( $reconfirm && ($user['email'] !== $data['email']) ) {
 					/**
@@ -116,7 +116,7 @@ call_user_func(function() {
 						/**
 						 * Remove the email verification keys
 						 */
-						uss::$global['usermeta']->remove( $key, $user['id'] );
+						Uss::$global['usermeta']->remove( $key, $user['id'] );
 					};
 					$message = null;
 				}
@@ -131,7 +131,7 @@ call_user_func(function() {
 				/** 
 				 * Update Database 
 				 */
-				$update = uss::$global['mysqli']->query( $SQL );
+				$update = Uss::$global['mysqli']->query( $SQL );
 				
 				/**
 				 * Get Response Message
@@ -149,7 +149,7 @@ call_user_func(function() {
 					 * If the user submitted any
 					 */
 					if( !empty($avatar) ) {
-						uss::$global['usermeta']->set('avatar', $avatar, $user['id']);
+						Uss::$global['usermeta']->set('avatar', $avatar, $user['id']);
 					}
 							
 				} else $message = "
@@ -169,7 +169,7 @@ call_user_func(function() {
 			/**
 			 * SHOW MESSAGE IN MODAL BOX
 			 */
-			uss::console( '@alert', $message );
+			Uss::console( '@alert', $message );
 		
 		}, EVENT_ID . 'profile' );
 		
@@ -177,11 +177,11 @@ call_user_func(function() {
 		/**
 		 * UPDATE USER PASSWORD
 		 */
-		events::addListener('@udash//page//profile::submit', function() {
+		Events::addListener('@udash//page//profile::submit', function() {
 			
 			if( $_POST['route'] !== 'password' ) return;
 			
-			$user = uss::$global['user'];
+			$user = Uss::$global['user'];
 			
 			/**
 			 * Check if old password is correct
@@ -213,7 +213,7 @@ call_user_func(function() {
 					'password' => udash::password( $_POST['password'] )
 				), "id = {$user['id']}" );
 				
-				$update = uss::$global['mysqli']->query( $SQL );
+				$update = Uss::$global['mysqli']->query( $SQL );
 				
 				if( $update ) {
 					
@@ -235,7 +235,7 @@ call_user_func(function() {
 			/**
 			 * SHOW MESSAGE IN MODAL BOX
 			 */
-			uss::console( '@alert', $message );
+			Uss::console( '@alert', $message );
 			
 		}, EVENT_ID . 'password' );
 		
@@ -244,7 +244,7 @@ call_user_func(function() {
 		 * Event Execution
 		 * Requires `route` index in `$_POST` variable to function
 		 */
-		events::exec('@udash//page//profile::submit', null, null, function() {
+		Events::exec('@udash//page//profile::submit', null, null, function() {
 			return !empty($_POST['route']);
 		});
 	

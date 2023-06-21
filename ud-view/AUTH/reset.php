@@ -2,12 +2,12 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
-uss::eTag( 'reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2' );
+Uss::eTag( 'reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2' );
 
 
 /** Create a reset password form */
 
-events::addListener('@auth//right', function() use($reset) { ?>
+Events::addListener('@auth//right', function() use($reset) { ?>
 	
 	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='%{reset.type}' enctype='multipart/form-data'>
 		<div class="row py-3">
@@ -25,21 +25,21 @@ events::addListener('@auth//right', function() use($reset) { ?>
 				?>
 				
 					
-					<?php events::addListener('@auth//form//reset', function() { ?>
+					<?php Events::addListener('@auth//form//reset', function() { ?>
 						<div class='text-center mb-3'>
 							<small>You'll receive an email to continue the process</small>
 						</div>
 					<?php }, EVENT_ID . 'detail'); ?>
 					
 					
-					<?php events::addListener('@auth//form//reset', function() { ?>
+					<?php Events::addListener('@auth//form//reset', function() { ?>
 						<div class="mb-3">
 							<input type="email" name='email' placeholder="Email" class='form-control' required>
 						</div>
 					<?php }, EVENT_ID . 'email'); ?>
 					
 					
-					<?php events::addListener('@auth//form//reset', function() { ?>
+					<?php Events::addListener('@auth//form//reset', function() { ?>
 						<button class="btn btn-primary w-100">
 							Reset Password
 						</button>
@@ -56,14 +56,14 @@ events::addListener('@auth//right', function() use($reset) { ?>
 						 */
 				?>
 				
-					<?php events::addListener('@auth//form//reset', function() { ?>
+					<?php Events::addListener('@auth//form//reset', function() { ?>
 						<div class='text-center mb-3'>
 							<small>Please enter your new password</small>
 						</div>
 					<?php }, EVENT_ID . 'detail'); ?>
 					
 					
-					<?php events::addListener('@auth//form//reset', function() use($reset) { ?>
+					<?php Events::addListener('@auth//form//reset', function() use($reset) { ?>
 					
 						<div class="mb-3">
 							<input type="password" name='password' placeholder="Password" class='form-control' pattern='^.{4,}$' required>
@@ -74,11 +74,11 @@ events::addListener('@auth//right', function() use($reset) { ?>
 						</div>
 						
 						<input type='hidden' name='passport' value='<?php echo $reset; ?>'>
-						<input type='hidden' name='nonce' value='<?php echo uss::nonce( $_SESSION['resetter'] ); ?>'>
+						<input type='hidden' name='nonce' value='<?php echo Uss::nonce( $_SESSION['resetter'] ); ?>'>
 						
 					<?php }, EVENT_ID . 'password-group' ); ?>
 					
-					<?php events::addListener('@auth//form//reset', function() { ?>
+					<?php Events::addListener('@auth//form//reset', function() { ?>
 						<button class="btn btn-primary w-100">
 							Change Password
 						</button>
@@ -86,7 +86,7 @@ events::addListener('@auth//right', function() use($reset) { ?>
 				
 				<?php endif; ?>
 				
-				<?php events::exec('@auth//form//reset', [$reset]); ?>
+				<?php Events::exec('@auth//form//reset', [$reset]); ?>
 				
 			</div>
 		</div>
@@ -96,7 +96,7 @@ events::addListener('@auth//right', function() use($reset) { ?>
 <?php }, EVENT_ID . 'reset-form' ); ?>
 
 
-<?php events::addListener('@auth//right', function() { ?>
+<?php Events::addListener('@auth//right', function() { ?>
 	<div class="mt-4">
 		<p class="text-sm text-medium text-dark text-center">
 			Back To <a href="%{udash.url}">Login</a>

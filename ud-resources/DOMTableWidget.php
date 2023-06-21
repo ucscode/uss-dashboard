@@ -146,7 +146,7 @@ abstract class DOMTableWidget extends DOMTable {
 			$div->setAttribute('class', 'col col-md-3 dt-uss-bulk');
 			
 			/** Generate Nonce */
-			$nonce = uss::nonce( $this->tablename );
+			$nonce = Uss::nonce( $this->tablename );
 			
 			/**
 			 * Add element to the bulk container;

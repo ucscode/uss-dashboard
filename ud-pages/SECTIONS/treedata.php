@@ -1,9 +1,9 @@
 <?php 
 	
-( defined( 'UDASH_MOD_DIR' ) && uss::$global['user']['id'] ) OR DIE; 
+( defined( 'UDASH_MOD_DIR' ) && Uss::$global['user']['id'] ) OR DIE; 
 
 /** The current user */
-$user = uss::$global['user'];
+$user = Uss::$global['user'];
 
 /** Table prefix */
 $prefix = DB_TABLE_PREFIX;
@@ -12,7 +12,7 @@ $prefix = DB_TABLE_PREFIX;
  * Get the `usercode` present in the Query string
  * If none exists, then we use that of the current user
  */
-$usercode = uss::query(3);
+$usercode = Uss::query(3);
 if( empty($usercode) ) $usercode = $user['usercode'];
 
 /**
@@ -152,7 +152,7 @@ $jsonTree = addslashes(json_encode($tree));
 				let el = e.target;
 				while( el && !el.hasAttribute('data-node') ) el = el.parentElement;
 				if( !el ) return;
-				window.location.href = `<?php echo core::url( ROOT_DIR . "/" . $hierFocus ); ?>/${el.dataset.node}`;
+				window.location.href = `<?php echo Core::url( ROOT_DIR . "/" . $hierFocus ); ?>/${el.dataset.node}`;
 			});
 		});
 	</script>

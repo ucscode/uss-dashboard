@@ -274,7 +274,7 @@ class roles {
 		
 		$new_roles = array_values( array_unique( array_merge( self::get_user_roles(), $roles ) ) );
 		
-		$assigned = uss::$global['usermeta']->set( 'roles', $new_roles, self::$user['id'] );
+		$assigned = Uss::$global['usermeta']->set( 'roles', $new_roles, self::$user['id'] );
 		
 		self::clear_user( $assigned ? null : "Database Error: Failed to assign role(s)" );
 		
@@ -294,7 +294,7 @@ class roles {
 		$roles = self::probe( $roles );
 		$new_roles = array_values( array_diff( self::get_user_roles(), $roles ) );
 		
-		$unassigned = uss::$global['usermeta']->set( 'roles', $new_roles, self::$user['id'] );
+		$unassigned = Uss::$global['usermeta']->set( 'roles', $new_roles, self::$user['id'] );
 		
 		self::clear_user( $unassigned ? null : "Database Error: Failed to unassign role(s)" );
 		
@@ -309,7 +309,7 @@ class roles {
 	
 	public static function get_user_roles() {
 		if( self::$user )
-			$roles = uss::$global['usermeta']->get('roles', self::$user['id']) ?? [];
+			$roles = Uss::$global['usermeta']->get('roles', self::$user['id']) ?? [];
 		else $roles = [];
 		return array_values( $roles );
 	}
@@ -411,7 +411,7 @@ class roles {
 	
 	public static function get_assigned_users( string $role, bool $complete = false ) {
 		
-		$role = uss::$global['mysqli']->real_escape_string( $role );
+		$role = Uss::$global['mysqli']->real_escape_string( $role );
 		
 		$prefix = DB_TABLE_PREFIX;
 		
@@ -427,7 +427,7 @@ class roles {
 		
 		$data = array();
 		
-		$results = uss::$global['mysqli']->query( $SQL );
+		$results = Uss::$global['mysqli']->query( $SQL );
 		
 		if( $results->num_rows ) {
 			while( $user = $results->fetch_assoc() ) {

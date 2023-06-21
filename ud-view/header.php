@@ -45,7 +45,7 @@
 							/**
 							 * Modules can attach custom stuff to the left side of the header
 							 */
-							events::exec('@udash//header//left'); 
+							Events::exec('@udash//header//left'); 
 						?>
 					</div>
 				</div>
@@ -66,14 +66,14 @@
 							 * udash::config('page:notification', "/path/to/notification");
 							 * ```
 							 */
-							events::addListener('@udash//header//right', function() {
+							Events::addListener('@udash//header//right', function() {
 								require __DIR__ . '/header-notification.php'; 
 							}, EVENT_ID);
 							
 							/**
 							 * Enable right header modification
 							 */
-							events::exec('@udash//header//right');
+							Events::exec('@udash//header//right');
 							
 						?>
 						
@@ -84,7 +84,7 @@
 								<div class="profile-info">
 									<div class="info">
 										<div class="image">
-											<img src="<?php echo udash::user_avatar( uss::$global['user']['id'] ); ?>" alt=""/>
+											<img src="<?php echo udash::user_avatar( Uss::$global['user']['id'] ); ?>" alt=""/>
 											<span class="status"></span>
 										</div>
 									</div>
@@ -94,7 +94,7 @@
 							
 							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
 								<?php 
-									if( !empty(uss::eTag('user.title')) ):
+									if( !empty(Uss::eTag('user.title')) ):
 									/**
 									 * Display user title
 									 */
@@ -110,10 +110,10 @@
 									/**
 									 *
 									 */
-									events::addListener('@auth//header//userdrop', function() {
+									Events::addListener('@auth//header//userdrop', function() {
 								?>
 									<li data-auth='logout'>
-										<a href="<?php echo core::url( ROOT_DIR . '/' . udash::config('page:signout') ); ?>"> 
+										<a href="<?php echo Core::url( ROOT_DIR . '/' . udash::config('page:signout') ); ?>"> 
 											<i class="bi bi-power"></i> Sign Out 
 										</a>
 									</li>
@@ -122,7 +122,7 @@
 									 * Execute user dropdown
 									 * Modules can attach listener to this event
 									 */
-									events::exec( '@auth//header//userdrop'); 
+									Events::exec( '@auth//header//userdrop'); 
 								?>
 							</ul>
 							

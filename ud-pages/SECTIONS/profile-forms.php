@@ -5,7 +5,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 	/**
 	 * DISPLAY ACCOUNT FORM
 	 */
-	events::addListener('@udash//page//profile', function() { 
+	Events::addListener('@udash//page//profile', function() { 
 		
 ?>
 	<div class="%{profile.col-left}">
@@ -35,17 +35,17 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 									/**
 									 * Nested Event
 									 */
-									events::addListener('@udash//page//profile:form', function() {
+									Events::addListener('@udash//page//profile:form', function() {
 										
 										/**
 										 * Check if user is allowed to update email
 										 */
-										$lockemail = !!uss::$global['options']->get('user:lock-email');
+										$lockemail = !!Uss::$global['options']->get('user:lock-email');
 										
 										/**
 										 * Check if user has an unverified email available
 										 */
-										$vcode = uss::$global['usermeta']->get('v-code:update', uss::$global['user']['id']);
+										$vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
 										
 								?>
 									<div class="mb-4">
@@ -54,7 +54,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 										
 										<?php 
 											if( $vcode ) {
-												$email = uss::$global['usermeta']->get('v-code:email', uss::$global['user']['id']);
+												$email = Uss::$global['usermeta']->get('v-code:email', Uss::$global['user']['id']);
 												echo "<div class='mt-2 text-center text-muted fs-12px'>
 													Please click the link sent to <span class='text-warning'>{$email}</span> to update your email
 												</div>";
@@ -70,7 +70,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 									/**
 									 * Allow module to add some extra input field!
 									 */
-									events::exec('@udash//page//profile:form'); 
+									Events::exec('@udash//page//profile:form'); 
 								?>
 								
 								<button class='btn btn-success w-100 btn-class-1' type='submit'>Update</button>
@@ -94,7 +94,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 	/**
 	 * DISPLAY PASSWORD FORM
 	 */
-	events::addListener('@udash//page//profile', function() {
+	Events::addListener('@udash//page//profile', function() {
 ?>
 
 <div class="%{profile.col-right}">

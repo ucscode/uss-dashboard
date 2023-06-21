@@ -23,7 +23,7 @@ call_user_func(function() {
 		
 		$data = explode( ":", base64_decode( $_GET['v'] ) );
 		
-		if( count($data) < 3 ) return uss::console( '@alert', '"Invalid confirmation link"' );
+		if( count($data) < 3 ) return Uss::console( '@alert', '"Invalid confirmation link"' );
 		
 		
 		/*
@@ -32,7 +32,7 @@ call_user_func(function() {
 		
 		$user = udash::fetch_assoc( DB_TABLE_PREFIX . "_users", $data[2], 'email' );
 		
-		if( !$user ) return uss::console( '@alert', "Confirmation link is forbidden" );
+		if( !$user ) return Uss::console( '@alert', "Confirmation link is forbidden" );
 		
 		
 		/*
@@ -41,7 +41,7 @@ call_user_func(function() {
 		
 		$v_key = ( $data[0] === 'update' ) ? 'v-code:update' : 'v-code';
 		
-		$vcode = uss::$global['usermeta']->get( $v_key, $user['id'] );
+		$vcode = Uss::$global['usermeta']->get( $v_key, $user['id'] );
 		
 		if( !$vcode ) return;
 		
@@ -51,21 +51,21 @@ call_user_func(function() {
 			
 		*/
 		
-		$epoch = uss::$global['usermeta']->get( $v_key, $user['id'], true );
+		$epoch = Uss::$global['usermeta']->get( $v_key, $user['id'], true );
 
 		// check expired link;
 		
 		$time = (new DateTime())->setTimestamp( $epoch );
 		$now = new DateTime();
 		
-		if( $now->diff( $time )->h > 12 ) return uss::console( '@alert', "Confirmation link expired" );
+		if( $now->diff( $time )->h > 12 ) return Uss::console( '@alert', "Confirmation link expired" );
 		
 		
 		/*
 			Get the verification code;
 		*/
 		
-		if( $vcode !== $data[1] ) return uss::console( '@alert', "Email confirmation failed <br> Please try again" );
+		if( $vcode !== $data[1] ) return Uss::console( '@alert', "Email confirmation failed <br> Please try again" );
 		
 		
 		/*
@@ -74,7 +74,7 @@ call_user_func(function() {
 		
 		if( $v_key == 'v-code' ) {
 			
-			$confirmed = uss::$global['usermeta']->remove( 'v-code', $user['id'] ); 
+			$confirmed = Uss::$global['usermeta']->remove( 'v-code', $user['id'] ); 
 		
 		} else {
 			
@@ -82,43 +82,43 @@ call_user_func(function() {
 				Get the new email address!
 			*/
 			
-			$email = uss::$global['usermeta']->get( 'v-code:email', $user['id'] );
+			$email = Uss::$global['usermeta']->get( 'v-code:email', $user['id'] );
 			
 			// Test for validity!
 			
-			if( preg_match( core::regex('email'), $email ) ) {
+			if( preg_match( Core::regex('email'), $email ) ) {
 				
 				$prefix = DB_TABLE_PREFIX;
 				
 				$SQL = sQuery::update( "{$prefix}_users", array(
 					"email" => $email
-				), "id = '{$user['id']}'", uss::$global['mysqli'] );
+				), "id = '{$user['id']}'", Uss::$global['mysqli'] );
 				
 				// insert the new email address!
 				
-				$confirmed = uss::$global['mysqli']->query( $SQL );
+				$confirmed = Uss::$global['mysqli']->query( $SQL );
 				
 				/*
 					Remove the usermeta key as it has become irrelevant!
 				*/
 				
 				foreach( ['v-code:update', 'v-code:email'] as $key )
-					uss::$global['usermeta']->remove( $key, $user['id'] );
+					Uss::$global['usermeta']->remove( $key, $user['id'] );
 				
-			} else return uss::console( '@alert', "The email to update cannot be retreived!" );
+			} else return Uss::console( '@alert', "The email to update cannot be retreived!" );
 			
 		};
 		
 		if( $confirmed ) {
-			uss::console( '@alert', "Your email address has been confirmed" );
-		} else uss::console( '@alert', "Your email address could not be confirmed <br> Try contacting the support team" );
+			Uss::console( '@alert', "Your email address has been confirmed" );
+		} else Uss::console( '@alert', "Your email address could not be confirmed <br> Try contacting the support team" );
 	
 	
 	} catch( Exception $e ) {
 		
 		// Output error message;
 		
-		uss::console( '@alert', "An unexpected error occured when trying to confirm the email <br> Try contacting the support team" );
+		Uss::console( '@alert', "An unexpected error occured when trying to confirm the email <br> Try contacting the support team" );
 	
 	};
 	

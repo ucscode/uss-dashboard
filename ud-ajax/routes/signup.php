@@ -4,14 +4,14 @@ defined( "UDASH_AJAX" ) OR DIE;
 
 # ------------------------------------------
 
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 	
 	/**
 	 * Define a redirect URL
 	 * The URL that user will be redirected to after a successful registration
 	 */
 	 
-	$redirect = udash::config('signup:redirect') ?? core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
+	$redirect = udash::config('signup:redirect') ?? Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI );
 	
 	
 	/**
@@ -31,7 +31,7 @@ events::addListener('@udash//ajax', function() {
 	 * Check if the email address is valid
 	 */
 	
-	if( !preg_match( core::regex('email'), $_POST['email'] ) ) $message = "The email address is not valid";
+	if( !preg_match( Core::regex('email'), $_POST['email'] ) ) $message = "The email address is not valid";
 		
 		
 	/**
@@ -91,7 +91,7 @@ events::addListener('@udash//ajax', function() {
 					Then: confirm that the parent exists!
 				*/
 				
-				if( isset($_POST['parent']) && !empty(uss::$global['options']->get('user:affiliation')) ) {
+				if( isset($_POST['parent']) && !empty(Uss::$global['options']->get('user:affiliation')) ) {
 					$parent = udash::fetch_assoc("{$prefix}_users", $_POST['parent']);
 					if( $parent ) $parent = $parent['id'];
 				} else $parent = null;
@@ -105,7 +105,7 @@ events::addListener('@udash//ajax', function() {
 					"email" => $_POST['email'],
 					"password" => udash::password( $_POST['password'] ),
 					"username" => $username,
-					"usercode" => core::keygen(mt_rand(5,7)),
+					"usercode" => Core::keygen(mt_rand(5,7)),
 					"parent" => $parent
 				);
 				
@@ -114,15 +114,15 @@ events::addListener('@udash//ajax', function() {
 				 * sQuery will auto sanitize the input
 				 */
 				
-				$SQL = sQuery::insert( "{$prefix}_users", $data, uss::$global['mysqli'] );
+				$SQL = sQuery::insert( "{$prefix}_users", $data, Uss::$global['mysqli'] );
 				
 				/**
 				 * Insert the user into database
 				 * Then get the userid immediately
 				 */
-				$status = uss::$global['mysqli']->query( $SQL );
+				$status = Uss::$global['mysqli']->query( $SQL );
 				
-				$data['id'] = uss::$global['mysqli']->insert_id;
+				$data['id'] = Uss::$global['mysqli']->insert_id;
 				
 				
 				/** On success */
@@ -133,7 +133,7 @@ events::addListener('@udash//ajax', function() {
 					 * Assign a role to the new user!
 					 */
 					
-					$defaultRole = uss::$global['options']->get('user:default-role');
+					$defaultRole = Uss::$global['options']->get('user:default-role');
 					
 					$assigned = roles::user( $data['id'] )::assign( $defaultRole );
 					
@@ -152,7 +152,7 @@ events::addListener('@udash//ajax', function() {
 					 * Send verification email
 					*/
 					
-					$verify_mail = !empty( uss::$global['options']->get('user:confirm-email') );
+					$verify_mail = !empty( Uss::$global['options']->get('user:confirm-email') );
 					
 					if( $verify_mail ) {
 						
@@ -206,7 +206,7 @@ events::addListener('@udash//ajax', function() {
 	 * Print the output and end the script
 	*/
 	
-	uss::stop( $status ?? false, $message, array( 'redirect' => $redirect ) );
+	Uss::stop( $status ?? false, $message, array( 'redirect' => $redirect ) );
 	
 }, 'ajax-signup' );
 

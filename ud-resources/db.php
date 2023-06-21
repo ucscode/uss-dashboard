@@ -98,7 +98,7 @@ new class {
 	protected function runInitQuery() {
 		
 		foreach( $this->initQuery as $SQL ) {
-			$result = uss::$global['mysqli']->query( $SQL );
+			$result = Uss::$global['mysqli']->query( $SQL );
 		};
 
 	}
@@ -118,13 +118,13 @@ new class {
 		/**
 		 * Instantiate the pairs class
 		 */
-		uss::$global['usermeta'] = new pairs( uss::$global['mysqli'], "{$prefix}_usermeta" );
+		Uss::$global['usermeta'] = new Pairs( Uss::$global['mysqli'], "{$prefix}_usermeta" );
 
 		/**
 		 * The user meta table will be linked to the main users table.
 		 * It will get bounded by a FOREIGN KEY Constraint
 		 */ 
-		uss::$global['usermeta']->linkParentTable( "{$prefix}_users", "{$prefix}_users" );
+		Uss::$global['usermeta']->linkParentTable( "{$prefix}_users", "{$prefix}_users" );
 	
 	}
 

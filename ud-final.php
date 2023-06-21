@@ -37,7 +37,7 @@ $defaultPagesExpr = array(
 	'page:signout' => UDASH_FOCUS_URI . '/signout',
 
 	// The redirection url after signing out
-	'signout:redirect' => core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI )
+	'signout:redirect' => Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI )
 
 );
 

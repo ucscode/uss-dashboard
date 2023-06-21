@@ -117,7 +117,7 @@ class hierarchy {
 			WHERE depth > 0 AND {$query}
 		", $userid);
 		
-		return uss::$global['mysqli']->query( $SQL );
+		return Uss::$global['mysqli']->query( $SQL );
 		
 	}
 	

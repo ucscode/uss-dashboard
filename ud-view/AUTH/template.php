@@ -12,19 +12,19 @@
  *
  * ```php
  *	
- * events::addListener('@auth//left', function() {
+ * Events::addListener('@auth//left', function() {
  *	// content to display at left side
  * });
  *	
  * // You can equally pass an id to override a content
  
- * events::addListener('@auth//right', function() {
+ * Events::addListener('@auth//right', function() {
  *	// content to display at right side
  * }, 'event-id');
  *
- * uss::eTag('auth.container', 'row');
- * uss::eTag('col.left', 'd-none');
- * uss::eTag('col.right', 'col-lg-12');
+ * Uss::eTag('auth.container', 'row');
+ * Uss::eTag('col.left', 'd-none');
+ * Uss::eTag('col.right', 'col-lg-12');
  *
  * require_once "/path/to/AUTH/template.php";
  *
@@ -36,7 +36,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 	
 	<div class="%{col.left}">
 		
-		<?php events::addListener('@auth//left', function() { ?>
+		<?php Events::addListener('@auth//left', function() { ?>
 			
 			<div class="auth-cover-wrapper bg-primary-100">
 				<div class="auth-cover">
@@ -44,15 +44,15 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 						
 						<!-- image -->
 						<div class='mb-2'>
-							<img src='<?php echo uss::$global['icon']; ?>' class='img-fluid user-select-none'>
+							<img src='<?php echo Uss::$global['icon']; ?>' class='img-fluid user-select-none'>
 						</div>
 						
 						<h1 class="text-white mb-10">
-							<?php echo uss::$global['title']; ?>
+							<?php echo Uss::$global['title']; ?>
 						</h1>
 						
 						<p class="text-light">
-							<?php echo uss::$global['tagline']; ?>
+							<?php echo Uss::$global['tagline']; ?>
 						</p>
 						
 					</div>
@@ -61,7 +61,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 		
 		<?php }, 0); ?>
 		
-		<?php events::exec('@auth//left'); ?>
+		<?php Events::exec('@auth//left'); ?>
 		
 	</div>
 
@@ -70,7 +70,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 		<div class="%{auth.container}">
 			<div class="flex-grow-1">
 			
-				<?php events::exec('@auth//right'); ?>
+				<?php Events::exec('@auth//right'); ?>
 				
 			</div>
 		</div>

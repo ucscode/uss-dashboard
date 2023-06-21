@@ -27,7 +27,7 @@ require_once __DIR__ . '/@init.php';
  * ```
  *
  * ```php
- * uss::focus( "path/to/ajax", function() {
+ * Uss::focus( "path/to/ajax", function() {
  *	 // handle ajax request
  * }, 'post' );
  * ```
@@ -44,7 +44,7 @@ require_once __DIR__ . '/@init.php';
  * Your code can be similar to the one below
  *
  * ```php
- * events::addListener('@udash//ajax', function() {
+ * Events::addListener('@udash//ajax', function() {
  *	 if( $_POST['route'] !== 'ud-signup' ) return;
  *	 // your antispam code here
  * });
@@ -98,5 +98,5 @@ foreach( $authFiles as $route => $filename ) {
 /**
  * Execute the events
  */
-events::exec('@udash//ajax');
+Events::exec('@udash//ajax');
 

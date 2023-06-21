@@ -8,7 +8,7 @@ call_user_func(function() use($profileFocus) {
 	 * Check if affiliation is turned off
 	 * If it is, ignore this functionality
 	 */
-	if( empty(uss::$global['options']->get('user:affiliation')) ) return;
+	if( empty(Uss::$global['options']->get('user:affiliation')) ) return;
 	
 	// The Focus Expression
 	$hierFocus = $profileFocus . "/hierarchy";
@@ -16,10 +16,10 @@ call_user_func(function() use($profileFocus) {
 	/**
 	 * Create a menu to access the page
 	 */
-	uss::$global['menu']->get('profile')->add('team-tree', array(
+	Uss::$global['menu']->get('profile')->add('team-tree', array(
 		'label' => "Hierarchy",
-		'href' => core::url( ROOT_DIR . "/{$hierFocus}" ),
-		"active" => implode("/", uss::query()) === $hierFocus
+		'href' => Core::url( ROOT_DIR . "/{$hierFocus}" ),
+		"active" => implode("/", Uss::query()) === $hierFocus
 	));
 	
 	/**
@@ -28,22 +28,22 @@ call_user_func(function() use($profileFocus) {
 	 * `(?:/?\w+)?` expression accepts extra query string containing usercode
 	 * This will enable you view hierarchy of a particular downlines
 	 */
-	uss::focus( $hierFocus . "(?:/?\w+)?", function() use($hierFocus) {
+	Uss::focus( $hierFocus . "(?:/?\w+)?", function() use($hierFocus) {
 		
-		events::addListener('@head::after', function() {
+		Events::addListener('@head::after', function() {
 			/**
 			 * Get CSS that will style the nodes
 			 */
-			$dir = core::url( udash::ASSETS_DIR . "/vendor/datatree" );
+			$dir = Core::url( udash::ASSETS_DIR . "/vendor/datatree" );
 			echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
 		});
 		
-		events::addListener('@body::after', function() use($hierFocus) {
+		Events::addListener('@body::after', function() use($hierFocus) {
 			
 			/**
 			 * Get JavaScript the will render the nodes
 			 */
-			$dir = core::url( udash::ASSETS_DIR . "/vendor/datatree" );
+			$dir = Core::url( udash::ASSETS_DIR . "/vendor/datatree" );
 			echo "\t<script src='{$dir}/treeData.js'></script>\n";
 			
 			/**
@@ -60,7 +60,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Create Event
 			 */
-			events::addListener('@udash//page//hierarchy', function() {
+			Events::addListener('@udash//page//hierarchy', function() {
 		?>
 			<div class='container-fluid'>
 				<div class='tree-container position-relative rounded-2'>
@@ -72,7 +72,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Execute Events
 			 */
-			events::exec('@udash//page//hierarchy');
+			Events::exec('@udash//page//hierarchy');
 			
 		}); // End view
 		

@@ -2,21 +2,21 @@
 
 defined( 'UDASH_AJAX' ) OR DIE;
 
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 	
 	/**
 	 * Test request nonce
 	 */
-	$trusted = uss::nonce( $_SESSION['uss_session_id'], $_POST['nonce'] ?? null );
+	$trusted = Uss::nonce( $_SESSION['uss_session_id'], $_POST['nonce'] ?? null );
 	
-	if( !$trusted ) uss::stop( false, 'The request is not from a trusted source' );
+	if( !$trusted ) Uss::stop( false, 'The request is not from a trusted source' );
 	
 	/**
 	 * Loop through $_POST recursively and sanitize all inputs
 	 */
 	
 	array_walk_recursive($_POST, function(&$value, $key) {
-		$value = uss::$global['mysqli']->real_escape_string($value);
+		$value = Uss::$global['mysqli']->real_escape_string($value);
 	});
 	
 	/**
@@ -50,9 +50,9 @@ events::addListener('@udash//ajax', function() {
 	};
 
 
-	$status = !empty($SQL) ? uss::$global['mysqli']->query( $SQL ) : false;
+	$status = !empty($SQL) ? Uss::$global['mysqli']->query( $SQL ) : false;
 
-	uss::stop( $status );
+	Uss::stop( $status );
 
 }, 'ajax-nx' );
 

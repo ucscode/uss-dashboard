@@ -19,7 +19,7 @@
 		 * It means the user is logged in.
 		 * So let's get the user id
 		 */
-		$userid = uss::$global['user']['id'];
+		$userid = Uss::$global['user']['id'];
 		
 		
 		/**
@@ -36,7 +36,7 @@
 		 * the user has "x" number of unread notifications available
 		 */
 		
-		$views = uss::$global['mysqli']->query( "
+		$views = Uss::$global['mysqli']->query( "
 			SELECT COUNT(viewed) AS unviewed
 			FROM {$prefix}_notifications
 			WHERE userid = {$userid}
@@ -54,7 +54,7 @@
 		 * Now our next step is to get the most recent notification received
 		 */
 		
-		$data['notify'] = uss::$global['mysqli']->query( "
+		$data['notify'] = Uss::$global['mysqli']->query( "
 			SELECT * FROM {$prefix}_notifications
 			WHERE userid = {$userid}
 				AND hidden = 0
@@ -71,7 +71,7 @@
 	 * The notification url is the page where a full list notifications will be displayed
 	 */
 	
-	$notify_url = core::url( ROOT_DIR ) . "/" . udash::config('page:notification');
+	$notify_url = Core::url( ROOT_DIR ) . "/" . udash::config('page:notification');
 	
 ?>
 	<div class="notification-box ml-15" data-nxurl='%{udash.ajax}'>
@@ -106,7 +106,7 @@
 				
 				/** convert array into HTML attribute */
 		?>
-			<button <?php echo core::array_to_html_attrs( $attrs ); ?>>
+			<button <?php echo Core::array_to_html_attrs( $attrs ); ?>>
 				<i class="bi bi-bell"></i>
 				<?php 
 					/**
@@ -198,7 +198,7 @@
 							</div>
 							<div class="content">
 								<p><?php echo $message; ?></p>
-								<span><?php echo core::elapse( $notification['period'] ); ?></span>
+								<span><?php echo Core::elapse( $notification['period'] ); ?></span>
 							</div>
 						</a>
 					</li>

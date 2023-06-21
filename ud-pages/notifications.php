@@ -2,20 +2,20 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
-uss::focus( udash::config('page:notification'), function() {
+Uss::focus( udash::config('page:notification'), function() {
 	
 	
 	/**
 	 * Process the SQL Queries required to display notification
 	 */
-	$notify = ( uss::$global['user'] ) ? ( require __DIR__ . '/SECTIONS/notification-query.php' ) : null;
+	$notify = ( Uss::$global['user'] ) ? ( require __DIR__ . '/SECTIONS/notification-query.php' ) : null;
 	
 	
 	/**
 	 * Render column size for the column element
 	 * This will enable modules alter the template or design of the notification page
 	 */
-	uss::eTag( 'udash.nx.cols', 'col-md-10 col-lg-9 m-auto', false );
+	Uss::eTag( 'udash.nx.cols', 'col-md-10 col-lg-9 m-auto', false );
 	
 	
 	/**
@@ -31,7 +31,7 @@ uss::focus( udash::config('page:notification'), function() {
 					/**
 					 * THE MARKER EVENT
 					 */
-					events::addListener('@udash//nx', function($notify) { 
+					Events::addListener('@udash//nx', function($notify) { 
 						/**
 						 * Add a button to mark all visible notifications as read
 						 */
@@ -51,7 +51,7 @@ uss::focus( udash::config('page:notification'), function() {
 					 * THE NOTIFICATION BLOCK EVENT
 					 */
 					 
-					events::addListener('@udash//nx', function($notify) {
+					Events::addListener('@udash//nx', function($notify) {
 						
 						/**
 						 * First, let create add a "delete" action to each notification
@@ -63,7 +63,7 @@ uss::focus( udash::config('page:notification'), function() {
 						 *
 						 */ 
 						 
-							events::addListener('@udash//nx:action', function($notification) {
+							Events::addListener('@udash//nx:action', function($notification) {
 						?>
 							<li class="dropdown-item">
 								<a href="javascript:void(0)" class="text-gray text-sm d-block" data-nx-action='remove'>
@@ -123,11 +123,11 @@ uss::focus( udash::config('page:notification'), function() {
 											 * Redirect URL = https://domain.com/focus/path/{userid}
 											 *
 											 * ```php
-											 * uss::focus( "focus/path/(\d+)", function($match) {
+											 * Uss::focus( "focus/path/(\d+)", function($match) {
 											 *
 											 * 	$isAdmin = roles::user($match[1])::is( 'administrator' );
 											 *
-											 * 	// alternatively, you can use `uss::query(2)` instead of `$match[1]`
+											 * 	// alternatively, you can use `Uss::query(2)` instead of `$match[1]`
 											 *
 											 * 	if( $isAdmin ) {
 											 *
@@ -158,7 +158,7 @@ uss::focus( udash::config('page:notification'), function() {
 												<?php echo $markdown; ?>
 											</div>
 											<span class="text-sm text-medium text-gray">
-												<?php echo core::elapse( $notification['period'] ); ?> 
+												<?php echo Core::elapse( $notification['period'] ); ?> 
 												<?php if( !empty($notification['redirect']) ): ?>
 													<i class='mdi mdi-vector-link ms-1'></i>
 												<?php endif; ?>
@@ -180,7 +180,7 @@ uss::focus( udash::config('page:notification'), function() {
 												 * Do execute an event inside a loop and at the same time,
 												 * Add listener to the event within the same loop
 												 */
-												events::exec('@udash//nx:action', $notification); 
+												Events::exec('@udash//nx:action', $notification); 
 											?>
 										</ul>
 										
@@ -200,7 +200,7 @@ uss::focus( udash::config('page:notification'), function() {
 											
 											<div class='row'>
 												<div class='col-sm-8 m-auto col-lg-6'>
-													<img src='<?php echo core::url( udash::ASSETS_DIR . '/images/notification-empty.webp' ); ?>' class='img-fluid'>
+													<img src='<?php echo Core::url( udash::ASSETS_DIR . '/images/notification-empty.webp' ); ?>' class='img-fluid'>
 												</div>
 											</div>
 											
@@ -217,7 +217,7 @@ uss::focus( udash::config('page:notification'), function() {
 				
 					
 				<?php
-					events::addListener('@udash//nx', function($notify) {
+					Events::addListener('@udash//nx', function($notify) {
 						
 						/**
 						 * If there's neither a next nor previous page
@@ -289,7 +289,7 @@ uss::focus( udash::config('page:notification'), function() {
 					 *
 					 * Add, modify remove events on this page
 					 */
-					events::exec('@udash//nx', $notify); 
+					Events::exec('@udash//nx', $notify); 
 				?>
 				
 			</div>

@@ -6,9 +6,9 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE; 
 
-?>	<title><?php echo htmlspecialchars( uss::$global['title'], ENT_QUOTES | ENT_HTML5 ); ?></title>
-	<link rel='icon' href='<?php echo uss::$global['icon']; ?>'>
-	<meta name='description' content='<?php echo htmlspecialchars( uss::$global['description'], ENT_QUOTES | ENT_HTML5 ); ?>'>
+?>	<title><?php echo htmlspecialchars( Uss::$global['title'], ENT_QUOTES | ENT_HTML5 ); ?></title>
+	<link rel='icon' href='<?php echo Uss::$global['icon']; ?>'>
+	<meta name='description' content='<?php echo htmlspecialchars( Uss::$global['description'], ENT_QUOTES | ENT_HTML5 ); ?>'>
 	
 	<?php
 		
@@ -19,7 +19,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 		);
 		
 		foreach( $opengraph as $key => $alt ) 
-			uss::$global['opengraph'][ $key ] = uss::$global['opengraph'][ $key ] ?? uss::$global[ $alt ];
+			Uss::$global['opengraph'][ $key ] = Uss::$global['opengraph'][ $key ] ?? Uss::$global[ $alt ];
 			
 		
 		/* 
@@ -38,7 +38,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 			
 		*/
 		
-		foreach( uss::$global['opengraph'] as $key => $value ):
+		foreach( Uss::$global['opengraph'] as $key => $value ):
 		
 			if( empty($value) ) continue;
 			

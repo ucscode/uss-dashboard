@@ -9,10 +9,10 @@ $profileFocus = UDASH_FOCUS_URI . "/account";
 
 // Create Profile Menu
 
-$account = uss::$global['menu']->add('profile', array(
+$account = Uss::$global['menu']->add('profile', array(
 	'label' => "Account",
 	"icon" => "<i class='bi bi-person'></i>",
-	"active" => uss::query(1) === 'account'
+	"active" => Uss::query(1) === 'account'
 ));
 
 
@@ -20,8 +20,8 @@ $account = uss::$global['menu']->add('profile', array(
 
 $account->add('profile', array(
 	"label" => "Profile",
-	"href" => core::url( ROOT_DIR . "/{$profileFocus}" ),
-	"active" => implode("/", uss::query()) === $profileFocus
+	"href" => Core::url( ROOT_DIR . "/{$profileFocus}" ),
+	"active" => implode("/", Uss::query()) === $profileFocus
 ));
 
 
@@ -30,7 +30,7 @@ $account->add('profile', array(
  * The "userdrop" is located at the TOP-RIGHT of the dashboard
  */
 
-events::addListener('@auth//header//userdrop', function() use( $account ) { ?>
+Events::addListener('@auth//header//userdrop', function() use( $account ) { ?>
 	<li>
 		<a href="<?php echo $account->get('profile')->get_attr('href'); ?>">
 			<i class="bi bi-person"></i> View Profile
@@ -43,17 +43,17 @@ events::addListener('@auth//header//userdrop', function() use( $account ) { ?>
  * Focus on the profile path
  * 
  * The code below will run only when the URL matches the `$profileFocus`
- * @see \uss::focus
+ * @see \Uss::focus
  */
-uss::focus( $profileFocus, function( $e ) {
+Uss::focus( $profileFocus, function( $e ) {
 	
 	/**
 	 * CREATE NONCE KEY
 	 * This is to prevent submission from unreliable source
 	 */
-	$nonce = uss::nonce( 'profile' );
+	$nonce = Uss::nonce( 'profile' );
 	
-	uss::eTag( 'nonce', $nonce );
+	Uss::eTag( 'nonce', $nonce );
 	
 		
 	/**
@@ -70,7 +70,7 @@ uss::focus( $profileFocus, function( $e ) {
 		/**
 		 * Get Configuration Option: {lock-email}
 		 */
-		$lockemail = !empty(uss::$global['options']->get('user:lock-email'));
+		$lockemail = !empty(Uss::$global['options']->get('user:lock-email'));
 		
 		/**
 		 * Build Template Tags
@@ -78,17 +78,17 @@ uss::focus( $profileFocus, function( $e ) {
 		 * The template tags will enable us call on `%{tagname}` 
 		 * Rather than re-writing the same PHP variables over again
 		 */
-		foreach( uss::$global['user'] as $key => $value ) uss::eTag("user.{$key}", $value, false);
+		foreach( Uss::$global['user'] as $key => $value ) Uss::eTag("user.{$key}", $value, false);
 		
 		/**
 		 * Load additional tags
 		 * @param 3 == false; Tag is editable
 		 */
-		uss::eTag('user.title', uss::$global['user']['username'] ?: 'Hi dear', false);
-		uss::eTag('user.avatar', udash::user_avatar( uss::$global['user']['id'] ), false);
+		Uss::eTag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
+		Uss::eTag('user.avatar', udash::user_avatar( Uss::$global['user']['id'] ), false);
 		
-		uss::eTag('profile.col-left', 'col-lg-5', false);
-		uss::eTag('profile.col-right', 'col-lg-7', false);
+		Uss::eTag('profile.col-left', 'col-lg-5', false);
+		Uss::eTag('profile.col-right', 'col-lg-7', false);
 		
 	?>
 		
@@ -100,9 +100,9 @@ uss::focus( $profileFocus, function( $e ) {
 						/** 
 						 * DISPLAY AFFILIATION LINK 
 						 */
-						events::addListener('@udash//page//profile', function() {
+						Events::addListener('@udash//page//profile', function() {
 							
-							if( !uss::$global['options']->get('user:affiliation') ) return;
+							if( !Uss::$global['options']->get('user:affiliation') ) return;
 							
 					?>
 						<div class='col-12 mb-3'>
@@ -136,7 +136,7 @@ uss::focus( $profileFocus, function( $e ) {
 						/**
 						 * Execute the profile page events
 						 */
-						events::exec('@udash//page//profile'); 
+						Events::exec('@udash//page//profile'); 
 						
 					?>
 					
@@ -146,4 +146,4 @@ uss::focus( $profileFocus, function( $e ) {
 		
 	<?php }); // udash::view
 	
-}, NULL); // uss::focus
+}, NULL); // Uss::focus

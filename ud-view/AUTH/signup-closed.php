@@ -4,16 +4,16 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 
 /** Column Right */
 
-uss::eTag('col.right', 'd-none');
+Uss::eTag('col.right', 'd-none');
 
-events::addListener('@auth//right', null);
+Events::addListener('@auth//right', null);
 
 
 /** Column Right */
 
-uss::eTag('col.left', 'col-lg-12');
+Uss::eTag('col.left', 'col-lg-12');
 
-events::addListener('@auth//left', function() { ?>
+Events::addListener('@auth//left', function() { ?>
 
 	<div class='vh-100 bg-light d-flex align-items-center justify-content-center text-center auth-bg-image'>
 		<div class='vh-100 vw-100 bg-dark bg-opacity-75 position-absolute'></div>

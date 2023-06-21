@@ -21,7 +21,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 		/**
 		 * Execute Footer Event
 		 */
-		events::exec('@udash//footer');
+		Events::exec('@udash//footer');
 	?>
 	
 </main>

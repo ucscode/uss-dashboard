@@ -18,7 +18,7 @@ defined( "UDASH_MOD_DIR" ) OR DIE;
  *
  * @var array
  */
-uss::$global['opengraph'] = array();
+Uss::$global['opengraph'] = array();
 
 
 /**
@@ -29,7 +29,7 @@ uss::$global['opengraph'] = array();
  *
  * @var Menufy
  */
-uss::$global['menu'] = new menufy();
+Uss::$global['menu'] = new Menufy();
 
 
 /**
@@ -41,14 +41,14 @@ uss::$global['menu'] = new menufy();
  *
  * @var array|null
  */
-uss::$global['user'] = null;
+Uss::$global['user'] = null;
 
 
 /**
  * Default Dashboard Configuration Options
  *
  * This variable holds the default configuration options for the dashboard.
- * It is managed by the `pairs` class and can be easily updated using the `uss::$global['options']` variable.
+ * It is managed by the `pairs` class and can be easily updated using the `Uss::$global['options']` variable.
  *
  * To update these options through a user interface instead of programmatically, you can install the User Synthetics Admin Panel module.
  */ 
@@ -113,9 +113,9 @@ foreach( $udash_config as $key => $value ) {
 	 * Check if the data exists already
 	 * Otherwise, add the configuration setting
 	 */
-	$data = uss::$global['options']->get($key);
+	$data = Uss::$global['options']->get($key);
 	
-	if( is_null($data) ) uss::$global['options']->set( $key, $value );
+	if( is_null($data) ) Uss::$global['options']->set( $key, $value );
 	
 }
 
@@ -133,12 +133,12 @@ foreach( $udash_config as $key => $value ) {
  * Authenticate user Login 
  * @see \udash_abstract::getAccessTokenUser()
  */
-uss::$global['user'] = udash::getAccessTokenUser();
+Uss::$global['user'] = udash::getAccessTokenUser();
 
 /**
- * Update `uss::$global` Variables
+ * Update `Uss::$global` Variables
  *
- * This function updates certain `uss::$global` variables.
+ * This function updates certain `Uss::$global` variables.
  * Refreshing the site variable can be useful when a configuration setting is updated after the default settings have already been loaded. This ensures that users view the most up-to-date settings without having to manually reload the page.
  */
 udash::refresh_site_vars();
@@ -150,6 +150,6 @@ udash::refresh_site_vars();
  * If it is enabled, it captures the referral code from the URL or from the last cookie session.
  * This is useful for tracking and attributing referrals in the application.
  */
-if( uss::$global['options']->get('user:affiliation') ) udash::get_sponsor();
+if( Uss::$global['options']->get('user:affiliation') ) udash::get_sponsor();
 
 

@@ -3,7 +3,7 @@
 defined( "UDASH_AJAX" ) OR DIE;
 
 
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 	
 	$prefix = DB_TABLE_PREFIX;
 	
@@ -23,7 +23,7 @@ events::addListener('@udash//ajax', function() {
 		
 	};
 	
-	uss::stop( $status ?? false, $message );
+	Uss::stop( $status ?? false, $message );
 	
 }, 'ajax-reset' );
 

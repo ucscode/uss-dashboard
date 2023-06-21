@@ -3,7 +3,7 @@
 defined( 'UDASH_AJAX' ) OR DIE;
 
 
-events::addListener('@udash//ajax', function() {
+Events::addListener('@udash//ajax', function() {
 	
 	/**
 	 * Get the user by email
@@ -12,7 +12,7 @@ events::addListener('@udash//ajax', function() {
 	
 	/** If no user is found, end the script */
 	
-	if( !$user ) uss::stop( false, "No account is associated to the email" );
+	if( !$user ) Uss::stop( false, "No account is associated to the email" );
 
 
 	/**
@@ -20,11 +20,11 @@ events::addListener('@udash//ajax', function() {
 	 * If a `v-code` key does not exist on the user meta,
 	 * It means the email is verified
 	 */
-	$vcode = uss::$global['usermeta']->get('v-code', $user['id']);
+	$vcode = Uss::$global['usermeta']->get('v-code', $user['id']);
 	
 	/** If email is verified, end the script */
 	
-	if( !$vcode ) uss::stop( false, "The email address has already been confirmed" );
+	if( !$vcode ) Uss::stop( false, "The email address has already been confirmed" );
 
 
 	/** 
@@ -45,6 +45,6 @@ events::addListener('@udash//ajax', function() {
 	 * Then end the script
 	 */
 
-	uss::stop( $sent, $message );
+	Uss::stop( $sent, $message );
 
 }, 'ajax-vcode' );

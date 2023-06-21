@@ -7,7 +7,7 @@ call_user_func(function() use($profileFocus) {
 	/**
 	 * Ignore this section if affiliation is turned off
 	 */
-	if( empty(uss::$global['options']->get('user:affiliation')) ) return;
+	if( empty(Uss::$global['options']->get('user:affiliation')) ) return;
 	
 	/**
 	 * Create The Focus URI
@@ -18,20 +18,20 @@ call_user_func(function() use($profileFocus) {
 	 * Create the affiliation menu
 	 * A child menu under profile
 	 */
-	uss::$global['menu']->get('profile')->add('team', array(
+	Uss::$global['menu']->get('profile')->add('team', array(
 		"label" => "My Team",
-		"href" => core::url( ROOT_DIR . "/{$teamFocus}" ),
-		"active" => implode("/", uss::query()) === $teamFocus
+		"href" => Core::url( ROOT_DIR . "/{$teamFocus}" ),
+		"active" => implode("/", Uss::query()) === $teamFocus
 	));
 	
 	/**
 	 * DISPLAY TEAM LIST
 	 */
-	uss::focus( $teamFocus, function() { 
+	Uss::focus( $teamFocus, function() { 
 		
 		udash::view(function() { 
 			
-			$userid = uss::$global['user']['id'];
+			$userid = Uss::$global['user']['id'];
 			
 			$hierarchy = new hierarchy();
 			
@@ -64,7 +64,7 @@ call_user_func(function() use($profileFocus) {
 			 * Check if collection of username is allowed
 			 * If it is, add username to the display list
 			 */
-			if( uss::$global['options']->get('user:collect-username') ) array_unshift($columns, 'username');
+			if( Uss::$global['options']->get('user:collect-username') ) array_unshift($columns, 'username');
 			
 			/**
 			 * Push the columns information into the table
@@ -79,7 +79,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Add Event Listener
 			 */
-			events::addListener('@udash//page//affiliate', function($data) {
+			Events::addListener('@udash//page//affiliate', function($data) {
 				
 				/**
 				 * Prepare and display the table
@@ -95,7 +95,7 @@ call_user_func(function() use($profileFocus) {
 			/**
 			 * Execute Event
 			 */
-			events::exec('@udash//page//affiliate', array( 'table' => &$table ));
+			Events::exec('@udash//page//affiliate', array( 'table' => &$table ));
 		
 		});
 		

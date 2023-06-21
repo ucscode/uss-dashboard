@@ -97,7 +97,7 @@ abstract class udash_abstract {
 		$PHPMailer->isHTML(true);
 		$PHPMailer->CharSet = 'UTF-8';
 			
-		$options = uss::$global['options'];
+		$options = Uss::$global['options'];
 		
 		if( $options->get('smtp:state') === 'custom' ) {
 			$PHPMailer->isSMTP();
@@ -181,7 +181,7 @@ abstract class udash_abstract {
 			 * Generate a code and store the value using `v-code` key in the usermeta table
 			 * If code is confirmed, verify the existing email
 			 */
-			$pallet = array( "v-code" => core::keygen( $length ) );
+			$pallet = array( "v-code" => Core::keygen( $length ) );
 			
 			/**
 			 * Pattern:
@@ -197,7 +197,7 @@ abstract class udash_abstract {
 			 * If code is confirmed, replace the old email with the new email
 			 */
 			$pallet = array(
-				"v-code:update" => core::keygen( $length ),
+				"v-code:update" => Core::keygen( $length ),
 				"v-code:email" => $new_email
 			);
 			
@@ -215,7 +215,7 @@ abstract class udash_abstract {
 		 * The user id becomes the reference id
 		 */
 		foreach( $pallet as $_key => $_value ) {
-			uss::$global['usermeta']->set( $_key, $_value, $user['id'] );
+			Uss::$global['usermeta']->set( $_key, $_value, $user['id'] );
 		};
 		
 		/**
@@ -224,7 +224,7 @@ abstract class udash_abstract {
 		 * The URL will be forwarded to the email that needs to be confirmed
 		 * The email security key will be tested for a match to confirm the validation
 		 */
-		$verify_url = core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI . "?v={$encoding}" );
+		$verify_url = Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI . "?v={$encoding}" );
 		
 		/**
 		 * X2Client By Ucscode is a library that makes email template creation more easier
@@ -268,7 +268,7 @@ abstract class udash_abstract {
 		
 		// replace variables within the email message;
 		
-		$message = core::replace_var( $message, array(
+		$message = Core::replace_var( $message, array(
 			'email' => $new_email,
 			'href' => $verify_url
 		));
@@ -276,9 +276,9 @@ abstract class udash_abstract {
 		
 		// replace variables within the email template
 		
-		$__body = core::replace_var( $template, array( 
+		$__body = Core::replace_var( $template, array( 
 			'content' => $message,
-			'footer' => "You are receiving this email because you signup up at " . uss::$global['title']
+			'footer' => "You are receiving this email because you signup up at " . Uss::$global['title']
 		) );
 		
 		
@@ -342,20 +342,20 @@ abstract class udash_abstract {
 		 * 
 		 * The code is only valid for a limite period of time.
 		 */
-		$r_code = core::keygen( 45 );
+		$r_code = Core::keygen( 45 );
 		
 		/**
 		 * Save the reset code in the user meta
 		 * The code will be tested for password reset approval
 		 */
-		uss::$global['usermeta']->set( "r-code", $r_code , $user['id'] );
+		Uss::$global['usermeta']->set( "r-code", $r_code , $user['id'] );
 		
 		
 		// Generete the reset link;
 		
 		$encode = base64_encode( "{$r_code}:{$user['email']}" );
 		
-		$r_url = core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI . "/reset?v={$encode}" );
+		$r_url = Core::url( ROOT_DIR . '/' . UDASH_FOCUS_URI . "/reset?v={$encode}" );
 		
 		
 		/**
@@ -376,13 +376,13 @@ abstract class udash_abstract {
 		
 		// Replace variables within the message
 		
-		$message = core::replace_var( $message, array(
+		$message = Core::replace_var( $message, array(
 			"href" => $r_url
 		));
 		
 		// Replace variables within the template
 
-		$__body = core::replace_var( $template, array(
+		$__body = Core::replace_var( $template, array(
 			"content" => $message,
 			"footer" => 'Secure your account and stay safe!'
 		));
@@ -446,7 +446,7 @@ abstract class udash_abstract {
 		 * @var MYSQLI $mysqli
 		 * @ignore
 		 */
-		$mysqli = uss::$global['mysqli'];
+		$mysqli = Uss::$global['mysqli'];
 		
 		/**
 		 * Sanitize the string
@@ -596,15 +596,15 @@ abstract class udash_abstract {
 		/**
 		 * Get the path where file should be uploaded
 		 */
-		if( !core::is_absolute_path( $path ) ) {
+		if( !Core::is_absolute_path( $path ) ) {
 			/** 
 			 * - Relative path will be calculated relatively to `ASSETS_DIR`
 			 */
-			$uploadPath = core::abspath( self::ASSETS_DIR . "/{$path}" ); 
+			$uploadPath = Core::abspath( self::ASSETS_DIR . "/{$path}" ); 
 			
-		} else $uploadPath = core::abspath( $path );
+		} else $uploadPath = Core::abspath( $path );
 		
-		$path = array_filter(explode("/", core::rslash($uploadPath)));
+		$path = array_filter(explode("/", Core::rslash($uploadPath)));
 		
 		/**
 		 * Recursively create any directory that does not exist
@@ -621,13 +621,13 @@ abstract class udash_abstract {
 		 * Get the relative filepath
 		 * The relative path from `MOD_DIR` where the file was saved
 		 */
-		$rel = preg_replace("#^" . core::rslash(MOD_DIR) . "/#i", "", $path);
+		$rel = preg_replace("#^" . Core::rslash(MOD_DIR) . "/#i", "", $path);
 		
 		/** 
 		 * If no changes were made between `$rel` && `$path` 
 		 * Then use the absolute full path instead
 		 */
-		if( $rel == $path ) $rel = core::url( $path, true );
+		if( $rel == $path ) $rel = Core::url( $path, true );
 		
 		$relativeFilepath = "{$rel}/{$filename}";
 		
@@ -666,12 +666,12 @@ abstract class udash_abstract {
 	 */
 	public static function user_avatar( ?int $userid = null ) {
 		
-		$avatar = $userid ? uss::$global['usermeta']->get('avatar', $userid) : null;
+		$avatar = $userid ? Uss::$global['usermeta']->get('avatar', $userid) : null;
 		
 		if( !$avatar ) $avatar = self::ASSETS_DIR . '/images/user.png';
 		else $avatar = MOD_DIR . "/{$avatar}";
 		
-		$avatar = core::url( $avatar );
+		$avatar = Core::url( $avatar );
 		
 		return $avatar;
 		
@@ -709,7 +709,7 @@ abstract class udash_abstract {
 	public static function empty_state( $var = 'Try searching with a different filter' ) { ?>
 		<div class='text-center py-4 ud-empty-state container-fluid'>
 			<h2 class='mb-3 fw-light text-uppercase'>No Result Found</h2>
-			<img src='<?php echo core::url( self::ASSETS_DIR . "/images/empty-state.webp" ); ?>' width='400px' class='img-fluid user-select-none'>
+			<img src='<?php echo Core::url( self::ASSETS_DIR . "/images/empty-state.webp" ); ?>' width='400px' class='img-fluid user-select-none'>
 			<div class='py-4'>
 				<?php 
 					if( is_callable($var) ) $var();
@@ -759,7 +759,7 @@ abstract class udash_abstract {
 		/**
 		 * Delete User
 		 */
-		$deleted = uss::$global['mysqli']->query( $SQL );
+		$deleted = Uss::$global['mysqli']->query( $SQL );
 		
 		/**
 		 * Return deleted user detail 
@@ -774,17 +774,17 @@ abstract class udash_abstract {
 	 * Refresh the website variables
 	 * 
 	 * This can be useful when variables are updated, such as site-title and those variables do not
-	 * immediately reflect on the `uss::$global` property
+	 * immediately reflect on the `Uss::$global` property
 	 *
 	 * @ignore
 	 * 
 	 */
 	public static function refresh_site_vars() {
 		foreach( ['title', 'tagline', 'description', 'icon'] as $key ) {
-			$value = uss::$global['options']->get( "site:{$key}" );
+			$value = Uss::$global['options']->get( "site:{$key}" );
 			if( !empty($value) ) {
-				if( $key == 'icon' ) $value = core::url( MOD_DIR . "/{$value}" );
-				uss::$global[ $key ] = $value;
+				if( $key == 'icon' ) $value = Core::url( MOD_DIR . "/{$value}" );
+				Uss::$global[ $key ] = $value;
 			};
 		};
 	}
@@ -876,7 +876,7 @@ abstract class udash_abstract {
 	 * 
 	 * ```php
 	 * udash_abstract::notify(array(
-	 * 	"userid" => uss::$global['user']['id'],
+	 * 	"userid" => Uss::$global['user']['id'],
 	 * 	"message" => "**Hey**. [Click this link](https://github.com/ucscode) to view the author's page"
 	 * ));
 	 * ```
@@ -911,7 +911,7 @@ abstract class udash_abstract {
 		
 		foreach( $data as $key => $value ) {
 			$value = trim( $value );
-			$data[ $key ] = uss::$global['mysqli']->real_escape_string( $value );
+			$data[ $key ] = Uss::$global['mysqli']->real_escape_string( $value );
 		};
 		
 		// prepare data for database entry;
@@ -926,7 +926,7 @@ abstract class udash_abstract {
 		
 		// save notification ;
 		
-		$status = uss::$global['mysqli']->query( $SQL );
+		$status = Uss::$global['mysqli']->query( $SQL );
 		return $status;
 		
 	}
@@ -1063,7 +1063,7 @@ abstract class udash_abstract {
 		$data = &$data[$key];
 		array_walk($data, function(&$value) {
 			// sanitize data
-			$value = uss::$global['mysqli']->real_escape_string($value);
+			$value = Uss::$global['mysqli']->real_escape_string($value);
 		});
 
 		$SQL = "
@@ -1072,7 +1072,7 @@ abstract class udash_abstract {
 			AND SHA2( CONCAT(id, usercode, password), 256 ) = '{$data['hash']}'
 		";
 		
-		return uss::$global['mysqli']->query( $SQL )->fetch_assoc();
+		return Uss::$global['mysqli']->query( $SQL )->fetch_assoc();
 		
 	}
 	
@@ -1137,7 +1137,7 @@ abstract class udash_abstract {
 	 * 1. Focus uses regular expression while load uses normal pathname
 	 * 2. In parameter 2, focus accepts callable while load accepts filepath
 	 * 3. In parameter 3, focus work for distinctive request method while load accept a mixed value
-	 * 3. If path is focused, 404 page will not display. However, load will display 404 page unless uss::view() is called
+	 * 3. If path is focused, 404 page will not display. However, load will display 404 page unless Uss::view() is called
 	 * 4. Focus works only for matching URI while load work for strictly matching URL + Ajax Request
 	 * 5. Focus works only for the defined expression while load work for a matching URL and all descendant URL
 	 * 6. Focus is user synthetics default algorithm while Load is uss dashboard default expression
@@ -1175,8 +1175,8 @@ abstract class udash_abstract {
 		
 		# Focus Route
 		
-		$uripath = array_filter( array_map('trim', explode("/", core::rslash($uripath))) );
-		$match = array_slice(uss::query(), 0, count($uripath));
+		$uripath = array_filter( array_map('trim', explode("/", Core::rslash($uripath))) );
+		$match = array_slice(Uss::query(), 0, count($uripath));
 		
 		$type = getType($project);
 		
@@ -1209,7 +1209,7 @@ abstract class udash_abstract {
 	public static function is_ajax_mode() {
 		
 		# verify script filename
-		$is_ajax_file = core::rslash($_SERVER['SCRIPT_FILENAME']) === core::rslash(udash::AJAX_DIR . "/@ajax.php");
+		$is_ajax_file = Core::rslash($_SERVER['SCRIPT_FILENAME']) === Core::rslash(udash::AJAX_DIR . "/@ajax.php");
 		# verify request method
 		$is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
 		# verify route index

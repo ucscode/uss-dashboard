@@ -9,7 +9,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
  * And also, the current logged in user
  */
 $prefix = DB_TABLE_PREFIX;
-$userid = uss::$global['user']['id'];
+$userid = Uss::$global['user']['id'];
 
 
 /**
@@ -33,7 +33,7 @@ $SQL = "
 	GROUP BY userid
 ";
 
-$all = uss::$global['mysqli']->query( $SQL )->fetch_assoc();
+$all = Uss::$global['mysqli']->query( $SQL )->fetch_assoc();
 
 /**
  * Now let's save the data with index `size`
@@ -93,7 +93,7 @@ $SQL = sQuery::select( "{$prefix}_notifications", "
 
 /** We save the query result with an index `query` */
 
-$notify['query'] = uss::$global['mysqli']->query( $SQL );
+$notify['query'] = Uss::$global['mysqli']->query( $SQL );
 
 
 /**
