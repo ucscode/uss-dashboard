@@ -1,6 +1,6 @@
 <?php 
 
-class Udash extends udash_abstract {
+class Udash extends UdashAbstract {
 	
 	/**
 	 * Dynamic configuration storage for uss dashboard
@@ -154,15 +154,15 @@ class Udash extends udash_abstract {
 			 * The user title
 			 * This is a name displayed at point `%{user.title}` on the dashboard to reference user
 			 */
-			Uss::eTag('user.title', Uss::$global['user']['username'] ?: Uss::$global['user']['email'], false);
+			Uss::tag('user.title', Uss::$global['user']['username'] ?: Uss::$global['user']['email'], false);
 			
 		}
 		
 		/**
 		 * Configure Basic Template Engine Tags
 		 */
-		Uss::eTag('udash.url', Core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ));
-		Uss::eTag('udash.ajax', Core::url( Udash::AJAX_DIR . '/@ajax.php', true ));
+		Uss::tag('udash.url', Core::url( ROOT_DIR . "/" . UDASH_FOCUS_URI ));
+		Uss::tag('udash.ajax', Core::url( Udash::AJAX_DIR . '/@ajax.php', true ));
 		
 		
 		// Modify Interface & Render Content
@@ -204,8 +204,8 @@ class Udash extends udash_abstract {
 			if( self::$config['sidebar'] ) require_once self::VIEW_DIR . '/sidebar.php';
 			else {
 				// Update template to fill screen width
-				$mainclass = Uss::eTag('udash.main.class');
-				Uss::eTag('udash.main.class', trim("full-width {$mainclass}"));
+				$mainclass = Uss::tag('udash.main.class');
+				Uss::tag('udash.main.class', trim("full-width {$mainclass}"));
 			};
 			
 			// Get the template header
@@ -266,10 +266,10 @@ class Udash extends udash_abstract {
 		 * Prepare the template tags
 		 * In contrast, do not overwrite any tag if it has already been declared by a module
 		 */
-		Uss::eTag('col.row', 'row g-0 auth-row', false);
-		Uss::eTag('col.left', 'col-lg-6', false);
-		Uss::eTag('col.right', 'col-lg-6', false);
-		Uss::eTag('auth.container', 'auth-wrapper', false);
+		Uss::tag('col.row', 'row g-0 auth-row', false);
+		Uss::tag('col.left', 'col-lg-6', false);
+		Uss::tag('col.right', 'col-lg-6', false);
+		Uss::tag('auth.container', 'auth-wrapper', false);
 		
 		/**
 		 * Now create the Interface

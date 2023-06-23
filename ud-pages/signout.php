@@ -4,7 +4,7 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 
 // ----------------- [{ signout }] --------------------
 
-Uss::focus( Udash::config('page:signout'), function() {
+Uss::route( Udash::config('page:signout'), function() {
 	
 	/**
 	 * Destroy Login Session;

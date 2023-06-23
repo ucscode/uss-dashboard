@@ -41,12 +41,12 @@ if( DB_CONNECT ) {
 	 */
 	$resources = array(
 		"db.php",
-		"udash_abstract.php", #abstract
-		"udash.php",
+		"UdashAbstract.php", #abstract
+		"Udash.php",
 		"DOMTableWidget.php", #abstract
 		"DOMTablet.php",
-		"roles.php",
-		"hierarchy.php",
+		"Roles.php",
+		"Hierarchy.php",
 		"phpmailer.php"
 	);
 	
@@ -126,7 +126,7 @@ if( DB_CONNECT ) {
 	 * Restrict Access to Dashboard
 	 * If the dashboard path is accessed, display a notice to user
 	 */
-	Uss::focus( UDASH_FOCUS_URI, function() {
+	Uss::route( UDASH_FOCUS_URI, function() {
 		
 		/**
 		 * Prepare the user synthetics interface

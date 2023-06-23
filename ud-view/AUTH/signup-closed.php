@@ -4,14 +4,14 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 
 /** Column Right */
 
-Uss::eTag('col.right', 'd-none');
+Uss::tag('col.right', 'd-none');
 
 Events::addListener('@auth//right', null);
 
 
 /** Column Right */
 
-Uss::eTag('col.left', 'col-lg-12');
+Uss::tag('col.left', 'col-lg-12');
 
 Events::addListener('@auth//left', function() { ?>
 

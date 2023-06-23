@@ -14,7 +14,7 @@
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
 
-abstract class udash_abstract {
+abstract class UdashAbstract {
 	
 	/**
 	 * VIEW_DIR

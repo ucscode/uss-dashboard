@@ -19,7 +19,7 @@
  *
 */
 
-class hierarchy {
+class Hierarchy {
 	
 	/**
 	 * A string that contains SQL Query to traverse child nodes

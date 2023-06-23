@@ -10,7 +10,7 @@
 	
 */
 
-class roles {
+class Roles {
 	
 	protected static ?string $error = null;
 	

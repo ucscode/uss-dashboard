@@ -27,7 +27,7 @@ require_once __DIR__ . '/@init.php';
  * ```
  *
  * ```php
- * Uss::focus( "path/to/ajax", function() {
+ * Uss::route( "path/to/ajax", function() {
  *	 // handle ajax request
  * }, 'post' );
  * ```

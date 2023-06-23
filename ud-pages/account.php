@@ -43,9 +43,9 @@ Events::addListener('@auth//header//userdrop', function() use( $account ) { ?>
  * Focus on the profile path
  * 
  * The code below will run only when the URL matches the `$profileFocus`
- * @see \Uss::focus
+ * @see \Uss::route
  */
-Uss::focus( $profileFocus, function( $e ) {
+Uss::route( $profileFocus, function( $e ) {
 	
 	/**
 	 * CREATE NONCE KEY
@@ -53,7 +53,7 @@ Uss::focus( $profileFocus, function( $e ) {
 	 */
 	$nonce = Uss::nonce( 'profile' );
 	
-	Uss::eTag( 'nonce', $nonce );
+	Uss::tag( 'nonce', $nonce );
 	
 		
 	/**
@@ -78,17 +78,17 @@ Uss::focus( $profileFocus, function( $e ) {
 		 * The template tags will enable us call on `%{tagname}` 
 		 * Rather than re-writing the same PHP variables over again
 		 */
-		foreach( Uss::$global['user'] as $key => $value ) Uss::eTag("user.{$key}", $value, false);
+		foreach( Uss::$global['user'] as $key => $value ) Uss::tag("user.{$key}", $value, false);
 		
 		/**
 		 * Load additional tags
 		 * @param 3 == false; Tag is editable
 		 */
-		Uss::eTag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
-		Uss::eTag('user.avatar', Udash::user_avatar( Uss::$global['user']['id'] ), false);
+		Uss::tag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
+		Uss::tag('user.avatar', Udash::user_avatar( Uss::$global['user']['id'] ), false);
 		
-		Uss::eTag('profile.col-left', 'col-lg-5', false);
-		Uss::eTag('profile.col-right', 'col-lg-7', false);
+		Uss::tag('profile.col-left', 'col-lg-5', false);
+		Uss::tag('profile.col-right', 'col-lg-7', false);
 		
 	?>
 		
@@ -146,4 +146,4 @@ Uss::focus( $profileFocus, function( $e ) {
 		
 	<?php }); // Udash::view
 	
-}, NULL); // Uss::focus
+}, NULL); // Uss::route

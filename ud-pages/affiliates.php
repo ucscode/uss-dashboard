@@ -27,7 +27,7 @@ call_user_func(function() use($profileFocus) {
 	/**
 	 * DISPLAY TEAM LIST
 	 */
-	Uss::focus( $teamFocus, function() { 
+	Uss::route( $teamFocus, function() { 
 		
 		Udash::view(function() { 
 			

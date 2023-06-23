@@ -28,7 +28,7 @@ call_user_func(function() use($profileFocus) {
 	 * `(?:/?\w+)?` expression accepts extra query string containing usercode
 	 * This will enable you view hierarchy of a particular downlines
 	 */
-	Uss::focus( $hierFocus . "(?:/?\w+)?", function() use($hierFocus) {
+	Uss::route( $hierFocus . "(?:/?\w+)?", function() use($hierFocus) {
 		
 		Events::addListener('@head::after', function() {
 			/**

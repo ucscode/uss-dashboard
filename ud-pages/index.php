@@ -18,7 +18,7 @@ Uss::$global['menu']->add('homepage', array(
 
 // Focus Path;
 
-Uss::focus( UDASH_FOCUS_URI, function() {
+Uss::route( UDASH_FOCUS_URI, function() {
 	
 	// Authenticate Email Requests
 	

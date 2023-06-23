@@ -22,9 +22,9 @@
  *	// content to display at right side
  * }, 'event-id');
  *
- * Uss::eTag('auth.container', 'row');
- * Uss::eTag('col.left', 'd-none');
- * Uss::eTag('col.right', 'col-lg-12');
+ * Uss::tag('auth.container', 'row');
+ * Uss::tag('col.left', 'd-none');
+ * Uss::tag('col.right', 'col-lg-12');
  *
  * require_once "/path/to/AUTH/template.php";
  *

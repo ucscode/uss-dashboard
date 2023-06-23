@@ -2,7 +2,7 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
-Uss::eTag( 'reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2' );
+Uss::tag( 'reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2' );
 
 
 /** Create a reset password form */

@@ -94,7 +94,7 @@
 							
 							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
 								<?php 
-									if( !empty(Uss::eTag('user.title')) ):
+									if( !empty(Uss::tag('user.title')) ):
 									/**
 									 * Display user title
 									 */

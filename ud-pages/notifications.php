@@ -2,7 +2,7 @@
 
 defined( 'UDASH_MOD_DIR' ) OR DIE;
 
-Uss::focus( Udash::config('page:notification'), function() {
+Uss::route( Udash::config('page:notification'), function() {
 	
 	
 	/**
@@ -15,7 +15,7 @@ Uss::focus( Udash::config('page:notification'), function() {
 	 * Render column size for the column element
 	 * This will enable modules alter the template or design of the notification page
 	 */
-	Uss::eTag( 'udash.nx.cols', 'col-md-10 col-lg-9 m-auto', false );
+	Uss::tag( 'udash.nx.cols', 'col-md-10 col-lg-9 m-auto', false );
 	
 	
 	/**
@@ -123,7 +123,7 @@ Uss::focus( Udash::config('page:notification'), function() {
 											 * Redirect URL = https://domain.com/focus/path/{userid}
 											 *
 											 * ```php
-											 * Uss::focus( "focus/path/(\d+)", function($match) {
+											 * Uss::route( "focus/path/(\d+)", function($match) {
 											 *
 											 * 	$isAdmin = roles::user($match[1])::is( 'administrator' );
 											 *
