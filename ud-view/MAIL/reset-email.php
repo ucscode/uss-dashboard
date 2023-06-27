@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * The reset password message
  *
@@ -7,11 +7,11 @@
  * @author ucscode
 */
 
-defined( 'UDASH_MOD_DIR' ) OR DIE;
+defined('UDASH_MOD_DIR') or die;
 
 /** Output Buffer */
 
-ob_start(); 
+ob_start();
 ?>
 
 <x2:html>

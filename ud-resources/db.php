@@ -1,52 +1,54 @@
-<?php 
+<?php
+
 /**
  * Create and initialize dashboard database
  * This file will check for existence of any default database table and create it if it doesn't exist!
  */
-defined( "UDASH_MOD_DIR" ) OR DIE;
+defined("UDASH_MOD_DIR") or die;
 
 /**
  * Let's handle the database table management process using an anomymous class
  */
-new class {
-		
-	/** 
-	 * Database Table Prefix 
-	 * Defined in the `uss-conn.php` file in the installation directory
-	 *
-	 * @var string 
-	 * @ignore
-	 */
-	public $prefix = DB_TABLE_PREFIX;
+new class () {
+    /**
+     * Database Table Prefix
+     * Defined in the `uss-conn.php` file in the installation directory
+     *
+     * @var string
+     * @ignore
+     */
+    public $prefix = DB_TABLE_PREFIX;
 
-	/**
-	 * An array run initial database query
-	 *
-	 * @var array
-	 * @ignore
-	 */
-	protected $initQuery = array();
+    /**
+     * An array run initial database query
+     *
+     * @var array
+     * @ignore
+     */
+    protected $initQuery = array();
 
-	/**
-	 * Database Connection Manager Constructor
-	 */
-	public function __construct() {
-		$this->loadInitQuery( $this->prefix );
-		$this->runInitQuery();
-		$this->initMetaTable( $this->prefix );
-	}
-	
-	/**
-	 * Load the initial SQL Query that will execute during runtime
-	 */
-	protected function loadInitQuery( string $prefix ) {
-		
-		/**
-		 * The `users` table
-		 * This creates the `users` table if it doesn't already exists
-		 * The table stores only basic information about a user.
-		 */
-		$this->initQuery[] = "
+    /**
+     * Database Connection Manager Constructor
+     */
+    public function __construct()
+    {
+        $this->loadInitQuery($this->prefix);
+        $this->runInitQuery();
+        $this->initMetaTable($this->prefix);
+    }
+
+    /**
+     * Load the initial SQL Query that will execute during runtime
+     */
+    protected function loadInitQuery(string $prefix)
+    {
+
+        /**
+         * The `users` table
+         * This creates the `users` table if it doesn't already exists
+         * The table stores only basic information about a user.
+         */
+        $this->initQuery[] = "
 			CREATE TABLE IF NOT EXISTS {$prefix}_users (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				email VARCHAR(255) NOT NULL UNIQUE,
@@ -60,21 +62,21 @@ new class {
 			)
 		";
 
-		/**
-		 * The `notification` table
-		 * This table is responsible for management of push notifications messages
-		 * 
-		 * - origin: The source (user) which triggered the notification
-		 * - model: The type of notification that was send. It may also be used to identify which module processed the notification.
-		 * - userid: The user receiving the notification
-		 * - period: The time at which the notification was created
-		 * - message: The message sent to the user
-		 * - viewed: Indicates whether the user has viewed the notification or not
-		 * - redirect: A URL to visit when the user clicks on the notification
-		 * - image: The thumbnail that will be displayed by the left side of the notification
-		 * - hidden: Make visible or invisible to the user
-		 */
-		$this->initQuery[] = "
+        /**
+         * The `notification` table
+         * This table is responsible for management of push notifications messages
+         *
+         * - origin: The source (user) which triggered the notification
+         * - model: The type of notification that was send. It may also be used to identify which module processed the notification.
+         * - userid: The user receiving the notification
+         * - period: The time at which the notification was created
+         * - message: The message sent to the user
+         * - viewed: Indicates whether the user has viewed the notification or not
+         * - redirect: A URL to visit when the user clicks on the notification
+         * - image: The thumbnail that will be displayed by the left side of the notification
+         * - hidden: Make visible or invisible to the user
+         */
+        $this->initQuery[] = "
 			CREATE TABLE IF NOT EXISTS {$prefix}_notifications (
 				id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				origin INT,
@@ -89,43 +91,45 @@ new class {
 				FOREIGN KEY(userid) REFERENCES {$prefix}_users(id) ON DELETE CASCADE
 			)
 		";
-		
-	}
-	
-	/**
-	 * Run all the loaded queries
-	 */
-	protected function runInitQuery() {
-		
-		foreach( $this->initQuery as $SQL ) {
-			$result = Uss::$global['mysqli']->query( $SQL );
-		};
 
-	}
+    }
 
-	/**
-	 * The usermeta table
-	 *
-	 * The usermeta table is automatically created and managed by the `pairs` class.
-	 * The table stores addition information about a user.
-	 * Thus, it is more efficient and optimizable to store extra user data into this table than creating new 
-	 * columns under the main user table
-	 *
-	 * @see \pairs
-	 */
-	protected function initMetaTable( string $prefix ) {
-		
-		/**
-		 * Instantiate the pairs class
-		 */
-		Uss::$global['usermeta'] = new Pairs( Uss::$global['mysqli'], "{$prefix}_usermeta" );
+    /**
+     * Run all the loaded queries
+     */
+    protected function runInitQuery()
+    {
 
-		/**
-		 * The user meta table will be linked to the main users table.
-		 * It will get bounded by a FOREIGN KEY Constraint
-		 */ 
-		Uss::$global['usermeta']->linkParentTable( "{$prefix}_users", "{$prefix}_users" );
-	
-	}
+        foreach($this->initQuery as $SQL) {
+            $result = Uss::$global['mysqli']->query($SQL);
+        };
+
+    }
+
+    /**
+     * The usermeta table
+     *
+     * The usermeta table is automatically created and managed by the `pairs` class.
+     * The table stores addition information about a user.
+     * Thus, it is more efficient and optimizable to store extra user data into this table than creating new
+     * columns under the main user table
+     *
+     * @see \pairs
+     */
+    protected function initMetaTable(string $prefix)
+    {
+
+        /**
+         * Instantiate the pairs class
+         */
+        Uss::$global['usermeta'] = new Pairs(Uss::$global['mysqli'], "{$prefix}_usermeta");
+
+        /**
+         * The user meta table will be linked to the main users table.
+         * It will get bounded by a FOREIGN KEY Constraint
+         */
+        Uss::$global['usermeta']->linkParentTable("{$prefix}_users", "{$prefix}_users");
+
+    }
 
 };

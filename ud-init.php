@@ -1,18 +1,19 @@
-<?php 
+<?php
+
 /**
  * Uss Dashboard Initialization
  *
- * This initializes key components of the dashboard, including the menu, logged user section, user meta, 
- * access token functionality, and affiliation management. These sections are essential for user interaction, 
+ * This initializes key components of the dashboard, including the menu, logged user section, user meta,
+ * access token functionality, and affiliation management. These sections are essential for user interaction,
  * profile management, access control, and affiliation-related operations within the User Synthetics system.
  */
-defined( "UDASH_MOD_DIR" ) OR DIE;
+defined("UDASH_MOD_DIR") or die;
 
 
 /**
  * Open Graph Variable
  *
- * The Open Graph variable holds important data for SEO optimization. 
+ * The Open Graph variable holds important data for SEO optimization.
  * This data will be printed into the HTML header as `<meta.../>` tags to enhance visibility.
  * If the default behavior does not meet your requirements, you have the flexibility to create a custom Open Graph handler.
  *
@@ -51,72 +52,74 @@ Uss::$global['user'] = null;
  * It is managed by the `pairs` class and can be easily updated using the `Uss::$global['options']` variable.
  *
  * To update these options through a user interface instead of programmatically, you can install the User Synthetics Admin Panel module.
- */ 
- 
+ */
+
 $udash_config = array(
 
-	# Temporarily disable the signup page.
-	'user:disable-signup' => 0,
-	
-	# Collect username at the point of registration
-	'user:collect-username' => 0,
-	
-	# Send a confirmation email to users at the point of registeration
-	'user:confirm-email' => 0,
-	
-	/** 
-	 * Prevent users from updating their email when they login to their dashboard account
-	 * This can be useful when a user has confirmed their email and you don't want them updating it into a fake email
-	 * However, it's not recommended because if a user lost access to their email, they cannot be able to update it
-	 */
-	'user:lock-email' => 0,
-	
-	# Force users to reconfirm their email if they change it
-	'user:reconfirm-email' => 1,
-	
-	# Default user role when registering
-	'user:default-role' => 'member',
-	
-	# Allow affiliation link and referral program
-	'user:affiliation' => 0,
-	
-	# Automatically delete a user from the system if their email in not confirmed with a specific number of days
-	'user:auto-trash-unverified-after-day' => 7,
-	
-	/**
-	 * The administrator email address
-	 * This will be used as the default email address for sending emails to clients
-	 */
-	'email:admin' => 'admin@' . $_SERVER['SERVER_NAME'],
-	
-	/**
-	 * Simple Mail Transfer Protocol (SMTP) Configuration
-	 *
-	 * This variable controls the SMTP configuration for sending emails.
-	 * It accepts values of either `default` or `custom`.
-	 *
-	 * - `default`: Uses the default server email configuration setting.
-	 * - `custom`: Allows you to set up your own SMTP server.
-	 *
-	 * To easily update this option, you can install the User Synthetics Admin Panel module, which provides a user-friendly interface for managing SMTP settings.
-	 */
-	'smtp:state' => 'default'
+    # Temporarily disable the signup page.
+    'user:disable-signup' => 0,
+
+    # Collect username at the point of registration
+    'user:collect-username' => 0,
+
+    # Send a confirmation email to users at the point of registeration
+    'user:confirm-email' => 0,
+
+    /**
+     * Prevent users from updating their email when they login to their dashboard account
+     * This can be useful when a user has confirmed their email and you don't want them updating it into a fake email
+     * However, it's not recommended because if a user lost access to their email, they cannot be able to update it
+     */
+    'user:lock-email' => 0,
+
+    # Force users to reconfirm their email if they change it
+    'user:reconfirm-email' => 1,
+
+    # Default user role when registering
+    'user:default-role' => 'member',
+
+    # Allow affiliation link and referral program
+    'user:affiliation' => 0,
+
+    # Automatically delete a user from the system if their email in not confirmed with a specific number of days
+    'user:auto-trash-unverified-after-day' => 7,
+
+    /**
+     * The administrator email address
+     * This will be used as the default email address for sending emails to clients
+     */
+    'email:admin' => 'admin@' . $_SERVER['SERVER_NAME'],
+
+    /**
+     * Simple Mail Transfer Protocol (SMTP) Configuration
+     *
+     * This variable controls the SMTP configuration for sending emails.
+     * It accepts values of either `default` or `custom`.
+     *
+     * - `default`: Uses the default server email configuration setting.
+     * - `custom`: Allows you to set up your own SMTP server.
+     *
+     * To easily update this option, you can install the User Synthetics Admin Panel module, which provides a user-friendly interface for managing SMTP settings.
+     */
+    'smtp:state' => 'default'
 );
 
 
-/** 
- * Push the configuration options into database 
+/**
+ * Push the configuration options into database
  */
-foreach( $udash_config as $key => $value ) {
-	
-	/**
-	 * Check if the data exists already
-	 * Otherwise, add the configuration setting
-	 */
-	$data = Uss::$global['options']->get($key);
-	
-	if( is_null($data) ) Uss::$global['options']->set( $key, $value );
-	
+foreach($udash_config as $key => $value) {
+
+    /**
+     * Check if the data exists already
+     * Otherwise, add the configuration setting
+     */
+    $data = Uss::$global['options']->get($key);
+
+    if(is_null($data)) {
+        Uss::$global['options']->set($key, $value);
+    }
+
 }
 
 
@@ -129,8 +132,8 @@ foreach( $udash_config as $key => $value ) {
  * Hence, a module dedicated for that purpose will perform better at security measurement!
  */
 
-/** 
- * Authenticate user Login 
+/**
+ * Authenticate user Login
  * @see \udash_abstract::getAccessTokenUser()
  */
 Uss::$global['user'] = Udash::getAccessTokenUser();
@@ -150,6 +153,6 @@ Udash::refresh_site_vars();
  * If it is enabled, it captures the referral code from the URL or from the last cookie session.
  * This is useful for tracking and attributing referrals in the application.
  */
-if( Uss::$global['options']->get('user:affiliation') ) Udash::get_sponsor();
-
-
+if(Uss::$global['options']->get('user:affiliation')) {
+    Udash::get_sponsor();
+}

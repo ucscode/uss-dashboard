@@ -2,8 +2,8 @@
 /**
  * Dashboard Module for User Synthetics
  *
- * The user synthetics dashboard module enables developer to build quick user-based project without need of re-creating a user management system. 
- * uss dashboard comes with beautiful and friendly user interface that is easily managable and customizable. 
+ * The user synthetics dashboard module enables developer to build quick user-based project without need of re-creating a user management system.
+ * uss dashboard comes with beautiful and friendly user interface that is easily managable and customizable.
  * It is backed by powerful event driven API to fit the need of any project and also allows modification of the system by other modules.
  *
  * `ud` &mdash; represents `uss` `dashboard`
@@ -15,128 +15,130 @@
  * @package uss.dashboard
  */
 
-defined( 'ROOT_DIR' ) OR DIE;
+defined('ROOT_DIR') or die;
 
-/** 
+/**
  * uss dashboard module directory
- * The directory (folder) of the dashboard module 
+ * The directory (folder) of the dashboard module
  */
-define( "UDASH_MOD_DIR", __DIR__ );
+define("UDASH_MOD_DIR", __DIR__);
 
-/** 
+/**
  * uss dashboard focus URI
  * The focus URI (i.e url path) that will be entered in the browser to access the dashboard module.
  */
-define( "UDASH_FOCUS_URI", 'dashboard' );
+define("UDASH_FOCUS_URI", 'dashboard');
 
 /**
  * The uss dashboard module requires database connection to work properly
  * Check if database connect is allowed
  */
-if( DB_CONNECT ) {
-	
-	/**
-	 * uss dashboard resources
-	 * This are classes and utilities that powers and helps simplify the usage of the module
-	 */
-	$resources = array(
-		"db.php",
-		"UdashAbstract.php", #abstract
-		"Udash.php",
-		"DOMTableWidget.php", #abstract
-		"DOMTablet.php",
-		"Roles.php",
-		"Hierarchy.php",
-		"phpmailer.php"
-	);
-	
-	# require all dashboard resources
-	
-	foreach( $resources as $file ) require_once UDASH_MOD_DIR . "/ud-resources/{$file}";
-	
-	
-	/** 
-	 * Now that all dashboard resources has been loaded
-	 * Let's Initialize the dashboard
-	 */
-	require UDASH_MOD_DIR . '/ud-init.php';
-	
-	
-	/**
-	 * Create User Interface Pages
-	 *
-	 * This code block is responsible for creating the default pages of the User Synthetics (uss) dashboard.
-	 * The pages that are created include:
-	 * - Profile page
-	 * - Affiliate page
-	 * - Hierarchy page
-	 *
-	 * These pages provide users with a user-friendly interface to manage their profile, affiliate information, and hierarchy.
-	 *
-	 * The pages will be loaded only when the dashboard URI is accessed
-	 * @see \udash_abstract::load()
-	 */
-	Udash::load( UDASH_FOCUS_URI, UDASH_MOD_DIR . '/ud-interface.php' );
-	
-	
-	/**
-	 * Integration with User Synthetics Dashboard
-	 *
-	 * The User Synthetics (uss) dashboard interface is rendered after all modules are loaded,
-	 * allowing any existing module to seamlessly add new features and enhance the dashboard's functionality.
-	 * To ensure proper integration with the uss dashboard, modules should listen to the `udash::ready` event.
-	 * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
-	 * into the dashboard, ensuring a smooth and cohesive user experience.
-	 */
-	Events::addListener('modules-loaded', function() {
-		
-		Events::exec( 'udash::ready' );
-		
-		/**
-		 * Finalizing User Synthetics Dashboard
-		 *
-		 * Once other modules have successfully integrated with the uss dashboard,
-		 * the uss dashboard module takes the final step before rendering the output.
-		 * This step involves performing any necessary finalization tasks, ensuring all components are properly configured
-		 * and ready to be displayed to the user. This finalization step is crucial for delivering a polished and seamless
-		 * user experience within the uss dashboard.
-		 */
-		require UDASH_MOD_DIR . '/ud-final.php';
-		
-		
-		/**
-		 * Avoid adding a listener to the `//udash//view` event
-		 * 
-		 * Adding a listener to the `//udash//view` event is not recommended. 
-		 * The `//udash//view` event is a system-level event used internally by the User Synthetics Dashboard module. 
-		 * Listening to this event directly will not propably not render anything
-		 
-		 * The module is only intended to be used by the `Udash::view()` method to render final output after all other module has
-		 * been integrated into the dashboard module
-		 */
-		Events::exec('//udash//view', null, null, function($debug) {
-			return ( $debug[0]['file'] === (new ReflectionClass('udash'))->getFilename() );
-		});
-		
-	});
-	
+if(DB_CONNECT) {
+
+    /**
+     * uss dashboard resources
+     * This are classes and utilities that powers and helps simplify the usage of the module
+     */
+    $resources = array(
+        "db.php",
+        "UdashAbstract.php", #abstract
+        "Udash.php",
+        "DOMTableWidget.php", #abstract
+        "DOMTablet.php",
+        "Roles.php",
+        "Hierarchy.php",
+        "phpmailer.php"
+    );
+
+    # require all dashboard resources
+
+    foreach($resources as $file) {
+        require_once UDASH_MOD_DIR . "/ud-resources/{$file}";
+    }
+
+
+    /**
+     * Now that all dashboard resources has been loaded
+     * Let's Initialize the dashboard
+     */
+    require UDASH_MOD_DIR . '/ud-init.php';
+
+
+    /**
+     * Create User Interface Pages
+     *
+     * This code block is responsible for creating the default pages of the User Synthetics (uss) dashboard.
+     * The pages that are created include:
+     * - Profile page
+     * - Affiliate page
+     * - Hierarchy page
+     *
+     * These pages provide users with a user-friendly interface to manage their profile, affiliate information, and hierarchy.
+     *
+     * The pages will be loaded only when the dashboard URI is accessed
+     * @see \udash_abstract::load()
+     */
+    Udash::load(UDASH_FOCUS_URI, UDASH_MOD_DIR . '/ud-interface.php');
+
+
+    /**
+     * Integration with User Synthetics Dashboard
+     *
+     * The User Synthetics (uss) dashboard interface is rendered after all modules are loaded,
+     * allowing any existing module to seamlessly add new features and enhance the dashboard's functionality.
+     * To ensure proper integration with the uss dashboard, modules should listen to the `udash::ready` event.
+     * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
+     * into the dashboard, ensuring a smooth and cohesive user experience.
+     */
+    Events::addListener('modules-loaded', function () {
+
+        Events::exec('udash::ready');
+
+        /**
+         * Finalizing User Synthetics Dashboard
+         *
+         * Once other modules have successfully integrated with the uss dashboard,
+         * the uss dashboard module takes the final step before rendering the output.
+         * This step involves performing any necessary finalization tasks, ensuring all components are properly configured
+         * and ready to be displayed to the user. This finalization step is crucial for delivering a polished and seamless
+         * user experience within the uss dashboard.
+         */
+        require UDASH_MOD_DIR . '/ud-final.php';
+
+
+        /**
+         * Avoid adding a listener to the `//udash//view` event
+         *
+         * Adding a listener to the `//udash//view` event is not recommended.
+         * The `//udash//view` event is a system-level event used internally by the User Synthetics Dashboard module.
+         * Listening to this event directly will not propably not render anything
+
+         * The module is only intended to be used by the `Udash::view()` method to render final output after all other module has
+         * been integrated into the dashboard module
+         */
+        Events::exec('//udash//view', null, null, function ($debug) {
+            return ($debug[0]['file'] === (new ReflectionClass('udash'))->getFilename());
+        });
+
+    });
+
 } else { // If database connection is disabled
-	
-	/**
-	 * Restrict Access to Dashboard
-	 * If the dashboard path is accessed, display a notice to user
-	 */
-	Uss::route( UDASH_FOCUS_URI, function() {
-		
-		/**
-		 * Prepare the user synthetics interface
-		 */
-		Uss::view(function() {
-			
-			/**
-			 * Display the notification content;
-			 */
-			echo "
+
+    /**
+     * Restrict Access to Dashboard
+     * If the dashboard path is accessed, display a notice to user
+     */
+    Uss::route(UDASH_FOCUS_URI, function () {
+
+        /**
+         * Prepare the user synthetics interface
+         */
+        Uss::view(function () {
+
+            /**
+             * Display the notification content;
+             */
+            echo "
 				<div class='container-fluid'>
 					<div class='text-center p-4 row'>
 						<div class='col-lg-6 mx-auto'>
@@ -150,9 +152,9 @@ if( DB_CONNECT ) {
 					</div>
 				</div>
 			";
-			
-		});
-		
-	}); // end focus
-	
+
+        });
+
+    }); // end focus
+
 };

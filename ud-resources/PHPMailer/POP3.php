@@ -45,21 +45,21 @@ class POP3
      *
      * @var string
      */
-    const VERSION = '6.0.6';
+    public const VERSION = '6.0.6';
 
     /**
      * Default POP3 port number.
      *
      * @var int
      */
-    const DEFAULT_PORT = 110;
+    public const DEFAULT_PORT = 110;
 
     /**
      * Default timeout in seconds.
      *
      * @var int
      */
-    const DEFAULT_TIMEOUT = 30;
+    public const DEFAULT_TIMEOUT = 30;
 
     /**
      * Debug display level.
@@ -128,7 +128,7 @@ class POP3
     /**
      * Line break constant.
      */
-    const LE = "\r\n";
+    public const LE = "\r\n";
 
     /**
      * Simple static wrapper for all-in-one POP before SMTP.

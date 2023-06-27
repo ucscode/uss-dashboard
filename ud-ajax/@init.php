@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /**
  * User Synthetics Dashboard Ajax Process
  *
@@ -13,22 +14,28 @@
  */
 
 
-/** 
- * Define Ajax Constant 
+/**
+ * Define Ajax Constant
  */
-if( !defined( 'UDASH_AJAX' ) ) define( 'UDASH_AJAX', TRUE );
+if(!defined('UDASH_AJAX')) {
+    define('UDASH_AJAX', true);
+}
 
 
 /**
  * Get Request Method
  */
-if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) die( '403 — Forbidden @ GET METHOD' );
+if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die('403 — Forbidden @ GET METHOD');
+}
 
 
 /**
  * Require a valid `route` parameter
  */
-if( empty($_POST['route']) || !is_scalar($_POST['route']) ) die( '400 — Bad Request @ NO ROUTE' );
+if(empty($_POST['route']) || !is_scalar($_POST['route'])) {
+    die('400 — Bad Request @ NO ROUTE');
+}
 
 
 /**
@@ -56,7 +63,9 @@ if( empty($_POST['route']) || !is_scalar($_POST['route']) ) die( '400 — Bad Re
  * In this case, we have to start the output buffering manually
  * we do this by confirming if the output buffer has not already been started
  */
-if( !ob_get_level() ) ob_start();
+if(!ob_get_level()) {
+    ob_start();
+}
 
 
 /**
@@ -64,18 +73,20 @@ if( !ob_get_level() ) ob_start();
  * It will be displayed to enable developer fix it
  */
 try {
-	
-	/** Load the configuration file */
-	
-	require_once realpath( __DIR__ . '/../../../' ) . "/uss-config.php";
-	
+
+    /** Load the configuration file */
+
+    require_once realpath(__DIR__ . '/../../../') . "/uss-config.php";
+
 } catch(Exception $e) {
-	
-	/** Re-Throw the exception */
-	
-	while( ob_get_level() ) ob_end_clean();
-	
-	throw $e;
+
+    /** Re-Throw the exception */
+
+    while(ob_get_level()) {
+        ob_end_clean();
+    }
+
+    throw $e;
 }
 
 /**
@@ -83,12 +94,6 @@ try {
  * We need to clean all buffer as we expect absolutely zero output
  */
 
-while( ob_get_level() ) ob_end_clean();
-
-
-
-
-
-
-
-
+while(ob_get_level()) {
+    ob_end_clean();
+}

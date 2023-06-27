@@ -1,38 +1,40 @@
 <?php
 
-defined( 'UDASH_MOD_DIR' ) OR DIE;
+defined('UDASH_MOD_DIR') or die;
 
 /** Create signup form */
 
-Events::addListener('@auth//right', function() { ?>
+Events::addListener('@auth//right', function () { ?>
 
 	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='ud-signup' enctype='multipart/form-data'>
 		<div class="row py-3">
 			<div class="col-sm-10 col-md-9 m-auto">
 				
 				<?php
-					Events::addListener('@auth//form//signup', function() {
-						/**
-						 * Check if username collection is disabled
-						 */
-						if( empty( Uss::$global['options']->get( "user:collect-username" ) ) ) return;
-				?>
+                    Events::addListener('@auth//form//signup', function () {
+                        /**
+                         * Check if username collection is disabled
+                         */
+                        if(empty(Uss::$global['options']->get("user:collect-username"))) {
+                            return;
+                        }
+                        ?>
 					<div class="mb-3">
 						<input type="text" placeholder="Username" class='form-control' name='username' required pattern="^\s*\w+\s*$">
 					</div>
 				<?php }, EVENT_ID . 'client'); ?>
 				
 				
-				<?php 
-					Events::addListener('@auth//form//signup', function() { ?>
+				<?php
+                            Events::addListener('@auth//form//signup', function () { ?>
 						<div class="mb-3">
 							<input type="email" placeholder="Email" class='form-control' name='email' required>
 						</div>
 				<?php }, EVENT_ID . 'email'); ?>
 				
 				
-				<?php 
-					Events::addListener('@auth//form//signup', function() { ?>
+				<?php
+                            Events::addListener('@auth//form//signup', function () { ?>
 						<!-- end col -->
 						<div class="mb-3">
 							<input type="password" placeholder="Password" class='form-control' name='password' required pattern='^.{4,}$'>
@@ -40,8 +42,8 @@ Events::addListener('@auth//right', function() { ?>
 				<?php }, EVENT_ID . 'password'); ?>
 				
 				
-				<?php 
-					Events::addListener('@auth//form//signup', function() { ?>
+				<?php
+                            Events::addListener('@auth//form//signup', function () { ?>
 						<!-- end col -->
 						<div class="mb-4">
 							<input type="password" placeholder="Confirm Password" class='form-control' name='confirm_password' pattern='^.{4,}$' required>
@@ -49,8 +51,8 @@ Events::addListener('@auth//right', function() { ?>
 				<?php }, EVENT_ID . 'password2'); ?>
 				
 				
-				<?php 
-					Events::addListener('@auth//form//signup', function() { ?>
+				<?php
+                            Events::addListener('@auth//form//signup', function () { ?>
 						<!-- end col -->
 						<div class='mb-4'>
 							<div class="form-check user-select-none">
@@ -65,18 +67,22 @@ Events::addListener('@auth//right', function() { ?>
 				<?php }, EVENT_ID . 'policy'); ?>
 				
 				
-				<?php 
-					Events::addListener('@auth//form//signup', function() {
-						if( empty(Uss::$global['options']->get('user:affiliation')) ) return;
-						$parent = Udash::get_sponsor();
-						if( !$parent ) return;
-				?>
+				<?php
+                            Events::addListener('@auth//form//signup', function () {
+                                if(empty(Uss::$global['options']->get('user:affiliation'))) {
+                                    return;
+                                }
+                                $parent = Udash::get_sponsor();
+                                if(!$parent) {
+                                    return;
+                                }
+                                ?>
 						<input type='hidden' name='parent' value='<?php echo $parent['id']; ?>'>
 				<?php }, EVENT_ID . 'referral'); ?>
 				
 				
 				<?php
-					Events::addListener('@auth//form//signup', function() { ?>
+                                    Events::addListener('@auth//form//signup', function () { ?>
 						<!-- end col -->
 						<div class="button-group d-flex justify-content-center flex-wrap">
 							<button class="btn btn-primary w-100" type='submit'>
@@ -84,7 +90,7 @@ Events::addListener('@auth//right', function() { ?>
 							</button>
 						</div>
 					<?php }, EVENT_ID . 'submit');
-				?>
+    ?>
 				
 				
 				<?php Events::exec('@auth//form//signup'); ?>
@@ -94,11 +100,11 @@ Events::addListener('@auth//right', function() { ?>
 	<!-- end row -->
 	</form>
 	
-<?php }, EVENT_ID . 'signup-form' ); ?>
+<?php }, EVENT_ID . 'signup-form'); ?>
 
 
-<?php 
-	Events::addListener('@auth//right', function() { ?>
+<?php
+    Events::addListener('@auth//right', function () { ?>
 		<div class='mt-4'>
 			<p class="text-sm text-medium text-dark text-center">
 				Already have an account? 

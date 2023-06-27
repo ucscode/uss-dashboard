@@ -1,11 +1,12 @@
-<?php 
+<?php
 
-defined( 'UDASH_MOD_DIR' ) OR DIE;
+
+defined('UDASH_MOD_DIR') or die;
 
 /**
  * READY!
  *
- * Let's get our table prefix 
+ * Let's get our table prefix
  * And also, the current logged in user
  */
 $prefix = DB_TABLE_PREFIX;
@@ -33,7 +34,7 @@ $SQL = "
 	GROUP BY userid
 ";
 
-$all = Uss::$global['mysqli']->query( $SQL )->fetch_assoc();
+$all = Uss::$global['mysqli']->query($SQL)->fetch_assoc();
 
 /**
  * Now let's save the data with index `size`
@@ -47,7 +48,7 @@ $notify['size'] = $all ? $all['_all'] : 0;
  * By identifying the number of notification per page, we can be able to know how many pages we have
  */
 
-$max_list = Udash::config( "notifications_per_page" ) ?? 20;
+$max_list = Udash::config("notifications_per_page") ?? 20;
 
 
 /**
@@ -55,10 +56,12 @@ $max_list = Udash::config( "notifications_per_page" ) ?? 20;
  *
  * We have to check the URL to know the current notification that page user has visited
  */
- 
-$page_number = (int)( $_GET['view'] ?? 1 );
 
-if( $page_number < 1 ) $page_number = 1; // page number cannot be less than 1
+$page_number = (int)($_GET['view'] ?? 1);
+
+if($page_number < 1) {
+    $page_number = 1;
+} // page number cannot be less than 1
 
 
 /**
@@ -66,50 +69,50 @@ if( $page_number < 1 ) $page_number = 1; // page number cannot be less than 1
  *
  * Pointer helps us determine the starting point of a page in the SQL table list
  * Assuming there are 10 notifications per page, then:
- * 
+ *
  * - Pointer of page 1 = 0
  * - Pointer of page 2 = 10
- * - Pointer of page 3 = 20 
+ * - Pointer of page 3 = 20
  * - Pointer of page 4 = 30 etc...
  */
 
-$pointer = ( ($page_number - 1) * $max_list );
+$pointer = (($page_number - 1) * $max_list);
 
 
 /**
  * CREATE SQL QUERY
- * 
+ *
  * Now we create the SQL Query
  * This will return a limited list of notications based on the current page
  */
 
-$SQL = sQuery::select( "{$prefix}_notifications", "
+$SQL = sQuery::select("{$prefix}_notifications", "
 	userid = {$userid}
 	AND hidden = 0
 	ORDER BY id DESC
 	LIMIT {$pointer}, {$max_list}
-" );
+");
 
 
 /** We save the query result with an index `query` */
 
-$notify['query'] = Uss::$global['mysqli']->query( $SQL );
+$notify['query'] = Uss::$global['mysqli']->query($SQL);
 
 
 /**
  * GET NEXT AND PREVIOUS PAGES
- * 
- * @var $QuerySize 
+ *
+ * @var $QuerySize
  *
  * Tells us what range of SQL rows we have reached.
  * For example: at 10 notification per page:
- * 
+ *
  * - page 1: $QuerySize = 10
  * - page 2: $QuerySize = 20
  * - page 3: $QuerySize = 30
  *
  * $QuerySize indicates that so far, we have reached "x" number of rows
- * 
+ *
  */
 
 $QuerySize = $pointer + $max_list;
@@ -124,7 +127,7 @@ $QuerySize = $pointer + $max_list;
  *
  * We save the information
  */
-$notify['next'] = ( $QuerySize >= $notify['size'] ) ? null : ( $page_number + 1 );
+$notify['next'] = ($QuerySize >= $notify['size']) ? null : ($page_number + 1);
 
 
 /**
@@ -135,11 +138,10 @@ $notify['next'] = ( $QuerySize >= $notify['size'] ) ? null : ( $page_number + 1 
  *
  * We also save the information
  */
-$notify['prev'] = ( $page_number > 1 ) ? ( $page_number - 1 ) : null;
+$notify['prev'] = ($page_number > 1) ? ($page_number - 1) : null;
 
 
 /**
  * Return The Notification Query;
  */
 return $notify;
-

@@ -1,13 +1,13 @@
-<?php 
+<?php
 /**
  * The default uss dashboard email template
  * This template was cloned from an online source.
  * @see X2Client
 */
 
-defined( 'UDASH_MOD_DIR') OR DIE;
+defined('UDASH_MOD_DIR') or die;
 
-ob_start(); 
+ob_start();
 ?>
 <!doctype html>
 <html>
@@ -53,7 +53,7 @@ ob_start();
                                 </tr>
                                 <tr>
                                     <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;" valign="top" align="center">
-                                        Powered by <a href="<?php echo Core::url( ROOT_DIR ); ?>" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;"><?php echo Uss::$global['title']; ?></a>.
+                                        Powered by <a href="<?php echo Core::url(ROOT_DIR); ?>" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;"><?php echo Uss::$global['title']; ?></a>.
                                     </td>
                                 </tr>
                             </table>

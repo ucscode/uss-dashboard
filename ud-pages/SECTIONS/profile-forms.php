@@ -1,13 +1,13 @@
-<?php 
+<?php
 
-defined( 'UDASH_MOD_DIR' ) OR DIE;
+defined('UDASH_MOD_DIR') or die;
 
-	/**
-	 * DISPLAY ACCOUNT FORM
-	 */
-	Events::addListener('@udash//page//profile', function() { 
-		
-?>
+/**
+ * DISPLAY ACCOUNT FORM
+ */
+Events::addListener('@udash//page//profile', function () {
+
+    ?>
 	<div class="%{profile.col-left}">
 		<div class="card settings-card-1 mb-30">
 			<div class='card-body'>
@@ -31,47 +31,49 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 									</div>
 								</div>
 								
-								<?php 
-									/**
-									 * Nested Event
-									 */
-									Events::addListener('@udash//page//profile:form', function() {
-										
-										/**
-										 * Check if user is allowed to update email
-										 */
-										$lockemail = !!Uss::$global['options']->get('user:lock-email');
-										
-										/**
-										 * Check if user has an unverified email available
-										 */
-										$vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
-										
-								?>
+								<?php
+                                        /**
+                                         * Nested Event
+                                         */
+                                        Events::addListener('@udash//page//profile:form', function () {
+
+                                            /**
+                                             * Check if user is allowed to update email
+                                             */
+                                            $lockemail = !!Uss::$global['options']->get('user:lock-email');
+
+                                            /**
+                                             * Check if user has an unverified email available
+                                             */
+                                            $vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
+
+                                            ?>
 									<div class="mb-4">
 										<label class='form-label --required'>Email</label>
-										<input type="email" placeholder="%{user.email}" class='form-control <?php if( $lockemail ) echo 'cursor-not-allowed'; ?>' value="%{user.email}" <?php echo !$lockemail ? "name='email'" : "disabled"; ?> required>
+										<input type="email" placeholder="%{user.email}" class='form-control <?php if($lockemail) {
+										    echo 'cursor-not-allowed';
+										} ?>' value="%{user.email}" <?php echo !$lockemail ? "name='email'" : "disabled"; ?> required>
 										
-										<?php 
-											if( $vcode ) {
-												$email = Uss::$global['usermeta']->get('v-code:email', Uss::$global['user']['id']);
-												echo "<div class='mt-2 text-center text-muted fs-12px'>
+										<?php
+                                            if($vcode) {
+                                                $email = Uss::$global['usermeta']->get('v-code:email', Uss::$global['user']['id']);
+                                                echo "<div class='mt-2 text-center text-muted fs-12px'>
 													Please click the link sent to <span class='text-warning'>{$email}</span> to update your email
 												</div>";
-											}
-										?>
+                                            }
+                                            ?>
 									</div>
 									
 									<input type='hidden' name='nonce' value='%{nonce}'>
 									<input type='hidden' name='route' value='profile'>
 									
-								<?php }, EVENT_ID . 'fields' );
-								
-									/**
-									 * Allow module to add some extra input field!
-									 */
-									Events::exec('@udash//page//profile:form'); 
-								?>
+								<?php }, EVENT_ID . 'fields');
+
+    /**
+     * Allow module to add some extra input field!
+     */
+    Events::exec('@udash//page//profile:form');
+    ?>
 								
 								<button class='btn btn-success w-100 btn-class-1' type='submit'>Update</button>
 								
@@ -84,18 +86,18 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 		</div> <!-- end card -->
 	</div> <!-- end col -->
 
-<?php 
-	/** 
-	 * End - @udash//page//profile
-	 */
-	}, EVENT_ID . "left" ); 
-	
-	
-	/**
-	 * DISPLAY PASSWORD FORM
-	 */
-	Events::addListener('@udash//page//profile', function() {
-?>
+<?php
+    /**
+     * End - @udash//page//profile
+     */
+}, EVENT_ID . "left");
+
+
+/**
+ * DISPLAY PASSWORD FORM
+ */
+Events::addListener('@udash//page//profile', function () {
+    ?>
 
 <div class="%{profile.col-right}">
 	<div class="card settings-card-2 mb-30">
@@ -146,9 +148,8 @@ defined( 'UDASH_MOD_DIR' ) OR DIE;
 	</div> <!-- end card -->
 </div> <!-- end col -->
 
-<?php 
-	/**
-	 * End - @udash//page//profile
-	 */
-	}, EVENT_ID . 'right' );
-	
+<?php
+        /**
+         * End - @udash//page//profile
+         */
+}, EVENT_ID . 'right');

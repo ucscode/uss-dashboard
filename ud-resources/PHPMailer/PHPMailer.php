@@ -30,21 +30,21 @@ namespace PHPMailer\PHPMailer;
  */
 class PHPMailer
 {
-    const CHARSET_ISO88591 = 'iso-8859-1';
-    const CHARSET_UTF8 = 'utf-8';
+    public const CHARSET_ISO88591 = 'iso-8859-1';
+    public const CHARSET_UTF8 = 'utf-8';
 
-    const CONTENT_TYPE_PLAINTEXT = 'text/plain';
-    const CONTENT_TYPE_TEXT_CALENDAR = 'text/calendar';
-    const CONTENT_TYPE_TEXT_HTML = 'text/html';
-    const CONTENT_TYPE_MULTIPART_ALTERNATIVE = 'multipart/alternative';
-    const CONTENT_TYPE_MULTIPART_MIXED = 'multipart/mixed';
-    const CONTENT_TYPE_MULTIPART_RELATED = 'multipart/related';
+    public const CONTENT_TYPE_PLAINTEXT = 'text/plain';
+    public const CONTENT_TYPE_TEXT_CALENDAR = 'text/calendar';
+    public const CONTENT_TYPE_TEXT_HTML = 'text/html';
+    public const CONTENT_TYPE_MULTIPART_ALTERNATIVE = 'multipart/alternative';
+    public const CONTENT_TYPE_MULTIPART_MIXED = 'multipart/mixed';
+    public const CONTENT_TYPE_MULTIPART_RELATED = 'multipart/related';
 
-    const ENCODING_7BIT = '7bit';
-    const ENCODING_8BIT = '8bit';
-    const ENCODING_BASE64 = 'base64';
-    const ENCODING_BINARY = 'binary';
-    const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
+    public const ENCODING_7BIT = '7bit';
+    public const ENCODING_8BIT = '8bit';
+    public const ENCODING_BASE64 = 'base64';
+    public const ENCODING_BINARY = 'binary';
+    public const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
 
     /**
      * Email priority.
@@ -701,28 +701,28 @@ class PHPMailer
      *
      * @var string
      */
-    const VERSION = '6.0.6';
+    public const VERSION = '6.0.6';
 
     /**
      * Error severity: message only, continue processing.
      *
      * @var int
      */
-    const STOP_MESSAGE = 0;
+    public const STOP_MESSAGE = 0;
 
     /**
      * Error severity: message, likely ok to continue processing.
      *
      * @var int
      */
-    const STOP_CONTINUE = 1;
+    public const STOP_CONTINUE = 1;
 
     /**
      * Error severity: message, plus full stop, critical error reached.
      *
      * @var int
      */
-    const STOP_CRITICAL = 2;
+    public const STOP_CRITICAL = 2;
 
     /**
      * SMTP RFC standard line ending.
@@ -736,7 +736,7 @@ class PHPMailer
      *
      * @var int
      */
-    const MAX_LINE_LENGTH = 998;
+    public const MAX_LINE_LENGTH = 998;
 
     /**
      * The lower maximum line length allowed by RFC 2822 section 2.1.1.
@@ -746,7 +746,7 @@ class PHPMailer
      *
      * @var int
      */
-    const STD_LINE_LENGTH = 76;
+    public const STD_LINE_LENGTH = 76;
 
     /**
      * Constructor.
@@ -848,9 +848,9 @@ class PHPMailer
                 $str = preg_replace('/\r\n|\r/ms', "\n", $str);
                 echo gmdate('Y-m-d H:i:s'),
                 "\t",
-                    //Trim trailing space
+                //Trim trailing space
                 trim(
-                //Indent for readability, except for trailing break
+                    //Indent for readability, except for trailing break
                     str_replace(
                         "\n",
                         "\n                   \t                  ",
@@ -994,10 +994,12 @@ class PHPMailer
         $pos = strrpos($address, '@');
         if (false === $pos) {
             // At-sign is missing.
-            $error_message = sprintf('%s (%s): %s',
+            $error_message = sprintf(
+                '%s (%s): %s',
                 $this->lang('invalid_address'),
                 $kind,
-                $address);
+                $address
+            );
             $this->setError($error_message);
             $this->edebug($error_message);
             if ($this->exceptions) {
@@ -1045,9 +1047,11 @@ class PHPMailer
     protected function addAnAddress($kind, $address, $name = '')
     {
         if (!in_array($kind, ['to', 'cc', 'bcc', 'Reply-To'])) {
-            $error_message = sprintf('%s: %s',
+            $error_message = sprintf(
+                '%s: %s',
                 $this->lang('Invalid recipient kind'),
-                $kind);
+                $kind
+            );
             $this->setError($error_message);
             $this->edebug($error_message);
             if ($this->exceptions) {
@@ -1057,10 +1061,12 @@ class PHPMailer
             return false;
         }
         if (!static::validateAddress($address)) {
-            $error_message = sprintf('%s (%s): %s',
+            $error_message = sprintf(
+                '%s (%s): %s',
                 $this->lang('invalid_address'),
                 $kind,
-                $address);
+                $address
+            );
             $this->setError($error_message);
             $this->edebug($error_message);
             if ($this->exceptions) {
@@ -1166,9 +1172,11 @@ class PHPMailer
         if (false === $pos or
             (!$this->has8bitChars(substr($address, ++$pos)) or !static::idnSupported()) and
             !static::validateAddress($address)) {
-            $error_message = sprintf('%s (From): %s',
+            $error_message = sprintf(
+                '%s (From): %s',
                 $this->lang('invalid_address'),
-                $address);
+                $address
+            );
             $this->setError($error_message);
             $this->edebug($error_message);
             if ($this->exceptions) {
@@ -1418,10 +1426,12 @@ class PHPMailer
                 }
                 $this->$address_kind = $this->punyencodeAddress($this->$address_kind);
                 if (!static::validateAddress($this->$address_kind)) {
-                    $error_message = sprintf('%s (%s): %s',
+                    $error_message = sprintf(
+                        '%s (%s): %s',
                         $this->lang('invalid_address'),
                         $address_kind,
-                        $this->$address_kind);
+                        $this->$address_kind
+                    );
                     $this->setError($error_message);
                     $this->edebug($error_message);
                     if ($this->exceptions) {
@@ -2114,8 +2124,8 @@ class PHPMailer
         }
 
         return $this->encodeHeader($this->secureHeader($addr[1]), 'phrase') . ' <' . $this->secureHeader(
-                $addr[0]
-            ) . '>';
+            $addr[0]
+        ) . '>';
     }
 
     /**
@@ -2330,8 +2340,8 @@ class PHPMailer
 
         // sendmail and mail() extract Bcc from the header before sending
         if ((
-                'sendmail' == $this->Mailer or 'qmail' == $this->Mailer or 'mail' == $this->Mailer
-            )
+            'sendmail' == $this->Mailer or 'qmail' == $this->Mailer or 'mail' == $this->Mailer
+        )
             and count($this->bcc) > 0
         ) {
             $result .= $this->addrAppend('Bcc', $this->bcc);
@@ -3076,10 +3086,11 @@ class PHPMailer
                 }
                 $matchcount = preg_match_all('/[^\040\041\043-\133\135-\176]/', $str, $matches);
                 break;
-            /* @noinspection PhpMissingBreakStatementInspection */
+                /* @noinspection PhpMissingBreakStatementInspection */
             case 'comment':
                 $matchcount = preg_match_all('/[()"]/', $str, $matches);
-            //fallthrough
+                //fallthrough
+                // no break
             case 'text':
             default:
                 $matchcount += preg_match_all('/[\000-\010\013\014\016-\037\177-\377]/', $str, $matches);
@@ -3242,14 +3253,15 @@ class PHPMailer
                 // RFC 2047 section 5.3
                 $pattern = '^A-Za-z0-9!*+\/ -';
                 break;
-            /*
-             * RFC 2047 section 5.2.
-             * Build $pattern without including delimiters and []
-             */
-            /* @noinspection PhpMissingBreakStatementInspection */
+                /*
+                 * RFC 2047 section 5.2.
+                 * Build $pattern without including delimiters and []
+                 */
+                /* @noinspection PhpMissingBreakStatementInspection */
             case 'comment':
                 $pattern = '\(\)"';
-            /* Intentional fall through */
+                /* Intentional fall through */
+                // no break
             case 'text':
             default:
                 // RFC 2047 section 5.1

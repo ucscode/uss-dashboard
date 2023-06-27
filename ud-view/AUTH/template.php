@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * The auth form template
  *
@@ -11,13 +11,13 @@
  * #### Example:
  *
  * ```php
- *	
+ *
  * Events::addListener('@auth//left', function() {
  *	// content to display at left side
  * });
- *	
+ *
  * // You can equally pass an id to override a content
- 
+
  * Events::addListener('@auth//right', function() {
  *	// content to display at right side
  * }, 'event-id');
@@ -29,14 +29,14 @@
  * require_once "/path/to/AUTH/template.php";
  *
  */
-defined( 'UDASH_MOD_DIR' ) OR DIE;
+defined('UDASH_MOD_DIR') or die;
 
 ?>
 <div class="%{col.row}">
 	
 	<div class="%{col.left}">
 		
-		<?php Events::addListener('@auth//left', function() { ?>
+		<?php Events::addListener('@auth//left', function () { ?>
 			
 			<div class="auth-cover-wrapper bg-primary-100">
 				<div class="auth-cover">
