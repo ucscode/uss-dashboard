@@ -129,7 +129,7 @@ Uss::route(Udash::config('page:notification'), function () {
                                                          * ```php
                                                          * Uss::route( "focus/path/(\d+)", function($match) {
                                                          *
-                                                         * 	$isAdmin = roles::user($match[1])::is( 'administrator' );
+                                                         * 	$isAdmin = Roles::user($match[1])::is( 'administrator' );
                                                          *
                                                          * 	// alternatively, you can use `Uss::query(2)` instead of `$match[1]`
                                                          *

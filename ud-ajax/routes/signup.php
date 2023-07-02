@@ -145,7 +145,7 @@ Events::addListener('@udash//ajax', function () {
 
                     $defaultRole = Uss::$global['options']->get('user:default-role');
 
-                    $assigned = roles::user($data['id'])::assign($defaultRole);
+                    $assigned = Roles::user($data['id'])::assign($defaultRole);
 
                     /**
                      * Clear Access Token!

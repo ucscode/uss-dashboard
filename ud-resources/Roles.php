@@ -234,23 +234,23 @@ class Roles
 
         - The roles, permission and authority of a user can easily be retrieved by userid. For Example:
 
-            `roles::user(1)::maxPriority()`
+            `Roles::user(1)::maxPriority()`
 
 
         However, every call to a user dedicated method will reset the user variable.
 
-            `roles::user(1)` // gets the user;
+            `Roles::user(1)` // gets the user;
 
-            `roles::maxPriority()` // gets the maxPriority & clears the user;
+            `Roles::maxPriority()` // gets the maxPriority & clears the user;
 
-            `roles::hasRole('member')` // false; No user available
+            `Roles::hasRole('member')` // false; No user available
 
 
         The best way is to always call involved the user by re-adding it
 
-            `roles::user(1)::maxPermission()` // gets the user maxPriority & clears the user;
+            `Roles::user(1)::maxPermission()` // gets the user maxPriority & clears the user;
 
-            `roles::user(1)::hasRole('members') // returns true & clears the user;
+            `Roles::user(1)::hasRole('members') // returns true & clears the user;
 
 
     */
@@ -530,7 +530,7 @@ class Roles
     # To add a new Role!
     ---------------------
 
-    roles::add( 'administrator', 100, array(
+    Roles::add( 'administrator', 100, array(
         "update-profile",
         "manage-account"
     ));
@@ -540,114 +540,114 @@ class Roles
     # To Remove Role!
     -----------------
 
-    roles::remove( 'administrator' );
+    Roles::remove( 'administrator' );
 
 
 
     # To Add Permission
     -------------------
 
-    roles::setPermission( 'administrator', "manage-users" );
+    Roles::setPermission( 'administrator', "manage-users" );
 
 
 
     # To Remove Permission
     -----------------------
 
-    roles::removePermission( 'administrator', 'manage-users' );
+    Roles::removePermission( 'administrator', 'manage-users' );
 
 
 
     # To Change Priority
     ---------------------
 
-    roles::updatePriority( 'administrator', 200 );
+    Roles::updatePriority( 'administrator', 200 );
 
 
 
     # To Get Roles
     ---------------------
 
-    roles::get( 'administrator' );
+    Roles::get( 'administrator' );
 
 
 
     # To Get Roles Attribute
     ---------------------
 
-    roles::get( 'administrator', 'permissions' );
-    roles::get( 'administrator', 'priority' );
+    Roles::get( 'administrator', 'permissions' );
+    Roles::get( 'administrator', 'priority' );
 
 
 
     # To Link A User
     -----------------
 
-    roles::user( 2 );
+    Roles::user( 2 );
 
 
 
     # To Assign Role To A User
     ---------------------------
 
-    roles::user( 2 )::assign( 'administrator' );
+    Roles::user( 2 )::assign( 'administrator' );
 
 
 
     # To Un-Assign Role From A User
     --------------------------------
 
-    roles::user( 2 )::unassign( 'administrator' );
+    Roles::user( 2 )::unassign( 'administrator' );
 
 
 
     # To Check If A User Has Role
     ------------------------------
 
-    roles::user( 2 )::hasRole( 'administrator' );
+    Roles::user( 2 )::hasRole( 'administrator' );
     OR
-    roles::user( 2 )::is( 'administrator' );
+    Roles::user( 2 )::is( 'administrator' );
 
 
 
     # To Check If A User Has Permission
     ------------------------------------
 
-    roles::user( 2 )::hasPermission( 'manage-account' );
+    Roles::user( 2 )::hasPermission( 'manage-account' );
 
 
 
     # To Get A User's Maximum Priority
     ------------------------------------
 
-    roles::user( 2 )::maxPriority();
+    Roles::user( 2 )::maxPriority();
     OR
-    roles::user( 2 )::authority();
+    Roles::user( 2 )::authority();
 
 
 
     # To Get All roles of a user
     ------------------------------------
 
-    roles::user( 2 )::get_user_roles();
+    Roles::user( 2 )::get_user_roles();
 
 
 
     # To get a list of users with a particular role
     -------------------------------------------------
 
-    roles::get_assigned_users( 'members' ); // Returns only the users ID
+    Roles::get_assigned_users( 'members' ); // Returns only the users ID
 
-    roles::get_assigned_users( 'members', true ); // Returns the complete user detail
+    Roles::get_assigned_users( 'members', true ); // Returns the complete user detail
 
 
 
     # To get a list of users with a particular permission
     ------------------------------------------------------
 
-    roles::get_permitted_users( 'manage-account' ); // Returns only the user ID
+    Roles::get_permitted_users( 'manage-account' ); // Returns only the user ID
 
-    roles::get_permitted_users( 'manage-account', true ); // Returns the complete user detail;
+    Roles::get_permitted_users( 'manage-account', true ); // Returns the complete user detail;
 
 
 */

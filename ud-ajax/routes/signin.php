@@ -107,8 +107,8 @@ Events::addListener('@udash//ajax', function () {
                  * If the user has no existing role
                 */
 
-                if(empty(roles::user($user['id'])::get_user_roles())) {
-                    roles::user($user['id'])::assign(Uss::$global['options']->get('user:default-role'));
+                if(empty(Roles::user($user['id'])::get_user_roles())) {
+                    Roles::user($user['id'])::assign(Uss::$global['options']->get('user:default-role'));
                 };
 
             };

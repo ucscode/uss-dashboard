@@ -71,7 +71,7 @@ $user = Uss::$global['user'];
  */
 if($user) {
 
-    $permission = roles::user($user['id'])::hasPermission('view-dashboard');
+    $permission = Roles::user($user['id'])::hasPermission('view-dashboard');
 
     /**
      * But does not have permission to view the current panel
