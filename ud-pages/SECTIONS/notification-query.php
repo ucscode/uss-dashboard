@@ -86,7 +86,7 @@ $pointer = (($page_number - 1) * $max_list);
  * This will return a limited list of notications based on the current page
  */
 
-$SQL = sQuery::select("{$prefix}_notifications", "
+$SQL = SQuery::select("{$prefix}_notifications", "
 	userid = {$userid}
 	AND hidden = 0
 	ORDER BY id DESC

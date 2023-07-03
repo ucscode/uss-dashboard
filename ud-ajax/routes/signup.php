@@ -124,7 +124,7 @@ Events::addListener('@udash//ajax', function () {
                  * sQuery will auto sanitize the input
                  */
 
-                $SQL = sQuery::insert("{$prefix}_users", $data, Uss::$global['mysqli']);
+                $SQL = SQuery::insert("{$prefix}_users", $data, Uss::$global['mysqli']);
 
                 /**
                  * Insert the user into database

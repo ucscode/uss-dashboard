@@ -80,7 +80,7 @@ Events::addListener('@udash//ajax', function () {
 
                         /** The SQL Query */
 
-                        $SQL = sQuery::update("{$prefix}_users", array(
+                        $SQL = SQuery::update("{$prefix}_users", array(
                             "password" => $_POST['password']
                         ), "id = {$user['id']}");
 

@@ -103,7 +103,7 @@ call_user_func(function () {
 
                 $prefix = DB_TABLE_PREFIX;
 
-                $SQL = sQuery::update("{$prefix}_users", array(
+                $SQL = SQuery::update("{$prefix}_users", array(
                     "email" => $email
                 ), "id = '{$user['id']}'", Uss::$global['mysqli']);
 

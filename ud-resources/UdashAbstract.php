@@ -469,7 +469,7 @@ abstract class UdashAbstract
         $resultant = is_null($value) ? " IS NULL " : " = '{$value}'";
 
         /** Create the SQL Syntax */
-        $SQL = sQuery::select($tablename, "{$column} {$resultant}");
+        $SQL = SQuery::select($tablename, "{$column} {$resultant}");
 
         /** Capture the result */
         $result = $mysqli->query($SQL);
@@ -975,9 +975,9 @@ abstract class UdashAbstract
         $prefix = DB_TABLE_PREFIX;
 
         if(!is_null($id)) {
-            $SQL = sQuery::update("{$prefix}_notifications", $data, "id = {$id}");
+            $SQL = SQuery::update("{$prefix}_notifications", $data, "id = {$id}");
         } else {
-            $SQL = sQuery::insert("{$prefix}_notifications", $data);
+            $SQL = SQuery::insert("{$prefix}_notifications", $data);
         };
 
         // save notification ;

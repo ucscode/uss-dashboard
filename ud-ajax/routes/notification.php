@@ -39,14 +39,14 @@ Events::addListener('@udash//ajax', function () {
          * Mark NX as viewed
          */
         case 'viewed':
-            $SQL = sQuery::update("{$prefix}_notifications", array( "viewed" => 1 ), "id IN({$keys})");
+            $SQL = SQuery::update("{$prefix}_notifications", array( "viewed" => 1 ), "id IN({$keys})");
             break;
 
             /**
              * Hide Notification
              */
         case 'remove':
-            $SQL = sQuery::update("{$prefix}_notifications", array( 'hidden' => 1 ), "id IN({$keys})");
+            $SQL = SQuery::update("{$prefix}_notifications", array( 'hidden' => 1 ), "id IN({$keys})");
             break;
 
     };

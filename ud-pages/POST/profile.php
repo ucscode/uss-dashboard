@@ -134,7 +134,7 @@ call_user_func(function () {
                  * UPDATE USER PROFILE
                  * Prepare SQL Query
                  */
-                $SQL = sQuery::update("{$prefix}_users", $data, "id = {$user['id']}");
+                $SQL = SQuery::update("{$prefix}_users", $data, "id = {$user['id']}");
 
                 /**
                  * Update Database
@@ -222,7 +222,7 @@ call_user_func(function () {
                  * Get SQL Query
                  * Then update user password
                  */
-                $SQL = sQuery::update("{$prefix}_users", array(
+                $SQL = SQuery::update("{$prefix}_users", array(
                     'password' => Udash::password($_POST['password'])
                 ), "id = {$user['id']}");
 
