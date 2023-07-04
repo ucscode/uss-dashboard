@@ -7,7 +7,7 @@ defined('UDASH_AJAX') or die;
  * Add new ajax event
  */
 
-Events::addListener('@udash//ajax', function () {
+Events::addListener('udash:ajax', function () {
 
     /**
      * Database prefix

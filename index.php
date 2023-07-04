@@ -12,7 +12,7 @@
  * @author ucscode <uche23mail@gmail.com>
  * @link https://github.com/ucscode
  * @copyright Copyright (c) 2023
- * @package uss.dashboard
+ * @package Uss\Dashboard
  */
 
 defined('ROOT_DIR') or die;
@@ -21,13 +21,13 @@ defined('ROOT_DIR') or die;
  * uss dashboard module directory
  * The directory (folder) of the dashboard module
  */
-define("UDASH_MOD_DIR", __DIR__);
+define("UDASH_DIR", __DIR__);
 
 /**
  * uss dashboard focus URI
  * The focus URI (i.e url path) that will be entered in the browser to access the dashboard module.
  */
-define("UDASH_FOCUS_URI", 'dashboard');
+define("UDASH_ROUTE", 'dashboard');
 
 /**
  * The uss dashboard module requires database connection to work properly
@@ -53,7 +53,7 @@ if(DB_CONNECT) {
     # require all dashboard resources
 
     foreach($resources as $file) {
-        require_once UDASH_MOD_DIR . "/ud-resources/{$file}";
+        require_once UDASH_DIR . "/ud-resources/{$file}";
     }
 
 
@@ -61,7 +61,7 @@ if(DB_CONNECT) {
      * Now that all dashboard resources has been loaded
      * Let's Initialize the dashboard
      */
-    require UDASH_MOD_DIR . '/ud-init.php';
+    require UDASH_DIR . '/ud-init.php';
 
 
     /**
@@ -78,7 +78,7 @@ if(DB_CONNECT) {
      * The pages will be loaded only when the dashboard URI is accessed
      * @see \udash_abstract::load()
      */
-    Udash::load(UDASH_FOCUS_URI, UDASH_MOD_DIR . '/ud-interface.php');
+    Udash::load(UDASH_ROUTE, UDASH_DIR . '/ud-interface.php');
 
 
     /**
@@ -103,7 +103,7 @@ if(DB_CONNECT) {
          * and ready to be displayed to the user. This finalization step is crucial for delivering a polished and seamless
          * user experience within the uss dashboard.
          */
-        require UDASH_MOD_DIR . '/ud-final.php';
+        require UDASH_DIR . '/ud-final.php';
 
 
         /**
@@ -128,7 +128,7 @@ if(DB_CONNECT) {
      * Restrict Access to Dashboard
      * If the dashboard path is accessed, display a notice to user
      */
-    Uss::route(UDASH_FOCUS_URI, function () {
+    Uss::route(UDASH_ROUTE, function () {
 
         /**
          * Prepare the user synthetics interface

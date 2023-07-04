@@ -1,7 +1,7 @@
 <?php
 
 
-defined("UDASH_MOD_DIR") or die;
+defined("UDASH_DIR") or die;
 
 call_user_func(function () {
 
@@ -26,7 +26,7 @@ call_user_func(function () {
         /**
          * PROCESS PROFILE DETAIL
          */
-        Events::addListener('@udash//page//profile::submit', function () {
+        Events::addListener('udash:pages/profile.submit', function () {
 
             if($_POST['route'] !== 'profile') {
                 return;
@@ -187,7 +187,7 @@ call_user_func(function () {
         /**
          * UPDATE USER PASSWORD
          */
-        Events::addListener('@udash//page//profile::submit', function () {
+        Events::addListener('udash:pages/profile.submit', function () {
 
             if($_POST['route'] !== 'password') {
                 return;
@@ -257,7 +257,7 @@ call_user_func(function () {
          * Event Execution
          * Requires `route` index in `$_POST` variable to function
          */
-        Events::exec('@udash//page//profile::submit', null, null, function () {
+        Events::exec('udash:pages/profile.submit', null, null, function () {
             return !empty($_POST['route']);
         });
 

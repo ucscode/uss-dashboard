@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /**
  * Create Dashboard Menu
@@ -12,14 +12,14 @@ defined('UDASH_MOD_DIR') or die;
 Uss::$global['menu']->add('homepage', array(
     'label' => "Dashboard",
     "icon" => "<i class='bi bi-speedometer2'></i>",
-    'href' => Core::url(ROOT_DIR . "/" . UDASH_FOCUS_URI),
-    'active' => implode("/", Uss::query()) === UDASH_FOCUS_URI
+    'href' => Core::url(ROOT_DIR . "/" . UDASH_ROUTE),
+    'active' => implode("/", Uss::query()) === UDASH_ROUTE
 ));
 
 
 // Focus Path;
 
-Uss::route(UDASH_FOCUS_URI, function () {
+Uss::route(UDASH_ROUTE, function () {
 
     // Authenticate Email Requests
 
@@ -32,7 +32,7 @@ Uss::route(UDASH_FOCUS_URI, function () {
          * A module needs to fill it up by adding an event listener;
         */
 
-        Events::exec('@udash//page//index');
+        Events::exec('udash:pages/index');
 
     });
 

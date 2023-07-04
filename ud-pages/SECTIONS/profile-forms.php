@@ -1,11 +1,11 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /**
  * DISPLAY ACCOUNT FORM
  */
-Events::addListener('@udash//page//profile', function () {
+Events::addListener('udash:pages/profile', function () {
 
     ?>
 	<div class="%{profile.col-left}">
@@ -35,7 +35,7 @@ Events::addListener('@udash//page//profile', function () {
                                         /**
                                          * Nested Event
                                          */
-                                        Events::addListener('@udash//page//profile:form', function () {
+                                        Events::addListener('udash:pages/profile.form', function () {
 
                                             /**
                                              * Check if user is allowed to update email
@@ -72,7 +72,7 @@ Events::addListener('@udash//page//profile', function () {
     /**
      * Allow module to add some extra input field!
      */
-    Events::exec('@udash//page//profile:form');
+    Events::exec('udash:pages/profile.form');
     ?>
 								
 								<button class='btn btn-success w-100 btn-class-1' type='submit'>Update</button>
@@ -88,7 +88,7 @@ Events::addListener('@udash//page//profile', function () {
 
 <?php
     /**
-     * End - @udash//page//profile
+     * End - udash:pages/profile
      */
 }, EVENT_ID . "left");
 
@@ -96,7 +96,7 @@ Events::addListener('@udash//page//profile', function () {
 /**
  * DISPLAY PASSWORD FORM
  */
-Events::addListener('@udash//page//profile', function () {
+Events::addListener('udash:pages/profile', function () {
     ?>
 
 <div class="%{profile.col-right}">
@@ -150,6 +150,6 @@ Events::addListener('@udash//page//profile', function () {
 
 <?php
         /**
-         * End - @udash//page//profile
+         * End - udash:pages/profile
          */
 }, EVENT_ID . 'right');

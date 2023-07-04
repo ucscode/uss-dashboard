@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 $notice = call_user_func(function () {
 

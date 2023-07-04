@@ -1,4 +1,4 @@
-<?php defined('UDASH_MOD_DIR') or die; ?>
+<?php defined('UDASH_DIR') or die; ?>
 
 <main class="main-wrapper %{udash.main.class}">
 	
@@ -45,7 +45,7 @@
             /**
              * Modules can attach custom stuff to the left side of the header
              */
-            Events::exec('@udash//header//left');
+            Events::exec('udash:header//left');
             ?>
 					</div>
 				</div>
@@ -66,14 +66,14 @@
                  * Udash::config('page:notification', "/path/to/notification");
                  * ```
                  */
-                Events::addListener('@udash//header//right', function () {
+                Events::addListener('udash:header//right', function () {
                     require __DIR__ . '/header-notification.php';
                 }, EVENT_ID);
 
             /**
              * Enable right header modification
              */
-            Events::exec('@udash//header//right');
+            Events::exec('udash:header//right');
 
             ?>
 						
@@ -110,7 +110,7 @@
             /**
              *
              */
-            Events::addListener('@auth//header//userdrop', function () {
+            Events::addListener('auth:header//userdrop', function () {
                 ?>
 									<li data-auth='logout'>
 										<a href="<?php echo Core::url(ROOT_DIR . '/' . Udash::config('page:signout')); ?>"> 
@@ -122,7 +122,7 @@
              * Execute user dropdown
              * Modules can attach listener to this event
              */
-            Events::exec('@auth//header//userdrop');
+            Events::exec('auth:header//userdrop');
             ?>
 							</ul>
 							

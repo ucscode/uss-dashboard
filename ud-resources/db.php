@@ -4,7 +4,7 @@
  * Create and initialize dashboard database
  * This file will check for existence of any default database table and create it if it doesn't exist!
  */
-defined("UDASH_MOD_DIR") or die;
+defined("UDASH_DIR") or die;
 
 /**
  * Let's handle the database table management process using an anomymous class

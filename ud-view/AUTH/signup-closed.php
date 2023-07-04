@@ -1,19 +1,19 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /** Column Right */
 
 Uss::tag('col.right', 'd-none');
 
-Events::addListener('@auth//right', null);
+Events::addListener('auth:right', null);
 
 
 /** Column Right */
 
 Uss::tag('col.left', 'col-lg-12');
 
-Events::addListener('@auth//left', function () { ?>
+Events::addListener('auth:left', function () { ?>
 
 	<div class='vh-100 bg-light d-flex align-items-center justify-content-center text-center auth-bg-image'>
 		<div class='vh-100 vw-100 bg-dark bg-opacity-75 position-absolute'></div>

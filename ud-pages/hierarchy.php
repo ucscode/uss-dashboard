@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 call_user_func(function () use ($profileFocus) {
 
@@ -32,7 +32,7 @@ call_user_func(function () use ($profileFocus) {
      */
     Uss::route($hierFocus . "(?:/?\w+)?", function () use ($hierFocus) {
 
-        Events::addListener('@head::after', function () {
+        Events::addListener('@head:after', function () {
             /**
              * Get CSS that will style the nodes
              */
@@ -40,7 +40,7 @@ call_user_func(function () use ($profileFocus) {
             echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
         });
 
-        Events::addListener('@body::after', function () use ($hierFocus) {
+        Events::addListener('@body:after', function () use ($hierFocus) {
 
             /**
              * Get JavaScript the will render the nodes
@@ -62,7 +62,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Create Event
              */
-            Events::addListener('@udash//page//hierarchy', function () {
+            Events::addListener('udash:pages/hierarchy', function () {
                 ?>
 			<div class='container-fluid'>
 				<div class='tree-container position-relative rounded-2'>
@@ -74,7 +74,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Execute Events
              */
-            Events::exec('@udash//page//hierarchy');
+            Events::exec('udash:pages/hierarchy');
 
         }); // End view
 

@@ -5,7 +5,7 @@
  * This file container all default tags that should be within the `<body></body>` section
  */
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 ?>	<script src="<?php echo Core::url(Udash::ASSETS_DIR . "/js/polyfill.js"); ?>"></script>
 <?php if(!Udash::config('auth')): ?>

@@ -1,6 +1,6 @@
 <?php
 
-(defined('UDASH_MOD_DIR') && Uss::$global['user']['id']) or die;
+(defined('UDASH_DIR') && Uss::$global['user']['id']) or die;
 
 /** The current user */
 $user = Uss::$global['user'];

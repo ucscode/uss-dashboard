@@ -49,7 +49,7 @@ if(empty($_POST['route']) || !is_scalar($_POST['route'])) {
  * As it will affect the normal JSON response that should be printed
  * Therefore, all direct output made by modules will be buffered and cleared
  *
- * Only event executions made through `@udash//ajax` listener can have printable content
+ * Only event executions made through `udash:ajax` listener can have printable content
  * The event should however be called globally and not within a focus expression
  */
 

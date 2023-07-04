@@ -4,7 +4,7 @@
 defined("UDASH_AJAX") or die;
 
 
-Events::addListener('@udash//ajax', function () {
+Events::addListener('udash:ajax', function () {
 
     $prefix = DB_TABLE_PREFIX;
 

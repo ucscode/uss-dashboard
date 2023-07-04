@@ -7,19 +7,7 @@
  * access token functionality, and affiliation management. These sections are essential for user interaction,
  * profile management, access control, and affiliation-related operations within the User Synthetics system.
  */
-defined("UDASH_MOD_DIR") or die;
-
-
-/**
- * Open Graph Variable
- *
- * The Open Graph variable holds important data for SEO optimization.
- * This data will be printed into the HTML header as `<meta.../>` tags to enhance visibility.
- * If the default behavior does not meet your requirements, you have the flexibility to create a custom Open Graph handler.
- *
- * @var array
- */
-Uss::$global['opengraph'] = array();
+defined("UDASH_DIR") or die;
 
 
 /**
@@ -134,7 +122,7 @@ foreach($udash_config as $key => $value) {
 
 /**
  * Authenticate user Login
- * @see \udash_abstract::getAccessTokenUser()
+ * @see \UdashAbstract::getAccessTokenUser()
  */
 Uss::$global['user'] = Udash::getAccessTokenUser();
 

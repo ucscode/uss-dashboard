@@ -171,7 +171,7 @@ class Udash extends UdashAbstract
         /**
          * Configure Basic Template Engine Tags
          */
-        Uss::tag('udash.url', Core::url(ROOT_DIR . "/" . UDASH_FOCUS_URI));
+        Uss::tag('udash.url', Core::url(ROOT_DIR . "/" . UDASH_ROUTE));
         Uss::tag('udash.ajax', Core::url(Udash::AJAX_DIR . '/@ajax.php', true));
 
 
@@ -186,15 +186,7 @@ class Udash extends UdashAbstract
 
         # >> HEAD SECTION
 
-        Events::addListener('@head::before', function () {
-
-            //Implement SEO information
-            require_once self::VIEW_DIR . '/meta.php';
-
-        }, EVENT_ID . self::view_id);
-
-
-        Events::addListener('@head::after', function () {
+        Events::addListener('@head:after', function () {
 
             //Require HTML <head/> scripts
             require_once self::VIEW_DIR . '/bundle.head.php';
@@ -204,7 +196,7 @@ class Udash extends UdashAbstract
 
         # >> BODY SECTION
 
-        Events::addListener('@body::before', function () {
+        Events::addListener('@body:before', function () {
 
             // Automatically remove sidebar if blank page is enabled
 
@@ -229,7 +221,7 @@ class Udash extends UdashAbstract
         }, -(self::view_id));
 
 
-        Events::addListener('@body::beforeAfter', function () {
+        Events::addListener('@body:beforeAfter', function () {
 
             // Get the template footer
             require_once self::VIEW_DIR . '/footer.php';
@@ -237,7 +229,7 @@ class Udash extends UdashAbstract
         }, self::view_id);
 
 
-        Events::addListener('@body::after', function () {
+        Events::addListener('@body:after', function () {
 
             // Require HTML <body/> scripts
             require_once self::VIEW_DIR . '/bundle.body.php';

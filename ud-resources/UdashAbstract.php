@@ -11,7 +11,7 @@
  * @author ucscode
  */
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 
 abstract class UdashAbstract
@@ -31,7 +31,7 @@ abstract class UdashAbstract
      *
      * @var string
      */
-    public const VIEW_DIR = UDASH_MOD_DIR . "/ud-view";
+    public const VIEW_DIR = UDASH_DIR . "/ud-view";
 
     /**
      * RES_DIR
@@ -41,7 +41,7 @@ abstract class UdashAbstract
      *
      * @var string
      */
-    public const RES_DIR = UDASH_MOD_DIR . "/ud-resource";
+    public const RES_DIR = UDASH_DIR . "/ud-resource";
 
     /**
      * ASSETS_DIR
@@ -51,7 +51,7 @@ abstract class UdashAbstract
      *
      * @var string
      */
-    public const ASSETS_DIR = UDASH_MOD_DIR . "/ud-assets";
+    public const ASSETS_DIR = UDASH_DIR . "/ud-assets";
 
     /**
      * AJAX_DIR
@@ -65,7 +65,7 @@ abstract class UdashAbstract
      *
      * @var string
      */
-    public const AJAX_DIR = UDASH_MOD_DIR . "/ud-ajax";
+    public const AJAX_DIR = UDASH_DIR . "/ud-ajax";
 
     /**
      * PAGES_DIR
@@ -78,7 +78,7 @@ abstract class UdashAbstract
      *
      * @var string
      */
-    public const PAGES_DIR = UDASH_MOD_DIR . "/ud-pages";
+    public const PAGES_DIR = UDASH_DIR . "/ud-pages";
 
     /**
      * Returns a PHPMailer instance
@@ -230,7 +230,7 @@ abstract class UdashAbstract
          * The URL will be forwarded to the email that needs to be confirmed
          * The email security key will be tested for a match to confirm the validation
          */
-        $verify_url = Core::url(ROOT_DIR . '/' . UDASH_FOCUS_URI . "?v={$encoding}");
+        $verify_url = Core::url(ROOT_DIR . '/' . UDASH_ROUTE . "?v={$encoding}");
 
         /**
          * X2Client By Ucscode is a library that makes email template creation more easier
@@ -364,7 +364,7 @@ abstract class UdashAbstract
 
         $encode = base64_encode("{$r_code}:{$user['email']}");
 
-        $r_url = Core::url(ROOT_DIR . '/' . UDASH_FOCUS_URI . "/reset?v={$encode}");
+        $r_url = Core::url(ROOT_DIR . '/' . UDASH_ROUTE . "/reset?v={$encode}");
 
 
         /**

@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 Uss::route(Udash::config('page:notification'), function () {
 
@@ -31,7 +31,7 @@ Uss::route(Udash::config('page:notification'), function () {
                     /**
                      * THE MARKER EVENT
                      */
-                    Events::addListener('@udash//nx', function ($notify) {
+                    Events::addListener('udash:nx', function ($notify) {
                         /**
                          * Add a button to mark all visible notifications as read
                          */
@@ -53,19 +53,19 @@ Uss::route(Udash::config('page:notification'), function () {
                              * THE NOTIFICATION BLOCK EVENT
                              */
 
-                            Events::addListener('@udash//nx', function ($notify) {
+                            Events::addListener('udash:nx', function ($notify) {
 
                                 /**
                                  * First, let create add a "delete" action to each notification
                                  *
-                                 * More custom actions can be added by adding listener to the `@udash//nx//action` events
+                                 * More custom actions can be added by adding listener to the `udash:nx//action` events
                                  * Hence, any module can attach a listener to expand the action
                                  *
                                  * The current notification being looped is passed as the argument
                                  *
                                  */
 
-                                Events::addListener('@udash//nx:action', function ($notification) {
+                                Events::addListener('udash:nx:action', function ($notification) {
                                     ?>
 							<li class="dropdown-item">
 								<a href="javascript:void(0)" class="text-gray text-sm d-block" data-nx-action='remove'>
@@ -184,7 +184,7 @@ Uss::route(Udash::config('page:notification'), function () {
                                                                          * Do execute an event inside a loop and at the same time,
                                                                          * Add listener to the event within the same loop
                                                                          */
-                                                                        Events::exec('@udash//nx:action', $notification);
+                                                                        Events::exec('udash:nx:action', $notification);
                                                         ?>
 										</ul>
 										
@@ -221,7 +221,7 @@ Uss::route(Udash::config('page:notification'), function () {
 				
 					
 				<?php
-                    Events::addListener('@udash//nx', function ($notify) {
+                    Events::addListener('udash:nx', function ($notify) {
 
                         /**
                          * If there's neither a next nor previous page
@@ -297,7 +297,7 @@ Uss::route(Udash::config('page:notification'), function () {
                              *
                              * Add, modify remove events on this page
                              */
-                            Events::exec('@udash//nx', $notify);
+                            Events::exec('udash:nx', $notify);
         ?>
 				
 			</div>

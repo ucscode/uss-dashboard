@@ -5,14 +5,14 @@ defined("UDASH_AJAX") or die;
 
 # ------------------------------------------
 
-Events::addListener('@udash//ajax', function () {
+Events::addListener('udash:ajax', function () {
 
     /**
      * Define a redirect URL
      * The URL that user will be redirected to after a successful registration
      */
 
-    $redirect = Udash::config('signup:redirect') ?? Core::url(ROOT_DIR . '/' . UDASH_FOCUS_URI);
+    $redirect = Udash::config('signup:redirect') ?? Core::url(ROOT_DIR . '/' . UDASH_ROUTE);
 
 
     /**

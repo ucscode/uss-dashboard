@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /**
  * Focus on the dashboard path
@@ -32,7 +32,7 @@ Events::addListener('udash:ready', function () {
      * It take account of the dashboard configuration setting and the user authentication before determining
      * whether to display the actual content or the login page
      */
-    Uss::route(UDASH_FOCUS_URI . '/(?:signup|reset)', function () {
+    Uss::route(UDASH_ROUTE . '/(?:signup|reset)', function () {
 
         /**
          * Forcefully disable authentication for signup and reset password page

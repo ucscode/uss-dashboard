@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /**
  * Further Configuration && Universal Pages
@@ -31,13 +31,13 @@ defined('UDASH_MOD_DIR') or die;
 $defaultPagesExpr = array(
 
     // The page to output notifications
-    'page:notification' => UDASH_FOCUS_URI . '/notifications',
+    'page:notification' => UDASH_ROUTE . '/notifications',
 
     // The focal expression to sign out
-    'page:signout' => UDASH_FOCUS_URI . '/signout',
+    'page:signout' => UDASH_ROUTE . '/signout',
 
     // The redirection url after signing out
-    'signout:redirect' => Core::url(ROOT_DIR . '/' . UDASH_FOCUS_URI)
+    'signout:redirect' => Core::url(ROOT_DIR . '/' . UDASH_ROUTE)
 
 );
 

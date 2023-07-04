@@ -1,10 +1,10 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 // Declare The Focus Path For Account Page
 
-$profileFocus = UDASH_FOCUS_URI . "/account";
+$profileFocus = UDASH_ROUTE . "/account";
 
 
 // Create Profile Menu
@@ -30,7 +30,7 @@ $account->add('profile', array(
  * The "userdrop" is located at the TOP-RIGHT of the dashboard
  */
 
-Events::addListener('@auth//header//userdrop', function () use ($account) { ?>
+Events::addListener('udash:pages/account@header.userdrop', function () use ($account) { ?>
 	<li>
 		<a href="<?php echo $account->get('profile')->get_attr('href'); ?>">
 			<i class="bi bi-person"></i> View Profile
@@ -102,7 +102,7 @@ Uss::route($profileFocus, function ($e) {
                             /**
                              * DISPLAY AFFILIATION LINK
                              */
-                            Events::addListener('@udash//page//profile', function () {
+                            Events::addListener('udash:pages/profile', function () {
 
                                 if(!Uss::$global['options']->get('user:affiliation')) {
                                     return;
@@ -140,7 +140,7 @@ Uss::route($profileFocus, function ($e) {
         /**
          * Execute the profile page events
          */
-        Events::exec('@udash//page//profile');
+        Events::exec('udash:pages/profile');
 
         ?>
 					

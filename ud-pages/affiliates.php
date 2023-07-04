@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 call_user_func(function () use ($profileFocus) {
 
@@ -84,7 +84,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Add Event Listener
              */
-            Events::addListener('@udash//page//affiliate', function ($data) {
+            Events::addListener('udash:pages/affiliate', function ($data) {
 
                 /**
                  * Prepare and display the table
@@ -100,7 +100,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Execute Event
              */
-            Events::exec('@udash//page//affiliate', array( 'table' => &$table ));
+            Events::exec('udash:pages/affiliate', array( 'table' => &$table ));
 
         });
 

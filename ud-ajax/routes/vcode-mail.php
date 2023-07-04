@@ -4,7 +4,7 @@
 defined('UDASH_AJAX') or die;
 
 
-Events::addListener('@udash//ajax', function () {
+Events::addListener('udash:ajax', function () {
 
     /**
      * Get the user by email

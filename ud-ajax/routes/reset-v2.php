@@ -4,7 +4,7 @@
 defined("UDASH_AJAX") or die;
 
 
-Events::addListener('@udash//ajax', function () {
+Events::addListener('udash:ajax', function () {
 
     /**
      * Verify Password Update Security
@@ -119,7 +119,7 @@ Events::addListener('@udash//ajax', function () {
     /**
      * Define the login page
      */
-    $loginPage = Core::url(ROOT_DIR . '/' . UDASH_FOCUS_URI);
+    $loginPage = Core::url(ROOT_DIR . '/' . UDASH_ROUTE);
 
 
     /**

@@ -12,13 +12,13 @@
  *
  * ```php
  *
- * Events::addListener('@auth//left', function() {
+ * Events::addListener('auth:left', function() {
  *	// content to display at left side
  * });
  *
  * // You can equally pass an id to override a content
 
- * Events::addListener('@auth//right', function() {
+ * Events::addListener('auth:right', function() {
  *	// content to display at right side
  * }, 'event-id');
  *
@@ -29,14 +29,14 @@
  * require_once "/path/to/AUTH/template.php";
  *
  */
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 ?>
 <div class="%{col.row}">
 	
 	<div class="%{col.left}">
 		
-		<?php Events::addListener('@auth//left', function () { ?>
+		<?php Events::addListener('auth:left', function () { ?>
 			
 			<div class="auth-cover-wrapper bg-primary-100">
 				<div class="auth-cover">
@@ -61,7 +61,7 @@ defined('UDASH_MOD_DIR') or die;
 		
 		<?php }, 0); ?>
 		
-		<?php Events::exec('@auth//left'); ?>
+		<?php Events::exec('auth:left'); ?>
 		
 	</div>
 
@@ -70,7 +70,7 @@ defined('UDASH_MOD_DIR') or die;
 		<div class="%{auth.container}">
 			<div class="flex-grow-1">
 			
-				<?php Events::exec('@auth//right'); ?>
+				<?php Events::exec('auth:right'); ?>
 				
 			</div>
 		</div>

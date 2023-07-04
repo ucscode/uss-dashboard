@@ -1,17 +1,17 @@
 <?php
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /** Create signup form */
 
-Events::addListener('@auth//right', function () { ?>
+Events::addListener('auth:right', function () { ?>
 
 	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='ud-signup' enctype='multipart/form-data'>
 		<div class="row py-3">
 			<div class="col-sm-10 col-md-9 m-auto">
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () {
+                    Events::addListener('auth:form//signup', function () {
                         /**
                          * Check if username collection is disabled
                          */
@@ -26,7 +26,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () { 
+                    Events::addListener('auth:form//signup', function () { 
 				?>
 					<div class="mb-3">
 						<input type="email" placeholder="Email" class='form-control' name='email' required>
@@ -35,7 +35,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () { 
+                    Events::addListener('auth:form//signup', function () { 
 				?>
 					<!-- end col -->
 					<div class="mb-3">
@@ -45,7 +45,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () { 
+                    Events::addListener('auth:form//signup', function () { 
 				?>
 					<!-- end col -->
 					<div class="mb-4">
@@ -55,7 +55,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () { 
+                    Events::addListener('auth:form//signup', function () { 
 				?>
 					<!-- end col -->
 					<div class='mb-4'>
@@ -72,7 +72,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () {
+                    Events::addListener('auth:form//signup', function () {
 						if(empty(Uss::$global['options']->get('user:affiliation'))) {
 							return;
 						}
@@ -86,7 +86,7 @@ Events::addListener('@auth//right', function () { ?>
 				
 				
 				<?php
-                    Events::addListener('@auth//form//signup', function () { 
+                    Events::addListener('auth:form//signup', function () { 
 				?>
 					<!-- end col -->
 					<div class="button-group d-flex justify-content-center flex-wrap">
@@ -97,7 +97,7 @@ Events::addListener('@auth//right', function () { ?>
 				<?php }, EVENT_ID . 'submit'); ?>
 				
 				
-				<?php Events::exec('@auth//form//signup'); ?>
+				<?php Events::exec('auth:form//signup'); ?>
 				
 			</div>
 		</div>
@@ -108,7 +108,7 @@ Events::addListener('@auth//right', function () { ?>
 
 
 <?php
-    Events::addListener('@auth//right', function () { ?>
+    Events::addListener('auth:right', function () { ?>
 		<div class='mt-4'>
 			<p class="text-sm text-medium text-dark text-center">
 				Already have an account? 

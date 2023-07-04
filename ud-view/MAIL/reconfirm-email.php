@@ -7,7 +7,7 @@
  * @author ucscode
 */
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /** Output Buffer */
 

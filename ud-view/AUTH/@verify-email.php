@@ -1,11 +1,11 @@
 <?php
 
 
-defined('UDASH_MOD_DIR') or die;
+defined('UDASH_DIR') or die;
 
 /*
 
-    This file was required in UDASH_MOD_DIR . "/model/class.php";
+    This file was required in UDASH_DIR . "/model/class.php";
 
     That is where this closure is called!
 

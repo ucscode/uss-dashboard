@@ -33,7 +33,7 @@ require_once __DIR__ . '/@init.php';
  * ```
  *
  * Nonetheless, If you still intend to call on this file to process custom request
- * Add a listener to the `@udash//ajax` event directly without using a focus express
+ * Add a listener to the `udash:ajax` event directly without using a focus express
  * And also add a `route` index to the `$_POST` variable
  *
  * To avoid conflict with uss dashboard default ajax events,
@@ -44,7 +44,7 @@ require_once __DIR__ . '/@init.php';
  * Your code can be similar to the one below
  *
  * ```php
- * Events::addListener('@udash//ajax', function() {
+ * Events::addListener('udash:ajax', function() {
  *	 if( $_POST['route'] !== 'ud-signup' ) return;
  *	 // your antispam code here
  * });
@@ -100,4 +100,4 @@ foreach($authFiles as $route => $filename) {
 /**
  * Execute the events
  */
-Events::exec('@udash//ajax');
+Events::exec('udash:ajax');
