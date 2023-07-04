@@ -215,7 +215,7 @@ Events::addListener('@udash//ajax', function () {
     /**
      * Print the output and end the script
     */
-
+    
     Uss::stop($status ?? false, $message, array( 'redirect' => $redirect ));
-
+    
 }, 'ajax-signup');

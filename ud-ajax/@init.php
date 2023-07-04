@@ -76,7 +76,7 @@ try {
 
     /** Load the configuration file */
 
-    require_once realpath(__DIR__ . '/../../../') . "/uss-config.php";
+    require_once realpath(__DIR__ . '/../../../') . "/uss-core/config.php";
 
 } catch(Exception $e) {
 
