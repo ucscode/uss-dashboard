@@ -563,7 +563,6 @@ abstract class UdashAbstract
 
         /**
          * Find a matching file mime;
-         *
          * @var string
          */
         $fileMIME = call_user_func(function () use (&$file, &$originalMIME, $mimeTypes) {
@@ -572,7 +571,6 @@ abstract class UdashAbstract
              * Get the mime type of the file
              * Allow PHP to scan the file internally and confirm the mime type
              */
-
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $originalMIME = explode("/", strtolower($finfo->file($file['tmp_name'])));
 
@@ -606,7 +604,7 @@ abstract class UdashAbstract
         });
 
         $originalMIME = implode("/", $originalMIME);
-
+        
         /**
          * Throw an exception
          * If the uploaded file does not match any supported mime type
@@ -615,70 +613,82 @@ abstract class UdashAbstract
             throw new Exception("415 — Unsupported Media Type ($originalMIME)");
         }
 
-        /**
-         * Get the path where file should be uploaded
-         */
-        if(!Core::is_absolute_path($path)) {
-            /**
-             * - Relative path will be calculated relatively to `ASSETS_DIR`
-             */
-            $uploadPath = Core::abspath(self::ASSETS_DIR . "/{$path}");
+        # Get the relative & absolute path;
 
-        } else {
-            $uploadPath = Core::abspath($path);
+        $pathdata = self::getPathdata( $path, $filename );
+
+        # Change File Permission
+
+        chmod($file['tmp_name'], 0777);
+
+        # Move the uploaded file
+        
+        $moved = move_uploaded_file($file['tmp_name'], $pathdata['absolute']);
+        
+        if($moved) return $pathdata['relative'];
+
+    }
+
+    /**
+     * Get the relative & absolute path for the uploaded file
+     * @ignore
+     */
+    private static function getPathdata( string $path, string $filename ) {
+        
+        $pathdata = array();
+
+        # Get the directory where file should be uploaded
+        
+        if(!Core::is_absolute_path($path)) {
+            # Relative path will be uploaded to `Udash::ASSETS_DIR`
+            $path = Core::abspath(self::ASSETS_DIR . "/{$path}");
+        } else  $path = Core::abspath($path);
+        
+        # Recursively create any directory that does not exist
+
+        $fullpath = call_user_func(function() use($path) {
+            $pathname = explode("/", Core::rslash($path));
+            $currentPath = '';
+            foreach( $pathname as $dir ) {
+                $currentPath .= $dir . DIRECTORY_SEPARATOR;
+                if (!is_dir($currentPath)) {
+                    if( is_writable(dirname($currentPath)) ) {
+                        mkdir($currentPath, 0777, true);
+                    };
+                };
+            }
+            return substr($currentPath, 0, -1);
+        });
+        
+        /**
+         * If the directory does not exist, it means there was no sufficient permission 
+         * given to the current user to create the directory automatically
+         */
+        if( !is_dir($fullpath) ) {
+            /**
+             * This would require creating the directory manually or
+             * Give sufficient permission (0777) to the current user
+             */
+           // throw new Exception("Insufficient file system permission.");
         }
 
-        $path = array_filter(explode("/", Core::rslash($uploadPath)));
+        # Get The Relative & Absolute Filepath
 
-        /**
-         * Recursively create any directory that does not exist
-         */
-        for($x = 1; $x <= count($path); $x++) {
-            $dir = implode("/", array_slice($path, 0, $x));
-            if(!is_dir($dir)) {
-                mkdir($dir);
-            }
+        $pathdata['relative'] = preg_replace("#^" . Core::rslash(MOD_DIR) . "/#i", "", $fullpath);
+        
+        if($pathdata['relative'] == $fullpath) {
+            /**
+             * For windows only!
+             * Enforce path to start from forward slash. For example;
+             * From "C:\a\b" To "/a/b"
+             */
+            $pathdata['relative'] = Core::url($fullpath, true);
         };
 
-        /** restore path */
-        $path = implode("/", $path);
-
-        /*
-         * Get the relative filepath
-         * The relative path from `MOD_DIR` where the file was saved
-         */
-        $rel = preg_replace("#^" . Core::rslash(MOD_DIR) . "/#i", "", $path);
-
-        /**
-         * If no changes were made between `$rel` && `$path`
-         * Then use the absolute full path instead
-         */
-        if($rel == $path) {
-            $rel = Core::url($path, true);
-        }
-
-        $relativeFilepath = "{$rel}/{$filename}";
-
-        /**
-         * Get the absolute filepath
-         */
-        $absoluteFilepath = "{$path}/{$filename}";
-
-        /**
-         * Move the uploaded file
-         */
-        $moved = move_uploaded_file($file['tmp_name'], $absoluteFilepath);
-
-        /**
-         * Return the relative path
-         *
-         * The default parent (:root) path for uploaded file is the `Udash::ASSETS_DIR`
-         * Hence, the relative path returned make you always point correctly to the right file
-         * Even if the $_SERVER domain name is changed
-         */
-        if($moved) {
-            return $relativeFilepath;
-        }
+        $pathdata['relative'] = "{$pathdata['relative']}/{$filename}";
+        $pathdata['absolute'] = "{$fullpath}/{$filename}";
+        
+        return $pathdata;
 
     }
 
@@ -697,13 +707,19 @@ abstract class UdashAbstract
     public static function user_avatar(?int $userid = null)
     {
 
+        # The default user avatar
+        $default = self::ASSETS_DIR . '/images/user.png';
+
+        # The uploaded user avatar
         $avatar = $userid ? Uss::$global['usermeta']->get('avatar', $userid) : null;
 
-        if(!$avatar) {
-            $avatar = self::ASSETS_DIR . '/images/user.png';
-        } else {
+        # If no uploaded avatar, use default;
+        if(!$avatar) $avatar = $default;
+        else {
+            # If uploaded avatar cannot be found, use default
             $avatar = MOD_DIR . "/{$avatar}";
-        }
+            if( !is_file($avatar) )  $avatar = $default;
+        };
 
         $avatar = Core::url($avatar);
 
