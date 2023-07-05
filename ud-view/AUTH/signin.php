@@ -22,14 +22,14 @@ Events::addListener('udash:auth.right', function () { ?>
 					<div class="mb-3">
 						<input type="text" placeholder="Login detail" class='form-control' name='login' required pattern="^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$">
 					</div>
-				<?php }, EVENT_ID . 'login'); ?>
+				<?php }, EVENT_ID . 'field'); ?>
 				
 				
 				<?php Events::addListener('udash:auth/signin@form', function () { ?>
 					<div class="mb-4">
 						<input type="password" placeholder="Password" class='form-control' name='password' required pattern='^.{4,}$'>
 					</div>
-				<?php }, EVENT_ID . 'password'); ?>
+				<?php }, EVENT_ID . 'field_100'); ?>
 					
 					
 				<?php
@@ -45,7 +45,7 @@ Events::addListener('udash:auth.right', function () { ?>
 							</a>
 						</div>
 					</div>
-				<?php }, EVENT_ID . 'reconfirm'); ?>
+				<?php }, EVENT_ID . 'field_200'); ?>
 				
 				
 				<?php Events::addListener('udash:auth/signin@form', function () { ?>
@@ -54,7 +54,7 @@ Events::addListener('udash:auth.right', function () { ?>
 							Sign In
 						</button>
 					</div>
-				<?php }, EVENT_ID . 'submit'); ?>
+				<?php }, EVENT_ID . 'field_300'); ?>
 					
 					
 				<?php Events::exec('udash:auth/signin@form'); ?>
@@ -64,7 +64,7 @@ Events::addListener('udash:auth.right', function () { ?>
 		<!-- end row -->
 	</form>
 	
-<?php }, EVENT_ID . 'signin-form'); ?>
+<?php }, EVENT_ID . 'signin'); ?>
 	
 	
 <?php Events::addListener('udash:auth.right', function () { ?>
@@ -74,7 +74,7 @@ Events::addListener('udash:auth.right', function () { ?>
 			<a href="%{udash.url}/reset" class="hover-underline text-nowrap">Reset Password</a>
 		</p>
 	</div>
-<?php }, EVENT_ID . 'signin-reset'); ?>
+<?php }, EVENT_ID . 'signin_100'); ?>
 
 
 <?php
@@ -90,4 +90,4 @@ Events::addListener('udash:auth.right', function () { ?>
 			<a href="%{udash.url}/signup" class='text-nowrap'>Create an account</a>
 		</p>
 	</div>
-<?php }, EVENT_ID . 'signin-reverse'); ?>
+<?php }, EVENT_ID . 'signin_200'); ?>

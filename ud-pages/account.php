@@ -36,7 +36,7 @@ Events::addListener('udash:pages/account@header.userdrop', function () use ($acc
 			<i class="bi bi-person"></i> View Profile
 		</a>
 	</li>
-<?php }, 'Profile');
+<?php }, EVENT_ID );
 
 
 /**
@@ -127,7 +127,7 @@ Uss::route($profileFocus, function ($e) {
 								</div>
 							</div>
 						</div>
-					<?php }, EVENT_ID . 'affiliate-link');
+					<?php }, EVENT_ID . 'affiliate_link');
 
         /**
          * Include Account Template:

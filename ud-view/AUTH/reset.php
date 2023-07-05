@@ -18,7 +18,7 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 
                         /**
                          * Display a reset password form
-                         * The form contains only an email input
+                         * The form contains only an email field
                          * After submitting the form, the system checks for account existence and send a password
                          * reset email to the associated user
                          */
@@ -29,21 +29,21 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 						<div class='text-center mb-3'>
 							<small>You'll receive an email to continue the process</small>
 						</div>
-					<?php }, EVENT_ID . 'detail'); ?>
+					<?php }, EVENT_ID . 'field'); ?>
 					
 					
 					<?php Events::addListener('udash:auth/reset@form', function () { ?>
 						<div class="mb-3">
 							<input type="email" name='email' placeholder="Email" class='form-control' required>
 						</div>
-					<?php }, EVENT_ID . 'email'); ?>
+					<?php }, EVENT_ID . 'field_100'); ?>
 					
 					
 					<?php Events::addListener('udash:auth/reset@form', function () { ?>
 						<button class="btn btn-primary w-100">
 							Reset Password
 						</button>
-					<?php }, EVENT_ID . 'submit'); ?>
+					<?php }, EVENT_ID . 'field_200'); ?>
 				
 				
 				<?php
@@ -60,7 +60,7 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 						<div class='text-center mb-3'>
 							<small>Please enter your new password</small>
 						</div>
-					<?php }, EVENT_ID . 'detail'); ?>
+					<?php }, EVENT_ID . 'field'); ?>
 					
 					
 					<?php Events::addListener('udash:auth/reset@form', function () use ($reset) { ?>
@@ -76,13 +76,13 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 						<input type='hidden' name='passport' value='<?php echo $reset; ?>'>
 						<input type='hidden' name='nonce' value='<?php echo Uss::nonce($_SESSION['resetter']); ?>'>
 						
-					<?php }, EVENT_ID . 'password-group'); ?>
+					<?php }, EVENT_ID . 'field_100'); ?>
 					
 					<?php Events::addListener('udash:auth/reset@form', function () { ?>
 						<button class="btn btn-primary w-100">
 							Change Password
 						</button>
-					<?php }, EVENT_ID . 'submit'); ?>
+					<?php }, EVENT_ID . 'field_200'); ?>
 				
 				<?php endif; ?>
 				
@@ -93,7 +93,7 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 		<!-- end row -->
 	</form>
 
-<?php }, EVENT_ID . 'reset-form'); ?>
+<?php }, EVENT_ID . 'reset'); ?>
 
 
 <?php Events::addListener('udash:auth.right', function () { ?>
@@ -102,5 +102,5 @@ Events::addListener('udash:auth.right', function () use ($reset) { ?>
 			Back To <a href="%{udash.url}">Login</a>
 		</p>
 	</div>
-<?php }, EVENT_ID . 'reset-signin'); ?>
+<?php }, EVENT_ID . 'reset_100'); ?>
 

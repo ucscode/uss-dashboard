@@ -44,7 +44,7 @@ Uss::route(Udash::config('page:notification'), function () {
 							Mark all as read
 						</a>
 					</div>
-				<?php }, EVENT_ID . 'marker'); ?>
+				<?php }, EVENT_ID . 'nx'); ?>
 				
 				
 				<?php
@@ -65,14 +65,14 @@ Uss::route(Udash::config('page:notification'), function () {
                                  *
                                  */
 
-                                Events::addListener('udash:nx:action', function ($notification) {
+                                Events::addListener('udash:nx.action', function ($notification) {
                                     ?>
 							<li class="dropdown-item">
 								<a href="javascript:void(0)" class="text-gray text-sm d-block" data-nx-action='remove'>
 									<i class='bi bi-trash me-1'></i> Remove
 								</a>
 							</li>
-						<?php }, EVENT_ID . 'remove'); // Notification Action
+						<?php }, EVENT_ID . 'action'); // Notification Action
 
                                 /**
                                  * Output the notification
@@ -184,7 +184,7 @@ Uss::route(Udash::config('page:notification'), function () {
                                                                          * Do execute an event inside a loop and at the same time,
                                                                          * Add listener to the event within the same loop
                                                                          */
-                                                                        Events::exec('udash:nx:action', $notification);
+                                                                        Events::exec('udash:nx.action', $notification);
                                                         ?>
 										</ul>
 										
@@ -217,7 +217,7 @@ Uss::route(Udash::config('page:notification'), function () {
 									
 							</div>
 						</div>
-				<?php }, EVENT_ID . 'notification'); ?>
+				<?php }, EVENT_ID . 'nx_100'); ?>
 				
 					
 				<?php
@@ -288,16 +288,16 @@ Uss::route(Udash::config('page:notification'), function () {
 							
 						</div>
 					</div>
-				<?php }, EVENT_ID . 'pagination'); ?>
+				<?php }, EVENT_ID . 'nx_200'); ?>
 				
 				<?php
 
-                            /**
-                             * THE EVENT DISPATCHER
-                             *
-                             * Add, modify remove events on this page
-                             */
-                            Events::exec('udash:nx', $notify);
+                    /**
+                     * THE EVENT DISPATCHER
+                     *
+                     * Add, modify remove events on this page
+                     */
+                    Events::exec('udash:nx', $notify);
         ?>
 				
 			</div>

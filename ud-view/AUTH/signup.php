@@ -22,7 +22,7 @@ Events::addListener('udash:auth.right', function () { ?>
 					<div class="mb-3">
 						<input type="text" placeholder="Username" class='form-control' name='username' required pattern="^\s*\w+\s*$">
 					</div>
-				<?php }, EVENT_ID . 'client'); ?>
+				<?php }, EVENT_ID . 'field'); ?>
 				
 				
 				<?php
@@ -31,7 +31,7 @@ Events::addListener('udash:auth.right', function () { ?>
 					<div class="mb-3">
 						<input type="email" placeholder="Email" class='form-control' name='email' required>
 					</div>
-				<?php }, EVENT_ID . 'email'); ?>
+				<?php }, EVENT_ID . 'field_100'); ?>
 				
 				
 				<?php
@@ -41,7 +41,7 @@ Events::addListener('udash:auth.right', function () { ?>
 					<div class="mb-3">
 						<input type="password" placeholder="Password" class='form-control' name='password' required pattern='^.{4,}$'>
 					</div>
-				<?php }, EVENT_ID . 'password'); ?>
+				<?php }, EVENT_ID . 'field_200'); ?>
 				
 				
 				<?php
@@ -51,7 +51,7 @@ Events::addListener('udash:auth.right', function () { ?>
 					<div class="mb-4">
 						<input type="password" placeholder="Confirm Password" class='form-control' name='confirm_password' pattern='^.{4,}$' required>
 					</div>
-				<?php }, EVENT_ID . 'password2'); ?>
+				<?php }, EVENT_ID . 'field_300'); ?>
 				
 				
 				<?php
@@ -68,7 +68,7 @@ Events::addListener('udash:auth.right', function () { ?>
 							</label>
 						</div>
 					</div>
-				<?php }, EVENT_ID . 'policy'); ?>
+				<?php }, EVENT_ID . 'field_400'); ?>
 				
 				
 				<?php
@@ -82,7 +82,7 @@ Events::addListener('udash:auth.right', function () { ?>
 						}
 					?>
 						<input type='hidden' name='parent' value='<?php echo $parent['id']; ?>'>
-				<?php }, EVENT_ID . 'referral'); ?>
+				<?php }, EVENT_ID . 'field_500'); ?>
 				
 				
 				<?php
@@ -94,7 +94,7 @@ Events::addListener('udash:auth.right', function () { ?>
 							Sign Up
 						</button>
 					</div>
-				<?php }, EVENT_ID . 'submit'); ?>
+				<?php }, EVENT_ID . 'field_600'); ?>
 				
 				
 				<?php Events::exec('udash:auth/signup@form'); ?>
@@ -104,7 +104,7 @@ Events::addListener('udash:auth.right', function () { ?>
 	<!-- end row -->
 	</form>
 	
-<?php }, EVENT_ID . 'signup-form'); ?>
+<?php }, EVENT_ID . 'signup'); ?>
 
 
 <?php
@@ -117,7 +117,7 @@ Events::addListener('udash:auth.right', function () { ?>
 				</a>
 			</p>
 		</div>
-	<?php }, EVENT_ID . 'signup-reverse');
+	<?php }, EVENT_ID . 'signup_100');
 ?>
 
 

@@ -35,7 +35,7 @@ Events::addListener('udash:pages/profile', function () {
                                         /**
                                          * Nested Event
                                          */
-                                        Events::addListener('udash:pages/profile.form', function () {
+                                        Events::addListener('udash:pages/profile.left@form', function () {
 
                                             /**
                                              * Check if user is allowed to update email
@@ -72,7 +72,7 @@ Events::addListener('udash:pages/profile', function () {
     /**
      * Allow module to add some extra input field!
      */
-    Events::exec('udash:pages/profile.form');
+    Events::exec('udash:pages/profile.left@form');
     ?>
 								
 								<button class='btn btn-success w-100 btn-class-1' type='submit'>Update</button>

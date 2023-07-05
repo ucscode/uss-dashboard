@@ -38,7 +38,8 @@ call_user_func(function () use ($profileFocus) {
              */
             $dir = Core::url(Udash::ASSETS_DIR . "/vendor/datatree");
             echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
-        });
+
+        }, EVENT_ID . "node");
 
         Events::addListener('@body:after', function () use ($hierFocus) {
 
@@ -53,7 +54,8 @@ call_user_func(function () use ($profileFocus) {
              * And then render it
              */
             require_once __DIR__ . '/SECTIONS/treedata.php';
-        });
+
+        }, EVENT_ID . "node");
 
         /**
          * Display the hierarchy tree

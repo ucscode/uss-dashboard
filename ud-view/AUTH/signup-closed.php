@@ -24,4 +24,4 @@ Events::addListener('udash:auth.left', function () { ?>
 		</div>
 	</div>
 
-<?php }, 0);
+<?php }, EVENT_ID . "default");

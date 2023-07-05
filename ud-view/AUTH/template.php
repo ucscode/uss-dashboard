@@ -59,7 +59,7 @@ defined('UDASH_DIR') or die;
 				</div>
 			</div>
 		
-		<?php }, 0); ?>
+		<?php }, EVENT_ID . 'default'); ?>
 		
 		<?php Events::exec('udash:auth.left'); ?>
 		
