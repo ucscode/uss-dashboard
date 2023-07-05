@@ -4,7 +4,7 @@
  *
  * Note: This file is included before the "template.php" file is called
  *
- * The easiest way to modify content of this page is to add or override `auth:right` events
+ * The easiest way to modify content of this page is to add or override `udash:auth.right` events
  */
 
 defined('UDASH_DIR') or die;
@@ -12,20 +12,20 @@ defined('UDASH_DIR') or die;
 
 /** Create the sign in form */
 
-Events::addListener('auth:right', function () { ?>
+Events::addListener('udash:auth.right', function () { ?>
 
 	<form method='post' action="%{udash.ajax}" id='auth-form' data-type='ud-signin' enctype='multipart/form-data'>
 		<div class="row py-3">
 			<div class="col-sm-10 col-md-9 m-auto">
 				
-				<?php Events::addListener('auth:form//signin', function () { ?>
+				<?php Events::addListener('udash:auth/signin@form', function () { ?>
 					<div class="mb-3">
 						<input type="text" placeholder="Login detail" class='form-control' name='login' required pattern="^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$">
 					</div>
 				<?php }, EVENT_ID . 'login'); ?>
 				
 				
-				<?php Events::addListener('auth:form//signin', function () { ?>
+				<?php Events::addListener('udash:auth/signin@form', function () { ?>
 					<div class="mb-4">
 						<input type="password" placeholder="Password" class='form-control' name='password' required pattern='^.{4,}$'>
 					</div>
@@ -33,7 +33,7 @@ Events::addListener('auth:right', function () { ?>
 					
 					
 				<?php
-                    Events::addListener('auth:form//signin', function () {
+                    Events::addListener('udash:auth/signin@form', function () {
                         /*
                             Remember Me: The option was removed!
                         */
@@ -48,7 +48,7 @@ Events::addListener('auth:right', function () { ?>
 				<?php }, EVENT_ID . 'reconfirm'); ?>
 				
 				
-				<?php Events::addListener('auth:form//signin', function () { ?>
+				<?php Events::addListener('udash:auth/signin@form', function () { ?>
 					<div class="">
 						<button class="btn btn-primary w-100" type='submit'>
 							Sign In
@@ -57,7 +57,7 @@ Events::addListener('auth:right', function () { ?>
 				<?php }, EVENT_ID . 'submit'); ?>
 					
 					
-				<?php Events::exec('auth:form//signin'); ?>
+				<?php Events::exec('udash:auth/signin@form'); ?>
 				
 			</div>
 		</div>
@@ -67,7 +67,7 @@ Events::addListener('auth:right', function () { ?>
 <?php }, EVENT_ID . 'signin-form'); ?>
 	
 	
-<?php Events::addListener('auth:right', function () { ?>
+<?php Events::addListener('udash:auth.right', function () { ?>
 	<div class="mt-2">
 		<p class="text-sm text-center">
 			Forgot Password? 
@@ -78,7 +78,7 @@ Events::addListener('auth:right', function () { ?>
 
 
 <?php
-    Events::addListener('auth:right', function () {
+    Events::addListener('udash:auth.right', function () {
         $disabled = !empty(Uss::$global['options']->get('user:disable-signup'));
         if($disabled) {
             return;
