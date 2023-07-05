@@ -299,8 +299,15 @@ new class {
 	*/
 	
 	forwardClickEvent() {
-		$("[data-uss-trigger-click]").click(function() {
-			$( this.dataset.ussTriggerClick ).trigger( 'click' );
+		$("body").on("click", "[data-uss-trigger-click]", function() {
+			let element = $( this.dataset.ussTriggerClick ).get(0);
+			if( !element ) return;
+			let click = new MouseEvent('click', {
+				bubbles: true,
+				cancelable: true,
+				view: window
+			});
+			element.dispatchEvent(click);
 		});
 	}
 	
