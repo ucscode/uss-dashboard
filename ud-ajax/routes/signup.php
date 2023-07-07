@@ -197,10 +197,12 @@ Events::addListener('udash:ajax', function () {
      * Allow module processing;
      * Hint: Values should be gotten by reference
      */
-    Events::exec("udash:ajax/signup", $result ); 
+    Events::exec("udash:ajax/signup", $result); 
 
     # Print the output and end the script
     
-    Uss::stop( $result['status'], $result['message'], $result['redirect'] );
+    Uss::stop( $result['status'], $result['message'], [
+        "redirect" => $result['redirect'] 
+    ]);
     
 }, 'ajax-signup');
