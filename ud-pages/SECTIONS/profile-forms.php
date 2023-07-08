@@ -69,15 +69,15 @@ Events::addListener('udash:pages/profile', function () {
                                             ?>
 									</div>
 									
-									<input type='hidden' name='nonce' value='%{nonce}'>
-									<input type='hidden' name='route' value='profile'>
-									
 								<?php }, EVENT_ID . 'field_100'); 
 
 								# Add Field Button;
 
 								Events::addListener('udash:pages/profile.left@form', function() { ?>
 
+									<input type='hidden' name='nonce' value='%{nonce}'>
+									<input type='hidden' name='route' value='profile'>
+									
 									<button class='btn btn-success w-100 btn-class-1' type='submit'>
 										Update
 									</button>
