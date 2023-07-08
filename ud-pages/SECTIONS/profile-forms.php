@@ -16,7 +16,10 @@ Events::addListener('udash:pages/profile', function () {
 					<div class="profile-info">
 						<form method='POST' enctype='multipart/form-data'>
 							<fieldset>
-							
+
+								<?php 
+									Events::addListener('udash:pages/profile.left@form', function() {
+									?>
 								<div class="d-flex flex-wrap align-items-center mb-30">
 									<div class="profile-image mb-3">
 										<img src="%{user.avatar}" alt="image" class='img-thumbnail' id='profile-image'>
@@ -31,23 +34,25 @@ Events::addListener('udash:pages/profile', function () {
 									</div>
 								</div>
 								
-								<?php
-                                        /**
-                                         * Nested Event
-                                         */
-                                        Events::addListener('udash:pages/profile.left@form', function () {
+								<?php }, EVENT_ID . "field" );
 
-                                            /**
-                                             * Check if user is allowed to update email
-                                             */
-                                            $lockemail = !!Uss::$global['options']->get('user:lock-email');
+								/**
+								 * Nested Event
+								 */
+								Events::addListener('udash:pages/profile.left@form', function () {
 
-                                            /**
-                                             * Check if user has an unverified email available
-                                             */
-                                            $vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
+									/**
+									 * Check if user is allowed to update email
+									 */
+									$lockemail = !!Uss::$global['options']->get('user:lock-email');
 
-                                            ?>
+									/**
+									 * Check if user has an unverified email available
+									 */
+									$vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
+
+									?>
+
 									<div class="mb-4">
 										<label class='form-label --required'>Email</label>
 										<input type="email" placeholder="%{user.email}" class='form-control <?php if($lockemail) {
@@ -67,15 +72,24 @@ Events::addListener('udash:pages/profile', function () {
 									<input type='hidden' name='nonce' value='%{nonce}'>
 									<input type='hidden' name='route' value='profile'>
 									
-								<?php }, EVENT_ID . 'fields');
+								<?php }, EVENT_ID . 'field_100'); 
 
-    /**
-     * Allow module to add some extra input field!
-     */
-    Events::exec('udash:pages/profile.left@form');
-    ?>
-								
-								<button class='btn btn-success w-100 btn-class-1' type='submit'>Update</button>
+								# Add Field Button;
+
+								Events::addListener('udash:pages/profile.left@form', function() { ?>
+
+									<button class='btn btn-success w-100 btn-class-1' type='submit'>
+										Update
+									</button>
+
+								<?php }, EVENT_ID . "field_200" );
+
+									/**
+									 * Allow module to add some extra input field!
+									 */
+									Events::exec('udash:pages/profile.left@form');
+
+    							?>
 								
 							</fieldset>
 						</form>

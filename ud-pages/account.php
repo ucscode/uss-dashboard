@@ -130,17 +130,17 @@ Uss::route($profileFocus, function ($e) {
 					<?php }, EVENT_ID . 'affiliate_link');
 
         /**
-         * Include Account Template:
-         *
-         * - Profile Form
-         * - Password Form
-         */
-        require_once __DIR__ . '/SECTIONS/profile-forms.php';
+                     * Include Account Template:
+                     *
+                     * - Profile Form
+                     * - Password Form
+                     */
+                    require_once __DIR__ . '/SECTIONS/profile-forms.php';
 
-        /**
-         * Execute the profile page events
-         */
-        Events::exec('udash:pages/profile');
+                    /**
+                     * Execute the profile page events
+                     */
+                    Events::exec('udash:pages/profile');
 
         ?>
 					
