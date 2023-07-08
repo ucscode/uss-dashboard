@@ -6,6 +6,8 @@ defined("UDASH_AJAX") or die;
 
 Events::addListener('udash:ajax', function () {
 
+    $status = false;
+
     /**
      * Verify Password Update Security
      *
@@ -116,15 +118,22 @@ Events::addListener('udash:ajax', function () {
 
     };
 
-    /**
-     * Define the login page
-     */
-    $loginPage = Core::url(ROOT_DIR . '/' . UDASH_ROUTE);
+    # Define the login page
+    
+    $data = array( "redirect" => Core::url(ROOT_DIR . '/' . UDASH_ROUTE) );
 
+    $result = [
+        "status" => &$status,
+        "message" => &$message,
+        "data" => &$data,
+    ];
 
-    /**
-     * Print the output and end the script
-     */
-    Uss::stop($status ?? false, $message, array( 'redirect' => $loginPage ));
+    # Module Execution Phase
+
+    Events::exec("udash:ajax/reset-v2", $result);
+
+    # Print the output and end the script
+    
+    Uss::stop( $result['status'], $result['message'], $result['data'] );
 
 }, 'ajax-reset-v2');

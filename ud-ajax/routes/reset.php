@@ -6,6 +6,8 @@ defined("UDASH_AJAX") or die;
 
 Events::addListener('udash:ajax', function () {
 
+    $status = !($data = []);
+
     $prefix = DB_TABLE_PREFIX;
 
     $user = Udash::fetch_assoc("{$prefix}_users", $_POST['email'], 'email');
@@ -26,6 +28,18 @@ Events::addListener('udash:ajax', function () {
 
     };
 
-    Uss::stop($status ?? false, $message);
+    $result = [
+        "status" => &$status,
+        "message" => &$message,
+        "data" => &$data,
+    ];
+
+    # Module Execution Phase;
+    
+    Events::exec("udash:ajax/reset", $result);
+
+    # Send Output
+
+    Uss::stop($result['status'], $result['message'], $result['data']);
 
 }, 'ajax-reset');

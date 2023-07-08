@@ -44,12 +44,22 @@ Events::addListener('udash:ajax', function () {
      */
     $message = $sent ? 'Please confirm the link sent to your email' : 'Sorry! email confirmation link could not be sent';
 
+    $data = [];
+
+    $result = [
+        "status" => &$sent,
+        "message" => &$message,
+        "data" => &$data
+    ];
+
+    # Execution Phase
+
+    Events::exec("udash:ajax/vcode", $result);
 
     /**
      * Inform the client
      * Then end the script
      */
-
-    Uss::stop($sent, $message);
+    Uss::stop($result['status'], $result['message'], $result['data']);
 
 }, 'ajax-vcode');

@@ -51,9 +51,24 @@ Events::addListener('udash:ajax', function () {
 
     };
 
+    # Result Set
 
     $status = !empty($SQL) ? Uss::$global['mysqli']->query($SQL) : false;
+    $message = null;
+    $data = [];
 
-    Uss::stop($status);
+    $result = array(
+        "status" => &$status,
+        "message" => &$message,
+        "data" => &$data
+    );
+
+    # Execution Phase
+
+    Events::exec("udash:ajax/nx", $result);
+    
+    # Send Output;
+    
+    Uss::stop( $result['status'], $result['message'], $result['data'] );
 
 }, 'ajax-nx');
