@@ -90,7 +90,7 @@ if(DB_CONNECT) {
      * By adding a listener to this event, modules can perform necessary setup tasks and inject their custom features
      * into the dashboard, ensuring a smooth and cohesive user experience.
      */
-    Events::addListener('modules-loaded', function () {
+    Events::addListener('modules:loaded', function () {
 
         Events::exec('udash:ready');
 
