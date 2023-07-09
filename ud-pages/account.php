@@ -11,17 +11,15 @@ $profileFocus = UDASH_ROUTE . "/account";
 
 $account = Uss::$global['menu']->add('profile', array(
     'label' => "Account",
-    "icon" => "<i class='bi bi-person'></i>",
-    "active" => Uss::query(1) === 'account'
+    "icon" => "<i class='bi bi-person'></i>"
 ));
 
 
 // Create Profile Child Menu
 
-$account->add('profile', array(
+$profileMenu = $account->add('profile', array(
     "label" => "Profile",
-    "href" => Core::url(ROOT_DIR . "/{$profileFocus}"),
-    "active" => implode("/", Uss::query()) === $profileFocus
+    "href" => Core::url(ROOT_DIR . "/{$profileFocus}")
 ));
 
 
@@ -45,8 +43,11 @@ Events::addListener('udash:pages/account@header.userdrop', function () use ($acc
  * The code below will run only when the URL matches the `$profileFocus`
  * @see \Uss::route
  */
-Uss::route($profileFocus, function ($e) {
+Uss::route($profileFocus, function ($e) use($profileMenu) {
 
+    $profileMenu->set_attr('active', true);
+    $profileMenu->parent_menu->set_attr('active', true);
+    
     /**
      * CREATE NONCE KEY
      * This is to prevent submission from unreliable source
