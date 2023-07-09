@@ -45,9 +45,13 @@ $defaultPagesExpr = array(
 // ------------ [{ Add pages to configuration }] -----------
 
 foreach($defaultPagesExpr as $key => $value) {
+
     if(!Udash::config($key)) {
+        
         Udash::config($key, $value);
-    }
+
+    };
+
 };
 
 

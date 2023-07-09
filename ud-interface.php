@@ -57,7 +57,6 @@ Events::addListener('udash:ready', function () {
 
 }, EVENT_ID);
 
-
 /**
  * Authenticate User
  *

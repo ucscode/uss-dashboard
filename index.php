@@ -92,8 +92,6 @@ if(DB_CONNECT) {
      */
     Events::addListener('modules:loaded', function () {
 
-        Events::exec('udash:ready');
-
         /**
          * Finalizing User Synthetics Dashboard
          *
@@ -103,8 +101,18 @@ if(DB_CONNECT) {
          * and ready to be displayed to the user. This finalization step is crucial for delivering a polished and seamless
          * user experience within the uss dashboard.
          */
-        require UDASH_DIR . '/ud-final.php';
+        Events::addListener('udash:ready', function() {
+            
+            # Process last event
 
+            require UDASH_DIR . '/ud-final.php';
+
+        }, 10000);
+        
+
+        # Execute all dashboard events;
+
+        Events::exec('udash:ready');
 
         /**
          * Avoid adding a listener to the `//udash//view` event
