@@ -619,13 +619,21 @@ abstract class UdashAbstract
 
         # Change File Permission
 
-        chmod($file['tmp_name'], 0775);
+        //chmod($file['tmp_name'], 0777);
 
         # Move the uploaded file
         
         $moved = move_uploaded_file($file['tmp_name'], $pathdata['absolute']);
-        
-        if($moved) return $pathdata['relative'];
+
+        if($moved) {
+            
+            # Change File Permission;
+
+            chmod($pathdata['absolute'], 0776);
+
+            return $pathdata['relative'];
+
+        };
 
     }
 
