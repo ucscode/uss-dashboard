@@ -30,7 +30,7 @@ $profileMenu = $account->add('profile', array(
 
 Events::addListener('udash:pages/account@header.userdrop', function () use ($account) { ?>
 	<li>
-		<a href="<?php echo $account->get('profile')->get_attr('href'); ?>">
+		<a href="<?php echo $account->get('profile')->getAttr('href'); ?>">
 			<i class="bi bi-person"></i> View Profile
 		</a>
 	</li>
@@ -45,8 +45,8 @@ Events::addListener('udash:pages/account@header.userdrop', function () use ($acc
  */
 Uss::route($profileFocus, function ($e) use($profileMenu) {
 
-    $profileMenu->set_attr('active', true);
-    $profileMenu->parent_menu->set_attr('active', true);
+    $profileMenu->setAttr('active', true);
+    $profileMenu->parentMenu->setAttr('active', true);
     
     /**
      * CREATE NONCE KEY

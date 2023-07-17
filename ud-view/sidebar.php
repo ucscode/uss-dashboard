@@ -40,7 +40,7 @@
                          * 	  - level 4 ( uss dashboard will ignore this menu )
                          * ```
                          */
-                        if(empty($menu->get_attr('label')) || $menu->level > $limit) {
+                        if(empty($menu->getAttr('label')) || $menu->level > $limit) {
                             return;
                         }
 
@@ -50,7 +50,7 @@
                          */
                         preg_match_all("/\w+/i", $menu->name, $match);
                         $menu_id = implode('-', $match[0]);
-                        $menu_id = $menu->get_attr('id') ?? "menufy" . ($menu->level ?: null) . "-{$menu_id}";
+                        $menu_id = $menu->getAttr('id') ?? "menufy" . ($menu->level ?: null) . "-{$menu_id}";
 
                         /**
                          * For <li/>
@@ -71,7 +71,7 @@
                          * Neither Menufy Object nor uss dashboard system automatically detects which menu is active
                          * The `active` attribute need to be specified with a boolean value `true` to indicate that the menu is active
                          */
-                        $active = !empty($menu->get_attr('active'));
+                        $active = !empty($menu->getAttr('active'));
 
                         if($active) {
                             $li_attr['class'] .= ' active';
@@ -122,8 +122,8 @@
                         } else {
 
                             $anchor_attr = array(
-                                'href' => $menu->get_attr('href') ?? 'javascript:void(0)',
-                                'target' => $menu->get_attr('target') ?? '_self'
+                                'href' => $menu->getAttr('href') ?? 'javascript:void(0)',
+                                'target' => $menu->getAttr('target') ?? '_self'
                             );
 
                         };
@@ -131,7 +131,7 @@
                         /**
                          * Append Custom Attributes
                          */
-                        $custom = $menu->get_attr('custom');
+                        $custom = $menu->getAttr('custom');
                         if(!is_array($custom)) {
                             $custom = [];
                         }
@@ -172,9 +172,9 @@
                                      */
 
                                     ?>
-							<span class="icon"><?php echo $menu->get_attr('icon'); ?></span>
+							<span class="icon"><?php echo $menu->getAttr('icon'); ?></span>
 						<?php endif; ?>
-						<span class="text"><?php echo $menu->get_attr('label'); ?></span>
+						<span class="text"><?php echo $menu->getAttr('label'); ?></span>
 					</a>
 					
 					<?php
@@ -203,7 +203,7 @@
 				</li>
 				
 				<?php
-                    if(!empty($menu->get_attr('hr'))):
+                    if(!empty($menu->getAttr('hr'))):
                         /**
                          * Divider
                          *
