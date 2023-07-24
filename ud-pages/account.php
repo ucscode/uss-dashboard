@@ -11,7 +11,8 @@ $profileFocus = UDASH_ROUTE . "/account";
 
 $account = Uss::$global['menu']->add('profile', array(
     'label' => "Account",
-    "icon" => "<i class='bi bi-person'></i>"
+    "icon" => "<i class='bi bi-person'></i>",
+    "order" => 1
 ));
 
 
