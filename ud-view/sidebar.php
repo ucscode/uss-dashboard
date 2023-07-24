@@ -24,7 +24,9 @@
                     $children = $menufy->child;
 
                     usort($children, function($a, $b) {
-                        return ( (float)$a->getAttr('order') <=> (float)$b->getAttr('order') );
+                        $orderA = (float)($a->getAttr('order') ?? 1);
+                        $orderB = (float)($b->getAttr('order') ?? 1);
+                        return ( $orderA <=> $orderB );
                     });
 
                     foreach($children as $menu):
