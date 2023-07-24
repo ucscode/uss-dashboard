@@ -13,7 +13,8 @@ Uss::$global['menu']->add('homepage', array(
     'label' => "Dashboard",
     "icon" => "<i class='bi bi-speedometer2'></i>",
     'href' => Core::url(ROOT_DIR . "/" . UDASH_ROUTE),
-    'active' => implode("/", Uss::query()) === UDASH_ROUTE
+    'active' => implode("/", Uss::query()) === UDASH_ROUTE,
+    'order' => 0
 ));
 
 

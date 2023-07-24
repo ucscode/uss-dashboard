@@ -21,7 +21,13 @@
                  */
                 $renderMenu = function ($menufy, $renderMenu) {
 
-                    foreach($menufy->child as $menu):
+                    $children = $menufy->child;
+
+                    usort($children, function($a, $b) {
+                        return ( (float)$a->getAttr('order') <=> (float)$b->getAttr('order') );
+                    });
+
+                    foreach($children as $menu):
 
                         /**
                          * @var $menu - A child menufy object
@@ -226,10 +232,10 @@
                     endforeach;
 
                 }; // end menu;
+                
+                $renderMenu(Uss::$global['menu'], $renderMenu);
 
-$renderMenu(Uss::$global['menu'], $renderMenu);
-
-?>
+            ?>
 			
 		</ul>
 	</nav>
