@@ -8,6 +8,8 @@ class DOMTablet extends DOMTableWidget
 
     private $wrapper;
 
+    private $paginate = true;
+
     /**
      * Constructor
      *
@@ -107,6 +109,13 @@ class DOMTablet extends DOMTableWidget
         $this->wrapper->parentNode->removeChild($this->wrapper);
         $this->wrapper = null;
 
+    }
+
+    /**
+     *
+     */
+    public function paginate(bool $value) {
+        $this->paginate = $value;
     }
 
     /**
@@ -230,7 +239,9 @@ class DOMTablet extends DOMTableWidget
         /**
          * Create pagination to move between next and previous page
          */
-        $this->createNav($this->pagination(1));
+        if( $this->paginate ) {
+            $this->createNav($this->pagination(1));
+        };
 
         /**
          * Get the HTML String of the table
