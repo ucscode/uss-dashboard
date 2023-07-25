@@ -767,10 +767,12 @@ abstract class UdashAbstract
      * @return null
      *
      */
-    public static function empty_state($var = 'Try searching with a different filter')
+    public static function empty_state($var = 'Try searching with a different filter', string $title = 'No result found')
     { ?>
 		<div class='text-center py-4 ud-empty-state container-fluid'>
-			<h2 class='mb-3 fw-light text-uppercase'>No Result Found</h2>
+			<h2 class='mb-3 fw-light text-uppercase'>
+                <?php echo $title; ?>
+            </h2>
 			<img src='<?php echo Core::url(self::ASSETS_DIR . "/images/empty-state.webp"); ?>' width='400px' class='img-fluid user-select-none'>
 			<div class='py-4'>
 				<?php
