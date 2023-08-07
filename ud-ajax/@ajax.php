@@ -96,7 +96,6 @@ foreach($authFiles as $route => $filename) {
     require_once __DIR__ . "/routes/{$filename}";
 };
 
-
 /**
  * Execute the events
  */
