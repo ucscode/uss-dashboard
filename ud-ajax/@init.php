@@ -33,6 +33,34 @@ if(empty($_POST['route']) || !is_scalar($_POST['route'])) {
  * Only event executions made through `udash:ajax` listener can have printable content
  * The event should however be called globally and not within a focus expression
  */
+register_shutdown_function(function() {
+
+    $illegalExit = function() {
+        if( !defined("UAJAX_LOADED") ) {
+            echo "The script was illegally terminated by a module using either die() or exit() function";
+            ob_end_flush();
+        };
+    };
+
+    $lastError = error_get_last();
+
+    if ($lastError !== null) {
+        
+        $errorType = $lastError['type'];
+
+        $isFatalError = $errorType === E_ERROR || $errorType === E_PARSE || $errorType === E_CORE_ERROR || $errorType === E_CORE_WARNING || $errorType === E_COMPILE_ERROR || $errorType === E_COMPILE_WARNING;
+
+        if ( $isFatalError ) {
+            return;
+        } else {
+            $illegalExit();
+        }
+
+    } else {
+        $illegalExit();
+    }
+    
+});
 
 # Output Buffering!
 if(!ob_get_level()) {
@@ -45,7 +73,12 @@ try {
     # Load the Configuration file & Modules
     require_once realpath(__DIR__ . '/../../../') . "/uss-core/config.php";
 
+    # Ajax Loaded
+    define("UAJAX_LOADED", TRUE);
+
 } catch(Exception $exception) {
+    
+    define("UAJAX_LOADED", TRUE);
 
     # Re-Throw the exception 
     while(ob_get_level()) {
