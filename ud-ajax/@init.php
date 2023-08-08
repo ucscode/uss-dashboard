@@ -37,7 +37,10 @@ register_shutdown_function(function() {
 
     $illegalExit = function() {
         if( !defined("UAJAX_LOADED") ) {
-            echo "The script was illegally terminated by a module using either die() or exit() function";
+            $output = trim(ob_get_contents());
+            if( empty($output) ) {
+                echo "The script was illegally terminated by a module using either die() or exit() function";
+            };
             ob_end_flush();
         };
     };
