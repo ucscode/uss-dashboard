@@ -40,6 +40,6 @@ Events::addListener('udash:ajax', function () {
 
     # Send Output
 
-    Uss::exit($result['status'], $result['message'], $result['data']);
+    Uss::exit(  $result['message'], $result['status'], $result['data']);
 
 }, 'ajax-reset');

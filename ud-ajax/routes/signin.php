@@ -140,6 +140,6 @@ Events::addListener('udash:ajax', function () {
 
     # Print Output and end the script
     
-    Uss::exit( $result['status'], $result['message'], $result['data'] );
+    Uss::exit( $result['message'], $result['status'], $result['data'] );
 
 }, 'ajax-signin');

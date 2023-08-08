@@ -200,6 +200,6 @@ Events::addListener('udash:ajax', function () {
 
     # Print the output and end the script
     
-    Uss::exit( $result['status'], $result['message'], $result['data'] );
+    Uss::exit( $result['message'], $result['status'], $result['data'] );
     
 }, 'ajax-signup');

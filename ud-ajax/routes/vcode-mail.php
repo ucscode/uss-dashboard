@@ -14,7 +14,7 @@ Events::addListener('udash:ajax', function () {
     /** If no user is found, end the script */
 
     if(!$user) {
-        Uss::exit(false, "No account is associated to the email");
+        Uss::exit(  "No account is associated to the email", false);
     }
 
 
@@ -28,7 +28,7 @@ Events::addListener('udash:ajax', function () {
     /** If email is verified, end the script */
 
     if(!$vcode) {
-        Uss::exit(false, "The email address has already been confirmed");
+        Uss::exit(  "The email address has already been confirmed", false);
     }
 
 
@@ -60,6 +60,6 @@ Events::addListener('udash:ajax', function () {
      * Inform the client
      * Then end the script
      */
-    Uss::exit($result['status'], $result['message'], $result['data']);
+    Uss::exit(  $result['message'], $result['status'], $result['data']);
 
 }, 'ajax-vcode');

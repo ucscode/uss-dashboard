@@ -10,7 +10,7 @@ Events::addListener('udash:ajax', function () {
     $trusted = Uss::nonce($_SESSION['uss_session_id'], $_POST['nonce'] ?? null);
 
     if(!$trusted) {
-        Uss::exit(false, 'The request is not from a trusted source');
+        Uss::exit(  'The request is not from a trusted source', false);
     }
 
     /**
@@ -69,6 +69,6 @@ Events::addListener('udash:ajax', function () {
     
     # Send Output;
     
-    Uss::exit( $result['status'], $result['message'], $result['data'] );
+    Uss::exit( $result['message'], $result['status'], $result['data'] );
 
 }, 'ajax-nx');
