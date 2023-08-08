@@ -16,7 +16,7 @@ Events::addListener('udash:ajax', function () {
      */
 
     if(empty($_POST['passport']) || empty($_POST['nonce'])) {
-        Uss::stop(false, "Suspicious Request");
+        Uss::exit(false, "Suspicious Request");
     }
 
 
@@ -134,6 +134,6 @@ Events::addListener('udash:ajax', function () {
 
     # Print the output and end the script
     
-    Uss::stop( $result['status'], $result['message'], $result['data'] );
+    Uss::exit( $result['status'], $result['message'], $result['data'] );
 
 }, 'ajax-reset-v2');
