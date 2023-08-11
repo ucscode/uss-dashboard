@@ -165,7 +165,8 @@ $button = function (array $attrs) use ($notice) {
                      * Tags like <br> will be encoded to `&lt;br&gt;`
                      */
                     $markdown = call_user_func(function () use ($notification) {
-                        $text = htmlspecialchars(trim($notification['message']));
+                        $message = trim($notification['message']);
+                        $text = htmlspecialchars($message);
                         return (new Parsedown())->text($text);
                     });
 

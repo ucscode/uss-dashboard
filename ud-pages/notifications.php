@@ -109,7 +109,8 @@ Uss::route(Udash::config('page:notification'), function () {
                                                          */
 
                                                         $markdown = call_user_func(function () use ($notification) {
-                                                            $message = htmlspecialchars(trim($notification['message']));
+                                                            $message = trim($notification['message']);
+                                                            $message = htmlentities($message);
                                                             return (new Parsedown())->text($message);
                                                         });
 
