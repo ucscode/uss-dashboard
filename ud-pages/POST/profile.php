@@ -15,18 +15,18 @@ call_user_func(function () {
     /**
      * VERIFY NONCE
      */
-    if(!Uss::nonce('profile', $_POST['nonce'])) {
+    if(!Uss::instance()->nonce('profile', $_POST['nonce'])) {
 
         /**
          * IN-SECURITY MESSAGE
          */
-        Uss::console('@alert', "<i class='bi bi-shield-slash-fill me-1'></i> Security check failed");
+        Uss::instance()->console('@alert', "<i class='bi bi-shield-slash-fill me-1'></i> Security check failed");
     } else {
 
         /**
          * PROCESS PROFILE DETAIL
          */
-        Events::addListener('udash:pages/profile.submit', function () {
+        Events::instance()->addListener('udash:pages/profile.submit', function () {
 
             if($_POST['route'] !== 'profile') {
                 return;
@@ -179,7 +179,7 @@ call_user_func(function () {
             /**
              * SHOW MESSAGE IN MODAL BOX
              */
-            Uss::console('@alert', $message);
+            Uss::instance()->console('@alert', $message);
 
         }, EVENT_ID . 'profile');
 
@@ -187,7 +187,7 @@ call_user_func(function () {
         /**
          * UPDATE USER PASSWORD
          */
-        Events::addListener('udash:pages/profile.submit', function () {
+        Events::instance()->addListener('udash:pages/profile.submit', function () {
 
             if($_POST['route'] !== 'password') {
                 return;
@@ -248,7 +248,7 @@ call_user_func(function () {
             /**
              * SHOW MESSAGE IN MODAL BOX
              */
-            Uss::console('@alert', $message);
+            Uss::instance()->console('@alert', $message);
 
         }, EVENT_ID . 'password');
 
@@ -257,7 +257,7 @@ call_user_func(function () {
          * Event Execution
          * Requires `route` index in `$_POST` variable to function
          */
-        Events::exec('udash:pages/profile.submit', null, null, function () {
+        Events::instance()->exec('udash:pages/profile.submit', null, null, function () {
             return !empty($_POST['route']);
         });
 

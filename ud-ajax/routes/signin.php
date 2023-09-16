@@ -7,12 +7,12 @@ defined('UDASH_AJAX') or die;
  * Add new ajax event
  */
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     $status = !!($user = null);
-    
+
     # Database prefix
-    
+
     $prefix = DB_TABLE_PREFIX;
 
     /**
@@ -136,10 +136,10 @@ Events::addListener('udash:ajax', function () {
 
     # Allow modules to make changes;
 
-    Events::exec("udash:ajax/signin", $result);
+    Events::instance()->exec("udash:ajax/signin", $result);
 
     # Print Output and end the script
-    
-    Uss::exit( $result['message'], $result['status'], $result['data'] );
+
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
 
 }, 'ajax-signin');

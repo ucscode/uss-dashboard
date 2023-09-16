@@ -1,0 +1,48 @@
+{% extends '@Udash/security/layout.html.twig' %}
+
+{% block main_right_form_element %}
+    
+    {# 
+        The form rendered in this page was build by creating a "UdashRegisterForm" Class which extends UssForm
+        
+        An instance of the "UdashRegisterForm" can be gotten by calling
+
+            Udash::instance()->config('forms:login'); 
+
+        From there, you can modify the form. 
+        But if you want a totally new custom from, there are 3 options. You can either
+
+        1. Extend the "UssForm" class and pass an instance of the new class to config. For example
+
+            class MyCustomForm extends UssForm {
+                ... 
+            }
+
+            Udash::instance()->config('forms:login', new MyCustomForm());
+
+        2. Extend the "UdashRegisterForm" and change only the required methods, then pass the instance to config
+
+            class MyCustomForm extends UssLoginForm {
+                ...
+            }
+
+            Udash::instance()->config('forms:login', new MyCustomForm());
+
+        3. Change the template that renders the form
+
+            Udash::instance()->config('templates:login', '@namespace/path/to/new/template.html.twig')
+
+    #}
+
+    {{ form.getHTML(1)|raw }} {# form is an instance of UdashRegisterForm #}
+
+	<div class='mt-4'>
+        <p class="text-sm text-medium text-dark text-center">
+            Already have an account? 
+            <a href="{{ form.getRouteUrl('pages:index') }}" class='text-nowrap'>
+                Sign In
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

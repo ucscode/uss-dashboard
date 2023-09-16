@@ -12,7 +12,7 @@ $prefix = DB_TABLE_PREFIX;
  * Get the `usercode` present in the Query string
  * If none exists, then we use that of the current user
  */
-$usercode = Uss::query(3);
+$usercode = Uss::instance()->query(3);
 if(empty($usercode)) {
     $usercode = $user['usercode'];
 }

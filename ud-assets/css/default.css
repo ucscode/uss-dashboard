@@ -74,10 +74,6 @@
 	background-size: cover;
 }
 
-.auth-row {
-	min-height: 100vh;
-}
-
 .auth-cover-wrapper::before {
 	content: '';
 	position: absolute;
@@ -85,7 +81,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, .75);
     z-index: 0;
 }
 
@@ -274,7 +270,7 @@ fieldset:disabled textarea {
 @media (min-width: 992px) {
 	
 	.auth-cover-wrapper .auth-cover {
-		position: fixed;
+		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
 	}

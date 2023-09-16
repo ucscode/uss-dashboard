@@ -4,7 +4,7 @@
 defined('UDASH_AJAX') or die;
 
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     /**
      * Get the user by email
@@ -14,7 +14,7 @@ Events::addListener('udash:ajax', function () {
     /** If no user is found, end the script */
 
     if(!$user) {
-        Uss::exit(  "No account is associated to the email", false);
+        Uss::instance()->exit("No account is associated to the email", false);
     }
 
 
@@ -28,7 +28,7 @@ Events::addListener('udash:ajax', function () {
     /** If email is verified, end the script */
 
     if(!$vcode) {
-        Uss::exit(  "The email address has already been confirmed", false);
+        Uss::instance()->exit("The email address has already been confirmed", false);
     }
 
 
@@ -54,12 +54,12 @@ Events::addListener('udash:ajax', function () {
 
     # Execution Phase
 
-    Events::exec("udash:ajax/vcode", $result);
+    Events::instance()->exec("udash:ajax/vcode", $result);
 
     /**
      * Inform the client
      * Then end the script
      */
-    Uss::exit(  $result['message'], $result['status'], $result['data']);
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
 
 }, 'ajax-vcode');

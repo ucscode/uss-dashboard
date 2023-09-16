@@ -5,7 +5,7 @@ defined('UDASH_DIR') or die;
 /**
  * DISPLAY ACCOUNT FORM
  */
-Events::addListener('udash:pages/profile', function () {
+Events::instance()->addListener('udash:pages/profile', function () {
 
     ?>
 	<div class="%{profile.col-left}">
@@ -17,9 +17,9 @@ Events::addListener('udash:pages/profile', function () {
 						<form method='POST' enctype='multipart/form-data'>
 							<fieldset>
 
-								<?php 
-									Events::addListener('udash:pages/profile.left@form', function() {
-									?>
+								<?php
+                                    Events::instance()->addListener('udash:pages/profile.left@form', function () {
+                                        ?>
 								<div class="d-flex flex-wrap align-items-center mb-30">
 									<div class="profile-image mb-3">
 										<img src="%{user.avatar}" alt="image" class='img-thumbnail' id='profile-image'>
@@ -34,24 +34,24 @@ Events::addListener('udash:pages/profile', function () {
 									</div>
 								</div>
 								
-								<?php }, EVENT_ID . "field" );
+								<?php }, EVENT_ID . "field");
 
-								/**
-								 * Nested Event
-								 */
-								Events::addListener('udash:pages/profile.left@form', function () {
+    /**
+     * Nested Event
+     */
+    Events::instance()->addListener('udash:pages/profile.left@form', function () {
 
-									/**
-									 * Check if user is allowed to update email
-									 */
-									$lockemail = !!Uss::$global['options']->get('user:lock-email');
+        /**
+         * Check if user is allowed to update email
+         */
+        $lockemail = !!Uss::$global['options']->get('user:lock-email');
 
-									/**
-									 * Check if user has an unverified email available
-									 */
-									$vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
+        /**
+         * Check if user has an unverified email available
+         */
+        $vcode = Uss::$global['usermeta']->get('v-code:update', Uss::$global['user']['id']);
 
-									?>
+        ?>
 
 									<div class="mb-4">
 										<label class='form-label --required'>Email</label>
@@ -60,20 +60,20 @@ Events::addListener('udash:pages/profile', function () {
 										} ?>' value="%{user.email}" <?php echo !$lockemail ? "name='email'" : "disabled"; ?> required>
 										
 										<?php
-                                            if($vcode) {
-                                                $email = Uss::$global['usermeta']->get('v-code:email', Uss::$global['user']['id']);
-                                                echo "<div class='mt-2 text-center text-muted fs-12px'>
+										    if($vcode) {
+										        $email = Uss::$global['usermeta']->get('v-code:email', Uss::$global['user']['id']);
+										        echo "<div class='mt-2 text-center text-muted fs-12px'>
 													Please click the link sent to <span class='text-warning'>{$email}</span> to update your email
 												</div>";
-                                            }
-                                            ?>
+										    }
+        ?>
 									</div>
 									
-								<?php }, EVENT_ID . 'field_100'); 
+								<?php }, EVENT_ID . 'field_100');
 
-								# Add Field Button;
+    # Add Field Button;
 
-								Events::addListener('udash:pages/profile.left@form', function() { ?>
+    Events::instance()->addListener('udash:pages/profile.left@form', function () { ?>
 
 									<input type='hidden' name='nonce' value='%{nonce}'>
 									<input type='hidden' name='route' value='profile'>
@@ -82,14 +82,14 @@ Events::addListener('udash:pages/profile', function () {
 										Update
 									</button>
 
-								<?php }, EVENT_ID . "field_200" );
+								<?php }, EVENT_ID . "field_200");
 
-									/**
-									 * Allow module to add some extra input field!
-									 */
-									Events::exec('udash:pages/profile.left@form');
+    /**
+     * Allow module to add some extra input field!
+     */
+    Events::instance()->exec('udash:pages/profile.left@form');
 
-    							?>
+    ?>
 								
 							</fieldset>
 						</form>
@@ -110,7 +110,7 @@ Events::addListener('udash:pages/profile', function () {
 /**
  * DISPLAY PASSWORD FORM
  */
-Events::addListener('udash:pages/profile', function () {
+Events::instance()->addListener('udash:pages/profile', function () {
     ?>
 
 <div class="%{profile.col-right}">

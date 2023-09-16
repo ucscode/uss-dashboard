@@ -2,15 +2,15 @@
 
 defined('UDASH_AJAX') or die;
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     /**
      * Test request nonce
      */
-    $trusted = Uss::nonce($_SESSION['uss_session_id'], $_POST['nonce'] ?? null);
+    $trusted = Uss::instance()->nonce($_SESSION['uss_session_id'], $_POST['nonce'] ?? null);
 
     if(!$trusted) {
-        Uss::exit(  'The request is not from a trusted source', false);
+        Uss::instance()->exit('The request is not from a trusted source', false);
     }
 
     /**
@@ -65,10 +65,10 @@ Events::addListener('udash:ajax', function () {
 
     # Execution Phase
 
-    Events::exec("udash:ajax/nx", $result);
-    
+    Events::instance()->exec("udash:ajax/nx", $result);
+
     # Send Output;
-    
-    Uss::exit( $result['message'], $result['status'], $result['data'] );
+
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
 
 }, 'ajax-nx');

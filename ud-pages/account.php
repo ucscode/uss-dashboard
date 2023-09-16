@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_DIR') or die;
+defined('Udash::DIR') or die;
 
 // Declare The Focus Path For Account Page
 
@@ -29,33 +29,33 @@ $profileMenu = $account->add('profile', array(
  * The "userdrop" is located at the TOP-RIGHT of the dashboard
  */
 
-Events::addListener('udash:pages/account@header.userdrop', function () use ($account) { ?>
+Events::instance()->addListener('udash:pages/account@header.userdrop', function () use ($account) { ?>
 	<li>
 		<a href="<?php echo $account->get('profile')->getAttr('href'); ?>">
 			<i class="bi bi-person"></i> View Profile
 		</a>
 	</li>
-<?php }, EVENT_ID );
+<?php }, EVENT_ID);
 
 
 /**
  * Focus on the profile path
  *
  * The code below will run only when the URL matches the `$profileFocus`
- * @see \Uss::route
+ * @see \Uss::instance()->route
  */
-Uss::route($profileFocus, function ($e) use($profileMenu) {
+Uss::instance()->route($profileFocus, function ($e) use ($profileMenu) {
 
     $profileMenu->setAttr('active', true);
     $profileMenu->parentMenu->setAttr('active', true);
-    
+
     /**
      * CREATE NONCE KEY
      * This is to prevent submission from unreliable source
      */
-    $nonce = Uss::nonce('profile');
+    $nonce = Uss::instance()->nonce('profile');
 
-    Uss::tag('nonce', $nonce);
+    Uss::instance()->tag('nonce', $nonce);
 
 
     /**
@@ -81,18 +81,18 @@ Uss::route($profileFocus, function ($e) use($profileMenu) {
          * Rather than re-writing the same PHP variables over again
          */
         foreach(Uss::$global['user'] as $key => $value) {
-            Uss::tag("user.{$key}", $value, false);
+            Uss::instance()->tag("user.{$key}", $value, false);
         }
 
         /**
          * Load additional tags
          * @param 3 == false; Tag is editable
          */
-        Uss::tag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
-        Uss::tag('user.avatar', Udash::user_avatar(Uss::$global['user']['id']), false);
+        Uss::instance()->tag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
+        Uss::instance()->tag('user.avatar', Udash::user_avatar(Uss::$global['user']['id']), false);
 
-        Uss::tag('profile.col-left', 'col-lg-5', false);
-        Uss::tag('profile.col-right', 'col-lg-7', false);
+        Uss::instance()->tag('profile.col-left', 'col-lg-5', false);
+        Uss::instance()->tag('profile.col-right', 'col-lg-7', false);
 
         ?>
 		
@@ -104,7 +104,7 @@ Uss::route($profileFocus, function ($e) use($profileMenu) {
                             /**
                              * DISPLAY AFFILIATION LINK
                              */
-                            Events::addListener('udash:pages/profile', function () {
+                            Events::instance()->addListener('udash:pages/profile', function () {
 
                                 if(!Uss::$global['options']->get('user:affiliation')) {
                                     return;
@@ -137,12 +137,12 @@ Uss::route($profileFocus, function ($e) use($profileMenu) {
                      * - Profile Form
                      * - Password Form
                      */
-                    require_once __DIR__ . '/SECTIONS/profile-forms.php';
+        require_once __DIR__ . '/SECTIONS/profile-forms.php';
 
-                    /**
-                     * Execute the profile page events
-                     */
-                    Events::exec('udash:pages/profile');
+        /**
+         * Execute the profile page events
+         */
+        Events::instance()->exec('udash:pages/profile');
 
         ?>
 					
@@ -152,4 +152,4 @@ Uss::route($profileFocus, function ($e) use($profileMenu) {
 		
 	<?php }); // Udash::view
 
-}, null); // Uss::route
+}, null); // Uss::instance()->route

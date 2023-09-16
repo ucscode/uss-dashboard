@@ -5,7 +5,7 @@ defined('UDASH_DIR') or die;
 
 // ----------------- [{ signout }] --------------------
 
-Uss::route(Udash::config('page:signout'), function () {
+Uss::instance()->route(Udash::config('page:signout'), function () {
 
     /**
      * Destroy Login Session;

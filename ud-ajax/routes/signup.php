@@ -5,29 +5,29 @@ defined("UDASH_AJAX") or die;
 
 # ------------------------------------------
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     $status = false;
     $userdata = null;
 
     # Trim all character
 
-    array_walk_recursive($_POST, function(&$value) {
+    array_walk_recursive($_POST, function (&$value) {
         $value = trim($value);
     });
 
     # The table prefix
-    
+
     $prefix = DB_TABLE_PREFIX;
 
 
-    if( !preg_match(Core::regex('email'), $_POST['email']) ) {
-        
+    if(!preg_match(Core::regex('email'), $_POST['email'])) {
+
         # Check if the email address is valid
 
         $message = "The email address is not valid";
 
-    } elseif( isset($_POST['username']) && !preg_match("/^\w+$/i", $_POST['username']) ) {
+    } elseif(isset($_POST['username']) && !preg_match("/^\w+$/i", $_POST['username'])) {
 
         # Check if username is valid
 
@@ -42,13 +42,13 @@ Events::addListener('udash:ajax', function () {
     } else {
 
         # Check if the email address already exists;
-        
+
         $user = Udash::fetch_assoc("{$prefix}_users", $_POST['email'], 'email');
 
         if($user) {
-            
+
             # If a user if found, then, the email exists
-            
+
             $message = "The email already exists";
 
         } else {
@@ -62,7 +62,7 @@ Events::addListener('udash:ajax', function () {
              * If username is set & A user is found
              * Then, the username exists
              */
-            if( !empty($username) && $user ) {
+            if(!empty($username) && $user) {
 
                 $message = "The username already exists";
 
@@ -78,9 +78,13 @@ Events::addListener('udash:ajax', function () {
 
                     $parent = Udash::fetch_assoc("{$prefix}_users", $_POST['parent']);
 
-                    if($parent)  $parent = $parent['id'];
-                    
-                } else $parent = null;
+                    if($parent) {
+                        $parent = $parent['id'];
+                    }
+
+                } else {
+                    $parent = null;
+                }
 
                 /**
                  * Great!
@@ -109,7 +113,7 @@ Events::addListener('udash:ajax', function () {
                 $userdata['id'] = Uss::$global['mysqli']->insert_id;
 
 
-                # If status == true 
+                # If status == true
 
                 if($status) {
 
@@ -120,13 +124,13 @@ Events::addListener('udash:ajax', function () {
                     $assigned = Roles::user($userdata['id'])::assign($defaultRole);
 
                     # Clear Access Token!
-                    
+
                     Udash::setAccessToken(null);
 
                     # The success message
-                    
+
                     $message = "<i class='bi bi-check-circle text-success me-1'></i> Your registration was successful";
-                    
+
 
                     # Send verification email
 
@@ -181,8 +185,8 @@ Events::addListener('udash:ajax', function () {
     }; // all conditions are met
 
 
-    $data = [ 
-        "redirect" => Udash::config('signup:redirect') ?? Core::url(ROOT_DIR . '/' . UDASH_ROUTE) 
+    $data = [
+        "redirect" => Udash::config('signup:redirect') ?? Core::url(ROOT_DIR . '/' . UDASH_ROUTE)
     ];
 
     $result = [
@@ -196,10 +200,10 @@ Events::addListener('udash:ajax', function () {
      * After the signup process, this event will be executed.
      * Thus, allowing modules to make changes based on their specific need
      */
-    Events::exec("udash:ajax/signup", $result); 
+    Events::instance()->exec("udash:ajax/signup", $result);
 
     # Print the output and end the script
-    
-    Uss::exit( $result['message'], $result['status'], $result['data'] );
-    
+
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
+
 }, 'ajax-signup');

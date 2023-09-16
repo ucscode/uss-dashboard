@@ -4,7 +4,7 @@
 defined("UDASH_AJAX") or die;
 
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     $status = false;
 
@@ -16,7 +16,7 @@ Events::addListener('udash:ajax', function () {
      */
 
     if(empty($_POST['passport']) || empty($_POST['nonce'])) {
-        Uss::exit(  "Suspicious Request", false);
+        Uss::instance()->exit("Suspicious Request", false);
     }
 
 
@@ -40,7 +40,7 @@ Events::addListener('udash:ajax', function () {
          * Let's confirm the nonce
          * This ensures that the end-user is from a reliable source
          */
-        if(!Uss::nonce($_SESSION['resetter'], $_POST['nonce'])) {
+        if(!Uss::instance()->nonce($_SESSION['resetter'], $_POST['nonce'])) {
 
             $message = "The request could not be completed! <br> Please contact the support team";
 
@@ -119,7 +119,7 @@ Events::addListener('udash:ajax', function () {
     };
 
     # Define the login page
-    
+
     $data = array( "redirect" => Core::url(ROOT_DIR . '/' . UDASH_ROUTE) );
 
     $result = [
@@ -130,10 +130,10 @@ Events::addListener('udash:ajax', function () {
 
     # Module Execution Phase
 
-    Events::exec("udash:ajax/reset-v2", $result);
+    Events::instance()->exec("udash:ajax/reset-v2", $result);
 
     # Print the output and end the script
-    
-    Uss::exit( $result['message'], $result['status'], $result['data'] );
+
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
 
 }, 'ajax-reset-v2');

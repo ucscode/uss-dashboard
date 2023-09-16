@@ -21,7 +21,7 @@ call_user_func(function () use ($profileFocus) {
     Uss::$global['menu']->get('profile')->add('team-tree', array(
         'label' => "Hierarchy",
         'href' => Core::url(ROOT_DIR . "/{$hierFocus}"),
-        "active" => implode("/", Uss::query()) === $hierFocus
+        "active" => implode("/", Uss::instance()->query()) === $hierFocus
     ));
 
     /**
@@ -30,9 +30,9 @@ call_user_func(function () use ($profileFocus) {
      * `(?:/?\w+)?` expression accepts extra query string containing usercode
      * This will enable you view hierarchy of a particular downlines
      */
-    Uss::route($hierFocus . "(?:/?\w+)?", function () use ($hierFocus) {
+    Uss::instance()->route($hierFocus . "(?:/?\w+)?", function () use ($hierFocus) {
 
-        Events::addListener('@head:after', function () {
+        Events::instance()->addListener('@head:after', function () {
             /**
              * Get CSS that will style the nodes
              */
@@ -41,7 +41,7 @@ call_user_func(function () use ($profileFocus) {
 
         }, EVENT_ID . "node");
 
-        Events::addListener('@body:after', function () use ($hierFocus) {
+        Events::instance()->addListener('@body:after', function () use ($hierFocus) {
 
             /**
              * Get JavaScript the will render the nodes
@@ -64,7 +64,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Create Event
              */
-            Events::addListener('udash:pages/hierarchy', function () {
+            Events::instance()->addListener('udash:pages/hierarchy', function () {
                 ?>
 			<div class='container-fluid'>
 				<div class='tree-container position-relative rounded-2'>
@@ -76,7 +76,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Execute Events
              */
-            Events::exec('udash:pages/hierarchy');
+            Events::instance()->exec('udash:pages/hierarchy');
 
         }); // End view
 

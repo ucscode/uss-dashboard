@@ -2144,7 +2144,7 @@ p {
   }
 }
 .auth-cover-wrapper .auth-cover .title {
-  text-align: cover;
+  text-align: center;
   margin-bottom: 40px;
 }
 @media (max-width: 767px) {

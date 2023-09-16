@@ -24,13 +24,13 @@ call_user_func(function () use ($profileFocus) {
     Uss::$global['menu']->get('profile')->add('team', array(
         "label" => "My Team",
         "href" => Core::url(ROOT_DIR . "/{$teamFocus}"),
-        "active" => implode("/", Uss::query()) === $teamFocus
+        "active" => implode("/", Uss::instance()->query()) === $teamFocus
     ));
 
     /**
      * DISPLAY TEAM LIST
      */
-    Uss::route($teamFocus, function () {
+    Uss::instance()->route($teamFocus, function () {
 
         Udash::view(function () {
 
@@ -84,7 +84,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Add Event Listener
              */
-            Events::addListener('udash:pages/affiliate', function ($data) {
+            Events::instance()->addListener('udash:pages/affiliate', function ($data) {
 
                 /**
                  * Prepare and display the table
@@ -100,7 +100,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Execute Event
              */
-            Events::exec('udash:pages/affiliate', array( 'table' => &$table ));
+            Events::instance()->exec('udash:pages/affiliate', array( 'table' => &$table ));
 
         });
 

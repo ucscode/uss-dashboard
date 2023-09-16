@@ -4,7 +4,7 @@
 defined("UDASH_AJAX") or die;
 
 
-Events::addListener('udash:ajax', function () {
+Events::instance()->addListener('udash:ajax', function () {
 
     $status = !($data = []);
 
@@ -35,11 +35,11 @@ Events::addListener('udash:ajax', function () {
     ];
 
     # Module Execution Phase;
-    
-    Events::exec("udash:ajax/reset", $result);
+
+    Events::instance()->exec("udash:ajax/reset", $result);
 
     # Send Output
 
-    Uss::exit(  $result['message'], $result['status'], $result['data']);
+    Uss::instance()->exit($result['message'], $result['status'], $result['data']);
 
 }, 'ajax-reset');

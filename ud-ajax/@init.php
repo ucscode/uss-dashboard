@@ -33,12 +33,12 @@ if(empty($_POST['route']) || !is_scalar($_POST['route'])) {
  * Only event executions made through `udash:ajax` listener can have printable content
  * The event should however be called globally and not within a focus expression
  */
-register_shutdown_function(function() {
+register_shutdown_function(function () {
 
-    $illegalExit = function() {
-        if( !defined("UAJAX_LOADED") ) {
+    $illegalExit = function () {
+        if(!defined("UAJAX_LOADED")) {
             $output = trim(ob_get_contents());
-            if( empty($output) ) {
+            if(empty($output)) {
                 echo "The script was illegally terminated by a module using either die() or exit() function";
             };
             ob_end_flush();
@@ -48,12 +48,12 @@ register_shutdown_function(function() {
     $lastError = error_get_last();
 
     if ($lastError !== null) {
-        
+
         $errorType = $lastError['type'];
 
         $isFatalError = $errorType === E_ERROR || $errorType === E_PARSE || $errorType === E_CORE_ERROR || $errorType === E_CORE_WARNING || $errorType === E_COMPILE_ERROR || $errorType === E_COMPILE_WARNING;
 
-        if ( $isFatalError ) {
+        if ($isFatalError) {
             return;
         } else {
             $illegalExit();
@@ -62,7 +62,7 @@ register_shutdown_function(function() {
     } else {
         $illegalExit();
     }
-    
+
 });
 
 # Output Buffering!
@@ -77,13 +77,13 @@ try {
     require_once realpath(__DIR__ . '/../../../') . "/uss-core/config.php";
 
     # Ajax Loaded
-    define("UAJAX_LOADED", TRUE);
+    define("UAJAX_LOADED", true);
 
 } catch(Exception $exception) {
-    
-    define("UAJAX_LOADED", TRUE);
 
-    # Re-Throw the exception 
+    define("UAJAX_LOADED", true);
+
+    # Re-Throw the exception
     while(ob_get_level()) {
         ob_end_clean();
     }
@@ -95,7 +95,7 @@ try {
  * All buffered output will be cleared to ensure zero output
  * Unless debug mode is enabled
  */
-if( !Udash::config('debug') ) {
+if(!Udash::config('debug')) {
     # Clear Output Buffer
     while(ob_get_level()) {
         ob_end_clean();

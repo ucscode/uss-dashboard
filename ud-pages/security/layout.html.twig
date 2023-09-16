@@ -1,0 +1,82 @@
+{% extends '@Udash/base.html.twig' %}
+
+{% block body_main %}
+
+    <div class="{% block main_class %}row g-0 min-vh-100{% endblock %}">
+
+        {% block main_left %}
+
+            <div class="{% block main_left_class %}col-lg-6{% endblock %}">
+                
+                {% block main_left_content %}
+
+                    <div class="auth-cover-wrapper">
+                        <div class="auth-cover px-sm-5">
+
+                            <div class="title text-center">
+
+                                {% block main_left_content_image %}
+
+                                    {% set icon = Uss.getOption('web:icon') %}
+
+                                    {% if icon is not empty %}
+                                        <div class='mb-2'>
+                                            <img src='{{ icon }}' class='img-fluid user-select-none'>
+                                        </div>
+                                    {% endif %}
+
+                                {% endblock %}
+
+                                {% block main_left_content_title %}
+                                    <h1 class="text-white mb-10">
+                                        {{ Uss.getOption('web:title') }}
+                                    </h1>
+                                {% endblock %}
+
+                                {% block main_left_content_description %}
+                                    <p class="text-light">
+                                        {{ Uss.getOption('web:description') }}
+                                    </p>
+                                {% endblock %}
+
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                {% endblock %}
+                
+            </div>
+
+        {% endblock main_left %}
+
+        {% block main_right %}
+
+            <div class="{% block main_right_class %}col-lg-6{% endblock %}">
+                        
+                {% block main_right_content %}
+
+                    <div class="{% block main_right_content_class %}row g-0 align-items-center justify-content-center bg-light p-5 h-100{% endblock %}">
+                        
+                        <div class="{% block main_right_content_column %}col-sm-10 col-md-9 m-auto{% endblock %}">
+
+                            {% block main_right_form_element %}{% endblock %}
+
+                        </div>
+                        
+                    </div>
+
+                {% endblock %}
+
+            </div>
+
+        {% endblock main_right %}
+
+    </div>
+
+{% endblock body_main %}
+
+{% block body_js %}
+    {{ parent() }}
+	<script src="{{ Uss.call('Core::url', constant('Udash::ASSETS_DIR') ~ '/js/access.js') }}"></script>
+{% endblock body_js %}
