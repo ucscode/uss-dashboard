@@ -1,7 +1,7 @@
 <?php
 
-interface UdashFormInterface {
-
+interface UdashFormInterface
+{
     public function process(): self;
 
     public function getRouteUrl(string $pagename): ?string;

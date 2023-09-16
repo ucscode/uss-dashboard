@@ -52,7 +52,7 @@ final class Udash extends AbstractUdash
             return $this->configs;
         } else {
             if($group) {
-                $group = array_filter($this->configs, function ($value, $key) use($property) {    
+                $group = array_filter($this->configs, function ($value, $key) use ($property) {
                     $property = str_replace("/", "\\/", $property);
                     return preg_match("/^" . $property . "/", $key);
                 }, ARRAY_FILTER_USE_BOTH);
@@ -68,7 +68,8 @@ final class Udash extends AbstractUdash
      *
      * @return void
      */
-    public function removeConfig(string $property): void {
+    public function removeConfig(string $property): void
+    {
         if(isset($this->configs[$property])) {
             unset($this->configs[$property]);
         };
@@ -81,10 +82,11 @@ final class Udash extends AbstractUdash
      *
      * @return void
      */
-    public function enableFirewall(bool $enable = true): void {
+    public function enableFirewall(bool $enable = true): void
+    {
         $this->hasActiveFirewall = $enable;
     }
-    
+
     /**
      * Render a template with optional rendering options and a Twig block manager.
      *
@@ -117,7 +119,8 @@ final class Udash extends AbstractUdash
      *
      * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
      */
-    public function easyQuery(string $tableName, string $value, $columnName = 'id') {
+    public function easyQuery(string $tableName, string $value, $columnName = 'id')
+    {
         $SQL = SQuery::select($tableName, "{$columnName} = '{$value}'");
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();

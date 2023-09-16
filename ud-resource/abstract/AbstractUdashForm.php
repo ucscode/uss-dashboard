@@ -2,9 +2,11 @@
 
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
-
+abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
+{
     abstract protected function buildForm();
+    //abstract protected function onSuccess();
+    //abstract protected function onError();
 
     /**
      * Default styles and settings for form elements.
@@ -51,7 +53,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      * @var bool
      */
     private string $nonceKey;
-    
+
     /**
      * A set of reusable data
      *
@@ -77,9 +79,9 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
         }
 
         parent::__construct($name, $action, $method, $enctype);
-        
+
         $this->initForm();
-        
+
         // Build the form;
         $this->buildForm();
     }
@@ -91,14 +93,15 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return string|null The URL associated with the page name, or null if not found.
      */
-    public function getRouteUrl(string $pagename): ?string {
+    public function getRouteUrl(string $pagename): ?string
+    {
         $page = Udash::instance()->getConfig($pagename);
         if(is_array($page) && array_key_exists('route', $page)) {
             $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
             return Core::url($path, true);
         };
     }
-    
+
     /**
      * Set the URL to redirect to upon successful form submission.
      *
@@ -106,7 +109,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return void
      */
-    public function redirectOnSuccessTo(string $location): void {
+    public function redirectOnSuccessTo(string $location): void
+    {
         $this->redirectUrl = $location;
     }
 
@@ -115,7 +119,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return bool True if the form is submitted; otherwise, false.
      */
-    public function isSubmitted(): bool {
+    public function isSubmitted(): bool
+    {
         return $this->submitted;
     }
 
@@ -124,7 +129,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return bool True if the submission is trusted; otherwise, false.
      */
-    public function isTrusted(): bool {
+    public function isTrusted(): bool
+    {
         return $this->trusted;
     }
 
@@ -148,7 +154,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return void
      */
-    protected function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void {
+    protected function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void
+    {
         $fieldset = $this->getFieldset($name);
         if($fieldset) {
             $fieldset['report']->setContent("* {$message}");
@@ -161,7 +168,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return void
      */
-    private function secureForm(): void {
+    private function secureForm(): void
+    {
         if(!$this->secured) {
             // add a nonce
             $this->add('udf-hash', UssForm::INPUT, UssForm::TYPE_HIDDEN, [
@@ -180,8 +188,9 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @return void
      */
-    private function initForm() {
-        
+    private function initForm()
+    {
+
         $name = $this->getAttribute('name');
         $method = $this->getAttribute('method');
 

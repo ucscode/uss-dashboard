@@ -2,8 +2,8 @@
 
 use Ucscode\Packages\Events;
 
-abstract class AbstractUdash {
-
+abstract class AbstractUdash
+{
     // Abstract Child Methods
 
     abstract public function setConfig(string $property, mixed $value): bool;
@@ -15,8 +15,8 @@ abstract class AbstractUdash {
     abstract public function enableFirewall(bool $enable = true): void;
 
     abstract public function render(
-        string $template, 
-        array $options = [], 
+        string $template,
+        array $options = [],
         ?UssTwigBlockManager $ussTwigBlockManager = null
     ): void;
 
@@ -47,8 +47,10 @@ abstract class AbstractUdash {
 
     public function init()
     {
-        
-        if($this->initialized) return;
+
+        if($this->initialized) {
+            return;
+        }
 
         if(!DB_ENABLED) {
             Uss::instance()->render('@Uss/error.html.twig', [
@@ -79,13 +81,15 @@ abstract class AbstractUdash {
     }
 
     // Get the route declared by the child class
-    
-    private function getPrimeRoute(): string {
+
+    private function getPrimeRoute(): string
+    {
         $class = get_called_class();
         return constant("$class::ROUTE");
     }
 
-    private function defaultConfigs(): void {
+    private function defaultConfigs(): void
+    {
 
         $this->configs = array(
 
@@ -93,7 +97,7 @@ abstract class AbstractUdash {
 
             /**
              * templates:login is not considered a page because it is globally rendered irrespective of the route
-             * I.E The login page will display by default on any page when a user tries to access the page 
+             * I.E The login page will display by default on any page when a user tries to access the page
              * without sufficient permission
              */
             'templates:login' => '@Udash/security/login.html.twig',
@@ -137,10 +141,10 @@ abstract class AbstractUdash {
             ],*/
 
         );
-    
+
     }
 
-        /**
+    /**
      * Configure Udash
      */
     private function configureSystem(): void
@@ -175,13 +179,13 @@ abstract class AbstractUdash {
                 $options->set($key, $value);
             };
         };
-        
+
         # Set Base Template Directory
         Uss::instance()->addTwigFilesystem(self::PAGES_DIR, 'Udash');
 
         $this->setConfig('forms:login', new UdashLoginForm('login'));
         $this->setConfig('forms:register', new UdashRegisterForm('register'));
-        $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery')); 
+        $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
 
     }
 
@@ -194,7 +198,7 @@ abstract class AbstractUdash {
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
-            
+
             foreach($pages as $pageIndex => $pageUnit) {
                 if(is_array($pageUnit)) {
                     $page['_key'] = $pageIndex;

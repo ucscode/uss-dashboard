@@ -3,10 +3,11 @@
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssElement\UssElement;
 
-class UdashLoginForm extends AbstractUdashForm {
-    
-    protected function buildForm() {
-        
+class UdashLoginForm extends AbstractUdashForm
+{
+    protected function buildForm()
+    {
+
         $this->add('login', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
             'attr' => [
                 'placeholder' => 'Login detail',
@@ -25,7 +26,7 @@ class UdashLoginForm extends AbstractUdashForm {
 
         $this->addRow();
 
-        $this->appendField( $this->buildMailBlock() );
+        $this->appendField($this->buildMailBlock());
 
         $this->add('submit', UssForm::BUTTON, UssForm::TYPE_SUBMIT, [
             'class' => 'btn btn-primary w-100'
@@ -33,12 +34,14 @@ class UdashLoginForm extends AbstractUdashForm {
 
     }
 
-    public function process(): self {
-        
+    public function process(): self
+    {
+
         return $this;
     }
 
-    protected function buildMailBlock() {
+    protected function buildMailBlock()
+    {
 
         # Create Block;
 

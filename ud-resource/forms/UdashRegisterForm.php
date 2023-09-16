@@ -3,9 +3,10 @@
 use Ucscode\UssForm\UssForm;
 use Ucscode\Packages\SQuery;
 
-class UdashRegisterForm extends AbstractUdashForm {
-
-    protected function buildForm() {
+class UdashRegisterForm extends AbstractUdashForm
+{
+    protected function buildForm()
+    {
 
         if(0) {
             $this->add('user[username]', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
@@ -18,7 +19,7 @@ class UdashRegisterForm extends AbstractUdashForm {
 
         $this->add('user[email]', UssForm::INPUT, UssForm::TYPE_EMAIL, $this->style + [
             'attr' => [
-                'placeholder' => 'Email'            
+                'placeholder' => 'Email'
             ]
         ]);
 
@@ -57,12 +58,12 @@ class UdashRegisterForm extends AbstractUdashForm {
      * Process the form data
      *
      * @return self The registration form object
-     */ 
+     */
     public function process(): self
     {
-        if($this->isSubmitted()) { 
+        if($this->isSubmitted()) {
 
-            if($this->isTrusted()) { 
+            if($this->isTrusted()) {
 
                 $post = $this->getApprovedData();
 
@@ -74,7 +75,7 @@ class UdashRegisterForm extends AbstractUdashForm {
 
                     $this->populate($_POST);
 
-                }; 
+                };
 
             }; // !Trust
 
@@ -83,12 +84,13 @@ class UdashRegisterForm extends AbstractUdashForm {
         return $this;
     }
 
-    protected function getApprovedData(): array|bool {
+    protected function getApprovedData(): array|bool
+    {
 
         $post = $_POST['user'] ?? [];
         array_walk_recursive($post, 'trim');
 
-        $approved = 
+        $approved =
             $this->validateEmail($post['email'])
             && $this->validatePassword($post['password'], $post['confirmPassword']);
 
@@ -103,19 +105,49 @@ class UdashRegisterForm extends AbstractUdashForm {
 
     }
 
-    protected function saveToDatabase(array $post) {
-    
+    protected function saveToDatabase(array $post)
+    {
+
         $post['password'] = password_hash($post['password'], PASSWORD_DEFAULT);
         $post['usercode'] = Core::keygen(6);
-        
+
         $SQL = SQuery::insert(DB_PREFIX . "users", $post);
         $result = Uss::instance()->mysqli->query($SQL);
 
         if($result) {
-            $location = $this->redirectUrl ?: $this->getRouteUrl('pages:index');
-            header("location: {$location}");
-            exit;
-        };
+            $this->onSuccess($post);
+        } else {
+            $this->onError($post);
+        }
+
+    }
+
+    /**
+     * This method is called when the form submission is successful
+     *
+     * @param array $post The data inserted into database.
+     *
+     * @return void
+     */
+    protected function onSuccess(array $post): void
+    {
+        $location = $this->redirectUrl ?: $this->getRouteUrl('pages:index');
+        header("location: {$location}");
+        exit;
+    }
+
+    /**
+     * Handles actions to be taken upon encountering form submission errors.
+     *
+     * This method is called when there are errors in the form submission. It can be overridden in child classes
+     * to implement error-specific logic.
+     *
+     * @param array $post The POST data submitted with the form.
+     *
+     * @return void
+     */
+    protected function onError(array $post): void
+    {
 
     }
 
@@ -124,7 +156,8 @@ class UdashRegisterForm extends AbstractUdashForm {
      *
      * @ignore
      */
-    protected function validateEmail(string $email) {
+    protected function validateEmail(string $email)
+    {
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
         if(!$email) {
             $this->setReport('user[email]', "Invalid email address");
@@ -139,11 +172,12 @@ class UdashRegisterForm extends AbstractUdashForm {
         return $email;
     }
 
-    protected function validatePassword(string $password, string $confirmPassword) {
+    protected function validatePassword(string $password, string $confirmPassword)
+    {
         if(strlen($password) < 6) {
             $this->setReport('user[password]', "Password should be at least 6 characters");
             return false;
-        } else if($password !== $confirmPassword) {
+        } elseif($password !== $confirmPassword) {
             $this->setReport('user[confirmPassword]', "Confirm password does not match");
             return false;
         };
