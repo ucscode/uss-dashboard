@@ -1,5 +1,6 @@
 <?php
 
+use Ucscode\Packages\SQuery;
 use Ucscode\Packages\Pairs;
 
 final class Udash extends AbstractUdash
@@ -102,6 +103,24 @@ final class Udash extends AbstractUdash
         $options['user'] = $this->user;
         $options['usermeta'] = $this->usermeta;
         Uss::instance()->render($template, $options, $ussTwigBlockManager);
+    }
+
+    /**
+     * Perform a simple database query to retrieve a single row based on a specified value and column.
+     *
+     * This method constructs and executes a SELECT query to fetch a single row from the specified database table
+     * where the specified column matches the provided value.
+     *
+     * @param string $tableName   The name of the database table to query.
+     * @param string $value       The value to match in the specified column.
+     * @param string $columnName  (Optional) The name of the column to search for the specified value. Default is 'id'.
+     *
+     * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
+     */
+    public function easyQuery(string $tableName, string $value, $columnName = 'id') {
+        $SQL = SQuery::select($tableName, "{$columnName} = '{$value}'");
+        $result = Uss::instance()->mysqli->query($SQL);
+        return $result->fetch_assoc();
     }
 
     /**

@@ -14,7 +14,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
     protected array $style = [
         'label_class' => 'd-none',
         'required' => true,
-        'column' => 'col-12',
+        'column' => 'col-12 mb-2',
     ];
 
     /**
@@ -29,7 +29,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      *
      * @var string
      */
-    protected string $redirectUrl = '';
+    protected ?string $redirectUrl = null;
 
     /**
      * Whether the form is submitted.
@@ -51,6 +51,13 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface {
      * @var bool
      */
     private string $nonceKey;
+    
+    /**
+     * A set of reusable data
+     *
+     * @var array
+     */
+    private array $links = [];
 
     /**
      * Constructor for the UdashForm class.
