@@ -23,7 +23,7 @@ $statements[] = "
         usercode VARCHAR(12) NOT NULL UNIQUE,
         last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
         parent INT DEFAULT NULL,
-        FOREIGN KEY(parent) REFERENCES %{prefix}_users(id) ON DELETE SET NULL
+        FOREIGN KEY(parent) REFERENCES %{prefix}users(id) ON DELETE SET NULL
     )
 ";
 
@@ -53,7 +53,7 @@ $statements[] = "
         redirect VARCHAR(255) DEFAULT NULL COMMENT 'URL',
         image VARCHAR(255),
         hidden TINYINT NOT NULL DEFAULT 0,
-        FOREIGN KEY(userid) REFERENCES %{prefix}_users(id) ON DELETE CASCADE
+        FOREIGN KEY(userid) REFERENCES %{prefix}users(id) ON DELETE CASCADE
     )
 ";
 

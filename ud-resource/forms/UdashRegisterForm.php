@@ -1,7 +1,7 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
-use Ucscode\Packages\SQuery;
+use Ucscode\SQuery\SQuery;
 
 class UdashRegisterForm extends AbstractUdashForm
 {
@@ -54,99 +54,46 @@ class UdashRegisterForm extends AbstractUdashForm
 
     }
 
-    /**
-     * Process the form data
-     *
-     * @return self The registration form object
-     */
-    public function process(): self
+    public function isValid(?array $post = null): bool
     {
-        if($this->isSubmitted()) {
-
-            if($this->isTrusted()) {
-
-                $post = $this->getApprovedData();
-
-                if(is_array($post)) {
-
-                    $this->saveToDatabase($post);
-
-                } else {
-
-                    $this->populate($_POST);
-
-                };
-
-            }; // !Trust
-
-        }; // !Submit
-
-        return $this;
+        $user = $post['user'] ?? [];
+        $approved =
+            !empty($user)
+            && $this->validateEmail($user['email'])
+            && $this->validatePassword($user['password'], $user['confirmPassword']);
+        return $approved;
     }
 
-    protected function getApprovedData(): array|bool
+    protected function prepareEntryData(array $post): array
     {
-
-        $post = $_POST['user'] ?? [];
-        array_walk_recursive($post, 'trim');
-
-        $approved =
-            $this->validateEmail($post['email'])
-            && $this->validatePassword($post['password'], $post['confirmPassword']);
-
-        if(!$approved) {
-            return false;
-        };
-
-        unset($post['confirmPassword']);
-        $post['email'] = strtolower($post['email']);
-
+        unset($post['user']['confirmPassword']);
+        $post['user']['email'] = strtolower($post['user']['email']);
+        $post['user']['password'] = password_hash($post['user']['password'], PASSWORD_DEFAULT);
+        $post['user']['usercode'] = Core::keygen(6);
         return $post;
-
     }
 
     protected function saveToDatabase(array $post)
     {
-
-        $post['password'] = password_hash($post['password'], PASSWORD_DEFAULT);
-        $post['usercode'] = Core::keygen(6);
-
-        $SQL = SQuery::insert(DB_PREFIX . "users", $post);
+        $tablename = DB_PREFIX . "users";
+        $SQL = (new SQuery())->insert($tablename, $post['user']);
         $result = Uss::instance()->mysqli->query($SQL);
 
         if($result) {
-            $this->onSuccess($post);
+            $this->onDataEntrySuccess($post);
         } else {
-            $this->onError($post);
+            $this->onDataEntryFailure($post);
         }
-
     }
 
-    /**
-     * This method is called when the form submission is successful
-     *
-     * @param array $post The data inserted into database.
-     *
-     * @return void
-     */
-    protected function onSuccess(array $post): void
+    public function onDataEntrySuccess(array $post, bool $isUpdate = false): void
     {
         $location = $this->redirectUrl ?: $this->getRouteUrl('pages:index');
         header("location: {$location}");
         exit;
     }
 
-    /**
-     * Handles actions to be taken upon encountering form submission errors.
-     *
-     * This method is called when there are errors in the form submission. It can be overridden in child classes
-     * to implement error-specific logic.
-     *
-     * @param array $post The POST data submitted with the form.
-     *
-     * @return void
-     */
-    protected function onError(array $post): void
+    public function onDataEntryFailure(array $post, bool $isUpdate = false): void
     {
 
     }

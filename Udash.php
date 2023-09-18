@@ -1,6 +1,6 @@
 <?php
 
-use Ucscode\Packages\SQuery;
+use Ucscode\SQuery\SQuery;
 use Ucscode\Packages\Pairs;
 
 final class Udash extends AbstractUdash
@@ -121,7 +121,9 @@ final class Udash extends AbstractUdash
      */
     public function easyQuery(string $tableName, string $value, $columnName = 'id')
     {
-        $SQL = SQuery::select($tableName, "{$columnName} = '{$value}'");
+        $SQL = (new SQuery())->select()
+            ->from($tableName)
+            ->where($columnName, $value);
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
     }
@@ -135,7 +137,7 @@ final class Udash extends AbstractUdash
     {
         $prefix = DB_PREFIX;
         $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
-        $this->usermeta->linkParentTable("{$prefix}_users", DB_PREFIX . "users");
+        $this->usermeta->linkParentTable("{$prefix}users", DB_PREFIX . "users");
         // {{{{{ As well as the user sponsor (upline) when registering }}}}}
     }
 

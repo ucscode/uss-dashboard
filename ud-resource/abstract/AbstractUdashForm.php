@@ -5,8 +5,6 @@ use Ucscode\UssForm\UssForm;
 abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 {
     abstract protected function buildForm();
-    //abstract protected function onSuccess();
-    //abstract protected function onError();
 
     /**
      * Default styles and settings for form elements.
@@ -86,6 +84,74 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         $this->buildForm();
     }
 
+    public function handleSubmission(): self
+    {
+        if($this->isSubmitted()) {
+
+            if($this->isTrusted()) {
+
+                $post = $this->getFilteredData();
+
+                if($this->isValid($post)) {
+                    
+                    $post = $this->prepareEntryData($post);
+
+                    $this->saveToDatabase($post);
+
+                } else {
+                    
+                    $this->populate($post);
+
+                };
+
+            }; // !Trust
+
+        }; // !Submit
+
+        return $this;
+    }
+
+    protected function saveToDataBase(array $data) 
+    {
+        $this->onDataEntryFailure($data);
+    }
+
+    public function onDataEntryFailure(array $data, bool $isUpdate = false)
+    {
+        // Extend to apply your logics
+    }
+
+    public function onDataEntrySuccess(array $data, bool $isUpdate = false)
+    {
+        // Extend to apply your logics
+    }
+
+    public function isValid(?array $post): bool
+    {
+        if($post === null) {
+            $post = $this->getFilteredData();
+        };
+        return empty($post);
+    }
+
+    /**
+     *
+     */
+    public function getFilteredData(bool $sanitize = true): array
+    {
+        $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        if(isset($data['udf-hash'])) {
+            unset($data['udf-hash']);
+        };
+        array_walk_recursive($data, function (&$value) use ($sanitize) {
+            $value = trim($value);
+            if($sanitize) {
+                $value = htmlspecialchars(trim($value), ENT_QUOTES);
+            };
+        });
+        return $data;
+    }
+
     /**
      * Get the URL associated with a page name from the configuration.
      *
@@ -143,6 +209,22 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     {
         $this->secureForm();
         return parent::getHTML($indent);
+    }
+
+    /**
+     * Get the data to be persisted to the database.
+     *
+     * This method retrieves and prepares the data that is intended to be saved or persisted in the database.
+     * It may involve data manipulation or transformation before the data is ready for database storage.
+     * It is available to child classes that inherits the AbstractUdashForm
+     *
+     * @param array $data The original data to be processed and persisted.
+     *
+     * @return array The prepared data ready for database storage.
+     */
+    protected function prepareEntryData(array $data): array
+    {
+        return $data;
     }
 
     /**
@@ -209,8 +291,16 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
             $hash = explode('/', $data['udf-hash'] ?? '');
 
             if(count($hash) === 2) {
+
                 list($name, $nonceValue) = $hash;
+
+                // Check if form is submitted
                 $this->submitted = ($name === $this->getAttribute('name'));
+
+                /**
+                 * Check if it is trusted
+                 * This also requires checking for CSRF Attack and other potential hack attempt
+                 */
                 $this->trusted = $this->submitted && Uss::instance()->nonce($this->nonceKey, $nonceValue);
             }
 

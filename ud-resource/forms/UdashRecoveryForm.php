@@ -7,9 +7,4 @@ class UdashRecoveryForm extends AbstractUdashForm
 
     }
 
-    public function process(): self
-    {
-        return $this;
-    }
-
 }

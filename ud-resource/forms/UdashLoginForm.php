@@ -34,7 +34,7 @@ class UdashLoginForm extends AbstractUdashForm
 
     }
 
-    public function process(): self
+    public function handleSubmission(): self
     {
 
         return $this;
