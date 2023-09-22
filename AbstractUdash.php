@@ -1,9 +1,12 @@
 <?php
 
 use Ucscode\Packages\Events;
+use Ucscode\Packages\Pairs;
 
 abstract class AbstractUdash
 {
+    use PropertyAccessTrait;
+    
     // Abstract Child Methods
 
     abstract public function setConfig(string $property, mixed $value): bool;
@@ -19,8 +22,6 @@ abstract class AbstractUdash
         array $options = [],
         ?UssTwigBlockManager $ussTwigBlockManager = null
     ): void;
-
-    abstract protected function configureUser(): void;
 
     // Default Class Constants
 
@@ -38,6 +39,9 @@ abstract class AbstractUdash
 
 
     // Default Class Variables
+
+    #[Accessible]
+    protected Pairs $usermeta;
 
     protected array $configs = [];
 
@@ -187,6 +191,19 @@ abstract class AbstractUdash
         $this->setConfig('forms:register', new UdashRegisterForm('register'));
         $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
 
+    }
+
+    /**
+     * Configure the user settings.
+     *
+     * @return void
+     */
+    private function configureUser(): void
+    {
+        $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
+        $this->usermeta->linkParentTable([
+            'parentTable' => DB_PREFIX . 'users', 
+        ]);
     }
 
     private function dispatchEvent(): void

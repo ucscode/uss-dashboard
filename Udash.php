@@ -121,18 +121,4 @@ final class Udash extends AbstractUdash
         return $result->fetch_assoc();
     }
 
-    /**
-     * Configure the user settings.
-     *
-     * @return void
-     */
-    protected function configureUser(): void
-    {
-        $prefix = DB_PREFIX;
-        return;
-        $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
-        $this->usermeta->linkParentTable("{$prefix}users", DB_PREFIX . "users");
-        // {{{{{ As well as the user sponsor (upline) when registering }}}}}
-    }
-
 }

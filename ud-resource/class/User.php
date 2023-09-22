@@ -7,19 +7,34 @@ class User implements UserInterface
 {
     use PropertyAccessTrait;
 
-    private ?array $user = [];
-
-    #[Accessible]
+    protected array $user = [];
+    protected $errors = [];
+    protected $userTable = DB_PREFIX . "users";
     protected ?Pairs $meta;
-
-    private $userTable = DB_PREFIX . "users";
-    private $errors = [];
 
     public function __construct(?int $userId = null)
     {
-        if($this->polyFill()) {
-            $this->user = $this->fetchUser($userId) ?: $this->user;
-        }
+        $this->polyFill($userId);
+    }
+
+    public function &__get(string $key) {
+        $this->validate($key, 'access');
+        return $this->user[$key];
+    }
+
+    public function __set(string $key, $value) {
+        $this->validate($key, 'set');
+        $type = gettype($value);
+        if(in_array($type, ['object', 'array'])) {
+            $class = __CLASS__;
+            throw new \Exception("Invalid datatype ({$type}) assigned to {$class}::\${$key}");
+        } elseif(strtolower($key) === 'id') {
+            throw new \Exception("Permission Denied: User ID cannot be changed");
+        };
+        if(is_bool($value)) {
+            $value = (int)$value;
+        };      
+        $this->user[$key] = $value;
     }
 
     public function getRoles(): array
@@ -44,39 +59,44 @@ class User implements UserInterface
 
     public function persist(): bool
     {
+        $user = $this->getUser($this->user['id']);
+        
+        try {
 
-        // Fetch default user from database
-        $user = $this->fetchUser($this->user['id']);
+            if(!$user) {
 
-        // if user does not exist; prepare a new record
-        if(!$user) {
+                $user = $this->user;
+                unset($user['id']);
 
-            $user = $this->user;
-            unset($user['id']);
-            $SQL = (new SQuery())->insert($this->userTable, $this->user);
+                $SQL = (new SQuery())->insert($this->userTable, $this->user);
+                $result = Uss::instance()->mysqli->query($SQL);
 
-        } else {
-
-            $newValues = [];
-
-            // For each current user data
-            foreach($this->user as $key => $value) {
-
-                // if current value !== default value
-                if($value !== $user[$key]) {
-                    $newValues[$key] = $value;
+                if($result) {
+                    $this->user['id'] = Uss::instance()->mysqli->insert_id;
                 }
+
+            } else {
+
+                $newValues = [];
+
+                // For each updated user data
+                foreach($this->user as $key => $value) {
+
+                    // if updated value !== default value
+                    if($value !== $user[$key]) {
+                        $newValues[$key] = $value;
+                    }
+
+                };
+
+                $SQL = (new SQuery())
+                    ->update($this->userTable, $newValues)
+                    ->where('id', $user['id']);
+                
+                $result = Uss::instance()->mysqli->query($SQL);
 
             };
 
-            $SQL = (new SQuery())
-                ->update($this->userTable, $newValues)
-                ->where('id', $user['id']);
-
-        };
-
-        try {
-            $result = Uss::instance()->mysqli->query($SQL);
         } catch(\Exception $e) {
             $this->errors[] = $e->getMessage();
             return false;
@@ -87,35 +107,52 @@ class User implements UserInterface
 
     public function delete(): ?bool
     {
-        $user = $this->fetchUser($this->user['id']);
-        if(!$user) {
-            return null;
+        $user = $this->getUser($this->user['id']);
+        $result = null;
+        if($user) {
+            $SQL = (new SQuery())->delete()
+                ->from($this->userTable)
+                ->where('id', $user['id']);
+            $result = Uss::instance()->mysqli->query($SQL);
         };
-        $SQL = (new SQuery())->delete()
-            ->from($this->userTable)
-            ->where('id', $user['id']);
-        $result = Uss::instance()->mysqli->query($SQL);
         return $result;
     }
 
     public function exists(): bool
     {
-        return !!$this->fetchUser($this->user['id']);
+        return !!$this->getUser($this->user['id']);
     }
 
-    public function get(?string $key = null)
+    public function getAll(?string $regex = null): array
     {
-        if(is_null($key)) {
-            return $this->user;
+        if(!is_null($this->user['id'])) {
+            return $this->meta->all($this->user['id'], $regex);
         }
-        $this->validate($key, __METHOD__);
-        return $this->exists() ? ($this->user[$key] ?? null) : false;
+    }
+    
+    // Obtain User Meta
+    public function get(string $key, bool $epoch = false): mixed
+    {
+        if(!is_null($this->user['id'])) {
+            return $this->meta->get($key, $this->user['id'], $epoch);
+        };
+        return null;
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value): bool
     {
-        $this->validate($key, __METHOD__);
-        $this->user[$key] = $value;
+        if(!is_null($this->user['id'])) {
+            return $this->meta->set($key, $value, $this->user['id']);
+        };
+        return false;
+    }
+
+    public function remove(string $key): ?bool
+    {
+        if(!is_null($this->user['id'])) {
+            return $this->meta->remove($key, $this->user['id']);
+        };
+        return null;
     }
 
     public function errors(): array
@@ -123,43 +160,59 @@ class User implements UserInterface
         return $this->errors;
     }
 
-    private function fetchUser(?int $userId): ?array
+    private function getUser(?int $userId): ?array
     {
         if(is_null($userId)) {
-            $userId = 'Undefined';
+            $userId = -1;
         }
         return Udash::instance()->easyQuery($this->userTable, $userId);
     }
 
-    private function polyFill(): bool
+    private function polyFill(?int $userId): bool
     {
-        // build Query
         $SQL = (new SQuery())
             ->select('column_name')
             ->from('information_schema.columns')
             ->where('table_schema', DB_NAME)
             ->and('table_name', $this->userTable);
 
-        // Get result
-        $result = Uss::instance()->mysqli->query($SQL->getQuery());
+        $result = Uss::instance()->mysqli->query($SQL);
 
         if($result->num_rows) {
-            // Update User
-            while($data = $result->fetch_assoc()) {
-                $key = $data['column_name'];
-                $this->user[$key] = null;
-            };
+
+            $this->user = $this->getUser($userId) ?? [];
+
+            if(empty($this->user)) {
+
+                while($data = $result->fetch_assoc()) {
+                    $key = $data['column_name'];
+                    if(strtolower($key) === 'id' && !empty($userId)) {
+                        $value = $userId;
+                    } else {
+                        $value = null;
+                    };
+                    $this->user[$key] = $value;
+                };
+
+            }
+
+            $this->meta = Udash::instance()->usermeta;
+
             return true;
+
         };
+        
         return false;
     }
 
-    private function validate(string $key, string $method): void
+    private function validate(string $key, string $action): void
     {
         if(!array_key_exists($key, $this->user)) {
+            $class = __CLASS__;
             throw new \Exception(
-                $method . "(\"{$key}\", ...) Unknown column name `{$this->userTable}`.`{$key}`"
+                "Trying to {$action} unknown property {$class}::\${$key}; references to unknown column `{$this->userTable}`.`{$key}`"
             );
         }
     }
+
 }
