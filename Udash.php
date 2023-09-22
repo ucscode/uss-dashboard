@@ -6,7 +6,6 @@ use Ucscode\Packages\Pairs;
 final class Udash extends AbstractUdash
 {
     use SingletonTrait;
-    use PropertyAccessTrait;
 
     /**
      * Dashboard Route
@@ -14,12 +13,6 @@ final class Udash extends AbstractUdash
      * The default dashboard route to asses udash
      */
     public const ROUTE = '/dashboard';
-
-    #[Accessible]
-    protected $user;
-
-    #[Accessible]
-    protected $usermeta;
 
     /** @ignore */
     private bool $firewallEnabled = true;
@@ -98,12 +91,12 @@ final class Udash extends AbstractUdash
      */
     public function render(string $template, array $options = [], ?UssTwigBlockManager $ussTwigBlockManager = null): void
     {
-        if($this->firewallEnabled && empty($this->user)) {
+        $user = (new User());
+        if($this->firewallEnabled && !$user->exists()) {
             $template = $this->getConfig('templates:login');
             $options['form'] = $this->getConfig('forms:login');
         };
-        $options['user'] = $this->user;
-        $options['usermeta'] = $this->usermeta;
+        $options['user'] = $user;
         Uss::instance()->render($template, $options, $ussTwigBlockManager);
     }
 
@@ -119,7 +112,7 @@ final class Udash extends AbstractUdash
      *
      * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
      */
-    public function easyQuery(string $tableName, string|array $value, $columnName = 'id')
+    public function easyQuery(string $tableName, null|int|string|array $value, $columnName = 'id')
     {
         $SQL = (new SQuery())->select()
             ->from($tableName)
@@ -136,6 +129,7 @@ final class Udash extends AbstractUdash
     protected function configureUser(): void
     {
         $prefix = DB_PREFIX;
+        return;
         $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
         $this->usermeta->linkParentTable("{$prefix}users", DB_PREFIX . "users");
         // {{{{{ As well as the user sponsor (upline) when registering }}}}}

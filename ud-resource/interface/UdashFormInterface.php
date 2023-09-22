@@ -14,7 +14,7 @@ interface UdashFormInterface
     * This method is responsible for saving the provided data to the database. It should perform
     * the necessary operations to store the data securely and return a boolean value indicating
     * whether the operation was successful or not.
-    * 
+    *
     * @param array $data The data to be saved to the database.
     *
     * @return bool Returns true if the data was successfully saved to the database; otherwise, false.

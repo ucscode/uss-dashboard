@@ -200,15 +200,15 @@ abstract class AbstractUdash
             $pages = $this->getConfig("pages:", true);
 
             foreach($pages as $index => $pageInfo) {
-                
+
                 if(is_array($pageInfo)) {
 
                     $pageInfo['_key'] = $index;
 
                     call_user_func(function () use ($pageInfo) {
-                        
+
                         Events::instance()->exec('Udash:pageload', $pageInfo);
-                       
+
                         require_once $pageInfo['file'];
 
                     });

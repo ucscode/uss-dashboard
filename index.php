@@ -32,9 +32,10 @@ require_once __DIR__ . "/Udash.php";
 $resources = [
     'interface' => [
         "UdashFormInterface.php",
+        "UserInterface.php",
     ],
     'trait' => [
-        //"UdashFormTrait.php",
+        //"Udas.php",
     ],
     'abstract' => [
         "AbstractUdashForm.php",
@@ -44,7 +45,8 @@ $resources = [
         "UdashCrud.php",
         //"DOMTablet.php",
         "Roles.php",
-        "Hierarchy.php"
+        "Hierarchy.php",
+        "User.php",
     ],
     'forms' => [
         "UdashLoginForm.php",

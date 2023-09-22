@@ -1,9 +1,5 @@
 "use strict";
 
-/*!
- * Anonymous class
- */
- 
 new class {
 	
 	#form;

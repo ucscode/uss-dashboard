@@ -15,14 +15,14 @@ $statements = [];
  */
 $statements[] = "
     CREATE TABLE IF NOT EXISTS %{prefix}users (
-        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
         email VARCHAR(255) NOT NULL UNIQUE,
         username VARCHAR(25) DEFAULT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         register_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
         usercode VARCHAR(12) NOT NULL UNIQUE,
         last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-        parent INT DEFAULT NULL,
+        parent INT UNSIGNED DEFAULT NULL,
         FOREIGN KEY(parent) REFERENCES %{prefix}users(id) ON DELETE SET NULL
     )
 ";
@@ -43,10 +43,10 @@ $statements[] = "
  */
 $statements[] = "
     CREATE TABLE IF NOT EXISTS %{prefix}notifications (
-        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
         origin INT,
         model VARCHAR(100) DEFAULT NULL COMMENT 'TYPE: Comment, Reply, Module-Name...',
-        userid INT NOT NULL,
+        userid INT UNSIGNED NOT NULL,
         period TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         message VARCHAR(5000),
         viewed TINYINT NOT NULL DEFAULT 0,

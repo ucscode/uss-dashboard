@@ -82,7 +82,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
             if($this->isTrusted()) {
 
-                // Get Filtered data from _GET or _POST 
+                // Get Filtered data from _GET or _POST
                 $post = $this->getFilteredSubmissionData();
 
                 // Validate The Data
@@ -90,7 +90,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
                     // Get data that should be inserted to database;
                     $post = $this->prepareEntryData($post);
-                    
+
                     // Update Or Insert Data To Database
                     $persist = $this->persistEntry($post);
 
@@ -133,11 +133,11 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      *
      * @throws Exception if not overridden
      *
-     * @return void 
+     * @return void
      */
     public function onEntryFailure(array $data): void
     {
-        $this->formulateError( __METHOD__, 'to manage actions upon database entry failure.' );
+        $this->formulateError(__METHOD__, 'to manage actions upon database entry failure.');
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      */
     public function onEntrySuccess(array $data): void
     {
-        $this->formulateError( __METHOD__, 'to manage actions upon successful database entry.' );
+        $this->formulateError(__METHOD__, 'to manage actions upon successful database entry.');
     }
 
     /**
@@ -171,7 +171,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     *
     * This method is called when a request is detected from an invalid source or with an attack.
     * You can implement custom logic here to handle such requests, such as logging, blocking, or other actions.
-    * 
+    *
     * @return void
     */
     public function handleUntrustedRequest(): void
@@ -183,8 +183,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     * Handle an invalid request.
     *
     * This method is called when a request is considered invalid, such as when it contains
-    * invalid data (e.g., an invalid email address). 
-    * 
+    * invalid data (e.g., an invalid email address).
+    *
     * @param array|null $post The post data associated with the invalid request.
     *
     * @return void
@@ -360,8 +360,9 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
     }
 
-    private function formulateError($method = null, string $error) {
-        throw new \Exception( $method . " must be overridden " . $error );
+    private function formulateError($method = null, string $error)
+    {
+        throw new \Exception($method . " must be overridden " . $error);
     }
 
 }

@@ -10,7 +10,7 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
 
                 public function __construct()
                 {
-                    $this->user = Udash::instance()->user;
+                    $this->user = new User();
                 }
 
                 public function getConfig(string $property)
