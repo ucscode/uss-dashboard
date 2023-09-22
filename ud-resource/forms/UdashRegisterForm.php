@@ -76,15 +76,18 @@ class UdashRegisterForm extends AbstractUdashForm
         unset($post['user']['confirmPassword']);
         $post['user']['email'] = strtolower($post['user']['email']);
         $post['user']['password'] = password_hash($post['user']['password'], PASSWORD_DEFAULT);
-        $post['user']['usercode'] = Core::keygen(6);
+        $post['user']['usercode'] = Core::keygen(7);
         return $post;
     }
 
     public function persistEntry(array $data): bool
     {
-        $tablename = DB_PREFIX . "users";
-        $SQL = (new SQuery())->insert($tablename, $data['user']);
-        return Uss::instance()->mysqli->query($SQL);
+        $user = new User();
+        $user->email = $data['user']['email'];
+        $user->password = $data['user']['password'];
+        $user->usercode = $data['user']['usercode'];
+        $user->username = $data['user']['username'] ?? null;
+        return $user->persist();
     }
 
     public function onEntrySuccess(array $post): void

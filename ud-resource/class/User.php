@@ -17,6 +17,18 @@ class User implements UserInterface
         $this->polyFill($userId);
     }
 
+    public function __debugInfo()
+    {
+        return [
+            'user' => $this->user,
+            'errors' => $this->errors
+        ];
+    }
+
+    public function __isset($key) {
+        return array_key_exists($key, $this->user);
+    }
+
     public function &__get(string $key) {
         $this->validate($key, 'access');
         return $this->user[$key];
