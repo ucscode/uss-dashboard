@@ -64,7 +64,14 @@ class UdashRegisterForm extends AbstractUdashForm
         return $approved;
     }
 
-    protected function prepareEntryData(array $post): array
+    public function handleInvalidRequest(?array $post): void
+    {
+        unset($post['user']['password']);
+        unset($post['user']['confirmPassword']);
+        $this->populate($post);
+    }
+
+    public function prepareEntryData(array $post): array
     {
         unset($post['user']['confirmPassword']);
         $post['user']['email'] = strtolower($post['user']['email']);
@@ -73,30 +80,25 @@ class UdashRegisterForm extends AbstractUdashForm
         return $post;
     }
 
-    protected function saveToDatabase(array $post)
+    public function persistEntry(array $data): bool
     {
         $tablename = DB_PREFIX . "users";
-        $SQL = (new SQuery())->insert($tablename, $post['user']);
-        $result = Uss::instance()->mysqli->query($SQL);
-
-        if($result) {
-            $this->onDataEntrySuccess($post);
-        } else {
-            $this->onDataEntryFailure($post);
-        }
+        $SQL = (new SQuery())->insert($tablename, $data['user']);
+        return Uss::instance()->mysqli->query($SQL);
     }
 
-    public function onDataEntrySuccess(array $post, bool $isUpdate = false): void
+    public function onEntrySuccess(array $post): void
     {
-        $location = $this->redirectUrl ?: $this->getRouteUrl('pages:index');
-        header("location: {$location}");
-        exit;
+        Uss::instance()->console('@bootbox', [
+            'message' => 'Your registration was successful',
+            'redirect' => null
+        ]);
     }
 
-    public function onDataEntryFailure(array $post, bool $isUpdate = false): void
+    /*public function onEntryFailure(array $post): void
     {
 
-    }
+    }*/
 
     /**
      * [VALIDATION] METHODS

@@ -6,7 +6,7 @@ use Ucscode\Packages\Pairs;
 final class Udash extends AbstractUdash
 {
     use SingletonTrait;
-    use EncapsulatedPropertyAccessTrait;
+    use PropertyAccessTrait;
 
     /**
      * Dashboard Route
@@ -22,7 +22,7 @@ final class Udash extends AbstractUdash
     protected $usermeta;
 
     /** @ignore */
-    private bool $hasActiveFirewall = true;
+    private bool $firewallEnabled = true;
 
     /**
      * Set a configuration property to a given value.
@@ -84,7 +84,7 @@ final class Udash extends AbstractUdash
      */
     public function enableFirewall(bool $enable = true): void
     {
-        $this->hasActiveFirewall = $enable;
+        $this->firewallEnabled = $enable;
     }
 
     /**
@@ -98,7 +98,7 @@ final class Udash extends AbstractUdash
      */
     public function render(string $template, array $options = [], ?UssTwigBlockManager $ussTwigBlockManager = null): void
     {
-        if($this->hasActiveFirewall && empty($this->user)) {
+        if($this->firewallEnabled && empty($this->user)) {
             $template = $this->getConfig('templates:login');
             $options['form'] = $this->getConfig('forms:login');
         };
@@ -119,11 +119,11 @@ final class Udash extends AbstractUdash
      *
      * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
      */
-    public function easyQuery(string $tableName, string $value, $columnName = 'id')
+    public function easyQuery(string $tableName, string|array $value, $columnName = 'id')
     {
         $SQL = (new SQuery())->select()
             ->from($tableName)
-            ->where($columnName, $value);
+            ->where(is_array($value) ? $value : $columnName, $value);
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
     }

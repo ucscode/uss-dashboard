@@ -25,13 +25,6 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     protected bool $secured = false;
 
     /**
-     * The URL to redirect to upon successful form submission.
-     *
-     * @var string
-     */
-    protected ?string $redirectUrl = null;
-
-    /**
      * Whether the form is submitted.
      *
      * @var bool
@@ -72,72 +65,159 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     public function __construct(string $name, ?string $action = null, string $method = 'POST', string $enctype = '')
     {
         if(empty($action)) {
-            # Create Url From Route;
             $action = $_SERVER['REQUEST_URI'];
         }
-
         parent::__construct($name, $action, $method, $enctype);
-
         $this->initForm();
-
-        // Build the form;
         $this->buildForm();
     }
 
-    public function handleSubmission(): self
+    /**
+     * This creates a dedicated process for handling form submission
+     * @return void
+     */
+    public function handleSubmission(): void
     {
         if($this->isSubmitted()) {
 
             if($this->isTrusted()) {
 
-                $post = $this->getFilteredData();
+                // Get Filtered data from _GET or _POST 
+                $post = $this->getFilteredSubmissionData();
 
+                // Validate The Data
                 if($this->isValid($post)) {
-                    
-                    $post = $this->prepareEntryData($post);
 
-                    $this->saveToDatabase($post);
+                    // Get data that should be inserted to database;
+                    $post = $this->prepareEntryData($post);
+                    
+                    // Update Or Insert Data To Database
+                    $persist = $this->persistEntry($post);
+
+                    if($persist) {
+                        $this->onEntrySuccess($post);
+                    } else {
+                        $this->onEntryFailure($post);
+                    }
 
                 } else {
-                    
-                    $this->populate($post);
-
+                    $this->handleInvalidRequest($post);
                 };
 
-            }; // !Trust
+            } else {
+                $this->handleUntrustedRequest();
+            }
 
-        }; // !Submit
+        };
 
-        return $this;
     }
 
-    protected function saveToDataBase(array $data) 
+    /**
+     * This method should save information to database and must return true or false regarding whether the data was saved or not
+     *
+     * @param array $data The data to persist to database
+     *
+     * @throws Exception if not overridden
+     *
+     * @return bool `true` if the data saved, `false` otherwise
+     */
+    public function persistEntry(array $data): bool
     {
-        $this->onDataEntryFailure($data);
+        $this->formulateError(__METHOD__, 'to save entry into database');
     }
 
-    public function onDataEntryFailure(array $data, bool $isUpdate = false)
+    /**
+     * This method is called if the data failed to save in database
+     *
+     * @param array $data The data that did not save to database
+     *
+     * @throws Exception if not overridden
+     *
+     * @return void 
+     */
+    public function onEntryFailure(array $data): void
     {
-        // Extend to apply your logics
+        $this->formulateError( __METHOD__, 'to manage actions upon database entry failure.' );
     }
 
-    public function onDataEntrySuccess(array $data, bool $isUpdate = false)
+    /**
+     * This method is called if the data successfully save to database
+     *
+     * @param array $data The data that saved to database
+     *
+     * @throws Exception if not overridden
+     *
+     * @return void
+     */
+    public function onEntrySuccess(array $data): void
     {
-        // Extend to apply your logics
+        $this->formulateError( __METHOD__, 'to manage actions upon successful database entry.' );
     }
 
+    /**
+     * Get the data to be persisted to the database.
+     *
+     * @param array $data The original data to be processed and persisted.
+     *
+     * @return array The prepared data ready for database storage.
+     */
+    public function prepareEntryData(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+    * Handle an untrusted request.
+    *
+    * This method is called when a request is detected from an invalid source or with an attack.
+    * You can implement custom logic here to handle such requests, such as logging, blocking, or other actions.
+    * 
+    * @return void
+    */
+    public function handleUntrustedRequest(): void
+    {
+        // Should be overridden by child class
+    }
+
+    /**
+    * Handle an invalid request.
+    *
+    * This method is called when a request is considered invalid, such as when it contains
+    * invalid data (e.g., an invalid email address). 
+    * 
+    * @param array|null $post The post data associated with the invalid request.
+    *
+    * @return void
+    */
+    public function handleInvalidRequest(?array $post): void
+    {
+        // Should be overridden by child class
+        $this->populate($post);
+    }
+
+    /**
+    * Check if the provided post data is valid.
+    *
+    * @param array|null $post The post data to validate.
+    *
+    * @return bool Returns true if the post data is empty or null; otherwise, false.
+    */
     public function isValid(?array $post): bool
     {
         if($post === null) {
-            $post = $this->getFilteredData();
+            $post = $this->getFilteredSubmissionData();
         };
         return empty($post);
     }
 
     /**
-     *
-     */
-    public function getFilteredData(bool $sanitize = true): array
+    * Get filtered submission data.
+    *
+    * @param bool $sanitize Whether to sanitize the data (default: true).
+    *
+    * @return array The filtered submission data.
+    */
+    public function getFilteredSubmissionData(bool $sanitize = true): array
     {
         $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
         if(isset($data['udf-hash'])) {
@@ -150,34 +230,6 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
             };
         });
         return $data;
-    }
-
-    /**
-     * Get the URL associated with a page name from the configuration.
-     *
-     * @param string $pagename The name of the page.
-     *
-     * @return string|null The URL associated with the page name, or null if not found.
-     */
-    public function getRouteUrl(string $pagename): ?string
-    {
-        $page = Udash::instance()->getConfig($pagename);
-        if(is_array($page) && array_key_exists('route', $page)) {
-            $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
-            return Core::url($path, true);
-        };
-    }
-
-    /**
-     * Set the URL to redirect to upon successful form submission.
-     *
-     * @param string $path The URL to redirect to.
-     *
-     * @return void
-     */
-    public function redirectOnSuccessTo(string $location): void
-    {
-        $this->redirectUrl = $location;
     }
 
     /**
@@ -212,19 +264,19 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     }
 
     /**
-     * Get the data to be persisted to the database.
+     * Get the URL associated with a page name from the configuration.
      *
-     * This method retrieves and prepares the data that is intended to be saved or persisted in the database.
-     * It may involve data manipulation or transformation before the data is ready for database storage.
-     * It is available to child classes that inherits the AbstractUdashForm
+     * @param string $pagename The name of the page.
      *
-     * @param array $data The original data to be processed and persisted.
-     *
-     * @return array The prepared data ready for database storage.
+     * @return string|null The URL associated with the page name, or null if not found.
      */
-    protected function prepareEntryData(array $data): array
+    public function getRouteUrl(string $pagename): ?string
     {
-        return $data;
+        $page = Udash::instance()->getConfig($pagename);
+        if(is_array($page) && array_key_exists('route', $page)) {
+            $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
+            return Core::url($path, true);
+        };
     }
 
     /**
@@ -236,7 +288,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      *
      * @return void
      */
-    protected function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void
+    public function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void
     {
         $fieldset = $this->getFieldset($name);
         if($fieldset) {
@@ -306,6 +358,10 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
         };
 
+    }
+
+    private function formulateError($method = null, string $error) {
+        throw new \Exception( $method . " must be overridden " . $error );
     }
 
 }

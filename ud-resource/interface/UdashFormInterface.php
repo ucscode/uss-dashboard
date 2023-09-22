@@ -7,7 +7,19 @@ interface UdashFormInterface
      *
      * @return self The registration form object
      */
-    public function handleSubmission();
+    public function handleSubmission(): void;
+
+    /** Persist an entry by saving data to the database.
+    *
+    * This method is responsible for saving the provided data to the database. It should perform
+    * the necessary operations to store the data securely and return a boolean value indicating
+    * whether the operation was successful or not.
+    * 
+    * @param array $data The data to be saved to the database.
+    *
+    * @return bool Returns true if the data was successfully saved to the database; otherwise, false.
+    */
+    public function persistEntry(array $data): bool;
 
     /**
      * When data is successfully inserted into database
@@ -18,7 +30,7 @@ interface UdashFormInterface
      *
      * @return void
      */
-    public function onDataEntrySuccess(array $data, bool $isUpdate = false);
+    public function onEntrySuccess(array $data): void;
 
     /**
      * When data fails to insert into database
@@ -31,27 +43,25 @@ interface UdashFormInterface
      *
      * @return void
      */
-    public function onDataEntryFailure(array $data, bool $isUpdate = false);
+    public function onEntryFailure(array $data): void;
 
     /**
-     * Refactor the data obtained from $_POST or $_GET.
-     *
-     * This method retrieves and refactors the data necessary for querying the database.
+     * This method should filter and retrieves only necessary data from _POST or _GET request.
      *
      * @param bool $sanitize Indicates whether to sanitize the data.
      *
      * @return array The filtered and refactored data.
      */
-    public function getFilteredData(bool $sanitize): array;
+    public function getFilteredSubmissionData(bool $sanitize): array;
 
     /**
-     * Get the URL for a specific page route.
+     * This method should filter and retrieves only the data necessary for inserting or update database record.
      *
-     * @param string $pagename The name of the page.
+     * @param array The data to filter
      *
-     * @return string|null The URL for the specified page route, or null if not found.
+     * @return array The filtered and persistable data.
      */
-    public function getRouteUrl(string $pagename): ?string;
+    public function prepareEntryData(array $data): array;
 
     /**
      * Check if the form has been submitted.
@@ -68,15 +78,6 @@ interface UdashFormInterface
      * @return bool true if the form submission is trusted, otherwise false.
      */
     public function isTrusted(): bool;
-
-    /**
-     * Redirect to a specified location upon successful form submission.
-     *
-     * @param string $location The URL to which to redirect.
-     *
-     * @return void
-     */
-    public function redirectOnSuccessTo(string $location): void;
 
     /**
      * Check the validity of a set of data against defined rules.

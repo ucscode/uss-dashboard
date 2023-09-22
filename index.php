@@ -3,11 +3,11 @@
 /**
  * Dashboard Module for User Synthetics
  *
- * The user synthetics dashboard module enables developer to build quick user-based project without need of re-creating a user management system.
- * uss dashboard comes with beautiful and friendly user interface that is easily managable and customizable.
+ * The user synthetics dashboard module enables developer to build quick backend project with available and powerful control panel.
+ * Uss dashboard comes with beautiful and friendly user interface that is easily managable and customizable.
  * It is backed by powerful event driven API to fit the need of any project and also allows modification of the system by other modules.
  *
- * `ud` &mdash; represents `uss` `dashboard`
+ * `ud` means "Uss Dashboard" not "User Dashboard"
  *
  * @version 2.3.0
  * @author ucscode <uche23mail@gmail.com>

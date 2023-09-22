@@ -34,10 +34,8 @@ class UdashLoginForm extends AbstractUdashForm
 
     }
 
-    public function handleSubmission(): self
+    public function handleSubmission(): void
     {
-
-        return $this;
     }
 
     protected function buildMailBlock()

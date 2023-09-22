@@ -199,17 +199,22 @@ abstract class AbstractUdash
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
 
-            foreach($pages as $pageIndex => $pageUnit) {
-                if(is_array($pageUnit)) {
-                    $page['_key'] = $pageIndex;
-                    // isolate the page
-                    call_user_func(function () use ($pageUnit) {
-                        // Inform all modules that a page is being loaded
-                        Events::instance()->exec('Udash:pageload', $pageUnit);
-                        // render the page
-                        require_once $pageUnit['file'];
+            foreach($pages as $index => $pageInfo) {
+                
+                if(is_array($pageInfo)) {
+
+                    $pageInfo['_key'] = $index;
+
+                    call_user_func(function () use ($pageInfo) {
+                        
+                        Events::instance()->exec('Udash:pageload', $pageInfo);
+                       
+                        require_once $pageInfo['file'];
+
                     });
+
                 };
+
             }
 
             // Inform all modules that Udash has ended
