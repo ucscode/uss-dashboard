@@ -47,6 +47,7 @@ $resources = [
         "Roles.php",
         "Hierarchy.php",
         "User.php",
+        "Alert.php",
     ],
     'forms' => [
         "UdashLoginForm.php",

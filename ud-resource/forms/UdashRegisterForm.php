@@ -5,6 +5,8 @@ use Ucscode\SQuery\SQuery;
 
 class UdashRegisterForm extends AbstractUdashForm
 {
+    protected User $user;
+
     protected function buildForm()
     {
 
@@ -82,26 +84,41 @@ class UdashRegisterForm extends AbstractUdashForm
 
     public function persistEntry(array $data): bool
     {
-        $user = new User();
-        $user->email = $data['user']['email'];
-        $user->password = $data['user']['password'];
-        $user->usercode = $data['user']['usercode'];
-        $user->username = $data['user']['username'] ?? null;
-        return $user->persist();
+        $this->user = new User();
+        $this->user->email = $data['user']['email'];
+        $this->user->password = $data['user']['password'];
+        $this->user->usercode = $data['user']['usercode'];
+        $this->user->username = $data['user']['username'] ?? null;
+        return $this->user->persist();
     }
 
     public function onEntrySuccess(array $post): void
     {
-        Uss::instance()->console('@bootbox', [
-            'message' => 'Your registration was successful',
-            'redirect' => null
-        ]);
+        $this->user->set('role', ['MEMBER']);
+
+        (new Alert("Your registration was successful"))
+            ->type('notification')
+            ->followRedirectAs('ud-registration')
+            ->display('success');
+        
+        (new Alert("Please confirm the link sent to your email"))
+            ->type('notification')
+            ->followRedirectAs('ud-email')
+            ->display('info', 2000);
+        
+        $this->sendEmail();
+
+        header("location: " . Udash::instance()->url());
+
+        exit;
     }
 
-    /*public function onEntryFailure(array $post): void
+    public function onEntryFailure(array $post): void
     {
-
-    }*/
+        (new Alert('Sorry! The registration failed'))
+            ->type('notification')
+            ->display('error');
+    }
 
     /**
      * [VALIDATION] METHODS
@@ -134,6 +151,10 @@ class UdashRegisterForm extends AbstractUdashForm
             return false;
         };
         return true;
+    }
+
+    protected function sendEmail() {
+        
     }
 
 }

@@ -6,7 +6,7 @@ use Ucscode\Packages\Pairs;
 abstract class AbstractUdash
 {
     use PropertyAccessTrait;
-    
+
     // Abstract Child Methods
 
     abstract public function setConfig(string $property, mixed $value): bool;
@@ -202,7 +202,7 @@ abstract class AbstractUdash
     {
         $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
         $this->usermeta->linkParentTable([
-            'parentTable' => DB_PREFIX . 'users', 
+            'parentTable' => DB_PREFIX . 'users',
         ]);
     }
 

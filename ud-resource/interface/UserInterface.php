@@ -26,4 +26,12 @@ interface UserInterface
 
     public function errors(): array;
 
+    //public function addNotification(array $data): ?array;
+
+    //public function removeNotification(array $data): ?array;
+
+    //public function updateNotification(array $data): ?array;
+
+    //public function getNotification(array $data): ?array;
+
 }

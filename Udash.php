@@ -12,7 +12,7 @@ final class Udash extends AbstractUdash
      *
      * The default dashboard route to asses udash
      */
-    public const ROUTE = '/dashboard';
+    public const ROUTE = 'dashboard';
 
     /** @ignore */
     private bool $firewallEnabled = true;
@@ -119,6 +119,15 @@ final class Udash extends AbstractUdash
             ->where(is_array($value) ? $value : $columnName, $value);
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
+    }
+
+    public function url(string $path = '') {
+        $root = Core::url(ROOT_DIR . "/" . self::ROUTE);
+        $path = Uss::instance()->filterContext($path);
+        if(!empty($path)) {
+            $root .= "/{$path}";
+        };
+        return $root;
     }
 
 }

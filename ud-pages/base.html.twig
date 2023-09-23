@@ -1,4 +1,5 @@
 {# The base template for Uss Dashboard #}
+{% import '@Uss/macrobase.twig' as macrobase %}
 {% extends '@Uss/base.html.twig' %}
 
 {% block head_css %}
@@ -12,4 +13,6 @@
     {% if user is not empty %}
 	    <script src="{{ Uss.toUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
     {% endif %}
+    
+    <script data-alerts>$(function() { {{ macrobase.renderExternalBlockContent('__alert') }} });</script>
 {% endblock %}

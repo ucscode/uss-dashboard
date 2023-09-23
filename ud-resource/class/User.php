@@ -25,16 +25,19 @@ class User implements UserInterface
         ];
     }
 
-    public function __isset($key) {
+    public function __isset($key)
+    {
         return array_key_exists($key, $this->user);
     }
 
-    public function &__get(string $key) {
+    public function &__get(string $key)
+    {
         $this->validate($key, 'access');
         return $this->user[$key];
     }
 
-    public function __set(string $key, $value) {
+    public function __set(string $key, $value)
+    {
         $this->validate($key, 'set');
         $type = gettype($value);
         if(in_array($type, ['object', 'array'])) {
@@ -45,7 +48,7 @@ class User implements UserInterface
         };
         if(is_bool($value)) {
             $value = (int)$value;
-        };      
+        };
         $this->user[$key] = $value;
     }
 
@@ -72,7 +75,7 @@ class User implements UserInterface
     public function persist(): bool
     {
         $user = $this->getUser($this->user['id']);
-        
+
         try {
 
             if(!$user) {
@@ -104,7 +107,7 @@ class User implements UserInterface
                 $SQL = (new SQuery())
                     ->update($this->userTable, $newValues)
                     ->where('id', $user['id']);
-                
+
                 $result = Uss::instance()->mysqli->query($SQL);
 
             };
@@ -141,7 +144,7 @@ class User implements UserInterface
             return $this->meta->all($this->user['id'], $regex);
         }
     }
-    
+
     // Obtain User Meta
     public function get(string $key, bool $epoch = false): mixed
     {
@@ -213,7 +216,7 @@ class User implements UserInterface
             return true;
 
         };
-        
+
         return false;
     }
 

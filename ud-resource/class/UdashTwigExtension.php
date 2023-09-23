@@ -1,24 +1,21 @@
 <?php
-
+/**
+ * This is one 
+ */
 final class UdashTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
     public function getGlobals(): array
     {
-        return [
-            'Udash' => new class () {
-                public $user;
+        return array('Udash' => $this);
+    }
 
-                public function __construct()
-                {
-                    $this->user = new User();
-                }
+    public function __construct()
+    {
+        Alert::flushAll();
+    }
 
-                public function getConfig(string $property)
-                {
-                    return Udash::instance()->config($property);
-                }
-
-            }
-        ];
+    public function getConfig(string $property)
+    {
+        return Udash::instance()->getConfig($property);
     }
 }
