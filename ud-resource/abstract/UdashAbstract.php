@@ -120,7 +120,7 @@ abstract class UdashAbstract
              * Generate a code and store the value using `v-code` key in the usermeta table
              * If code is confirmed, verify the existing email
              */
-            $pallet = array( "v-code" => Core::keygen($length) );
+            $pallet = array( "v-code" => Uss::instance()->keygen($length) );
 
             /**
              * Pattern:
@@ -136,7 +136,7 @@ abstract class UdashAbstract
              * If code is confirmed, replace the old email with the new email
              */
             $pallet = array(
-                "v-code:update" => Core::keygen($length),
+                "v-code:update" => Uss::instance()->keygen($length),
                 "v-code:email" => $new_email
             );
 
@@ -163,7 +163,7 @@ abstract class UdashAbstract
          * The URL will be forwarded to the email that needs to be confirmed
          * The email security key will be tested for a match to confirm the validation
          */
-        $verify_url = Core::url(ROOT_DIR . '/' . UDASH_ROUTE . "?v={$encoding}");
+        $verify_url = Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE . "?v={$encoding}");
 
         /**
          * X2Client By Ucscode is a library that makes email template creation more easier
@@ -207,7 +207,7 @@ abstract class UdashAbstract
 
         // replace variables within the email message;
 
-        $message = Core::replace_var($message, array(
+        $message = Uss::instance()->replace_var($message, array(
             'email' => $new_email,
             'href' => $verify_url
         ));
@@ -215,7 +215,7 @@ abstract class UdashAbstract
 
         // replace variables within the email template
 
-        $__body = Core::replace_var($template, array(
+        $__body = Uss::instance()->replace_var($template, array(
             'content' => $message,
             'footer' => "You are receiving this email because you signup up at " . Uss::$global['title']
         ));
@@ -284,7 +284,7 @@ abstract class UdashAbstract
          *
          * The code is only valid for a limite period of time.
          */
-        $r_code = Core::keygen(45);
+        $r_code = Uss::instance()->keygen(45);
 
         /**
          * Save the reset code in the user meta
@@ -297,7 +297,7 @@ abstract class UdashAbstract
 
         $encode = base64_encode("{$r_code}:{$user['email']}");
 
-        $r_url = Core::url(ROOT_DIR . '/' . UDASH_ROUTE . "/reset?v={$encode}");
+        $r_url = Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE . "/reset?v={$encode}");
 
 
         /**
@@ -318,13 +318,13 @@ abstract class UdashAbstract
 
         // Replace variables within the message
 
-        $message = Core::replace_var($message, array(
+        $message = Uss::instance()->replace_var($message, array(
             "href" => $r_url
         ));
 
         // Replace variables within the template
 
-        $__body = Core::replace_var($template, array(
+        $__body = Uss::instance()->replace_var($template, array(
             "content" => $message,
             "footer" => 'Secure your account and stay safe!'
         ));
@@ -581,17 +581,17 @@ abstract class UdashAbstract
 
         # Get the directory where file should be uploaded
 
-        if(!Core::is_absolute_path($path)) {
+        if(!Uss::instance()->is_absolute_path($path)) {
             # Relative path will be uploaded to `Udash::ASSETS_DIR`
-            $path = Core::abspath(self::ASSETS_DIR . "/{$path}");
+            $path = Uss::instance()->abspath(self::ASSETS_DIR . "/{$path}");
         } else {
-            $path = Core::abspath($path);
+            $path = Uss::instance()->abspath($path);
         }
 
         # Recursively create any directory that does not exist
 
         $fullpath = call_user_func(function () use ($path) {
-            $pathname = explode("/", Core::rslash($path));
+            $pathname = explode("/", Uss::instance()->rslash($path));
             $currentPath = '';
             foreach($pathname as $dir) {
                 $currentPath .= $dir . DIRECTORY_SEPARATOR;
@@ -618,7 +618,7 @@ abstract class UdashAbstract
 
         # Get The Relative & Absolute Filepath
 
-        $pathdata['relative'] = preg_replace("#^" . Core::rslash(MOD_DIR) . "/#i", "", $fullpath);
+        $pathdata['relative'] = preg_replace("#^" . Uss::instance()->rslash(MOD_DIR) . "/#i", "", $fullpath);
 
         if($pathdata['relative'] == $fullpath) {
             /**
@@ -626,7 +626,7 @@ abstract class UdashAbstract
              * Enforce path to start from forward slash. For example;
              * From "C:\a\b" To "/a/b"
              */
-            $pathdata['relative'] = Core::url($fullpath, true);
+            $pathdata['relative'] = Uss::instance()->generateUrl($fullpath, true);
         };
 
         $pathdata['relative'] = "{$pathdata['relative']}/{$filename}";
@@ -668,7 +668,7 @@ abstract class UdashAbstract
             }
         };
 
-        $avatar = Core::url($avatar);
+        $avatar = Uss::instance()->generateUrl($avatar);
 
         return $avatar;
 
@@ -712,7 +712,7 @@ abstract class UdashAbstract
 			<h2 class='mb-3 fw-light text-uppercase'>
                 <?php echo $title; ?>
             </h2>
-			<img src='<?php echo Core::url(self::ASSETS_DIR . "/images/empty-state.webp"); ?>' width='400px' class='img-fluid user-select-none'>
+			<img src='<?php echo Uss::instance()->generateUrl(self::ASSETS_DIR . "/images/empty-state.webp"); ?>' width='400px' class='img-fluid user-select-none'>
 			<div class='py-4'>
 				<?php
                     if(is_callable($var)) {
@@ -794,7 +794,7 @@ abstract class UdashAbstract
             $value = Uss::$global['options']->get("site:{$key}");
             if(!empty($value)) {
                 if($key == 'icon') {
-                    $value = Core::url(MOD_DIR . "/{$value}");
+                    $value = Uss::instance()->generateUrl(MOD_DIR . "/{$value}");
                 }
                 Uss::$global[ $key ] = $value;
             };
@@ -1218,7 +1218,7 @@ abstract class UdashAbstract
 
         # Focus Route
 
-        $uripath = array_filter(array_map('trim', explode("/", Core::rslash($uripath))));
+        $uripath = array_filter(array_map('trim', explode("/", Uss::instance()->rslash($uripath))));
         $match = array_slice(Uss::instance()->query(), 0, count($uripath));
 
         $type = getType($resource);
@@ -1255,7 +1255,7 @@ abstract class UdashAbstract
     {
 
         # verify script filename
-        $is_ajax_file = Core::rslash($_SERVER['SCRIPT_FILENAME']) === Core::rslash(Udash::AJAX_DIR . "/@ajax.php");
+        $is_ajax_file = Uss::instance()->rslash($_SERVER['SCRIPT_FILENAME']) === Uss::instance()->rslash(Udash::AJAX_DIR . "/@ajax.php");
         # verify request method
         $is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
         # verify route index

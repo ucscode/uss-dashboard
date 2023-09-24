@@ -71,7 +71,7 @@ $notice = call_user_func(function () {
  * The notification url is the page where a full list notifications will be displayed
  */
 
-$notify_url = Core::url(ROOT_DIR) . "/" . Udash::config('page:notification');
+$notify_url = Uss::instance()->generateUrl(ROOT_DIR) . "/" . Udash::config('page:notification');
 
 ?>
 	<div class="notification-box ml-15" data-nxurl='%{udash.ajax}'>
@@ -106,7 +106,7 @@ $button = function (array $attrs) use ($notice) {
 
     /** convert array into HTML attribute */
     ?>
-			<button <?php echo Core::array_to_html_attrs($attrs); ?>>
+			<button <?php echo Uss::instance()->array_to_html_attrs($attrs); ?>>
 				<i class="bi bi-bell"></i>
 				<?php
                 /**
@@ -205,7 +205,7 @@ $button = function (array $attrs) use ($notice) {
 							</div>
 							<div class="content">
 								<p><?php echo $message; ?></p>
-								<span><?php echo Core::elapse($notification['period']); ?></span>
+								<span><?php echo Uss::instance()->elapse($notification['period']); ?></span>
 							</div>
 						</a>
 					</li>

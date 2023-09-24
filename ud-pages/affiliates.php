@@ -23,7 +23,7 @@ call_user_func(function () use ($profileFocus) {
      */
     Uss::$global['menu']->get('profile')->add('team', array(
         "label" => "My Team",
-        "href" => Core::url(ROOT_DIR . "/{$teamFocus}"),
+        "href" => Uss::instance()->generateUrl(ROOT_DIR . "/{$teamFocus}"),
         "active" => implode("/", Uss::instance()->query()) === $teamFocus
     ));
 

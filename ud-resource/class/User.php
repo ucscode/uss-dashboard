@@ -138,7 +138,7 @@ class User implements UserInterface
         return !!$this->getUser($this->user['id']);
     }
 
-    public function getAll(?string $regex = null): array
+    public function getAllMeta(?string $regex = null): array
     {
         if(!is_null($this->user['id'])) {
             return $this->meta->all($this->user['id'], $regex);
@@ -146,7 +146,7 @@ class User implements UserInterface
     }
 
     // Obtain User Meta
-    public function get(string $key, bool $epoch = false): mixed
+    public function getMeta(string $key, bool $epoch = false): mixed
     {
         if(!is_null($this->user['id'])) {
             return $this->meta->get($key, $this->user['id'], $epoch);
@@ -154,7 +154,7 @@ class User implements UserInterface
         return null;
     }
 
-    public function set(string $key, mixed $value): bool
+    public function setMeta(string $key, mixed $value): bool
     {
         if(!is_null($this->user['id'])) {
             return $this->meta->set($key, $value, $this->user['id']);
@@ -162,7 +162,7 @@ class User implements UserInterface
         return false;
     }
 
-    public function remove(string $key): ?bool
+    public function removeMeta(string $key): ?bool
     {
         if(!is_null($this->user['id'])) {
             return $this->meta->remove($key, $this->user['id']);

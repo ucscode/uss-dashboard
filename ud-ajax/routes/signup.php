@@ -21,7 +21,7 @@ Events::instance()->addListener('udash:ajax', function () {
     $prefix = DB_TABLE_PREFIX;
 
 
-    if(!preg_match(Core::regex('email'), $_POST['email'])) {
+    if(!preg_match(Uss::instance()->regex('email'), $_POST['email'])) {
 
         # Check if the email address is valid
 
@@ -94,7 +94,7 @@ Events::instance()->addListener('udash:ajax', function () {
                     "email" => $_POST['email'],
                     "password" => Udash::password($_POST['password']),
                     "username" => $username,
-                    "usercode" => Core::keygen(mt_rand(5, 7)),
+                    "usercode" => Uss::instance()->keygen(mt_rand(5, 7)),
                     "parent" => $parent
                 );
 
@@ -186,7 +186,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
 
     $data = [
-        "redirect" => Udash::config('signup:redirect') ?? Core::url(ROOT_DIR . '/' . UDASH_ROUTE)
+        "redirect" => Udash::config('signup:redirect') ?? Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE)
     ];
 
     $result = [

@@ -113,7 +113,7 @@
             Events::instance()->addListener('auth:header//userdrop', function () {
                 ?>
 									<li data-auth='logout'>
-										<a href="<?php echo Core::url(ROOT_DIR . '/' . Udash::config('page:signout')); ?>"> 
+										<a href="<?php echo Uss::instance()->generateUrl(ROOT_DIR . '/' . Udash::config('page:signout')); ?>"> 
 											<i class="bi bi-power"></i> Sign Out 
 										</a>
 									</li>

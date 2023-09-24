@@ -1,6 +1,6 @@
 <?php
 
-use Ucscode\Packages\Events;
+use Ucscode\Event\Event;
 use Ucscode\Packages\Pairs;
 
 abstract class AbstractUdash
@@ -56,12 +56,14 @@ abstract class AbstractUdash
             return;
         }
 
+        $uss = Uss::instance();
+
         if(!DB_ENABLED) {
-            Uss::instance()->render('@Uss/error.html.twig', [
+            $uss->render('@Uss/error.html.twig', [
                 "subject" => "Database Connection Disabled",
                 "message" => "<span class='text-danger'>PROBLEM</span> &gt;&gt;&gt; " . highlight_string("define('DB_ENABLED', false)", true),
                 "message_class" => "mb-5",
-                "image" => Core::url(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image" => $uss->generateUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
             ]);
             return;
@@ -153,7 +155,6 @@ abstract class AbstractUdash
      */
     private function configureSystem(): void
     {
-
         require_once self::RES_DIR . "/declare-database.php";
 
         # Default Udash Configuration
@@ -174,13 +175,12 @@ abstract class AbstractUdash
             'smtp:state' => 'default'
         ];
 
-        # Get global Config
-        $options = Uss::instance()->options;
+        $uss = Uss::instance();
 
         # Setup Global Config
         foreach($defaultConfigs as $key => $value) {
-            if(is_null($options->get($key))) {
-                $options->set($key, $value);
+            if(is_null($uss->options->get($key))) {
+                $uss->options->set($key, $value);
             };
         };
 
@@ -200,7 +200,8 @@ abstract class AbstractUdash
      */
     private function configureUser(): void
     {
-        $this->usermeta = new Pairs(Uss::instance()->mysqli, DB_PREFIX . "usermeta");
+        $uss = Uss::instance();
+        $this->usermeta = new Pairs($uss->mysqli, DB_PREFIX . "usermeta");
         $this->usermeta->linkParentTable([
             'parentTable' => DB_PREFIX . 'users',
         ]);
@@ -208,10 +209,10 @@ abstract class AbstractUdash
 
     private function dispatchEvent(): void
     {
-        Events::instance()->addListener('modules:loaded', function () {
+        (new Event())->addListener('Modules:loaded', function () {
 
             // Inform all modules that Udash has started
-            Events::instance()->exec('Udash:started');
+            (new Event())->dispatch('Udash:started');
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
@@ -224,7 +225,7 @@ abstract class AbstractUdash
 
                     call_user_func(function () use ($pageInfo) {
 
-                        Events::instance()->exec('Udash:pageload', $pageInfo);
+                        (new Event())->dispatch('Udash:pageload', $pageInfo);
 
                         require_once $pageInfo['file'];
 
@@ -235,7 +236,7 @@ abstract class AbstractUdash
             }
 
             // Inform all modules that Udash has ended
-            Events::instance()->exec('Udash:ended');
+            (new Event())->dispatch('Udash:ended');
 
         });
     }

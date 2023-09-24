@@ -73,7 +73,7 @@ call_user_func(function () {
                     $data['email'] = $user['email'];
                 }
 
-                if(!preg_match(Core::regex('email'), $data['email'])) {
+                if(!preg_match(Uss::instance()->regex('email'), $data['email'])) {
                     throw new Exception("Invalid email address");
                 }
 

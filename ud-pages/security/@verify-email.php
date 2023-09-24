@@ -99,7 +99,7 @@ call_user_func(function () {
 
             // Test for validity!
 
-            if(preg_match(Core::regex('email'), $email)) {
+            if(preg_match(Uss::instance()->regex('email'), $email)) {
 
                 $prefix = DB_TABLE_PREFIX;
 

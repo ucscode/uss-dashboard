@@ -1,7 +1,8 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
-use Ucscode\SQuery\SQuery;
+
+// Create custom Registration Form By extending this class
 
 class UdashRegisterForm extends AbstractUdashForm
 {
@@ -78,34 +79,28 @@ class UdashRegisterForm extends AbstractUdashForm
         unset($post['user']['confirmPassword']);
         $post['user']['email'] = strtolower($post['user']['email']);
         $post['user']['password'] = password_hash($post['user']['password'], PASSWORD_DEFAULT);
-        $post['user']['usercode'] = Core::keygen(7);
+        $post['user']['usercode'] = Uss::instance()->keygen(7);
         return $post;
     }
 
     public function persistEntry(array $data): bool
     {
         $this->user = new User();
-        $this->user->email = $data['user']['email'];
-        $this->user->password = $data['user']['password'];
-        $this->user->usercode = $data['user']['usercode'];
-        $this->user->username = $data['user']['username'] ?? null;
+        foreach($data['user'] as $key => $value) {
+            $this->user->{$key} = $value ?: null;
+        };
         return $this->user->persist();
     }
 
     public function onEntrySuccess(array $post): void
     {
-        $this->user->set('role', ['MEMBER']);
+        $this->user->setMeta('role', ['MEMBER']);
 
         (new Alert("Your registration was successful"))
             ->type('notification')
             ->followRedirectAs('ud-registration')
             ->display('success');
-        
-        (new Alert("Please confirm the link sent to your email"))
-            ->type('notification')
-            ->followRedirectAs('ud-email')
-            ->display('info', 2000);
-        
+
         $this->sendEmail();
 
         header("location: " . Udash::instance()->url());
@@ -153,8 +148,12 @@ class UdashRegisterForm extends AbstractUdashForm
         return true;
     }
 
-    protected function sendEmail() {
-        
+    protected function sendEmail()
+    {
+        (new Alert("Please confirm the link sent to your email"))
+            ->type('notification')
+            ->followRedirectAs('ud-email')
+            ->display('info', 2000);
     }
 
 }

@@ -53,7 +53,7 @@ ob_start();
                                 </tr>
                                 <tr>
                                     <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;" valign="top" align="center">
-                                        Powered by <a href="<?php echo Core::url(ROOT_DIR); ?>" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;"><?php echo Uss::$global['title']; ?></a>.
+                                        Powered by <a href="<?php echo Uss::instance()->generateUrl(ROOT_DIR); ?>" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;"><?php echo Uss::$global['title']; ?></a>.
                                     </td>
                                 </tr>
                             </table>

@@ -120,7 +120,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
     # Define the login page
 
-    $data = array( "redirect" => Core::url(ROOT_DIR . '/' . UDASH_ROUTE) );
+    $data = array( "redirect" => Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE) );
 
     $result = [
         "status" => &$status,

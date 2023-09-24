@@ -121,8 +121,9 @@ final class Udash extends AbstractUdash
         return $result->fetch_assoc();
     }
 
-    public function url(string $path = '') {
-        $root = Core::url(ROOT_DIR . "/" . self::ROUTE);
+    public function url(string $path = '')
+    {
+        $root = Uss::instance()->generateUrl(ROOT_DIR . "/" . self::ROUTE);
         $path = Uss::instance()->filterContext($path);
         if(!empty($path)) {
             $root .= "/{$path}";

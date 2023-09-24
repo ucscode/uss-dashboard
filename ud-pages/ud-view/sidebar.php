@@ -157,9 +157,9 @@
 
                         ?>
 
-				<li <?php echo Core::array_to_html_attrs($li_attr); ?>>
+				<li <?php echo Uss::instance()->array_to_html_attrs($li_attr); ?>>
 				
-					<a <?php echo Core::array_to_html_attrs($anchor_attr); ?>>
+					<a <?php echo Uss::instance()->array_to_html_attrs($anchor_attr); ?>>
 						<?php
 
                                 if(empty($menu->level)):

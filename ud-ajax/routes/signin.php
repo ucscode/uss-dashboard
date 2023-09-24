@@ -32,7 +32,7 @@ Events::instance()->addListener('udash:ajax', function () {
      *
      * If the login input does not match an email, then it is assumed to be a username
      */
-    $column = preg_match(Core::regex('email'), $_POST['login']) ? 'email' : 'username';
+    $column = preg_match(Uss::instance()->regex('email'), $_POST['login']) ? 'email' : 'username';
 
 
     /**

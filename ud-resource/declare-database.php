@@ -3,7 +3,7 @@
 # Ensure that this file is required within the Udash instantiation
 
 if(!class_exists('\\Udash') || !isset($this) || !($this instanceof Udash)) {
-    die();
+    die('Udash: This file is not properly implemented');
 };
 
 $statements = [];
@@ -57,26 +57,28 @@ $statements[] = "
     )
 ";
 
+$uss = Uss::instance();
+
 # Execute Statements
 foreach($statements as $SQL) {
 
     try {
 
-        $SQL = Core::replace_var($SQL, [
+        $SQL = $uss->replaceVar($SQL, [
             'prefix' => DB_PREFIX
         ]);
 
-        $result = Uss::instance()->mysqli->query($SQL);
+        $result = $uss->mysqli->query($SQL);
 
         if(!$result) {
-            throw new Exception(Uss::instance()->mysqli->error);
+            throw new Exception($uss->mysqli->error);
         }
 
     } catch(Exception $e) {
 
-        Uss::instance()->render('@Uss/error.html.twig', [
+        $uss->render('@Uss/error.html.twig', [
             "subject" => "Udash: Database Setup Error",
-            "message" => $this->getConfig('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . Uss::instance()->mysqli->errno
+            "message" => $this->getConfig('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
         ]);
 
         die();

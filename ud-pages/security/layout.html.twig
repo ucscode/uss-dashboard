@@ -78,5 +78,5 @@
 
 {% block body_js %}
     {{ parent() }}
-	<script src="{{ Uss.call('Core::url', constant('Udash::ASSETS_DIR') ~ '/js/security.js') }}"></script>
+	<script src="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/js/security.js') }}"></script>
 {% endblock body_js %}

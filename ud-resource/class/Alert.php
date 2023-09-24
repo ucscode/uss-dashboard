@@ -20,7 +20,8 @@ class Alert
      * This method is called only once by
      * UdashTwigExtension Class Instance
      */
-    public static function flushAll() {
+    public static function flushAll()
+    {
         if(!self::$liberated) {
             $alerts = $_SESSION['UssAlert'] ?? [];
             foreach(array_keys($alerts) as $key) {
@@ -65,7 +66,7 @@ class Alert
     }
 
     /**
-     * IMPORTANT: 
+     * IMPORTANT:
      * FOLLOW REDIRECT WILL NOT WORK IF YOU REDIRECT AND DO NOT EXIT THE SCRIPT
      */
     public function followRedirectAs($name): self
@@ -100,7 +101,7 @@ class Alert
             $jsResult = "setTimeout(function() { " . $jsResult . " }, {$delay})";
         };
 
-        UssTwigBlockManager::instance()->appendTo('__alert', $this->alertId, $jsResult);
+        (new UssTwigBlockManager())->appendTo('__alert', $this->alertId, $jsResult);
     }
 
     protected function bootBox($method): string

@@ -163,7 +163,7 @@ Uss::instance()->route(Udash::config('page:notification'), function () {
 												<?php echo $markdown; ?>
 											</div>
 											<span class="text-sm text-medium text-gray">
-												<?php echo Core::elapse($notification['period']); ?> 
+												<?php echo Uss::instance()->elapse($notification['period']); ?> 
 												<?php if(!empty($notification['redirect'])): ?>
 													<i class='mdi mdi-vector-link ms-1'></i>
 												<?php endif; ?>
@@ -205,7 +205,7 @@ Uss::instance()->route(Udash::config('page:notification'), function () {
 											
 											<div class='row'>
 												<div class='col-sm-8 m-auto col-lg-6'>
-													<img src='<?php echo Core::url(Udash::ASSETS_DIR . '/images/notification-empty.webp'); ?>' class='img-fluid'>
+													<img src='<?php echo Uss::instance()->generateUrl(Udash::ASSETS_DIR . '/images/notification-empty.webp'); ?>' class='img-fluid'>
 												</div>
 											</div>
 											

@@ -16,13 +16,13 @@ interface UserInterface
 
     public function hasRole(string $role): bool;
 
-    public function get(string $key, bool $epoch): mixed;
+    public function getMeta(string $key, bool $epoch): mixed;
 
-    public function set(string $key, mixed $value): bool;
+    public function setMeta(string $key, mixed $value): bool;
 
-    public function remove(string $key): ?bool;
+    public function removeMeta(string $key): ?bool;
 
-    public function getAll(string $regex): array;
+    public function getAllMeta(string $regex): array;
 
     public function errors(): array;
 

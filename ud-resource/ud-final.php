@@ -37,7 +37,7 @@ $defaultPagesExpr = array(
     'page:signout' => UDASH_ROUTE . '/signout',
 
     // The redirection url after signing out
-    'signout:redirect' => Core::url(ROOT_DIR . '/' . UDASH_ROUTE)
+    'signout:redirect' => Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE)
 
 );
 

@@ -1,18 +1,17 @@
 {# The base template for Uss Dashboard #}
-{% import '@Uss/macrobase.twig' as macrobase %}
 {% extends '@Uss/base.html.twig' %}
 
 {% block head_css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ Uss.toUrl(constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
+    <link rel="stylesheet" href="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
 {% endblock head_css %}
 
 {% block body_js %}
-    <script src="{{ Uss.toUrl(constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
+    <script src="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
     {{ parent() }}
     {% if user is not empty %}
-	    <script src="{{ Uss.toUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
+	    <script src="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
     {% endif %}
     
-    <script data-alerts>$(function() { {{ macrobase.renderExternalBlockContent('__alert') }} });</script>
+    <script data-alerts>$(function() { {{ Uss.renderBlocks('__alert')|raw }} });</script>
 {% endblock %}

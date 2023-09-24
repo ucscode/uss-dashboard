@@ -1,6 +1,6 @@
 <?php
 /**
- * This is one 
+ * This is one
  */
 final class UdashTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
