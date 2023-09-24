@@ -3,14 +3,14 @@
 
 {% block head_css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
+    <link rel="stylesheet" href="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
 {% endblock head_css %}
 
 {% block body_js %}
-    <script src="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
+    <script src="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
     {{ parent() }}
     {% if user is not empty %}
-	    <script src="{{ Uss.call('generateUrl', constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
+	    <script src="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
     {% endif %}
     
     <script data-alerts>$(function() { {{ Uss.renderBlocks('__alert')|raw }} });</script>
