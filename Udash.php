@@ -1,7 +1,6 @@
 <?php
 
 use Ucscode\SQuery\SQuery;
-use Ucscode\Packages\Pairs;
 
 final class Udash extends AbstractUdash
 {
@@ -91,8 +90,8 @@ final class Udash extends AbstractUdash
      */
     public function render(string $template, array $options = [], ?UssTwigBlockManager $ussTwigBlockManager = null): void
     {
-        $user = (new User());
-        if($this->firewallEnabled && !$user->exists()) {
+        $user = new User();
+        if($this->firewallEnabled && !$user->getFromSession()) {
             $template = $this->getConfig('templates:login');
             $options['form'] = $this->getConfig('forms:login');
         };
@@ -112,23 +111,80 @@ final class Udash extends AbstractUdash
      *
      * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
      */
-    public function easyQuery(string $tableName, null|int|string|array $value, $columnName = 'id')
+    public function fetchData(string $tableName, null|int|string|array $value, $columnName = 'id')
     {
+        $parameter = is_array($value) ? $value : $columnName;
+
         $SQL = (new SQuery())->select()
             ->from($tableName)
-            ->where(is_array($value) ? $value : $columnName, $value);
+            ->where($parameter, $value);
+
         $result = Uss::instance()->mysqli->query($SQL);
+        
         return $result->fetch_assoc();
     }
 
-    public function url(string $path = '')
+    /**
+    * Generates a URL based on the provided path and parameters.
+    *
+    * @param string $path The path for the URL.
+    * @param array $param An associative array of query parameters.
+    *
+    * @return object An anonymous class representing the generated URL with methods to manipulate parameters.
+    *               - setParam(string $key, ?string $value): Set or update a query parameter.
+    *               - removeParam(string $key): Remove a query parameter.
+    *               - getResult(): Get the final generated URL as a string.
+    */
+    public function urlGenerator(string $path = '', array $param = []): object
     {
-        $root = Uss::instance()->generateUrl(ROOT_DIR . "/" . self::ROUTE);
-        $path = Uss::instance()->filterContext($path);
-        if(!empty($path)) {
-            $root .= "/{$path}";
+        return new class($path, $param) {
+            
+            private string $path;
+            private array $query = [];
+
+            public function __construct(string $path, array $param)
+            {
+                $this->init($path);
+                $this->query = array_merge($this->query, $param);
+            }
+
+            public function __toString()
+            {
+                return $this->getResult();
+            }
+
+            public function setParam(string $key, ?string $value) {
+                $this->query[$key] = $value;
+            }
+
+            public function removeParam(string $key) {
+                if(isset($this->query[$key])) {
+                    unset($this->query[$key]);
+                }
+            }   
+
+            public function getResult() {
+                $uss = Uss::instance();
+                $result = $uss->pathToUrl(ROOT_DIR . "/" . Udash::ROUTE);
+                if(!empty($this->path)) {
+                    $result .= "/{$this->path}";
+                };
+                if(!empty($this->query)) {
+                    $result .= "?" . http_build_query($this->query);
+                };
+                return $result;
+            }
+
+            private function init(string $path): void {
+                $path = explode("?", $path);
+                $uss = Uss::instance();
+                $this->path = $uss->filterContext($path[0]);
+                if(!empty($path[1])) {
+                    parse_str($path[1], $this->query);
+                };
+            }
+        
         };
-        return $root;
     }
 
 }

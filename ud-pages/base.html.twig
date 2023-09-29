@@ -3,15 +3,183 @@
 
 {% block head_css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
+    <link rel="stylesheet" href="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
 {% endblock head_css %}
 
+{% block body_main %}
+    
+    {% block dashboard_sidebar %}
+
+        <aside class="sidebar-nav-wrapper">
+
+            <div class="navbar-logo">
+                <a href="%{udash.url}">
+                    <img src="" height='50px' alt="logo" />
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav text-capitalize">
+                <ul id='nav-group'>
+                
+                    <li class="nav-item" data-menu-level="0">
+                        <a href="http://localhost/projects/aa-courier/dashboard/cargo/shipment" target="_self">
+                        <span class="icon"><i class="bi bi-truck"></i></span>
+                        <span class="text">Shipments</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item nav-item-has-children" data-menu-level="0">
+                        <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#menufy-shipnew" aria-controls="menufy-shipnew" aria-expanded="true">
+                        <span class="icon"><i class="bi bi-send-plus"></i></span>
+                        <span class="text">New Shipment</span>
+                        </a>
+                        <ul id="menufy-shipnew" class="dropdown-nav collapse show" data-bs-parent="#nav-group" style="">
+                            <li class="nav-sub-item nav-item-has-children" data-menu-level="1">
+                                <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#menufy1-trial" aria-controls="menufy1-trial" aria-expanded="true">
+                                <span class="text">Ship Child</span>
+                                </a>
+                                <ul id="menufy1-trial" class="dropdown-nav collapse show" style="">
+                                    <li class="nav-sub-item nav-item-has-children" data-menu-level="2">
+                                        <a href="javascript:void(0)" class="collapsed" data-bs-toggle="collapse" data-bs-target="#menufy2-prone" aria-controls="menufy2-prone" aria-expanded="false">
+                                        <span class="text">Ghost</span>
+                                        </a>
+                                        <ul id="menufy2-prone" class="dropdown-nav collapse" style="">
+                                            <li class="nav-sub-item" data-menu-level="3">
+                                                <a href="https://bruce.lee" target="_self">
+                                                <span class="text">Fist Of Fury</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-sub-item" data-menu-level="3">
+                                                <a href="javascript:void(0)" target="_self">
+                                                <span class="text">True Waking Child</span>
+                                                </a>
+                                                <ul id="menufy3-milk" class="collapse dropdown-nav ">
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-sub-item" data-menu-level="1">
+                                <a href="http://works" target="_self">
+                                <span class="text">Ship Child</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                </ul>
+            </nav>
+            
+        </aside>
+
+        <div class="overlay">
+            <a href='javascript:void(0)' class='overlay-close'>	
+                <i class='bi bi-x-lg'></i>
+            </a>
+        </div>
+
+    {% endblock %}
+
+    <main class="main-wrapper %{udash.main.class}">
+	
+    {% block dashboard_header %}
+
+        <header class="header %{udash.header.class}">
+        
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                
+                    <div class="col-md-6 col-6">
+                        <div class="header-left d-flex align-items-center">
+
+                            <div class="menu-toggle-btn mr-20 d-xl-none">
+                                <button id="menu-toggle" class="btn btn-hover">
+                                    <i class="bi bi-list"></i>
+                                </button>
+                            </div>
+                            
+                            {# Udash:header/left #}
+
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-6">
+                        <div class="header-right">
+
+                            {# include __DIR__ . "/header-notification.php" #}
+
+                            {# Udash:header/right #}
+                            
+                            <!-- profile start -->
+                            <div class="profile-box ml-1 %{udash.userdrop.class}">
+                            
+                                <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="profile-info">
+                                        <div class="info">
+                                            <div class="image">
+                                                <img src="<?php echo Udash::user_avatar(Uss::$global['user']['id']); ?>" alt=""/>
+                                                <span class="status"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                                
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
+                                    <li>
+                                        <div class='px-3 py-2 text-end bg-light rounded-2 fs-14px'>
+                                            <span class='text-success'>{{ user.username ? user.username : user.email }}</span>
+                                            <i class='bi bi-info-circle ms-1'></i>
+                                        </div>
+                                    </li>
+
+                                    {% block nav_list %}
+
+                                        <li data-auth='logout'>
+                                            <a href=""> 
+                                                <i class="bi bi-power"></i> Sign Out 
+                                            </a>
+                                        </li>
+
+                                    {% endblock %}
+
+                                    {# Auth:header/userdrop #}
+
+                                </ul>
+                                
+                            </div>
+                            <!-- profile end -->
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </header>
+
+    {% endblock %} {# dashboard_header #}
+        
+    {% block dashboard_main %}
+
+        <div class='content-wrapper'>
+            {% block dashboard_content %}{% endblock %}
+	    </div>
+	            
+    {% endblock %}
+
+    {% block dashboard_footer %}{% endblock %}
+
+    </main>
+
+{% endblock %} {# body_main #}
+
 {% block body_js %}
-    <script src="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
+    <script src="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
     {{ parent() }}
     {% if user is not empty %}
-	    <script src="{{ Uss.generateUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
+	    <script src="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
     {% endif %}
-    
     <script data-alerts>$(function() { {{ Uss.renderBlocks('__alert')|raw }} });</script>
 {% endblock %}

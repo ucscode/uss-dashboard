@@ -103,7 +103,7 @@ class UdashRegisterForm extends AbstractUdashForm
 
         $this->sendEmail();
 
-        header("location: " . Udash::instance()->url());
+        header("location: " . Udash::instance()->urlGenerator('/'));
 
         exit;
     }
@@ -127,7 +127,7 @@ class UdashRegisterForm extends AbstractUdashForm
             $this->setReport('user[email]', "Invalid email address");
             return false;
         } else {
-            $exists = Udash::instance()->easyQuery(DB_PREFIX . "users", $email, 'email');
+            $exists = Udash::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
             if($exists) {
                 $this->setReport('user[email]', 'The email address already exists');
                 return false;

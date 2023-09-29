@@ -186,7 +186,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
 
     $data = [
-        "redirect" => Udash::config('signup:redirect') ?? Uss::instance()->generateUrl(ROOT_DIR . '/' . UDASH_ROUTE)
+        "redirect" => Udash::config('signup:redirect') ?? Uss::instance()->pathToUrl(ROOT_DIR . '/' . UDASH_ROUTE)
     ];
 
     $result = [

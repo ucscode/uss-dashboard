@@ -69,7 +69,17 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         }
         parent::__construct($name, $action, $method, $enctype);
         $this->initForm();
+        $this->beforeBuild();
         $this->buildForm();
+    }
+
+    /**
+     * An alternative way to mimic __construct for child class
+     * Since the constructor does many process, trying to redefine all parameters on child class and call parent::__construct() 
+     * method can be time wasting. Override the constructor instead
+     */
+    protected function beforeBuild() {
+        // Does nothing, just for overriding
     }
 
     /**
@@ -77,14 +87,14 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      * @return void
      */
     public function handleSubmission(): void
-    {
+    {   
         if($this->isSubmitted()) {
-
+            
             if($this->isTrusted()) {
 
                 // Get Filtered data from _GET or _POST
                 $post = $this->getFilteredSubmissionData();
-
+                
                 // Validate The Data
                 if($this->isValid($post)) {
 
@@ -137,7 +147,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      */
     public function onEntryFailure(array $data): void
     {
-        $this->formulateError(__METHOD__, 'to manage actions upon database entry failure.');
+        $this->formulateError(__METHOD__, 'to manage actions upon failure on database entry.');
     }
 
     /**
@@ -207,7 +217,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         if($post === null) {
             $post = $this->getFilteredSubmissionData();
         };
-        return empty($post);
+        return !empty($post);
     }
 
     /**
@@ -275,7 +285,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         $page = Udash::instance()->getConfig($pagename);
         if(is_array($page) && array_key_exists('route', $page)) {
             $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
-            return Uss::instance()->generateUrl($path, true);
+            return Uss::instance()->pathToUrl($path, true);
         };
     }
 
@@ -295,6 +305,10 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
             $fieldset['report']->setContent("* {$message}");
             $fieldset['report']->addAttributeValue('class', $class);
         };
+    }
+
+    protected function onFormBuild() {
+
     }
 
     /**
@@ -362,7 +376,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
     private function formulateError($method = null, string $error)
     {
-        throw new \Exception($method . " must be overridden " . $error);
+        $childClass = get_called_class();
+        throw new \Exception($method . " must be overridden on `$childClass` " . $error);
     }
 
 }

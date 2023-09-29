@@ -71,7 +71,7 @@ $notice = call_user_func(function () {
  * The notification url is the page where a full list notifications will be displayed
  */
 
-$notify_url = Uss::instance()->generateUrl(ROOT_DIR) . "/" . Udash::config('page:notification');
+$notify_url = Uss::instance()->pathToUrl(ROOT_DIR) . "/" . Udash::config('page:notification');
 
 ?>
 	<div class="notification-box ml-15" data-nxurl='%{udash.ajax}'>

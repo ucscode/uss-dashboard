@@ -5,10 +5,17 @@ use Ucscode\UssElement\UssElement;
 
 class UdashLoginForm extends AbstractUdashForm
 {
+    private string $error;
+    protected User|array $user;
+
+    protected function beforeBuild() {
+        $this->handleSubmission();
+    }
+
     protected function buildForm()
     {
 
-        $this->add('login', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
+        $this->add('user[login]', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
             'attr' => [
                 'placeholder' => 'Login detail',
                 'pattern' => '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$',
@@ -16,7 +23,7 @@ class UdashLoginForm extends AbstractUdashForm
             ]
         ]);
 
-        $this->add('password', UssForm::INPUT, UssForm::TYPE_PASSWORD, $this->style + [
+        $this->add('user[password]', UssForm::INPUT, UssForm::TYPE_PASSWORD, $this->style + [
             'attr' => [
                 'placeholder' => 'Password',
                 'pattern' => '^.{4,}$',
@@ -34,21 +41,63 @@ class UdashLoginForm extends AbstractUdashForm
 
     }
 
-    public function handleSubmission(): void
+    public function persistEntry(array $data): bool
     {
+        $column = strpos($data['user']['login'], '@') === false ? 'username' : 'email';
+
+        $this->user = Udash::instance()->fetchData(User::TABLE, $data['user']['login'], $column);
+
+        if(!empty($this->user)) {
+            $isValidPassword = password_verify($data['user']['password'], $this->user['password']);
+            if($isValidPassword) {
+                return true;
+            };
+        };
+
+        if(isset($data['user']['password'])) {
+            unset($data['user']['password']);
+        };
+
+        $this->populate($data);
+        return !($this->error = "Authentication Failed: Incorrect login credential");
     }
 
+    public function onEntryFailure(array $data): void
+    {
+        (new Alert($this->error))
+            ->type('notification')
+            ->display('error');
+    }
+
+    public function onEntrySuccess(array $data): void
+    {
+        (new User($this->user['id']))->saveToSession();
+
+        $redirect = "
+            <script>
+                setTimeout(function() {
+                    window.location.href = '';
+                }, 5000);
+            </script>
+        ";
+
+        (new UssTwigBlockManager())->appendTo('body_js', 'login:redirect', $redirect);
+
+        (new Alert("Authentication Successful"))
+            ->type('notification')
+            ->display('success');
+        
+        (new Alert("Redirected you to dashboard"))
+            ->type('notification')
+            ->display(null, 1000);
+    }
+    
     protected function buildMailBlock()
     {
-
-        # Create Block;
-
         $div1 = (new UssElement(UssForm::NODE_DIV))
             ->setAttribute('class', 'd-flex justify-content-between my-3 col-12');
-
         $div2 = (new UssElement(UssForm::NODE_DIV))
             ->setAttribute('class', 'resend-email ms-auto');
-
         $a = (new UssElement(UssForm::NODE_A))
             ->setAttribute('href', 'javascript:void(0)')
             ->setAttribute('title', 'Resend Confirmation Email')
@@ -56,11 +105,8 @@ class UdashLoginForm extends AbstractUdashForm
 
         $small = (new UssElement(UssForm::NODE_SMALL))
             ->setContent('Reconfirm Email');
-
         $i = (new UssElement(UssForm::NODE_I))
             ->setAttribute('class', 'bi bi-envelope-at');
-
-        # Organize Block
 
         $div1->appendChild($div2);
         $div2->appendChild($a);
@@ -68,7 +114,6 @@ class UdashLoginForm extends AbstractUdashForm
         $a->appendChild($i);
 
         return $div1;
-
     }
 
 }

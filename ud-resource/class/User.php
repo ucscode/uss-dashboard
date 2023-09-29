@@ -7,9 +7,11 @@ class User implements UserInterface
 {
     use PropertyAccessTrait;
 
+    public const TABLE = DB_PREFIX . "users";
+    public const META_TABLE = DB_PREFIX . "usermeta";
+
     protected array $user = [];
     protected $errors = [];
-    protected $userTable = DB_PREFIX . "users";
     protected ?Pairs $meta;
 
     public function __construct(?int $userId = null)
@@ -52,6 +54,11 @@ class User implements UserInterface
         $this->user[$key] = $value;
     }
 
+    public function getAvatar(): ?string
+    {
+        return null;
+    }
+
     public function getRoles(): array
     {
         return $this->meta->get('user:roles') ?? [];
@@ -72,6 +79,14 @@ class User implements UserInterface
         return false;
     }
 
+    /**
+     * Save user information in database
+     *
+     * If user does not exist, user is created
+     * Else, user is updated
+     *
+     * @return bool: true if the user was added or updated, false otherwise
+     */
     public function persist(): bool
     {
         $user = $this->getUser($this->user['id']);
@@ -83,7 +98,7 @@ class User implements UserInterface
                 $user = $this->user;
                 unset($user['id']);
 
-                $SQL = (new SQuery())->insert($this->userTable, $this->user);
+                $SQL = (new SQuery())->insert(self::TABLE, $this->user);
                 $result = Uss::instance()->mysqli->query($SQL);
 
                 if($result) {
@@ -105,7 +120,7 @@ class User implements UserInterface
                 };
 
                 $SQL = (new SQuery())
-                    ->update($this->userTable, $newValues)
+                    ->update(self::TABLE, $newValues)
                     ->where('id', $user['id']);
 
                 $result = Uss::instance()->mysqli->query($SQL);
@@ -120,24 +135,41 @@ class User implements UserInterface
         return $result;
     }
 
+    /**
+     * Delete the user record from database
+     *
+     * @return bool: true if the user was deleted
+     */
     public function delete(): ?bool
     {
         $user = $this->getUser($this->user['id']);
         $result = null;
         if($user) {
             $SQL = (new SQuery())->delete()
-                ->from($this->userTable)
+                ->from(self::TABLE)
                 ->where('id', $user['id']);
             $result = Uss::instance()->mysqli->query($SQL);
         };
         return $result;
     }
 
+    /**
+     * Check if a user exists
+     *
+     * This method checks the database for a user with a specific ID
+     *
+     * @return bool: true if the user exists
+     */
     public function exists(): bool
     {
         return !!$this->getUser($this->user['id']);
     }
 
+    /**
+     * Get all meta information or pattern associated to the current user
+     *
+     * @return array: An empty array if no meta information or user does not exist
+     */
     public function getAllMeta(?string $regex = null): array
     {
         if(!is_null($this->user['id'])) {
@@ -145,7 +177,14 @@ class User implements UserInterface
         }
     }
 
-    // Obtain User Meta
+    /**
+     * Obtain a User Meta based on the specified key
+     *
+     * @param string $key: The meta data to obtain
+     * @param bool $epoch: Whether to return the timestamp of when the data was added
+     *
+     * @return mixed: The meta value; or a timestamp if parameter 2 is set to `true`
+     */
     public function getMeta(string $key, bool $epoch = false): mixed
     {
         if(!is_null($this->user['id'])) {
@@ -154,6 +193,14 @@ class User implements UserInterface
         return null;
     }
 
+    /**
+     * Set a User Meta for the associated user
+     * 
+     * @param string $key: The meta data key
+     * @param string $value: The meta data value for the specified key
+     *
+     * @return bool: true if the meta data was added, false otherwise
+     */
     public function setMeta(string $key, mixed $value): bool
     {
         if(!is_null($this->user['id'])) {
@@ -162,6 +209,13 @@ class User implements UserInterface
         return false;
     }
 
+    /**
+     * Remove a User Meta based on the specified key
+     *
+     * @param string $key: The key of the meta data to be removed
+     *
+     * @return bool: true if the meta data was removed, false otherwise
+     */
     public function removeMeta(string $key): ?bool
     {
         if(!is_null($this->user['id'])) {
@@ -170,17 +224,59 @@ class User implements UserInterface
         return null;
     }
 
+    /**
+     * Get error messages associated to failures in queriing the database
+     */
     public function errors(): array
     {
         return $this->errors;
     }
 
+    /**
+     * Encode and save user information to session
+     */
+    public function saveToSession() {
+        if($this->exists()) {
+            $userSecret = $this->user['password'] . $this->user['usercode'];
+            $var = $this->user['id'] . ":" . hash('sha256', $userSecret);
+            $_SESSION['UssUser'] = $var;
+        }
+    }
+
+    /**
+     * Get user information from session, decode it and populate the user instance
+     * 
+     * This will not populate the user instance if the instance already contains a user information
+     *
+     * @return bool: true if the session information is found and the User instance was populated, false otherwise
+     */
+    public function getFromSession(): bool {
+        if(empty($this->user['id']) && !empty($_SESSION['UssUser']) && is_string($_SESSION['UssUser'])) {
+            $detail = explode(":", $_SESSION['UssUser']);
+            if(count($detail) === 2 && is_numeric($detail[0])) {
+                $user = $this->getUser($detail[0]);
+                if($user) {
+                    $hash = hash('sha256', $user['password'] . $user['usercode']);
+                    if($hash === $detail[1]) {
+                        return !!($this->user = $user);
+                    }
+                };
+            };
+        };
+        return false;
+    }
+
+    /**
+     * Private Methods
+     * @ignore
+     */
+    
     private function getUser(?int $userId): ?array
     {
         if(is_null($userId)) {
             $userId = -1;
         }
-        return Udash::instance()->easyQuery($this->userTable, $userId);
+        return Udash::instance()->fetchData(self::TABLE, $userId);
     }
 
     private function polyFill(?int $userId): bool
@@ -189,7 +285,7 @@ class User implements UserInterface
             ->select('column_name')
             ->from('information_schema.columns')
             ->where('table_schema', DB_NAME)
-            ->and('table_name', $this->userTable);
+            ->and('table_name', self::TABLE);
 
         $result = Uss::instance()->mysqli->query($SQL);
 
@@ -225,7 +321,7 @@ class User implements UserInterface
         if(!array_key_exists($key, $this->user)) {
             $class = __CLASS__;
             throw new \Exception(
-                "Trying to {$action} unknown property {$class}::\${$key}; references to unknown column `{$this->userTable}`.`{$key}`"
+                "Trying to {$action} unknown property {$class}::\${$key}; references to unknown column `{self::TABLE}`.`{$key}`"
             );
         }
     }

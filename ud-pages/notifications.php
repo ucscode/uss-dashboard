@@ -205,7 +205,7 @@ Uss::instance()->route(Udash::config('page:notification'), function () {
 											
 											<div class='row'>
 												<div class='col-sm-8 m-auto col-lg-6'>
-													<img src='<?php echo Uss::instance()->generateUrl(Udash::ASSETS_DIR . '/images/notification-empty.webp'); ?>' class='img-fluid'>
+													<img src='<?php echo Uss::instance()->pathToUrl(Udash::ASSETS_DIR . '/images/notification-empty.webp'); ?>' class='img-fluid'>
 												</div>
 											</div>
 											

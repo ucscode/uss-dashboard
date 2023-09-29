@@ -63,7 +63,7 @@ abstract class AbstractUdash
                 "subject" => "Database Connection Disabled",
                 "message" => "<span class='text-danger'>PROBLEM</span> &gt;&gt;&gt; " . highlight_string("define('DB_ENABLED', false)", true),
                 "message_class" => "mb-5",
-                "image" => $uss->generateUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image" => $uss->pathToUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
             ]);
             return;
@@ -78,17 +78,17 @@ abstract class AbstractUdash
         // Configure logged in user information and authentication
         $this->configureUser();
 
+        $this->initialized = true;
+
         // Send Signal to alter other modules update any of the configuration
         // Then render the default pages
         $this->dispatchEvent();
-
-        $this->initialized = true;
 
     }
 
     // Get the route declared by the child class
 
-    private function getPrimeRoute(): string
+    private function dashboardRoute(): string
     {
         $class = get_called_class();
         return constant("$class::ROUTE");
@@ -102,28 +102,33 @@ abstract class AbstractUdash
             'debug' => true,
 
             /**
-             * templates:login is not considered a page because it is globally rendered irrespective of the route
-             * I.E The login page will display by default on any page when a user tries to access the page
-             * without sufficient permission
+             * HINTS: 
+             * - There is no login page file, there is only a "login template" and "login form class"
+             * - The login template will render by default on any page when a user tries to access the page without sufficient permission
+             * - The "handleSubmission()" method is called within the "login form class" itself
              */
             'templates:login' => '@Udash/security/login.html.twig',
 
             'templates:notification' => '@Udash/notification.html.twig',
 
+            /**
+             * This is the first page user will enter when they visit the dashboards
+             * However, a login page will be displayed if user has no permission
+             */
             'pages:index' => [
-                'route' => $this->getPrimeRoute(),
+                'route' => $this->dashboardRoute(),
                 'file' => self::PAGES_DIR . '/index.php',
                 'template' => '@Udash/index.html.twig'
             ],
 
             'pages:register' => [
-                'route' => $this->getPrimeRoute() . '/register',
+                'route' => $this->dashboardRoute() . '/register',
                 'file' => self::PAGES_DIR . "/register.php",
                 'template' => '@Udash/security/register.html.twig'
             ],
 
             'pages:recovery' => [
-                'route' => $this->getPrimeRoute() . '/reset',
+                'route' => $this->dashboardRoute() . '/reset',
                 'file' => self::PAGES_DIR . "/recovery.php",
                 'template' => '@Udash/security/recovery.html.twig',
             ],
@@ -185,7 +190,7 @@ abstract class AbstractUdash
         };
 
         # Set Base Template Directory
-        Uss::instance()->addTwigFilesystem(self::PAGES_DIR, 'Udash');
+        $uss->addTwigFilesystem(self::PAGES_DIR, 'Udash');
 
         $this->setConfig('forms:login', new UdashLoginForm('login'));
         $this->setConfig('forms:register', new UdashRegisterForm('register'));
@@ -201,9 +206,9 @@ abstract class AbstractUdash
     private function configureUser(): void
     {
         $uss = Uss::instance();
-        $this->usermeta = new Pairs($uss->mysqli, DB_PREFIX . "usermeta");
+        $this->usermeta = new Pairs($uss->mysqli, User::META_TABLE);
         $this->usermeta->linkParentTable([
-            'parentTable' => DB_PREFIX . 'users',
+            'parentTable' => User::TABLE,
         ]);
     }
 
@@ -212,7 +217,7 @@ abstract class AbstractUdash
         (new Event())->addListener('Modules:loaded', function () {
 
             // Inform all modules that Udash has started
-            (new Event())->dispatch('Udash:started');
+            (new Event())->dispatch('Udash:OnStart');
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
@@ -225,7 +230,7 @@ abstract class AbstractUdash
 
                     call_user_func(function () use ($pageInfo) {
 
-                        (new Event())->dispatch('Udash:pageload', $pageInfo);
+                        (new Event())->dispatch('Udash:OnPageload', $pageInfo);
 
                         require_once $pageInfo['file'];
 
@@ -236,7 +241,7 @@ abstract class AbstractUdash
             }
 
             // Inform all modules that Udash has ended
-            (new Event())->dispatch('Udash:ended');
+            (new Event())->dispatch('Udash:OnEnd');
 
         });
     }

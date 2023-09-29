@@ -20,7 +20,7 @@ call_user_func(function () use ($profileFocus) {
      */
     Uss::$global['menu']->get('profile')->add('team-tree', array(
         'label' => "Hierarchy",
-        'href' => Uss::instance()->generateUrl(ROOT_DIR . "/{$hierFocus}"),
+        'href' => Uss::instance()->pathToUrl(ROOT_DIR . "/{$hierFocus}"),
         "active" => implode("/", Uss::instance()->query()) === $hierFocus
     ));
 
@@ -36,7 +36,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Get CSS that will style the nodes
              */
-            $dir = Uss::instance()->generateUrl(Udash::ASSETS_DIR . "/vendor/datatree");
+            $dir = Uss::instance()->pathToUrl(Udash::ASSETS_DIR . "/vendor/datatree");
             echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
 
         }, EVENT_ID . "node");
@@ -46,7 +46,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Get JavaScript the will render the nodes
              */
-            $dir = Uss::instance()->generateUrl(Udash::ASSETS_DIR . "/vendor/datatree");
+            $dir = Uss::instance()->pathToUrl(Udash::ASSETS_DIR . "/vendor/datatree");
             echo "\t<script src='{$dir}/treeData.js'></script>\n";
 
             /**
