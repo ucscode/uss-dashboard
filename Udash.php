@@ -135,56 +135,9 @@ final class Udash extends AbstractUdash
     *               - removeParam(string $key): Remove a query parameter.
     *               - getResult(): Get the final generated URL as a string.
     */
-    public function urlGenerator(string $path = '', array $param = []): object
+    public function urlGenerator(string $path = '/', array $param = []): object
     {
-        return new class($path, $param) {
-            
-            private string $path;
-            private array $query = [];
-
-            public function __construct(string $path, array $param)
-            {
-                $this->init($path);
-                $this->query = array_merge($this->query, $param);
-            }
-
-            public function __toString()
-            {
-                return $this->getResult();
-            }
-
-            public function setParam(string $key, ?string $value) {
-                $this->query[$key] = $value;
-            }
-
-            public function removeParam(string $key) {
-                if(isset($this->query[$key])) {
-                    unset($this->query[$key]);
-                }
-            }   
-
-            public function getResult() {
-                $uss = Uss::instance();
-                $result = $uss->getUrl(ROOT_DIR . "/" . Udash::ROUTE);
-                if(!empty($this->path)) {
-                    $result .= "/{$this->path}";
-                };
-                if(!empty($this->query)) {
-                    $result .= "?" . http_build_query($this->query);
-                };
-                return $result;
-            }
-
-            private function init(string $path): void {
-                $path = explode("?", $path);
-                $uss = Uss::instance();
-                $this->path = $uss->filterContext($path[0]);
-                if(!empty($path[1])) {
-                    parse_str($path[1], $this->query);
-                };
-            }
-        
-        };
+        return new urlGenerator($path, $param);
     }
 
 }

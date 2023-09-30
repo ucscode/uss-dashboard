@@ -92,7 +92,8 @@
 }
 
 .header .header-right .profile-box .dropdown-menu li a {
-	font-size: 0.8rem;
+	font-size: 0.85rem;
+	text-transform: capitalize;
 }
 
 .main-wrapper.full-width {

@@ -41,6 +41,7 @@ $resources = [
         "AbstractUdashForm.php",
     ],
     'class' => [
+        "UrlGenerator.php",
         "UdashTwigExtension.php",
         "UdashCrud.php",
         //"DOMTablet.php",

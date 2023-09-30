@@ -10,6 +10,7 @@ abstract class AbstractUdash
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
     abstract public function enableFirewall(bool $enable = true): void;
+    abstract public function urlGenerator(string $path, array $param = []): object;
     abstract public function render(
         string $template,
         array $options = [],
@@ -119,6 +120,18 @@ abstract class AbstractUdash
                 'template' => '@Udash/security/recovery.html.twig',
             ],
 
+            'pages:logout' => [
+                'route' => $this->dashboardRoute() . '/logout',
+                'file' => self::PAGES_DIR . "/logout.php",
+                'template' => null,
+                'item' => [
+                    'label' => 'logout',
+                    'href' => $this->urlGenerator('/logout'),
+                    'icon' => 'bi bi-power',
+                ],
+                'endpoint' => $this->urlGenerator('/')
+            ]
+
             /*'pages:account' => [
                 'route' => self::ROUTE . '/account',
                 'file' => self::PAGES_DIR . '/account.php',
@@ -178,13 +191,6 @@ abstract class AbstractUdash
         # Set Base Template Directory
         $uss->addTwigFilesystem(self::PAGES_DIR, 'Udash');
 
-        $this->setConfig('forms:login', new UdashLoginForm('login'));
-        $this->setConfig('forms:register', new UdashRegisterForm('register'));
-        $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
-
-        $this->menu = new TreeNode('MenuContainer');
-        $this->userMenu = new TreeNode('UserMenuContainer');
-
     }
 
     /**
@@ -199,6 +205,13 @@ abstract class AbstractUdash
         $this->usermeta->linkParentTable([
             'parentTable' => User::TABLE,
         ]);
+
+        $this->setConfig('forms:login', new UdashLoginForm('login'));
+        $this->setConfig('forms:register', new UdashRegisterForm('register'));
+        $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
+
+        $this->menu = new TreeNode('MenuContainer');
+        $this->userMenu = new TreeNode('UserMenuContainer');
     }
 
     /**
@@ -215,6 +228,8 @@ abstract class AbstractUdash
             $this->recursiveMenuConfig($this->menu, 'Main Menu');
             $this->recursiveMenuConfig($this->userMenu, 'User Menu');
             
+            $this->signoutNav();
+
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
 
@@ -284,6 +299,15 @@ abstract class AbstractUdash
             }
         }
         
+    }
+
+    private function signoutNav(): void {
+        $logout = $this->configs['pages:logout'] ?? null;
+        if(is_array($logout) && isset($logout['item']) && is_array($logout['item'])) {
+            $item = $logout['item'];
+            $item['order'] = $item['order'] ?? 1204;
+            $this->userMenu->add('logout', $item);
+        };
     }
 
 }
