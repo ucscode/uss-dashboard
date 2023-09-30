@@ -6,5 +6,48 @@
     } 
 %}
 
+<div class="notification-box ml-15">
+ 
+        {# <div class='mobile d-sm-none'>
+            <a href='<?php echo $notify_url; ?>'>
+                <?php echo $button($mobile_attrs); ?>
+            </a>
+        </div> #}
+        
+        <div class='widescreen d-sm-flex'>
+        
+            <button class="dropdown-toggle" id="notification" data-bs-toggle="dropdown" aria-expanded="false" type="button">
+                <i class="bi bi-bell"></i>
+                {# display number if unviewed #}
+                <span class='animate__animated animate__wobble animate__infinite' data-nx-count>
+                    0
+                </span>
+            </button>
+    
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification" data-nx-container='header'>
+               
+                <li>
+                    <a href="javascript:void('redirect')" class='{{ 1 ? "unviewed" : null }}' data-nx='id-num'>
+                        <div class="image">
+                            <img src="{{ 1 ? user.avatar : 'notification.image' }}" alt="" />
+                        </div>
+                        <div class="content">
+                            <p>{{ "Parsedown(This is the message you wanna see &hellip;)" }}</p>
+                            <span>{{ 'timestamp' }}</span>
+                        </div>
+                    </a>
+                </li>
 
+                <li>
+                    <a href="<?php echo $notify_url; ?>" class='d-block text-center'>
+                        <small> <i class='bi bi-bell me-1'></i> View all </small>
+                    </a>
+                </li>
+
+            </ul>
+            
+        </div>
+    
+</div>
+	
 

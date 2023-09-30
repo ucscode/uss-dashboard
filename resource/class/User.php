@@ -199,7 +199,8 @@ class User implements UserInterface
             $SQL = (new SQuery())
                 ->select('COUNT(id) AS total')
                 ->from(self::NOTIFICATION_TABLE)
-                ->where($filter);
+                ->where($filter)
+                ->groupBy('userid');
             $result = $uss->mysqli->query($SQL)->fetch_assoc();
             return (int)($result ? $result['total'] : 0);
         }
