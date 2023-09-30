@@ -56,7 +56,8 @@ class User implements UserInterface
 
     public function getAvatar(): ?string
     {
-        return null;
+        $avatar = Uss::instance()->getUrl(Udash::ASSETS_DIR . "/images/user.png");
+        return $avatar;
     }
 
     public function getRoles(): array

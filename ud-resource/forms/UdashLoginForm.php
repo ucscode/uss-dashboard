@@ -72,24 +72,11 @@ class UdashLoginForm extends AbstractUdashForm
     public function onEntrySuccess(array $data): void
     {
         (new User($this->user['id']))->saveToSession();
-
-        $redirect = "
-            <script>
-                setTimeout(function() {
-                    window.location.href = '';
-                }, 5000);
-            </script>
-        ";
-
-        (new UssTwigBlockManager())->appendTo('body_js', 'login:redirect', $redirect);
-
+        
         (new Alert("Authentication Successful"))
             ->type('notification')
             ->display('success');
-        
-        (new Alert("Redirected you to dashboard"))
-            ->type('notification')
-            ->display(null, 1000);
+
     }
     
     protected function buildMailBlock()

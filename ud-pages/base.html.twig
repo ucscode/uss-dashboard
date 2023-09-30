@@ -11,15 +11,18 @@
 
 {% endblock head_css %}
 
+
 {% block body_main %}
     
+    {# Dashboard Sidebar #}
+    
     {% block dashboard_sidebar %}
-
+        
         <aside class="sidebar-nav-wrapper">
-
+            
             <div class="navbar-logo">
-                <a href="">
-                    <img src="" height='50px' alt="logo" />
+                <a href="{{ Udash.linkTo('/') }}">
+                    <img src="{{ Uss.getOption('web:icon') ?? Uss.globals.icon }}" height='50px' alt="logo" />
                 </a>
             </div>
             
@@ -86,13 +89,18 @@
 
     {% endblock %}
 
+
+    {# Dashboard Main #}
+
     {% block dashboard_main %}
 
-        <main class="main-wrapper %{udash.main.class}">
+        <main class="main-wrapper">
         
+        {# Dashboard Header #}
+
         {% block dashboard_header %}
 
-            <header class="header %{udash.header.class}">
+            <header class="header">
             
                 <div class="container-fluid">
                     <div class="row align-items-center">
@@ -125,7 +133,7 @@
                                         <div class="profile-info">
                                             <div class="info">
                                                 <div class="image">
-                                                    <img src="<?php echo Udash::user_avatar(Uss::$global['user']['id']); ?>" alt=""/>
+                                                    <img src="{{ user.avatar }}" alt=""/>
                                                     <span class="status"></span>
                                                 </div>
                                             </div>
@@ -167,29 +175,34 @@
             </header>
 
         {% endblock %} {# dashboard_header #}
-            
+        
+
+        {# Dashboard Wrapper #}
+
         {% block dashboard_wrapper %}
 
             <div class='content-wrapper'>
                 {% block dashboard_content %}{% endblock %}
             </div>
                     
-        {% endblock %} {# dashboard_wrapper #}
+        {% endblock %} {# Dashboard Wrapper #}
 
-        {% block dashboard_footer %}{% endblock %}
+
+        {# Dashboard Footer #}
+
+        {% block dashboard_footer %}
+        {% endblock %}
 
         </main>
 
-    {% endblock %} {# dashboard_main #}
+    {% endblock %} {# Dashboard Main #}
 
-{% endblock %} {# body_main #}
+{% endblock %} {# Body Main #}
+
 
 {% block body_js %}
-
-    {% set polyFillJs = constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js' %}
+    
     {% set dashboardJs = constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js' %}
-
-    <script src="{{ Uss.getUrl(polyFillJs) }}"></script>
 
     {{ parent() }}
 
