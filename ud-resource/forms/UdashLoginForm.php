@@ -6,7 +6,7 @@ use Ucscode\UssElement\UssElement;
 class UdashLoginForm extends AbstractUdashForm
 {
     private string $error;
-    protected User|array $user;
+    protected ?array $user;
 
     protected function beforeBuild() {
         $this->handleSubmission();

@@ -20,7 +20,7 @@ $account = Uss::$global['menu']->add('profile', array(
 
 $profileMenu = $account->add('profile', array(
     "label" => "Profile",
-    "href" => Uss::instance()->pathToUrl(ROOT_DIR . "/{$profileFocus}")
+    "href" => Uss::instance()->getUrl(ROOT_DIR . "/{$profileFocus}")
 ));
 
 

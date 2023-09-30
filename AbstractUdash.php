@@ -63,7 +63,7 @@ abstract class AbstractUdash
                 "subject" => "Database Connection Disabled",
                 "message" => "<span class='text-danger'>PROBLEM</span> &gt;&gt;&gt; " . highlight_string("define('DB_ENABLED', false)", true),
                 "message_class" => "mb-5",
-                "image" => $uss->pathToUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image" => $uss->getUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
             ]);
             return;

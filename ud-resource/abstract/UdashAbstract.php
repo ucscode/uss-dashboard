@@ -163,7 +163,7 @@ abstract class UdashAbstract
          * The URL will be forwarded to the email that needs to be confirmed
          * The email security key will be tested for a match to confirm the validation
          */
-        $verify_url = Uss::instance()->pathToUrl(ROOT_DIR . '/' . UDASH_ROUTE . "?v={$encoding}");
+        $verify_url = Uss::instance()->getUrl(ROOT_DIR . '/' . UDASH_ROUTE . "?v={$encoding}");
 
         /**
          * X2Client By Ucscode is a library that makes email template creation more easier
@@ -297,7 +297,7 @@ abstract class UdashAbstract
 
         $encode = base64_encode("{$r_code}:{$user['email']}");
 
-        $r_url = Uss::instance()->pathToUrl(ROOT_DIR . '/' . UDASH_ROUTE . "/reset?v={$encode}");
+        $r_url = Uss::instance()->getUrl(ROOT_DIR . '/' . UDASH_ROUTE . "/reset?v={$encode}");
 
 
         /**
@@ -626,7 +626,7 @@ abstract class UdashAbstract
              * Enforce path to start from forward slash. For example;
              * From "C:\a\b" To "/a/b"
              */
-            $pathdata['relative'] = Uss::instance()->pathToUrl($fullpath, true);
+            $pathdata['relative'] = Uss::instance()->getUrl($fullpath, true);
         };
 
         $pathdata['relative'] = "{$pathdata['relative']}/{$filename}";
@@ -668,7 +668,7 @@ abstract class UdashAbstract
             }
         };
 
-        $avatar = Uss::instance()->pathToUrl($avatar);
+        $avatar = Uss::instance()->getUrl($avatar);
 
         return $avatar;
 
@@ -712,7 +712,7 @@ abstract class UdashAbstract
 			<h2 class='mb-3 fw-light text-uppercase'>
                 <?php echo $title; ?>
             </h2>
-			<img src='<?php echo Uss::instance()->pathToUrl(self::ASSETS_DIR . "/images/empty-state.webp"); ?>' width='400px' class='img-fluid user-select-none'>
+			<img src='<?php echo Uss::instance()->getUrl(self::ASSETS_DIR . "/images/empty-state.webp"); ?>' width='400px' class='img-fluid user-select-none'>
 			<div class='py-4'>
 				<?php
                     if(is_callable($var)) {
@@ -794,7 +794,7 @@ abstract class UdashAbstract
             $value = Uss::$global['options']->get("site:{$key}");
             if(!empty($value)) {
                 if($key == 'icon') {
-                    $value = Uss::instance()->pathToUrl(MOD_DIR . "/{$value}");
+                    $value = Uss::instance()->getUrl(MOD_DIR . "/{$value}");
                 }
                 Uss::$global[ $key ] = $value;
             };

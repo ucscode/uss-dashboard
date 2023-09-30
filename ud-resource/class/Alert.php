@@ -36,6 +36,10 @@ class Alert
             };
             self::$liberated = true;
         }
+        // Garbage Collection
+        if(empty($_SESSION['UssAlert'])) {
+            unset($_SESSION['UssAlert']);
+        };
     }
 
     public function setOption(string|array $option, $value = null): self
@@ -101,7 +105,7 @@ class Alert
             $jsResult = "setTimeout(function() { " . $jsResult . " }, {$delay})";
         };
 
-        (new UssTwigBlockManager())->appendTo('__alert', $this->alertId, $jsResult);
+        UssTwigBlockManager::instance()->appendTo('__alert', $this->alertId, $jsResult);
     }
 
     protected function bootBox($method): string

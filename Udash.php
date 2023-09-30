@@ -165,7 +165,7 @@ final class Udash extends AbstractUdash
 
             public function getResult() {
                 $uss = Uss::instance();
-                $result = $uss->pathToUrl(ROOT_DIR . "/" . Udash::ROUTE);
+                $result = $uss->getUrl(ROOT_DIR . "/" . Udash::ROUTE);
                 if(!empty($this->path)) {
                     $result .= "/{$this->path}";
                 };

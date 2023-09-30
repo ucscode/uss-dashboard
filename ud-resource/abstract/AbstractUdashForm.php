@@ -285,7 +285,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         $page = Udash::instance()->getConfig($pagename);
         if(is_array($page) && array_key_exists('route', $page)) {
             $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
-            return Uss::instance()->pathToUrl($path, true);
+            return Uss::instance()->getUrl($path, true);
         };
     }
 

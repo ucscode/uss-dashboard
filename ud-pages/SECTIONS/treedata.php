@@ -159,7 +159,7 @@ $jsonTree = addslashes(json_encode($tree));
 				let el = e.target;
 				while( el && !el.hasAttribute('data-node') ) el = el.parentElement;
 				if( !el ) return;
-				window.location.href = `<?php echo Uss::instance()->pathToUrl(ROOT_DIR . "/" . $hierFocus); ?>/${el.dataset.node}`;
+				window.location.href = `<?php echo Uss::instance()->getUrl(ROOT_DIR . "/" . $hierFocus); ?>/${el.dataset.node}`;
 			});
 		});
 	</script>

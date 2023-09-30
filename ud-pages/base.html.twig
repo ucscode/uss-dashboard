@@ -2,8 +2,13 @@
 {% extends '@Uss/base.html.twig' %}
 
 {% block head_css %}
+
     {{ parent() }}
-    <link rel="stylesheet" href="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/css/default.css') }}">
+
+    {% set cssPath = constant('Udash::ASSETS_DIR') ~ '/css/default.css' %}
+
+    <link rel="stylesheet" href="{{ Uss.getUrl(cssPath) }}">
+
 {% endblock head_css %}
 
 {% block body_main %}
@@ -13,7 +18,7 @@
         <aside class="sidebar-nav-wrapper">
 
             <div class="navbar-logo">
-                <a href="%{udash.url}">
+                <a href="">
                     <img src="" height='50px' alt="logo" />
                 </a>
             </div>
@@ -180,10 +185,24 @@
 {% endblock %} {# body_main #}
 
 {% block body_js %}
-    <script src="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js') }}"></script>
+
+    {% set polyFillJs = constant('Udash::ASSETS_DIR') ~ '/js/polyfill.js' %}
+    {% set dashboardJs = constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js' %}
+
+    <script src="{{ Uss.getUrl(polyFillJs) }}"></script>
+
     {{ parent() }}
-    {% if user is not empty %}
-	    <script src="{{ Uss.pathToUrl(constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js') }}"></script>
+
+    {% if (user and user.id is not empty) %}
+	    <script src="{{ Uss.getUrl(dashboardJs) }}"></script>
     {% endif %}
-    <script data-alerts>$(function() { {{ Uss.renderBlocks('__alert')|raw }} });</script>
+
+    {% set alerts = Uss.renderBlocks('__alert') %}
+
+    {% if alerts is not null %}
+        <script>$(function() { 
+            {{ alerts|raw }} 
+        });</script>
+    {% endif %}
+
 {% endblock %}
