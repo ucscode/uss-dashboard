@@ -83,6 +83,18 @@
     border-radius: 4px;
 }
 
+.header .header-right .dropdown-menu {
+	border-radius: 5px;
+}
+
+.header .header-right .profile-box .dropdown-menu {
+	width: 260px;
+}
+
+.header .header-right .profile-box .dropdown-menu li a {
+	font-size: 0.8rem;
+}
+
 .main-wrapper.full-width {
 	margin-left: auto;
 	padding: 0;

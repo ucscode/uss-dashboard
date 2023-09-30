@@ -8,6 +8,7 @@ use Ucscode\Packages\TreeNode;
 final class UdashTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
     public readonly TreeNode $menu;
+    public readonly TreeNode $userMenu;
 
     public function getGlobals(): array
     {
@@ -16,7 +17,9 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
 
     public function __construct()
     {
-        $this->menu = Udash::instance()->menu;
+        $udash = Udash::instance();
+        $this->menu = $udash->menu;
+        $this->userMenu = $udash->userMenu;
         Alert::flushAll();
     }
 

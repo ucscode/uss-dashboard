@@ -29,6 +29,7 @@ abstract class AbstractUdash
 
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
+    public readonly TreeNode $userMenu;
     protected array $configs = [];
     private bool $initialized = false;
 
@@ -182,6 +183,7 @@ abstract class AbstractUdash
         $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
 
         $this->menu = new TreeNode('MenuContainer');
+        $this->userMenu = new TreeNode('UserMenuContainer');
 
     }
 
@@ -210,7 +212,8 @@ abstract class AbstractUdash
             (new Event())->dispatch('Udash:OnStart');
             
             // Sort Menu Based On Order Attribute
-            $this->recursiveMenuConfig($this->menu);
+            $this->recursiveMenuConfig($this->menu, 'Main Menu');
+            $this->recursiveMenuConfig($this->userMenu, 'User Menu');
             
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
@@ -243,11 +246,11 @@ abstract class AbstractUdash
      * Sort Udash Menu
      * All menu children will be sorted according to the "order" attribute
      */
-    private function recursiveMenuConfig($menu) {
+    private function recursiveMenuConfig(TreeNode $menu, string $title): void {
 
         if(empty($menu->getAttr('label')) && !empty($menu->level)) {
             $name = $menu->name;
-            throw new \Exception("(MenuItem: {$name}): All menu items must have a label attribute");
+            throw new \Exception("{$title}: (Item: {$name}) must have a label attribute");
         };
 
         $menu->sortChildren(function($a, $b) {
@@ -259,12 +262,16 @@ abstract class AbstractUdash
         if(empty($menu->getAttr('target'))) {
             $menu->setAttr('target', '_self');
         };
+            
+        if(empty($menu->getAttr('href'))) {
+            $menu->setAttr('href', 'javascript:void(0)');
+        };
         
         if(!empty($menu->children)) {
             $menu->setAttr('href', 'javascript:void(0)');
             $menu->setAttr('target', '_self');
             foreach($menu->children as $childMenu) {
-                $this->recursiveMenuConfig($childMenu);
+                $this->recursiveMenuConfig($childMenu, $title);
             }
         }
 
