@@ -17,9 +17,8 @@
     {# Dashboard Sidebar #}
     
     {% block dashboard_sidebar %}
-        
         <aside class="sidebar-nav-wrapper">
-            
+
             <div class="navbar-logo">
                 <a href="{{ Udash.linkTo('/') }}">
                     <img src="{{ Uss.getOption('web:icon') ?? Uss.globals.icon }}" height='50px' alt="logo" />
@@ -28,54 +27,9 @@
             
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
-                
-                    <li class="nav-item" data-menu-level="0">
-                        <a href="http://localhost/projects/aa-courier/dashboard/cargo/shipment" target="_self">
-                        <span class="icon"><i class="bi bi-truck"></i></span>
-                        <span class="text">Shipments</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item nav-item-has-children" data-menu-level="0">
-                        <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#menufy-shipnew" aria-controls="menufy-shipnew" aria-expanded="true">
-                        <span class="icon"><i class="bi bi-send-plus"></i></span>
-                        <span class="text">New Shipment</span>
-                        </a>
-                        <ul id="menufy-shipnew" class="dropdown-nav collapse show" data-bs-parent="#nav-group" style="">
-                            <li class="nav-sub-item nav-item-has-children" data-menu-level="1">
-                                <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#menufy1-trial" aria-controls="menufy1-trial" aria-expanded="true">
-                                <span class="text">Ship Child</span>
-                                </a>
-                                <ul id="menufy1-trial" class="dropdown-nav collapse show" style="">
-                                    <li class="nav-sub-item nav-item-has-children" data-menu-level="2">
-                                        <a href="javascript:void(0)" class="collapsed" data-bs-toggle="collapse" data-bs-target="#menufy2-prone" aria-controls="menufy2-prone" aria-expanded="false">
-                                        <span class="text">Ghost</span>
-                                        </a>
-                                        <ul id="menufy2-prone" class="dropdown-nav collapse" style="">
-                                            <li class="nav-sub-item" data-menu-level="3">
-                                                <a href="https://bruce.lee" target="_self">
-                                                <span class="text">Fist Of Fury</span>
-                                                </a>
-                                            </li>
-                                            <li class="nav-sub-item" data-menu-level="3">
-                                                <a href="javascript:void(0)" target="_self">
-                                                <span class="text">True Waking Child</span>
-                                                </a>
-                                                <ul id="menufy3-milk" class="collapse dropdown-nav ">
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-sub-item" data-menu-level="1">
-                                <a href="http://works" target="_self">
-                                <span class="text">Ship Child</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    
+                    {% block dashboard_menu_items %}
+                        {% include '@Udash/menu-items.html.twig' %}
+                    {% endblock %}
                 </ul>
             </nav>
             

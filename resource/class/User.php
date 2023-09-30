@@ -5,8 +5,6 @@ use Ucscode\SQuery\SQuery;
 
 class User implements UserInterface
 {
-    use PropertyAccessTrait;
-
     public const TABLE = DB_PREFIX . "users";
     public const META_TABLE = DB_PREFIX . "usermeta";
 

@@ -1,10 +1,14 @@
 <?php
 
+use Ucscode\Packages\TreeNode;
+
 /**
  * This extension contains minified version of Udash Object
  */
 final class UdashTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
+    public readonly TreeNode $menu;
+
     public function getGlobals(): array
     {
         return ['Udash' => $this];
@@ -12,6 +16,7 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
 
     public function __construct()
     {
+        $this->menu = Udash::instance()->menu;
         Alert::flushAll();
     }
 

@@ -2,21 +2,14 @@
 
 use Ucscode\Event\Event;
 use Ucscode\Packages\Pairs;
+use Ucscode\Packages\TreeNode;
 
 abstract class AbstractUdash
-{
-    use PropertyAccessTrait;
-
-    // Abstract Child Methods
-
+{   
     abstract public function setConfig(string $property, mixed $value): bool;
-
     abstract public function getConfig(?string $property, bool $group): mixed;
-
     abstract public function removeConfig(string $property): void;
-
     abstract public function enableFirewall(bool $enable = true): void;
-
     abstract public function render(
         string $template,
         array $options = [],
@@ -26,25 +19,17 @@ abstract class AbstractUdash
     // Default Class Constants
 
     public const DIR = __DIR__;
-
-    public const VIEW_DIR = self::DIR . "/ud-view";
-
-    public const RES_DIR = self::DIR . "/ud-resource";
-
-    public const ASSETS_DIR = self::DIR . "/ud-assets";
-
+    public const ASSETS_DIR = self::DIR . "/assets";
+    public const PAGES_DIR = self::DIR . "/pages";
+    public const VIEW_DIR = self::DIR . "/view";
+    public const RES_DIR = self::DIR . "/resource";
     public const CLASS_DIR = self::RES_DIR . "/class";
-
-    public const PAGES_DIR = self::DIR . "/ud-pages";
-
 
     // Default Class Variables
 
-    #[Accessible]
-    protected Pairs $usermeta;
-
+    public readonly Pairs $usermeta;
+    public readonly TreeNode $menu;
     protected array $configs = [];
-
     private bool $initialized = false;
 
     // Inline Class Methods;
@@ -196,6 +181,8 @@ abstract class AbstractUdash
         $this->setConfig('forms:register', new UdashRegisterForm('register'));
         $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
 
+        $this->menu = new TreeNode('MenuContainer');
+
     }
 
     /**
@@ -212,13 +199,19 @@ abstract class AbstractUdash
         ]);
     }
 
+    /**
+     *
+     */
     private function dispatchEvent(): void
     {
         (new Event())->addListener('Modules:loaded', function () {
 
             // Inform all modules that Udash has started
             (new Event())->dispatch('Udash:OnStart');
-
+            
+            // Sort Menu Based On Order Attribute
+            $this->recursiveMenuConfig($this->menu);
+            
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
 
@@ -244,6 +237,46 @@ abstract class AbstractUdash
             (new Event())->dispatch('Udash:OnEnd');
 
         });
+    }
+
+    /**
+     * Sort Udash Menu
+     * All menu children will be sorted according to the "order" attribute
+     */
+    private function recursiveMenuConfig($menu) {
+
+        if(empty($menu->getAttr('label')) && !empty($menu->level)) {
+            $name = $menu->name;
+            throw new \Exception("(MenuItem: {$name}): All menu items must have a label attribute");
+        };
+
+        $menu->sortChildren(function($a, $b) {
+            $aOrder = (int)($a->getAttr('order') ?? 0);
+            $bOrder = (int)($b->getAttr('order') ?? 0);
+            return $aOrder <=> $bOrder;
+        });
+
+        if(empty($menu->getAttr('target'))) {
+            $menu->setAttr('target', '_self');
+        };
+        
+        if(!empty($menu->children)) {
+            $menu->setAttr('href', 'javascript:void(0)');
+            $menu->setAttr('target', '_self');
+            foreach($menu->children as $childMenu) {
+                $this->recursiveMenuConfig($childMenu);
+            }
+        }
+
+        if($menu->getAttr('active')) {
+            $parentNode = $menu->parentNode;
+            $x = 0;
+            while($parentNode && $parentNode->level) {
+                $parentNode->setAttr('isExpanded', true);
+                $parentNode = $parentNode->parentNode;
+            }
+        }
+        
     }
 
 }
