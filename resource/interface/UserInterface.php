@@ -26,12 +26,14 @@ interface UserInterface
 
     public function errors(): array;
 
-    //public function addNotification(array $data): ?array;
+    public function addNotification(array $data): int|bool;
 
-    //public function removeNotification(array $data): ?array;
+    public function updateNotification(array $data, int|array $filter): bool;
 
-    //public function updateNotification(array $data): ?array;
+    public function getNotifications(array $filter, int $start, int $limit, string $order): ?array;
 
-    //public function getNotification(array $data): ?array;
+    public function removeNotification(int|array $filter): bool;
+
+    public function countNotifications(array $filter): int;
 
 }

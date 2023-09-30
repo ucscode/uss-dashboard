@@ -10,7 +10,6 @@ abstract class AbstractUdash
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
     abstract public function enableFirewall(bool $enable = true): void;
-    abstract public function urlGenerator(string $path, array $param = []): object;
     abstract public function render(
         string $template,
         array $options = [],
@@ -126,10 +125,10 @@ abstract class AbstractUdash
                 'template' => null,
                 'item' => [
                     'label' => 'logout',
-                    'href' => $this->urlGenerator('/logout'),
+                    'href' => new UrlGenerator('/logout'),
                     'icon' => 'bi bi-power',
                 ],
-                'endpoint' => $this->urlGenerator('/')
+                'endpoint' => new UrlGenerator('/')
             ]
 
             /*'pages:account' => [

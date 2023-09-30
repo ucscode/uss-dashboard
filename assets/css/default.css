@@ -91,9 +91,14 @@
 	width: 260px;
 }
 
+.header .header-right .profile-box .dropdown-menu li {
+	padding: 0;
+}
+
 .header .header-right .profile-box .dropdown-menu li a {
 	font-size: 0.85rem;
 	text-transform: capitalize;
+	padding: 5px 12px;
 }
 
 .main-wrapper.full-width {

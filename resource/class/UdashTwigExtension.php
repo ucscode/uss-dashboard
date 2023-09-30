@@ -36,4 +36,11 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
         return Udash::instance()->urlGenerator($path, $param)->getResult();
     }
 
+    /**
+     * Get Notifications from database
+     */
+    public function getNotifications(array $data) {
+        //return new PushNotification();
+    }
+
 }

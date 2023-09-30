@@ -68,8 +68,9 @@
                                         <i class="bi bi-list"></i>
                                     </button>
                                 </div>
-                                
-                                {# Udash:header/left #}
+
+                                {% block dashboard_header_left_reserved %}
+                                {% endblock %}
 
                             </div>
                         </div>
@@ -77,53 +78,59 @@
                         <div class="col-md-6 col-6">
                             <div class="header-right">
 
-                                {# include __DIR__ . "/header-notification.php" #}
+                                {% block dashboard_header_notification %}
+
+                                    {% include "@Udash/header-notification.html.twig" %}
+                                
+                                {% endblock %}
 
                                 {# Udash:header/right #}
                                 
-                                <!-- profile start -->
-                                <div class="profile-box ml-1">
-                                
-                                    <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <div class="profile-info">
-                                            <div class="info">
-                                                <div class="image">
-                                                    <img src="{{ user.avatar }}" alt=""/>
-                                                    <span class="status"></span>
+                                {% block dashboard_header_profile %}
+
+                                    <div class="profile-box ml-1">
+                                    
+                                        <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <div class="profile-info">
+                                                <div class="info">
+                                                    <div class="image">
+                                                        <img src="{{ user.avatar }}" alt=""/>
+                                                        <span class="status"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <i class="bi bi-chevron-down"></i>
-                                    </button>
-                                    
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
+                                            <i class="bi bi-chevron-down"></i>
+                                        </button>
+                                        
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
 
-                                        <li>
-                                            <div class='px-3 py-2 text-end bg-light rounded-1 fs-12px'>
-                                                <span class='text-success'>
-                                                    {{ user.username ? user.username : user.email }}
-                                                </span>
-                                                <i class='bi bi-info-circle ms-1'></i>
-                                            </div>
-                                        </li>
+                                            <li class='mb-1'>
+                                                <div class='px-3 py-2 text-end bg-light rounded-1 fs-12px'>
+                                                    <span class='text-success'>
+                                                        {{ user.username ? user.username : user.email }}
+                                                    </span>
+                                                    <i class='bi bi-info-circle ms-1'></i>
+                                                </div>
+                                            </li>
 
-                                        {% block dashboard_user_menu_items %}
+                                            {% block dashboard_user_menu_items %}
 
-                                           {% for item in Udash.userMenu.children %}
-                                                <li>
-                                                    <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
-                                                        <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
-                                                        {{ item.getAttr('label') }} 
-                                                    </a>
-                                                </li>
-                                            {% endfor %}  
+                                            {% for item in Udash.userMenu.children %}
+                                                    <li>
+                                                        <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
+                                                            <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
+                                                            {{ item.getAttr('label') }} 
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}  
 
-                                        {% endblock %}
+                                            {% endblock %}
 
-                                    </ul>
-                                    
-                                </div>
-                                <!-- profile end -->
+                                        </ul>
+                                        
+                                    </div>
+
+                                {% endblock %}
                                 
                             </div>
                         </div>

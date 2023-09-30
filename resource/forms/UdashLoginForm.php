@@ -41,6 +41,14 @@ class UdashLoginForm extends AbstractUdashForm
 
     }
 
+    public function handleSubmission(): void
+    {
+        $user = new User();
+        if(!$user->getFromSession()) {
+            parent::handleSubmission();
+        };
+    }
+
     public function persistEntry(array $data): bool
     {
         $column = strpos($data['user']['login'], '@') === false ? 'username' : 'email';

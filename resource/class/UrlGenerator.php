@@ -16,14 +16,17 @@ class UrlGenerator {
         return $this->getResult();
     }
 
-    public function setParam(string $key, ?string $value) {
+    public function setParam(string $key, ?string $value): self 
+    {
         $this->query[$key] = $value;
+        return $this;
     }
 
-    public function removeParam(string $key) {
+    public function removeParam(string $key): self {
         if(isset($this->query[$key])) {
             unset($this->query[$key]);
         }
+        return $this;
     }   
 
     public function getResult() {
