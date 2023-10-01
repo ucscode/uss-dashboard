@@ -57,5 +57,5 @@ foreach($defaultPagesExpr as $key => $value) {
 
 // ------------- [{ Get all Global Pages }] ----------------
 
-require Udash::PAGES_DIR . '/notifications.php';
-require Udash::PAGES_DIR . '/signout.php';
+require Udash::SRC_DIR . '/notifications.php';
+require Udash::SRC_DIR . '/signout.php';

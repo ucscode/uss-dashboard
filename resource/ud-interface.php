@@ -19,10 +19,10 @@ defined('UDASH_DIR') or die;
  */
 Events::instance()->addListener('udash:ready', function () {
 
-    require Udash::PAGES_DIR . '/index.php'; # visible immediately after login
-    require Udash::PAGES_DIR . '/account.php';
-    require Udash::PAGES_DIR . '/affiliates.php';
-    require Udash::PAGES_DIR . '/hierarchy.php';
+    require Udash::SRC_DIR . '/index.php'; # visible immediately after login
+    require Udash::SRC_DIR . '/account.php';
+    require Udash::SRC_DIR . '/affiliates.php';
+    require Udash::SRC_DIR . '/hierarchy.php';
 
     /**
      * Focus expression for authentication pages

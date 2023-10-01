@@ -20,7 +20,7 @@ abstract class AbstractUdash
 
     public const DIR = __DIR__;
     public const ASSETS_DIR = self::DIR . "/assets";
-    public const PAGES_DIR = self::DIR . "/pages";
+    public const SRC_DIR = self::DIR . "/src";
     public const VIEW_DIR = self::DIR . "/view";
     public const RES_DIR = self::DIR . "/resource";
     public const CLASS_DIR = self::RES_DIR . "/class";
@@ -102,25 +102,25 @@ abstract class AbstractUdash
              */
             'pages:index' => [
                 'route' => $this->dashboardRoute(),
-                'file' => self::PAGES_DIR . '/index.php',
+                'file' => self::SRC_DIR . '/index.php',
                 'template' => '@Udash/pages/index.html.twig'
             ],
 
             'pages:register' => [
                 'route' => $this->dashboardRoute() . '/register',
-                'file' => self::PAGES_DIR . "/register.php",
+                'file' => self::SRC_DIR . "/register.php",
                 'template' => '@Udash/security/register.html.twig'
             ],
 
             'pages:recovery' => [
                 'route' => $this->dashboardRoute() . '/reset',
-                'file' => self::PAGES_DIR . "/recovery.php",
+                'file' => self::SRC_DIR . "/recovery.php",
                 'template' => '@Udash/security/recovery.html.twig',
             ],
 
             'pages:logout' => [
                 'route' => $this->dashboardRoute() . '/logout',
-                'file' => self::PAGES_DIR . "/logout.php",
+                'file' => self::SRC_DIR . "/logout.php",
                 'template' => null,
                 'item' => [
                     'label' => 'logout',
@@ -132,25 +132,25 @@ abstract class AbstractUdash
 
             'pages:notifications' => [
                 'route' => $this->dashboardRoute() . '/notifications',
-                'file' => self::PAGES_DIR . "/notifications.php",
+                'file' => self::SRC_DIR . "/notifications.php",
                 'template' => '@Udash/pages/notifications.html.twig',
             ]
 
             /*'pages:account' => [
                 'route' => self::ROUTE . '/account',
-                'file' => self::PAGES_DIR . '/account.php',
+                'file' => self::SRC_DIR . '/account.php',
                 'template' => '@Udash/account.html.twig'
             ],
 
             'pages:affiliate' => [
                 'route' => self::ROUTE . '/affiliate',
-                'file' => self::PAGES_DIR . '/affiliate.php',
+                'file' => self::SRC_DIR . '/affiliate.php',
                 'template' => '@Udash/affiliate.html.twig'
             ],
 
             'pages:hierarchy' => [
                 'route' => self::ROUTE . '/hierarchy',
-                'file' => self::PAGES_DIR . '/hierarchy.php',
+                'file' => self::SRC_DIR . '/hierarchy.php',
                 'template' => '@Udash/hierarchy.html.twig'
             ],*/
 
