@@ -1,0 +1,61 @@
+{% set notifications = user.getNotifications(null, 0, 5) %}
+
+{% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
+
+<div class="notification-box ml-15">
+    <div class='d-sm-flex'>
+    
+        <button class="dropdown-toggle" id="notification" data-bs-toggle="dropdown" aria-expanded="false" type="button">
+            <i class="bi bi-bell"></i>
+            {% if unseen > 0 %}
+                <span class='animate__animated animate__wobble animate__infinite' data-nx-count>{{ unseen }}</span>
+            {% endif %}
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification" data-nx-container='header'>
+            
+            {% if notifications|length %}
+
+                {% for notification in notifications %}
+                    
+                    <li>
+                        <a href="{{ (notification.redirect is not empty) ? notification.redirect : 'javascript:void(0)' }}" 
+                            class='{{ notification.viewed is same as('0') ? "unviewed" : null }}' 
+                            data-nx='id-num'
+                        >
+                            <div class="image">
+                                <img src="{{ notification.image ? notification.image : user.avatar }}" alt="" />
+                            </div>
+                            <div class="content">
+                                <p>{{ notification.message ~ '&hellip;' }}</p>
+                                <span>{{ Uss.elapse(notification.period) }}</span>
+                            </div>
+                        </a>
+                    </li>
+
+                {% endfor %}
+
+                <li>
+                    {# The route is hard coded: Please change it #}
+                    
+                    <a href="{{ Udash.linkTo('/notifications') }}" class='d-block text-center'>
+                        <small> <i class='bi bi-bell me-1'></i> View all </small>
+                    </a>
+                </li>
+
+            {% else %}
+
+                <li>
+                    <h5 class='text-center my-2'>
+                        <i class='bi bi-ban text-danger me-1'></i> No Notification
+                    </h5>
+                </li>
+
+            {% endif %}
+
+        </ul>
+        
+    </div>
+</div>
+
+

@@ -1,6 +1,6 @@
 <?php
 
-defined('ROOT_DIR') || die('Invalid Registration Channel');
+defined('ROOT_DIR') || die(':REGISTER');
 
 Uss::instance()->route($pageInfo['route'], function () use ($pageInfo) {
 

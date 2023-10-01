@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_DIR') or die;
+defined('UDASH_DIR') or die(':HIERARCHY');
 
 call_user_func(function () use ($profileFocus) {
 

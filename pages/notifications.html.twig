@@ -1,0 +1,128 @@
+{% extends '@Udash/base.html.twig' %}
+
+{% block dashboard_content %}
+
+    {% set notifications = user.getNotifications() %}
+
+    <div class='container-fluid'>
+        <div class='row'>
+            
+            {% block notification_widgets %}
+
+                {% if notifications|length %}
+                    <div class='text-end mb-2 nx-marker col-md-10 col-lg-9 m-auto'>
+                        <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-nx-marker>
+                            Mark all as read
+                        </a>
+                    </div>
+                {% endif %}
+            
+            {% endblock %}
+
+            {% block notification_content %}
+
+                <div class='mb-4 nx-block col-md-10 col-lg-9 m-auto' data-nxurl='%{udash.ajax}'>
+                    <div class='card' id='notification-list' data-nx-container='body'>
+                        
+                        {% if notifications|length %}
+
+                            {% for notification in notifications %}
+
+                                <div class="single-notification p-3">
+                                    
+                                    <a href='{{ notification.redirect ?? 'javascript:void(0)' }}' 
+                                        class='notification-redirect {{ notification.viewed is same as('0') ? 'unviewed' : null }}' 
+                                        data-nx='{{ notification.id }}'></a>
+                                    
+                                    <div class="notification">
+                                        <div class="image ">
+                                            <img src='{{ notification.image ?? user.avatar }}' class=''>
+                                        </div>
+                                        <div class="content">
+                                            <div class='notification-wrapper text-sm text-gray'>
+                                                {{ notification.message }}
+                                            </div>
+                                            <span class="text-sm text-medium text-gray">
+                                                {{ Udash.elapse(notification.period) }}
+                                                {% if notification.redirect %}
+                                                    <i class='mdi mdi-vector-link ms-1'></i>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="action">
+
+                                        <button class="more-btn dropdown-toggle" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
+                                            <li class="dropdown-item">
+                                                <a href="javascript:void(0)" class="text-gray text-sm d-block" data-nx-action='remove'>
+                                                    <i class='bi bi-trash me-1'></i> Remove
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        
+                                    </div>
+                                    
+                                </div>
+
+                            {% endfor %}
+                        
+                        {% else %}
+
+                            <div class='text-center py-5'>
+                                <div class='px-md-5'>
+                                    
+                                    <div class='row'>
+                                        <div class='col-sm-8 m-auto col-lg-6'>
+                                            {% set errorImage = constant('Udash::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
+                                            <img src='{{ Uss.getUrl(errorImage) }}' class='img-fluid'>
+                                        </div>
+                                    </div>
+                                    
+                                    <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
+                                
+                                </div>
+                            </div>
+                            
+                        {% endif %}
+                            
+                    </div>
+                </div>
+
+            {% endblock %}
+
+            {% block notification_pagination %}
+                
+                {% if notifications|length %}
+
+                    <div class='col-md-10 col-lg-9 m-auto'>
+                        <div class='row'>
+
+                            <div class='col-sm-6'>
+                                <a href='?page' class='btn btn-secondary w-100 text-sm'>
+                                    <i class='bi bi-chevron-bar-left'></i> Older
+                                </a>
+                            </div>
+
+                            <div class='col-sm-6'>
+                                <a href='?page' class='btn btn-success w-100 text-sm'>
+                                    Newer <i class='bi bi-chevron-bar-right'></i> 
+                                </a>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            {% endblock %}
+            
+        </div>
+    </div>
+    
+
+{% endblock %}

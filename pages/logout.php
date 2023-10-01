@@ -1,6 +1,6 @@
 <?php
 
-defined('ROOT_DIR') || die;
+defined('ROOT_DIR') || die(':LOGOUT');
 
 Uss::instance()->route($pageInfo['route'], function() use ($pageInfo) {
 

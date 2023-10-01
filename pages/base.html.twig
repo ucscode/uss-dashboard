@@ -80,7 +80,7 @@
 
                                 {% block dashboard_header_notification %}
 
-                                    {% include "@Udash/header-notification.html.twig" %}
+                                    {% include "@Udash/notifications-top.html.twig" %}
                                 
                                 {% endblock %}
 
@@ -115,14 +115,14 @@
 
                                             {% block dashboard_user_menu_items %}
 
-                                            {% for item in Udash.userMenu.children %}
-                                                    <li>
-                                                        <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
-                                                            <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
-                                                            {{ item.getAttr('label') }} 
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}  
+                                                {% for item in Udash.userMenu.children %}
+                                                        <li>
+                                                            <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
+                                                                <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
+                                                                {{ item.getAttr('label') }} 
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}  
 
                                             {% endblock %}
 

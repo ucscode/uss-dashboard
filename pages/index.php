@@ -1,6 +1,6 @@
 <?php
 
-defined('Udash::DIR') or die;
+defined('Udash::DIR') or die(':INDEX');
 
 /**
  * Create Dashboard Menu

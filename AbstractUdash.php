@@ -95,8 +95,6 @@ abstract class AbstractUdash
              */
             'templates:login' => '@Udash/security/login.html.twig',
 
-            'templates:notification' => '@Udash/notification.html.twig',
-
             /**
              * This is the first page user will enter when they visit the dashboards
              * However, a login page will be displayed if user has no permission
@@ -129,6 +127,12 @@ abstract class AbstractUdash
                     'icon' => 'bi bi-power',
                 ],
                 'endpoint' => new UrlGenerator('/')
+            ],
+
+            'pages:notifications' => [
+                'route' => $this->dashboardRoute() . '/notifications',
+                'file' => self::PAGES_DIR . "/notifications.php",
+                'template' => '@Udash/notifications.html.twig',
             ]
 
             /*'pages:account' => [
@@ -241,7 +245,7 @@ abstract class AbstractUdash
                     call_user_func(function () use ($pageInfo) {
 
                         (new Event())->dispatch('Udash:OnPageload', $pageInfo);
-
+                        
                         require_once $pageInfo['file'];
 
                     });

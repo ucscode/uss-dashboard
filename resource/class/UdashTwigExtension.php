@@ -18,8 +18,10 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
     public function __construct()
     {
         $udash = Udash::instance();
+        
         $this->menu = $udash->menu;
         $this->userMenu = $udash->userMenu;
+
         Alert::flushAll();
     }
 
@@ -34,13 +36,6 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
     public function linkTo(string $path = '', array $param = []): string
     {
         return Udash::instance()->urlGenerator($path, $param)->getResult();
-    }
-
-    /**
-     * Get Notifications from database
-     */
-    public function getNotifications(array $data) {
-        //return new PushNotification();
     }
 
 }
