@@ -18,11 +18,12 @@ abstract class AbstractUdash
 
     // Default Class Constants
 
-    public const DIR = __DIR__;
+    public const DIR = UD_DIR;
     public const ASSETS_DIR = self::DIR . "/assets";
     public const SRC_DIR = self::DIR . "/src";
     public const VIEW_DIR = self::DIR . "/view";
-    public const RES_DIR = self::DIR . "/resource";
+    public const RES_DIR = self::DIR . "/bundles";
+    public const CENTRAL_DIR = self::RES_DIR . "/central";
     public const CLASS_DIR = self::RES_DIR . "/class";
     public const TEMPLATES_DIR = self::DIR . "/templates";
 
@@ -103,7 +104,15 @@ abstract class AbstractUdash
             'pages:index' => [
                 'route' => $this->dashboardRoute(),
                 'file' => self::SRC_DIR . '/index.php',
-                'template' => '@Udash/pages/index.html.twig'
+                'template' => '@Udash/pages/index.html.twig',
+                'menu-items' => [
+                    'category' => 'menu',
+                    'item' => [
+                        'label' => 'dashboard',
+                        'href' => new UrlGenerator(),
+                        'icon' => 'bi bi-home',
+                    ]
+                ]
             ],
 
             'pages:register' => [
@@ -122,10 +131,13 @@ abstract class AbstractUdash
                 'route' => $this->dashboardRoute() . '/logout',
                 'file' => self::SRC_DIR . "/logout.php",
                 'template' => null,
-                'item' => [
-                    'label' => 'logout',
-                    'href' => new UrlGenerator('/logout'),
-                    'icon' => 'bi bi-power',
+                'menu-item' => [
+                    'category' => 'user-menu',
+                    'item' => [
+                        'label' => 'logout',
+                        'href' => new UrlGenerator('/logout'),
+                        'icon' => 'bi bi-power',
+                    ]
                 ],
                 'endpoint' => new UrlGenerator('/')
             ],
@@ -163,7 +175,7 @@ abstract class AbstractUdash
      */
     private function configureSystem(): void
     {
-        require_once self::RES_DIR . "/declare-database.php";
+        require_once self::CENTRAL_DIR . "/database.php";
 
         # Default Udash Configuration
         $defaultConfigs = [
@@ -231,8 +243,6 @@ abstract class AbstractUdash
             // Sort Menu Based On Order Attribute
             $this->recursiveMenuConfig($this->menu, 'Main Menu');
             $this->recursiveMenuConfig($this->userMenu, 'User Menu');
-            
-            $this->signoutNav();
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
@@ -246,6 +256,8 @@ abstract class AbstractUdash
                     call_user_func(function () use ($pageInfo) {
 
                         (new Event())->dispatch('Udash:OnPageload', $pageInfo);
+            
+                        $this->manageMenuItems($pageInfo['menu-item'] ?? null);
                         
                         require_once $pageInfo['file'];
 
@@ -305,7 +317,7 @@ abstract class AbstractUdash
         
     }
 
-    private function signoutNav(): void {
+    private function manageMenuItems(?array $items): void {
         $logout = $this->configs['pages:logout'] ?? null;
         if(is_array($logout) && isset($logout['item']) && is_array($logout['item'])) {
             $item = $logout['item'];

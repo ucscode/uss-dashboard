@@ -7,7 +7,7 @@
  * Uss dashboard comes with beautiful and friendly user interface that is easily managable and customizable.
  * It is backed by powerful event driven API to fit the need of any project and also allows modification of the system by other modules.
  *
- * `ud` means "Uss Dashboard" not "User Dashboard"
+ * `Ud` means "Uss Dashboard" not "User Dashboard"
  *
  * @version 2.3.0
  * @author ucscode <uche23mail@gmail.com>
@@ -16,26 +16,23 @@
  * @package Uss\Dashboard
  */
 
-defined('ROOT_DIR') || die("Udash cannot be accessible directly");
+defined('ROOT_DIR') || die("Uss Dashboard: Permission Denied");
 
-/**
- * Get Base Uss Dashboard Class
- * The class is "final" and cannot be extended
- */
-require_once __DIR__ . "/AbstractUdash.php";
-require_once __DIR__ . "/Udash.php";
+if(!defined('UD_DIR')) {
+    define('UD_DIR', __DIR__);
+};
 
-/**
- * Load Udash Resources:
- * These includes Classes, Enums, Traits, Abstract
- */
 $resources = [
+    'central' => [
+        'AbstractUdash.php',
+        'Udash.php',
+    ],
     'interface' => [
         "UdashFormInterface.php",
         "UserInterface.php",
     ],
     'trait' => [
-        //"Udas.php",
+        //
     ],
     'abstract' => [
         "AbstractUdashForm.php",
@@ -61,7 +58,7 @@ foreach($resources as $directory => $fileList) {
     # Iterate Folder
     foreach($fileList as $resourceFile) {
         # Include Files
-        require_once Udash::RES_DIR . "/{$directory}/{$resourceFile}";
+        require_once UD_DIR . "/bundles/{$directory}/{$resourceFile}";
     }
 }
 
