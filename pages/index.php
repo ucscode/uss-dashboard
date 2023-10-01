@@ -20,7 +20,7 @@ Uss::$global['menu']->add('homepage', array(
 
 // Focus Path;
 
-Uss::instance()->route(Udash::ROUTE, function () {
+Uss::instance()->route(Udash::ROUTE, function () use ($pageInfo) {
 
     /*
     // Authenticate Email Requests
@@ -34,6 +34,6 @@ Uss::instance()->route(Udash::ROUTE, function () {
     });
     */
 
-    $this->render('@Udash/sample.html.twig');
+    $this->render($pageInfo['template']);
 
 });

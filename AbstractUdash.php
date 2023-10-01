@@ -24,6 +24,7 @@ abstract class AbstractUdash
     public const VIEW_DIR = self::DIR . "/view";
     public const RES_DIR = self::DIR . "/resource";
     public const CLASS_DIR = self::RES_DIR . "/class";
+    public const TEMPLATES_DIR = self::DIR . "/templates";
 
     // Default Class Variables
 
@@ -102,7 +103,7 @@ abstract class AbstractUdash
             'pages:index' => [
                 'route' => $this->dashboardRoute(),
                 'file' => self::PAGES_DIR . '/index.php',
-                'template' => '@Udash/index.html.twig'
+                'template' => '@Udash/pages/index.html.twig'
             ],
 
             'pages:register' => [
@@ -132,7 +133,7 @@ abstract class AbstractUdash
             'pages:notifications' => [
                 'route' => $this->dashboardRoute() . '/notifications',
                 'file' => self::PAGES_DIR . "/notifications.php",
-                'template' => '@Udash/notifications.html.twig',
+                'template' => '@Udash/pages/notifications.html.twig',
             ]
 
             /*'pages:account' => [
@@ -192,7 +193,7 @@ abstract class AbstractUdash
         };
 
         # Set Base Template Directory
-        $uss->addTwigFilesystem(self::PAGES_DIR, 'Udash');
+        $uss->addTwigFilesystem(self::TEMPLATES_DIR, 'Udash');
 
     }
 
