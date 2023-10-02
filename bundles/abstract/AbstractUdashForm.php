@@ -75,10 +75,11 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
 
     /**
      * An alternative way to mimic __construct for child class
-     * Since the constructor does many process, trying to redefine all parameters on child class and call parent::__construct() 
+     * Since the constructor does many process, trying to redefine all parameters on child class and call parent::__construct()
      * method can be time wasting. Override the constructor instead
      */
-    protected function beforeBuild() {
+    protected function beforeBuild()
+    {
         // Does nothing, just for overriding
     }
 
@@ -87,14 +88,14 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      * @return void
      */
     public function handleSubmission(): void
-    {   
+    {
         if($this->isSubmitted()) {
-            
+
             if($this->isTrusted()) {
 
                 // Get Filtered data from _GET or _POST
                 $post = $this->getFilteredSubmissionData();
-                
+
                 // Validate The Data
                 if($this->isValid($post)) {
 
@@ -307,7 +308,8 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
         };
     }
 
-    protected function onFormBuild() {
+    protected function onFormBuild()
+    {
 
     }
 

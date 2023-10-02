@@ -18,7 +18,7 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
     public function __construct()
     {
         $udash = Udash::instance();
-        
+
         $this->menu = $udash->menu;
         $this->userMenu = $udash->userMenu;
 
@@ -33,7 +33,7 @@ final class UdashTwigExtension extends \Twig\Extension\AbstractExtension impleme
         return Udash::instance()->getConfig($property);
     }
 
-    public function linkTo(string $path = '', array $param = []): string
+    public function urlGenerator(string $path = '', array $param = []): string
     {
         return Udash::instance()->urlGenerator($path, $param)->getResult();
     }

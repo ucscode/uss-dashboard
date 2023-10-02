@@ -156,7 +156,7 @@ class User implements UserInterface
             $filter = $uss->sanitize($filter, Uss::SANITIZE_SQL);
             $SQL = (new SQuery())
                 ->update(self::NOTIFICATION_TABLE, $data)
-                ->where($filter,);
+                ->where($filter, );
             $update = $uss->mysqli->query($SQL);
             return $update;
         };
@@ -323,7 +323,7 @@ class User implements UserInterface
 
     /**
      * Set a User Meta for the associated user
-     * 
+     *
      * @param string $key: The meta data key
      * @param string $value: The meta data value for the specified key
      *
@@ -363,7 +363,8 @@ class User implements UserInterface
     /**
      * Encode and save user information to session
      */
-    public function saveToSession() {
+    public function saveToSession()
+    {
         if($this->exists()) {
             $userSecret = $this->user['password'] . $this->user['usercode'];
             $var = $this->user['id'] . ":" . hash('sha256', $userSecret);
@@ -373,12 +374,13 @@ class User implements UserInterface
 
     /**
      * Get user information from session, decode it and populate the user instance
-     * 
+     *
      * This will not populate the user instance if the instance already contains a user information
      *
      * @return bool: true if the session information is found and the User instance was populated, false otherwise
      */
-    public function getFromSession(): bool|self {
+    public function getFromSession(): bool|self
+    {
         if(empty($this->user['id']) && !empty($_SESSION['UssUser']) && is_string($_SESSION['UssUser'])) {
             $detail = explode(":", $_SESSION['UssUser']);
             if(count($detail) === 2 && is_numeric($detail[0])) {
@@ -399,7 +401,7 @@ class User implements UserInterface
      * Private Methods
      * @ignore
      */
-    
+
     private function getUser(?int $userId): ?array
     {
         if(is_null($userId)) {
@@ -448,11 +450,12 @@ class User implements UserInterface
         }
     }
 
-    private function filterNotificationData(array $originalArray): array {
+    private function filterNotificationData(array $originalArray): array
+    {
         $keysToExtract = Uss::instance()->getTableColumns(self::NOTIFICATION_TABLE);
         unset($keysToExtract['userid']);
         $filteredArray = array_intersect_key($originalArray, array_flip($keysToExtract));
-        $result = array_filter($filteredArray, function($value) {
+        $result = array_filter($filteredArray, function ($value) {
             return is_scalar($value) || is_null($value);
         });
         return $result;

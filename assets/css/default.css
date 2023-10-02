@@ -118,6 +118,7 @@
 
 .sidebar-nav-wrapper .sidebar-nav ul .nav-item a .icon {
 	color: var(--bs-gray);
+	margin-right: 8px;
 }
 
 .auth-cover-wrapper,

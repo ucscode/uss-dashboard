@@ -5,7 +5,7 @@ use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 
 abstract class AbstractUdash
-{   
+{
     abstract public function setConfig(string $property, mixed $value): bool;
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
@@ -45,7 +45,7 @@ abstract class AbstractUdash
 
                 // Initialize Udash with default configurations
                 $this->defaultConfigs();
-                
+
                 // Configure (create) database values, forms, and template directory
                 $this->configureSystem();
 
@@ -79,7 +79,7 @@ abstract class AbstractUdash
             'debug' => true,
 
             /**
-             * HINTS: 
+             * HINTS:
              * - There is no login page file, there is only a "login template" and "login form class"
              * - The login template will render by default on any page when a user tries to access the page without sufficient permission
              * - The "handleSubmission()" method is called within the "login form class" itself
@@ -93,13 +93,14 @@ abstract class AbstractUdash
             'pages:index' => [
                 'route' => $this->dashboardRoute(),
                 'file' => self::SRC_DIR . '/index.php',
-                'template' => '@Udash/pages/index.html.twig',
-                'menu-items' => [
+                'template' => '@Udash/pages/welcome.html.twig',
+                'menu-item' => [
                     'category' => 'menu',
+                    'name' => 'index',
                     'item' => [
                         'label' => 'dashboard',
                         'href' => new UrlGenerator(),
-                        'icon' => 'bi bi-home',
+                        'icon' => 'bi bi-speedometer',
                     ]
                 ]
             ],
@@ -122,10 +123,12 @@ abstract class AbstractUdash
                 'template' => null,
                 'menu-item' => [
                     'category' => 'user-menu',
+                    'name' => 'logout',
                     'item' => [
                         'label' => 'logout',
                         'href' => new UrlGenerator('/logout'),
                         'icon' => 'bi bi-power',
+                        'order' => 1024
                     ]
                 ],
                 'endpoint' => new UrlGenerator('/')
@@ -159,7 +162,8 @@ abstract class AbstractUdash
 
     }
 
-    private function databaseEnabled(): bool {
+    private function databaseEnabled(): bool
+    {
         $uss = Uss::instance();
         if(!DB_ENABLED) {
             $uss->render('@Uss/error.html.twig', [
@@ -248,13 +252,16 @@ abstract class AbstractUdash
 
             // Inform all modules that Udash has started
             (new Event())->dispatch('Udash:OnStart');
-            
-            // Sort Menu Based On Order Attribute
-            $this->recursiveMenuConfig($this->menu, 'Main Menu');
-            $this->recursiveMenuConfig($this->userMenu, 'User Menu');
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
+
+            // Parse Menu
+            $this->parseMenuItems($pages);
+
+            // Sort Menu Based On Order Attribute
+            $this->recursiveMenuConfig($this->menu, 'Main Menu');
+            $this->recursiveMenuConfig($this->userMenu, 'User Menu');
 
             foreach($pages as $index => $pageInfo) {
 
@@ -265,9 +272,7 @@ abstract class AbstractUdash
                     call_user_func(function () use ($pageInfo) {
 
                         (new Event())->dispatch('Udash:OnPageload', $pageInfo);
-            
-                        $this->manageMenuItems($pageInfo['menu-item'] ?? null);
-                        
+
                         require_once $pageInfo['file'];
 
                     });
@@ -286,14 +291,15 @@ abstract class AbstractUdash
      * Sort Udash Menu
      * All menu children will be sorted according to the "order" attribute
      */
-    private function recursiveMenuConfig(TreeNode $menu, string $title): void {
+    private function recursiveMenuConfig(TreeNode $menu, string $title): void
+    {
 
         if(empty($menu->getAttr('label')) && !empty($menu->level)) {
             $name = $menu->name;
             throw new \Exception("{$title}: (Item: {$name}) must have a label attribute");
         };
 
-        $menu->sortChildren(function($a, $b) {
+        $menu->sortChildren(function ($a, $b) {
             $aOrder = (int)($a->getAttr('order') ?? 0);
             $bOrder = (int)($b->getAttr('order') ?? 0);
             return $aOrder <=> $bOrder;
@@ -302,11 +308,11 @@ abstract class AbstractUdash
         if(empty($menu->getAttr('target'))) {
             $menu->setAttr('target', '_self');
         };
-            
+
         if(empty($menu->getAttr('href'))) {
             $menu->setAttr('href', 'javascript:void(0)');
         };
-        
+
         if(!empty($menu->children)) {
             $menu->setAttr('href', 'javascript:void(0)');
             $menu->setAttr('target', '_self');
@@ -323,16 +329,66 @@ abstract class AbstractUdash
                 $parentNode = $parentNode->parentNode;
             }
         }
-        
+
     }
 
-    private function manageMenuItems(?array $items): void {
-        $logout = $this->configs['pages:logout'] ?? null;
-        if(is_array($logout) && isset($logout['item']) && is_array($logout['item'])) {
-            $item = $logout['item'];
-            $item['order'] = $item['order'] ?? 1204;
-            $this->userMenu->add('logout', $item);
+    private function parseMenuItems(array $pages): void
+    {
+        foreach($pages as $key => $page) {
+
+            $menuItem = $page['menu-item'] ?? null;
+            $item = $menuItem['item'] ?? null;
+
+            if(is_array($menuItem) && is_array($item)) {
+                $category = $this->getMenuCategory($key, strtolower($menuItem['category'] ?? null));
+
+                if(empty($menuItem['name'])) {
+                    $this->throwConfigException(
+                        "Menu item `name` must be defined for key '{$key}'"
+                    );
+                };
+
+                $menuTree = $category == 'menu' ? $this->menu : $this->userMenu;
+
+                $menuTree->add($menuItem['name'], $item);
+
+            }
+
+        }
+    }
+
+    private function getMenuCategory(string $key, string $category): string
+    {
+        $error = null;
+        $categories = ['menu', 'user-menu'];
+
+        if(empty($category)) {
+            $error = "Menu item `category` must be defined for key '{$key}'";
+        } elseif(!in_array($category, $categories)) {
+            $error = sprintf(
+                'Menu item `category` "%s" for key "%s" must be subset of [%s]',
+                $category,
+                $key,
+                implode(", ", $categories)
+            );
         };
+
+        if(!empty($error)) {
+            $this->throwConfigException($error);
+        }
+
+        return $category;
+    }
+
+    private function throwConfigException(string $error): void
+    {
+        throw new Exception(
+            sprintf(
+                "%s configuration error: %s",
+                get_called_class(),
+                $error
+            )
+        );
     }
 
 }

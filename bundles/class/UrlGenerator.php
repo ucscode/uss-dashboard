@@ -1,7 +1,7 @@
 <?php
 
-class UrlGenerator {
-    
+class UrlGenerator
+{
     private string $path;
     private array $query = [];
 
@@ -16,20 +16,22 @@ class UrlGenerator {
         return $this->getResult();
     }
 
-    public function setParam(string $key, ?string $value): self 
+    public function setParam(string $key, ?string $value): self
     {
         $this->query[$key] = $value;
         return $this;
     }
 
-    public function removeParam(string $key): self {
+    public function removeParam(string $key): self
+    {
         if(isset($this->query[$key])) {
             unset($this->query[$key]);
         }
         return $this;
-    }   
+    }
 
-    public function getResult() {
+    public function getResult()
+    {
         $uss = Uss::instance();
         $result = $uss->getUrl(ROOT_DIR . "/" . Udash::ROUTE);
         if(!empty($this->path)) {
@@ -41,7 +43,8 @@ class UrlGenerator {
         return $result;
     }
 
-    private function init(string $path): void {
+    private function init(string $path): void
+    {
         $path = explode("?", $path);
         $uss = Uss::instance();
         $this->path = $uss->filterContext($path[0]);

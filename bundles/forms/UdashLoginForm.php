@@ -8,7 +8,8 @@ class UdashLoginForm extends AbstractUdashForm
     private string $error;
     protected ?array $user;
 
-    protected function beforeBuild() {
+    protected function beforeBuild()
+    {
         $this->handleSubmission();
     }
 
@@ -80,13 +81,13 @@ class UdashLoginForm extends AbstractUdashForm
     public function onEntrySuccess(array $data): void
     {
         (new User($this->user['id']))->saveToSession();
-        
+
         (new Alert("Authentication Successful"))
             ->type('notification')
             ->display('success');
 
     }
-    
+
     protected function buildMailBlock()
     {
         $div1 = (new UssElement(UssForm::NODE_DIV))

@@ -120,7 +120,7 @@ final class Udash extends AbstractUdash
             ->where($parameter, $value);
 
         $result = Uss::instance()->mysqli->query($SQL);
-        
+
         return $result->fetch_assoc();
     }
 
@@ -137,7 +137,7 @@ final class Udash extends AbstractUdash
     */
     public function urlGenerator(string $path = '/', array $param = []): object
     {
-        return new urlGenerator($path, $param);
+        return new UrlGenerator($path, $param);
     }
 
 }
