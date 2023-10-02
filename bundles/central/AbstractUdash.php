@@ -32,46 +32,35 @@ abstract class AbstractUdash
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    protected array $configs = [];
+    protected array $configs;
     private bool $initialized = false;
 
     // Inline Class Methods;
 
     public function init()
     {
+        if(!$this->initialized) {
 
-        if($this->initialized) {
-            return;
+            if($this->databaseEnabled()) {
+
+                // Initialize Udash with default configurations
+                $this->defaultConfigs();
+                
+                // Configure (create) database values, forms, and template directory
+                $this->configureSystem();
+
+                // Configure logged in user information and authentication
+                $this->configureUser();
+
+                $this->initialized = true;
+
+                // Send Signal to alter other modules update any of the configuration
+                // Then render the default pages
+                $this->dispatchEvent();
+
+            }
+
         }
-
-        $uss = Uss::instance();
-
-        if(!DB_ENABLED) {
-            $uss->render('@Uss/error.html.twig', [
-                "subject" => "Database Connection Disabled",
-                "message" => "<span class='text-danger'>PROBLEM</span> &gt;&gt;&gt; " . highlight_string("define('DB_ENABLED', false)", true),
-                "message_class" => "mb-5",
-                "image" => $uss->getUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
-                "image_style" => "width: 150px"
-            ]);
-            return;
-        };
-
-        // Initialize Udash with default configurations
-        $this->defaultConfigs();
-
-        // Configure (create) database values, forms, and template directory
-        $this->configureSystem();
-
-        // Configure logged in user information and authentication
-        $this->configureUser();
-
-        $this->initialized = true;
-
-        // Send Signal to alter other modules update any of the configuration
-        // Then render the default pages
-        $this->dispatchEvent();
-
     }
 
     // Get the route declared by the child class
@@ -168,6 +157,26 @@ abstract class AbstractUdash
 
         );
 
+    }
+
+    private function databaseEnabled(): bool {
+        $uss = Uss::instance();
+        if(!DB_ENABLED) {
+            $uss->render('@Uss/error.html.twig', [
+                "subject" => "Database Connection Disabled",
+                "message" => sprintf(
+                    "<span class='%s'>PROBLEM</span> : define('DB_ENABLED', <span class='%s'>false</span>)",
+                    'text-danger',
+                    'text-primary'
+                ),
+                "message_class" => "mb-5",
+                "image" => $uss->getUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image_style" => "width: 150px"
+            ]);
+        } else {
+            $uss->addTwigExtension(UdashTwigExtension::class);
+        }
+        return !!DB_ENABLED;
     }
 
     /**
