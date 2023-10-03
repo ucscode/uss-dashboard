@@ -1,6 +1,6 @@
 <?php
 
-(defined('UDASH_DIR') && Uss::$global['user']['id']) or die;
+(defined('UD_DIR') && Uss::$global['user']['id']) or die;
 
 /** The current user */
 $user = Uss::$global['user'];
@@ -21,7 +21,7 @@ if(empty($usercode)) {
  * Get the owner of the `usercode`
  * We'll be referring to this owner as `prospect`
  */
-$prospect = Udash::fetch_assoc("{$prefix}_users", $usercode, "usercode");
+$prospect = Ud::fetch_assoc("{$prefix}_users", $usercode, "usercode");
 
 /**
  * If there is no such account,
@@ -58,7 +58,7 @@ if($prospect['id'] === $user['id']) {
 */
 
 $value_of = function ($prospect, $info = '') {
-    $avatar = Udash::user_avatar($prospect['id']);
+    $avatar = Ud::user_avatar($prospect['id']);
     $title = $prospect['username'] ?: $prospect['email'];
     $value = "
 		<div data-node='{$prospect['usercode']}''>
@@ -73,7 +73,7 @@ $value_of = function ($prospect, $info = '') {
 /**
  * Get the parent of the prospect
  */
-$parent = Udash::fetch_assoc("{$prefix}_users", $prospect['parent']);
+$parent = Ud::fetch_assoc("{$prefix}_users", $prospect['parent']);
 
 /**
  * Now find all descendants of the prospect!

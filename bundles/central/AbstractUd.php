@@ -4,7 +4,7 @@ use Ucscode\Event\Event;
 use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 
-abstract class AbstractUdash
+abstract class AbstractUd
 {
     abstract public function setConfig(string $property, mixed $value): bool;
     abstract public function getConfig(?string $property, bool $group): mixed;
@@ -25,6 +25,7 @@ abstract class AbstractUdash
     public const RES_DIR = self::DIR . "/bundles";
     public const CENTRAL_DIR = self::RES_DIR . "/central";
     public const CLASS_DIR = self::RES_DIR . "/class";
+    public const CONFIG_DIR = self::RES_DIR . "/configs";
     public const TEMPLATES_DIR = self::DIR . "/templates";
 
     // Default Class Variables
@@ -43,7 +44,7 @@ abstract class AbstractUdash
 
             if($this->databaseEnabled()) {
 
-                // Initialize Udash with default configurations
+                // Initialize Ud with default configurations
                 $this->defaultConfigs();
 
                 // Configure (create) database values, forms, and template directory
@@ -84,7 +85,7 @@ abstract class AbstractUdash
              * - The login template will render by default on any page when a user tries to access the page without sufficient permission
              * - The "handleSubmission()" method is called within the "login form class" itself
              */
-            'templates:login' => '@Udash/security/login.html.twig',
+            'templates:login' => '@Ud/security/login.html.twig',
 
             /**
              * This is the first page user will enter when they visit the dashboards
@@ -93,7 +94,7 @@ abstract class AbstractUdash
             'pages:index' => [
                 'route' => $this->dashboardRoute(),
                 'file' => self::SRC_DIR . '/index.php',
-                'template' => '@Udash/pages/welcome.html.twig',
+                'template' => '@Ud/pages/welcome.html.twig',
                 'menu-item' => [
                     'category' => 'menu',
                     'name' => 'index',
@@ -108,13 +109,13 @@ abstract class AbstractUdash
             'pages:register' => [
                 'route' => $this->dashboardRoute() . '/register',
                 'file' => self::SRC_DIR . "/register.php",
-                'template' => '@Udash/security/register.html.twig'
+                'template' => '@Ud/security/register.html.twig'
             ],
 
             'pages:recovery' => [
                 'route' => $this->dashboardRoute() . '/reset',
                 'file' => self::SRC_DIR . "/recovery.php",
-                'template' => '@Udash/security/recovery.html.twig',
+                'template' => '@Ud/security/recovery.html.twig',
             ],
 
             'pages:logout' => [
@@ -137,25 +138,25 @@ abstract class AbstractUdash
             'pages:notifications' => [
                 'route' => $this->dashboardRoute() . '/notifications',
                 'file' => self::SRC_DIR . "/notifications.php",
-                'template' => '@Udash/pages/notifications.html.twig',
+                'template' => '@Ud/pages/notifications.html.twig',
             ]
 
             /*'pages:account' => [
                 'route' => self::ROUTE . '/account',
                 'file' => self::SRC_DIR . '/account.php',
-                'template' => '@Udash/account.html.twig'
+                'template' => '@Ud/account.html.twig'
             ],
 
             'pages:affiliate' => [
                 'route' => self::ROUTE . '/affiliate',
                 'file' => self::SRC_DIR . '/affiliate.php',
-                'template' => '@Udash/affiliate.html.twig'
+                'template' => '@Ud/affiliate.html.twig'
             ],
 
             'pages:hierarchy' => [
                 'route' => self::ROUTE . '/hierarchy',
                 'file' => self::SRC_DIR . '/hierarchy.php',
-                'template' => '@Udash/hierarchy.html.twig'
+                'template' => '@Ud/hierarchy.html.twig'
             ],*/
 
         );
@@ -178,19 +179,19 @@ abstract class AbstractUdash
                 "image_style" => "width: 150px"
             ]);
         } else {
-            $uss->addTwigExtension(UdashTwigExtension::class);
+            $uss->addTwigExtension(UdTwigExtension::class);
         }
         return !!DB_ENABLED;
     }
 
     /**
-     * Configure Udash
+     * Configure Ud
      */
     private function configureSystem(): void
     {
         require_once self::CENTRAL_DIR . "/database.php";
 
-        # Default Udash Configuration
+        # Default Ud Configuration
         $defaultConfigs = [
             'user:disable-signup' => 0,
             'user:collect-username' => 0,
@@ -218,7 +219,7 @@ abstract class AbstractUdash
         };
 
         # Set Base Template Directory
-        $uss->addTwigFilesystem(self::TEMPLATES_DIR, 'Udash');
+        $uss->addTwigFilesystem(self::TEMPLATES_DIR, 'Ud');
 
     }
 
@@ -235,9 +236,9 @@ abstract class AbstractUdash
             'parentTable' => User::TABLE,
         ]);
 
-        $this->setConfig('forms:login', new UdashLoginForm('login'));
-        $this->setConfig('forms:register', new UdashRegisterForm('register'));
-        $this->setConfig('forms:recovery', new UdashRecoveryForm('recovery'));
+        $this->setConfig('forms:login', new UdLoginForm('login'));
+        $this->setConfig('forms:register', new UdRegisterForm('register'));
+        $this->setConfig('forms:recovery', new UdRecoveryForm('recovery'));
 
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
@@ -250,8 +251,8 @@ abstract class AbstractUdash
     {
         (new Event())->addListener('Modules:loaded', function () {
 
-            // Inform all modules that Udash has started
-            (new Event())->dispatch('Udash:OnStart');
+            // Inform all modules that Ud has started
+            (new Event())->dispatch('Ud:ready');
 
             // Get all available pages
             $pages = $this->getConfig("pages:", true);
@@ -271,24 +272,24 @@ abstract class AbstractUdash
 
                     call_user_func(function () use ($pageInfo) {
 
-                        (new Event())->dispatch('Udash:OnPageload', $pageInfo);
+                        (new Event())->dispatch('Ud:pageload', $pageInfo);
 
                         require_once $pageInfo['file'];
 
                     });
-
+                
                 };
 
             }
 
-            // Inform all modules that Udash has ended
-            (new Event())->dispatch('Udash:OnEnd');
+            // Inform all modules that Ud has ended
+            (new Event())->dispatch('Ud:ended');
 
         });
     }
 
     /**
-     * Sort Udash Menu
+     * Sort Ud Menu
      * All menu children will be sorted according to the "order" attribute
      */
     private function recursiveMenuConfig(TreeNode $menu, string $title): void
@@ -340,6 +341,7 @@ abstract class AbstractUdash
             $item = $menuItem['item'] ?? null;
 
             if(is_array($menuItem) && is_array($item)) {
+
                 $category = $this->getMenuCategory($key, strtolower($menuItem['category'] ?? null));
 
                 if(empty($menuItem['name'])) {
@@ -349,7 +351,6 @@ abstract class AbstractUdash
                 };
 
                 $menuTree = $category == 'menu' ? $this->menu : $this->userMenu;
-
                 $menuTree->add($menuItem['name'], $item);
 
             }

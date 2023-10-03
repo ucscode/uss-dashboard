@@ -29,7 +29,7 @@
  * require_once "/path/to/AUTH/template.php";
  *
  */
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 ?>
 <div class="%{col.row}">

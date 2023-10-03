@@ -1,6 +1,6 @@
 <?php
 
-interface UdashFormInterface
+interface UdFormInterface
 {
     /**
      * Process the form data

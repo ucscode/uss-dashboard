@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_DIR') or die(':HIERARCHY');
+defined('UD_DIR') or die(':HIERARCHY');
 
 call_user_func(function () use ($profileFocus) {
 
@@ -36,7 +36,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Get CSS that will style the nodes
              */
-            $dir = Uss::instance()->getUrl(Udash::ASSETS_DIR . "/vendor/datatree");
+            $dir = Uss::instance()->getUrl(Ud::ASSETS_DIR . "/vendor/datatree");
             echo "\t<link rel='stylesheet' href='{$dir}/treeNode.css'/>\n";
 
         }, EVENT_ID . "node");
@@ -46,7 +46,7 @@ call_user_func(function () use ($profileFocus) {
             /**
              * Get JavaScript the will render the nodes
              */
-            $dir = Uss::instance()->getUrl(Udash::ASSETS_DIR . "/vendor/datatree");
+            $dir = Uss::instance()->getUrl(Ud::ASSETS_DIR . "/vendor/datatree");
             echo "\t<script src='{$dir}/treeData.js'></script>\n";
 
             /**
@@ -60,7 +60,7 @@ call_user_func(function () use ($profileFocus) {
         /**
          * Display the hierarchy tree
          */
-        Udash::view(function () {
+        Ud::view(function () {
             /**
              * Create Event
              */

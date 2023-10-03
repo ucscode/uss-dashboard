@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 Uss::instance()->tag('reset.type', !$reset ? 'ud-reset' : 'ud-reset-v2');
 

@@ -2,7 +2,7 @@
 
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
+abstract class AbstractUdForm extends UssForm implements UdFormInterface
 {
     abstract protected function buildForm();
 
@@ -53,7 +53,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
     private array $links = [];
 
     /**
-     * Constructor for the UdashForm class.
+     * Constructor for the UdForm class.
      *
      * @param string $name The name of the form.
      * @param string|null $action The URL where the form data will be submitted (default: null, which uses the current request URI).
@@ -283,7 +283,7 @@ abstract class AbstractUdashForm extends UssForm implements UdashFormInterface
      */
     public function getRouteUrl(string $pagename): ?string
     {
-        $page = Udash::instance()->getConfig($pagename);
+        $page = Ud::instance()->getConfig($pagename);
         if(is_array($page) && array_key_exists('route', $page)) {
             $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
             return Uss::instance()->getUrl($path, true);

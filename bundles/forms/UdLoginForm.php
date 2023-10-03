@@ -3,7 +3,7 @@
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssElement\UssElement;
 
-class UdashLoginForm extends AbstractUdashForm
+class UdLoginForm extends AbstractUdForm
 {
     private string $error;
     protected ?array $user;
@@ -54,7 +54,7 @@ class UdashLoginForm extends AbstractUdashForm
     {
         $column = strpos($data['user']['login'], '@') === false ? 'username' : 'email';
 
-        $this->user = Udash::instance()->fetchData(User::TABLE, $data['user']['login'], $column);
+        $this->user = Ud::instance()->fetchData(User::TABLE, $data['user']['login'], $column);
 
         if(!empty($this->user)) {
             $isValidPassword = password_verify($data['user']['password'], $this->user['password']);

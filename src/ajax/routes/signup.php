@@ -43,7 +43,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
         # Check if the email address already exists;
 
-        $user = Udash::fetch_assoc("{$prefix}_users", $_POST['email'], 'email');
+        $user = Ud::fetch_assoc("{$prefix}_users", $_POST['email'], 'email');
 
         if($user) {
 
@@ -56,7 +56,7 @@ Events::instance()->addListener('udash:ajax', function () {
             # Check if the username already exists;
 
             $username = $_POST['username'] ?? null;
-            $user = Udash::fetch_assoc("{$prefix}_users", $username, 'username');
+            $user = Ud::fetch_assoc("{$prefix}_users", $username, 'username');
 
             /**
              * If username is set & A user is found
@@ -76,7 +76,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
                     # Get the parent
 
-                    $parent = Udash::fetch_assoc("{$prefix}_users", $_POST['parent']);
+                    $parent = Ud::fetch_assoc("{$prefix}_users", $_POST['parent']);
 
                     if($parent) {
                         $parent = $parent['id'];
@@ -92,7 +92,7 @@ Events::instance()->addListener('udash:ajax', function () {
                  */
                 $userdata = array(
                     "email" => $_POST['email'],
-                    "password" => Udash::password($_POST['password']),
+                    "password" => Ud::password($_POST['password']),
                     "username" => $username,
                     "usercode" => Uss::instance()->keygen(mt_rand(5, 7)),
                     "parent" => $parent
@@ -125,7 +125,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
                     # Clear Access Token!
 
-                    Udash::setAccessToken(null);
+                    Ud::setAccessToken(null);
 
                     # The success message
 
@@ -142,7 +142,7 @@ Events::instance()->addListener('udash:ajax', function () {
                          * Send a new confirmation link to the user
                          * The user will be able to login on after verifying the link
                          */
-                        $sent = Udash::send_confirmation_email($userdata['email']);
+                        $sent = Ud::send_confirmation_email($userdata['email']);
 
                         $className = 'mt-3 pt-3 border-top fs-14px';
 
@@ -186,7 +186,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
 
     $data = [
-        "redirect" => Udash::config('signup:redirect') ?? Uss::instance()->getUrl(ROOT_DIR . '/' . UDASH_ROUTE)
+        "redirect" => Ud::config('signup:redirect') ?? Uss::instance()->getUrl(ROOT_DIR . '/' . UDASH_ROUTE)
     ];
 
     $result = [

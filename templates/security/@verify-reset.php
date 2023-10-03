@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 $reset = call_user_func(function () {
 
@@ -26,7 +26,7 @@ $reset = call_user_func(function () {
 
             $prefix = DB_TABLE_PREFIX;
 
-            $user = Udash::fetch_assoc("{$prefix}_users", $rcode[1], 'email');
+            $user = Ud::fetch_assoc("{$prefix}_users", $rcode[1], 'email');
 
             if(!$user) {
 

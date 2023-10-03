@@ -1,4 +1,4 @@
-{% extends '@Udash/base.html.twig' %}
+{% extends '@Ud/base.html.twig' %}
 
 {% block dashboard_content %}
 
@@ -43,7 +43,7 @@
                                                 {{ notification.message }}
                                             </div>
                                             <span class="text-sm text-medium text-gray">
-                                                {{ Udash.elapse(notification.period) }}
+                                                {{ Ud.elapse(notification.period) }}
                                                 {% if notification.redirect %}
                                                     <i class='mdi mdi-vector-link ms-1'></i>
                                                 {% endif %}
@@ -78,7 +78,7 @@
                                     
                                     <div class='row'>
                                         <div class='col-sm-8 m-auto col-lg-6'>
-                                            {% set errorImage = constant('Udash::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
+                                            {% set errorImage = constant('Ud::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
                                             <img src='{{ Uss.getUrl(errorImage) }}' class='img-fluid'>
                                         </div>
                                     </div>

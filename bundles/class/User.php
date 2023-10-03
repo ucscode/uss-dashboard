@@ -55,7 +55,7 @@ class User implements UserInterface
 
     public function getAvatar(): ?string
     {
-        $avatar = Uss::instance()->getUrl(Udash::ASSETS_DIR . "/images/user.png");
+        $avatar = Uss::instance()->getUrl(Ud::ASSETS_DIR . "/images/user.png");
         return $avatar;
     }
 
@@ -407,7 +407,7 @@ class User implements UserInterface
         if(is_null($userId)) {
             $userId = -1;
         }
-        return Udash::instance()->fetchData(self::TABLE, $userId);
+        return Ud::instance()->fetchData(self::TABLE, $userId);
     }
 
     private function polyFill(?int $userId): bool
@@ -431,7 +431,7 @@ class User implements UserInterface
 
             }
 
-            $this->meta = Udash::instance()->usermeta;
+            $this->meta = Ud::instance()->usermeta;
 
             return true;
 

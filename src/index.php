@@ -1,6 +1,6 @@
 <?php
 
-defined('Udash::DIR') or die(':INDEX');
+defined('Ud::DIR') or die(':INDEX');
 
 /**
  * Create Dashboard Menu
@@ -20,14 +20,14 @@ Uss::$global['menu']->add('homepage', array(
 
 // Focus Path;
 
-Uss::instance()->route(Udash::ROUTE, function () use ($pageInfo) {
+Uss::instance()->route(Ud::ROUTE, function () use ($pageInfo) {
 
     /*
     // Authenticate Email Requests
 
-    // require Udash::VIEW_DIR . "/AUTH/@verify-email.php";
+    // require Ud::VIEW_DIR . "/AUTH/@verify-email.php";
 
-    Udash::view(function () {
+    Ud::view(function () {
 
         Events::instance()->exec('udash:pages/index');
 

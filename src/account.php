@@ -1,6 +1,6 @@
 <?php
 
-defined('Udash::DIR') or die;
+defined('Ud::DIR') or die;
 
 // Declare The Focus Path For Account Page
 
@@ -67,7 +67,7 @@ Uss::instance()->route($profileFocus, function ($e) use ($profileMenu) {
     /**
      * DISPLAY PROFILE CONTENT
      */
-    Udash::view(function () use ($nonce) {
+    Ud::view(function () use ($nonce) {
 
         /**
          * Get Configuration Option: {lock-email}
@@ -89,7 +89,7 @@ Uss::instance()->route($profileFocus, function ($e) use ($profileMenu) {
          * @param 3 == false; Tag is editable
          */
         Uss::instance()->tag('user.title', Uss::$global['user']['username'] ?: 'Hi dear', false);
-        Uss::instance()->tag('user.avatar', Udash::user_avatar(Uss::$global['user']['id']), false);
+        Uss::instance()->tag('user.avatar', Ud::user_avatar(Uss::$global['user']['id']), false);
 
         Uss::instance()->tag('profile.col-left', 'col-lg-5', false);
         Uss::instance()->tag('profile.col-right', 'col-lg-7', false);
@@ -150,6 +150,6 @@ Uss::instance()->route($profileFocus, function ($e) use ($profileMenu) {
 			</div> <!-- end container -->
 		</section>
 		
-	<?php }); // Udash::view
+	<?php }); // Ud::view
 
 }, null); // Uss::instance()->route

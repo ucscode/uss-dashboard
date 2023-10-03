@@ -2,7 +2,7 @@
 
 use Ucscode\SQuery\SQuery;
 
-final class Udash extends AbstractUdash
+final class Ud extends AbstractUd
 {
     use SingletonTrait;
 

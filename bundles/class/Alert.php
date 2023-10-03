@@ -18,7 +18,7 @@ class Alert
 
     /**
      * This method is called only once by
-     * UdashTwigExtension Class Instance
+     * UdTwigExtension Class Instance
      */
     public static function flushAll()
     {

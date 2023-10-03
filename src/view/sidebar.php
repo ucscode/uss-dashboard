@@ -1,4 +1,4 @@
-<?php defined('UDASH_DIR') or die; ?>
+<?php defined('UD_DIR') or die; ?>
 
 <!-- ======== sidebar-nav start =========== -->
 

@@ -1,7 +1,7 @@
 <?php
 
 
-defined("UDASH_DIR") or die;
+defined("UD_DIR") or die;
 
 call_user_func(function () {
 
@@ -48,11 +48,11 @@ call_user_func(function () {
                  * --------------------
                  * 1. The accepted file MIME
                  * 2. The file array
-                 * 3. The directory to upload the file into ( `Udash::ASSETS_DIR` is the ROOT directory )
+                 * 3. The directory to upload the file into ( `Ud::ASSETS_DIR` is the ROOT directory )
                  * 4. A prefix to prepend to the filename
                  * ---------------------
                  */
-                $avatar = Udash::uploadFile("image/jpg|png|jpeg|webp", $_FILES['avatar'], 'images/profile', "{$user['id']}-");
+                $avatar = Ud::uploadFile("image/jpg|png|jpeg|webp", $_FILES['avatar'], 'images/profile', "{$user['id']}-");
 
                 /**
                  * Get only required data from the $_POST
@@ -96,7 +96,7 @@ call_user_func(function () {
                     /**
                      * Send Confirmation Email
                      */
-                    $update = Udash::send_confirmation_email($data['email'], $user['email']);
+                    $update = Ud::send_confirmation_email($data['email'], $user['email']);
 
                     if($update) {
                         $message = "
@@ -171,7 +171,7 @@ call_user_func(function () {
             } catch(Exception $e) {
                 /**
                  * Handle Exception
-                 * Most likely, this would be caused by the `Udash::uploadFile` method
+                 * Most likely, this would be caused by the `Ud::uploadFile` method
                  */
                 $message = "<i class='bi bi-exclamation-triangle me-1'></i> " . $e->getMessage();
             };
@@ -198,7 +198,7 @@ call_user_func(function () {
             /**
              * Check if old password is correct
              */
-            $approved = Udash::password($_POST['old_password'], $user['password']);
+            $approved = Ud::password($_POST['old_password'], $user['password']);
 
             if(!$approved) {
                 $message = "<div class=''>
@@ -223,7 +223,7 @@ call_user_func(function () {
                  * Then update user password
                  */
                 $SQL = SQuery::update("{$prefix}_users", array(
-                    'password' => Udash::password($_POST['password'])
+                    'password' => Ud::password($_POST['password'])
                 ), "id = {$user['id']}");
 
                 $update = Uss::$global['mysqli']->query($SQL);
@@ -231,7 +231,7 @@ call_user_func(function () {
                 if($update) {
 
                     /** Renew access token */
-                    Udash::setAccessToken($user['id']);
+                    Ud::setAccessToken($user['id']);
 
                     $message = "<div class=''>
 						<i class='bi bi-lock me-1'></i> Password successfully updated

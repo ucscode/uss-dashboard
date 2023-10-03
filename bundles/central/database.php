@@ -1,9 +1,9 @@
 <?php
 
-# Ensure that this file is required within the Udash instantiation
+# Ensure that this file is required within the Ud instantiation
 
-if(!class_exists('\\Udash') || !isset($this) || !($this instanceof Udash)) {
-    die('Udash: This file is not properly implemented');
+if(!class_exists('\\Ud') || !isset($this) || !($this instanceof Ud)) {
+    die('Ud: This file is not properly implemented');
 };
 
 $statements = [];
@@ -77,7 +77,7 @@ foreach($statements as $SQL) {
     } catch(Exception $e) {
 
         $uss->render('@Uss/error.html.twig', [
-            "subject" => "Udash: Database Setup Error",
+            "subject" => "Ud: Database Setup Error",
             "message" => $this->getConfig('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
         ]);
 

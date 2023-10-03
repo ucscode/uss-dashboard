@@ -95,7 +95,7 @@ try {
  * All buffered output will be cleared to ensure zero output
  * Unless debug mode is enabled
  */
-if(!Udash::config('debug')) {
+if(!Ud::config('debug')) {
     # Clear Output Buffer
     while(ob_get_level()) {
         ob_end_clean();

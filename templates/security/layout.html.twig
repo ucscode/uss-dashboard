@@ -1,4 +1,4 @@
-{% extends '@Udash/base.html.twig' %}
+{% extends '@Ud/base.html.twig' %}
 
 {% block body_main %}
 
@@ -78,5 +78,5 @@
 
 {% block body_js %}
     {{ parent() }}
-	<script src="{{ Uss.getUrl(constant('Udash::ASSETS_DIR') ~ '/js/security.js') }}"></script>
+	<script src="{{ Uss.getUrl(constant('Ud::ASSETS_DIR') ~ '/js/security.js') }}"></script>
 {% endblock body_js %}

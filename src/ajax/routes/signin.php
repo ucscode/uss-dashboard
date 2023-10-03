@@ -40,7 +40,7 @@ Events::instance()->addListener('udash:ajax', function () {
      * Thanks to the `udash_abstract::fetch_assoc`
      * It allows us get a user detail securely without running multiple query
      */
-    $user = Udash::fetch_assoc("{$prefix}_users", $_POST['login'], $column);
+    $user = Ud::fetch_assoc("{$prefix}_users", $_POST['login'], $column);
 
 
     /**
@@ -57,7 +57,7 @@ Events::instance()->addListener('udash:ajax', function () {
          * Verify the user password!
          * Using PHP's default password verification algorithm
          */
-        $password = Udash::password($_POST['password'], $user['password']);
+        $password = Ud::password($_POST['password'], $user['password']);
 
         /**
          * INCASE OF LOST PASSWORD!
@@ -103,7 +103,7 @@ Events::instance()->addListener('udash:ajax', function () {
                  * Create an access token
                  */
 
-                Udash::setAccessToken($user['id']);
+                Ud::setAccessToken($user['id']);
 
                 $status = !!($message = "<i class='bi bi-check-circle text-success me-1'></i> Login successful");
 
@@ -125,7 +125,7 @@ Events::instance()->addListener('udash:ajax', function () {
 
     };
 
-    $data = array( "redirect" => Udash::config('signin:redirect') );
+    $data = array( "redirect" => Ud::config('signin:redirect') );
 
     $result = [
         "status" => &$status,

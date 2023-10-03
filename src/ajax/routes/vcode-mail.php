@@ -9,7 +9,7 @@ Events::instance()->addListener('udash:ajax', function () {
     /**
      * Get the user by email
      */
-    $user = Udash::fetch_assoc(DB_TABLE_PREFIX . "_users", $_POST['email'], 'email');
+    $user = Ud::fetch_assoc(DB_TABLE_PREFIX . "_users", $_POST['email'], 'email');
 
     /** If no user is found, end the script */
 
@@ -37,7 +37,7 @@ Events::instance()->addListener('udash:ajax', function () {
      * This will update the `v-code` key with a new one
      * Any previous email sent becomes invalid
      */
-    $sent = Udash::send_confirmation_email($user['email']);
+    $sent = Ud::send_confirmation_email($user['email']);
 
     /**
      * Get the response message

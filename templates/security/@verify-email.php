@@ -1,11 +1,11 @@
 <?php
 
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 /*
 
-    This file was required in UDASH_DIR . "/model/class.php";
+    This file was required in UD_DIR . "/model/class.php";
 
     That is where this closure is called!
 
@@ -35,7 +35,7 @@ call_user_func(function () {
             Get the user by email;
         */
 
-        $user = Udash::fetch_assoc(DB_TABLE_PREFIX . "_users", $data[2], 'email');
+        $user = Ud::fetch_assoc(DB_TABLE_PREFIX . "_users", $data[2], 'email');
 
         if(!$user) {
             return Uss::instance()->console('@alert', "Confirmation link is forbidden");

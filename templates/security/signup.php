@@ -1,6 +1,6 @@
 <?php
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 /** Create signup form */
 
@@ -59,7 +59,7 @@ Events::instance()->addListener('udash:auth.right', function () { ?>
                                                                 if(empty(Uss::$global['options']->get('user:affiliation'))) {
                                                                     return;
                                                                 }
-                                                                $parent = Udash::get_sponsor();
+                                                                $parent = Ud::get_sponsor();
                                                                 if(!$parent) {
                                                                     return;
                                                                 }

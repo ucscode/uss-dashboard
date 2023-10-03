@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 call_user_func(function () use ($profileFocus) {
 
@@ -32,7 +32,7 @@ call_user_func(function () use ($profileFocus) {
      */
     Uss::instance()->route($teamFocus, function () {
 
-        Udash::view(function () {
+        Ud::view(function () {
 
             $userid = Uss::$global['user']['id'];
 

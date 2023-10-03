@@ -7,7 +7,7 @@
  * The easiest way to modify content of this page is to add or override `udash:auth.right` events
  */
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 
 /** Create the sign in form */

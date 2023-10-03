@@ -5,7 +5,7 @@
  * @see X2Client
 */
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 ob_start();
 ?>

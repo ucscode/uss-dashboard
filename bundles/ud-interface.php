@@ -1,38 +1,38 @@
 <?php
 
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 /**
  * Focus on the dashboard path
  *
  * Include every file that is required to build the dashboard interface
- * Note: The `udash:ready` event can be overridden by modules that need custom functionality.
+ * Note: The `Ud:ready` event can be overridden by modules that need custom functionality.
  * For example: If you do not want the dashboard interface to exist and would rather prefer to create yours.
  *
- * Attaching a listener to `udash:ready` event is the appropriate way to modify content on uss dashboard
- * Do not try to modify dashboard content without using the `udash:ready` event
+ * Attaching a listener to `Ud:ready` event is the appropriate way to modify content on uss dashboard
+ * Do not try to modify dashboard content without using the `Ud:ready` event
  * as it is possible that your code will run even before the dashboard module is loaded
  *
  * In other case, your code may be called after the dashboard has loaded but will not be properly handled
- * Hence, it highly recommended to bind your dashboard function to the `udash:ready` event
+ * Hence, it highly recommended to bind your dashboard function to the `Ud:ready` event
  */
-Events::instance()->addListener('udash:ready', function () {
+Events::instance()->addListener('Ud:ready', function () {
 
-    require Udash::SRC_DIR . '/index.php'; # visible immediately after login
-    require Udash::SRC_DIR . '/account.php';
-    require Udash::SRC_DIR . '/affiliates.php';
-    require Udash::SRC_DIR . '/hierarchy.php';
+    require Ud::SRC_DIR . '/index.php'; # visible immediately after login
+    require Ud::SRC_DIR . '/account.php';
+    require Ud::SRC_DIR . '/affiliates.php';
+    require Ud::SRC_DIR . '/hierarchy.php';
 
     /**
      * Focus expression for authentication pages
      * The expression would focus on "/signup" and "/reset" page of the dashboard
      *
-     * Note: Login page is solely handled by the `Udash::view()`
+     * Note: Login page is solely handled by the `Ud::view()`
      * It take account of the dashboard configuration setting and the user authentication before determining
      * whether to display the actual content or the login page
      */
-    Uss::instance()->route(UDASH_ROUTE . '/(?:signup|reset)', function () {
+    Uss::instance()->route(Ud_ROUTE . '/(?:signup|reset)', function () {
 
         /**
          * Forcefully disable authentication for signup and reset password page
@@ -42,15 +42,15 @@ Events::instance()->addListener('udash:ready', function () {
          *
          * To add a custom authentication page through module, add a callable to the `auth-page` offset
          * ```php
-         * 	Udash::config('auth-page', function() {
+         * 	Ud::config('auth-page', function() {
          * 		if( Uss::instance()->query(1) == 'signup' ) // your custom signup content here
          *  });
          * ```
          */
-        Udash::config('auth', false);
+        Ud::config('auth', false);
 
         # display the content;
-        Udash::view(function () {});
+        Ud::view(function () {});
 
     });
 
@@ -85,7 +85,7 @@ if($user) {
         });
 
     } else {
-        Udash::config('auth', $permission);
+        Ud::config('auth', $permission);
     } // Approve permission
 
 };

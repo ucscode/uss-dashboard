@@ -5,7 +5,7 @@
 
     {{ parent() }}
 
-    {% set cssPath = constant('Udash::ASSETS_DIR') ~ '/css/default.css' %}
+    {% set cssPath = constant('Ud::ASSETS_DIR') ~ '/css/default.css' %}
 
     <link rel="stylesheet" href="{{ Uss.getUrl(cssPath) }}">
 
@@ -21,7 +21,7 @@
         <aside class="sidebar-nav-wrapper">
 
             <div class="navbar-logo">
-                <a href="{{ Udash.urlGenerator('/') }}">
+                <a href="{{ Ud.urlGenerator('/') }}">
                     <img src="{{ Uss.getOption('web:icon') ?? Uss.globals.icon }}" height='50px' alt="logo" />
                 </a>
             </div>
@@ -29,7 +29,7 @@
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
                     {% block dashboard_menu_items %}
-                        {% include '@Udash/includes/menu-items.html.twig' %}
+                        {% include '@Ud/includes/menu-items.html.twig' %}
                     {% endblock %}
                 </ul>
             </nav>
@@ -80,11 +80,11 @@
 
                                 {% block dashboard_header_notification %}
 
-                                    {% include "@Udash/includes/notifications-top.html.twig" %}
+                                    {% include "@Ud/includes/notifications-top.html.twig" %}
                                 
                                 {% endblock %}
 
-                                {# Udash:header/right #}
+                                {# Ud:header/right #}
                                 
                                 {% block dashboard_header_profile %}
 
@@ -115,7 +115,7 @@
 
                                             {% block dashboard_user_menu_items %}
 
-                                                {% for item in Udash.userMenu.children %}
+                                                {% for item in Ud.userMenu.children %}
                                                         <li>
                                                             <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
                                                                 <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
@@ -168,7 +168,7 @@
 
 {% block body_js %}
     
-    {% set dashboardJs = constant('Udash::ASSETS_DIR') ~ '/js/dashboard.js' %}
+    {% set dashboardJs = constant('Ud::ASSETS_DIR') ~ '/js/dashboard.js' %}
 
     {{ parent() }}
 

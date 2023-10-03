@@ -23,24 +23,27 @@ if(!defined('UD_DIR')) {
 };
 
 $resources = [
+    'configs' => [
+        'UdConfig.php',
+    ],
     'central' => [
-        'AbstractUdash.php',
-        'Udash.php',
+        'AbstractUd.php',
+        'Ud.php',
     ],
     'interface' => [
-        "UdashFormInterface.php",
+        "UdFormInterface.php",
         "UserInterface.php",
     ],
     'trait' => [
         //
     ],
     'abstract' => [
-        "AbstractUdashForm.php",
+        "AbstractUdForm.php",
     ],
     'class' => [
         "UrlGenerator.php",
-        "UdashTwigExtension.php",
-        "UdashCrud.php",
+        "UdTwigExtension.php",
+        "UdCrud.php",
         //"DOMTablet.php",
         "Roles.php",
         "Hierarchy.php",
@@ -48,9 +51,9 @@ $resources = [
         "Alert.php",
     ],
     'forms' => [
-        "UdashLoginForm.php",
-        "UdashRegisterForm.php",
-        "UdashRecoveryForm.php"
+        "UdLoginForm.php",
+        "UdRegisterForm.php",
+        "UdRecoveryForm.php"
     ]
 ];
 
@@ -62,9 +65,9 @@ foreach($resources as $directory => $fileList) {
     }
 }
 
-# Initialize Udash;
+# Initialize Ud;
 
-Udash::instance()->init();
+Ud::instance()->init();
 
 /**
  * The uss dashboard module requires database connection to work properly

@@ -11,7 +11,7 @@
  * @author ucscode
  */
 
-abstract class UdashAbstract
+abstract class UdAbstract
 {
     /**
      * Returns a PHPMailer instance
@@ -373,7 +373,7 @@ abstract class UdashAbstract
      * $data = udash_abstract::fetch_assoc( 'my_table', 'ucscode', 'username' );
      * ```
      *
-     * Please keep in mind that you cannot call `udash_abstract::fetch_assoc` directly as `udash_abstract` is an abstract class and needs to be extended. Use the `Udash::fetch_assoc` instead.
+     * Please keep in mind that you cannot call `udash_abstract::fetch_assoc` directly as `udash_abstract` is an abstract class and needs to be extended. Use the `Ud::fetch_assoc` instead.
      *
      * @param string $tablename The name of the database table
      * @param string|null $value The value of a column you want to retreive
@@ -582,7 +582,7 @@ abstract class UdashAbstract
         # Get the directory where file should be uploaded
 
         if(!Uss::instance()->is_absolute_path($path)) {
-            # Relative path will be uploaded to `Udash::ASSETS_DIR`
+            # Relative path will be uploaded to `Ud::ASSETS_DIR`
             $path = Uss::instance()->abspath(self::ASSETS_DIR . "/{$path}");
         } else {
             $path = Uss::instance()->abspath($path);
@@ -812,10 +812,10 @@ abstract class UdashAbstract
      *
      * ```php
      * // example:
-     * echo "text-" . Udash::get_color('approved'); // text-success
+     * echo "text-" . Ud::get_color('approved'); // text-success
      *
      * // example2:
-     * echo "bg-" . Udash::get_color('failed'); // bg-danger
+     * echo "bg-" . Ud::get_color('failed'); // bg-danger
      * ```
      *
      * @param string|null $word
@@ -1255,7 +1255,7 @@ abstract class UdashAbstract
     {
 
         # verify script filename
-        $is_ajax_file = Uss::instance()->rslash($_SERVER['SCRIPT_FILENAME']) === Uss::instance()->rslash(Udash::AJAX_DIR . "/@ajax.php");
+        $is_ajax_file = Uss::instance()->rslash($_SERVER['SCRIPT_FILENAME']) === Uss::instance()->rslash(Ud::AJAX_DIR . "/@ajax.php");
         # verify request method
         $is_post_request = $_SERVER['REQUEST_METHOD'] === 'POST';
         # verify route index

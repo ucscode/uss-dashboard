@@ -54,7 +54,7 @@ Events::instance()->addListener('udash:ajax', function () {
                  */
                 $passport = explode("-", str_rot13(base64_decode($_POST['passport'])));
 
-                $user = Udash::fetch_assoc("{$prefix}_users", $passport[1]);
+                $user = Ud::fetch_assoc("{$prefix}_users", $passport[1]);
 
 
                 /**
@@ -78,7 +78,7 @@ Events::instance()->addListener('udash:ajax', function () {
                          * If the reset key is valid
                          * Update the user password
                          */
-                        $_POST['password'] = Udash::password($_POST['password']);
+                        $_POST['password'] = Ud::password($_POST['password']);
 
                         /** The SQL Query */
 

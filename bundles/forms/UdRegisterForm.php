@@ -4,7 +4,7 @@ use Ucscode\UssForm\UssForm;
 
 // Create custom Registration Form By extending this class
 
-class UdashRegisterForm extends AbstractUdashForm
+class UdRegisterForm extends AbstractUdForm
 {
     protected User $user;
 
@@ -103,7 +103,7 @@ class UdashRegisterForm extends AbstractUdashForm
 
         $this->sendEmail();
 
-        header("location: " . Udash::instance()->urlGenerator('/'));
+        header("location: " . Ud::instance()->urlGenerator('/'));
 
         exit;
     }
@@ -127,7 +127,7 @@ class UdashRegisterForm extends AbstractUdashForm
             $this->setReport('user[email]', "Invalid email address");
             return false;
         } else {
-            $exists = Udash::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
+            $exists = Ud::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
             if($exists) {
                 $this->setReport('user[email]', 'The email address already exists');
                 return false;

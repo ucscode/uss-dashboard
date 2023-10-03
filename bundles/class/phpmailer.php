@@ -1,7 +1,7 @@
 <?php
 
 
-defined('UDASH_DIR') or die;
+defined('UD_DIR') or die;
 
 /**
  * PHPMailer Classes
