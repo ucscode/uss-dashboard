@@ -91,11 +91,17 @@ final class Ud extends AbstractUd
     public function render(string $template, array $options = [], ?UssTwigBlockManager $ussTwigBlockManager = null): void
     {
         $user = new User();
+
         if($this->firewallEnabled && !$user->getFromSession()) {
-            $template = $this->getConfig('templates:login');
-            $options['form'] = $this->getConfig('forms:login');
+            $loginContext = $this->forceLoginPage();
+            if(!empty($loginContext)) {
+                $template = $loginContext['template'];
+                $options['form'] = $loginContext['form'];
+            }
         };
+
         $options['user'] = $user;
+
         Uss::instance()->render($template, $options, $ussTwigBlockManager);
     }
 
@@ -138,6 +144,27 @@ final class Ud extends AbstractUd
     public function urlGenerator(string $path = '/', array $param = []): object
     {
         return new UrlGenerator($path, $param);
+    }
+
+    private function forceLoginPage(): ?array
+    {
+        $options = [];
+
+        $loginPage = $this->getDefaultPage('login');
+
+        if(!$loginPage->equalsCurrentRoute()) {
+
+            $loginForm = $loginPage->get('form');
+
+            $options['template'] = $loginPage->get('template');
+
+            $options['form'] = new $loginForm($loginPage->name);
+            $options['form']->handleSubmission();
+
+            return $options;
+        };
+
+        return null;
     }
 
 }

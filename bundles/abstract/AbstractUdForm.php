@@ -275,22 +275,6 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
     }
 
     /**
-     * Get the URL associated with a page name from the configuration.
-     *
-     * @param string $pagename The name of the page.
-     *
-     * @return string|null The URL associated with the page name, or null if not found.
-     */
-    public function getRouteUrl(string $pagename): ?string
-    {
-        $page = Ud::instance()->getConfig($pagename);
-        if(is_array($page) && array_key_exists('route', $page)) {
-            $path = ROOT_DIR . "/" . Uss::instance()->filterContext($page['route']);
-            return Uss::instance()->getUrl($path, true);
-        };
-    }
-
-    /**
      * Set a report message for a form field.
      *
      * @param string $name The name of the form field.

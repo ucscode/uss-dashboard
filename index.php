@@ -22,13 +22,19 @@ if(!defined('UD_DIR')) {
     define('UD_DIR', __DIR__);
 };
 
-$resources = [
-    'configs' => [
-        'UdConfig.php',
-    ],
+$parseComponents = function (array $components, string $folder): void {
+    foreach($components as $directory => $fileList) {
+        foreach($fileList as $resourceFile) {
+            require_once UD_DIR . "/{$folder}/{$directory}/{$resourceFile}";
+        }
+    }
+};
+
+$bundles = [
     'central' => [
         'AbstractUd.php',
         'Ud.php',
+        'UdPage.php',
     ],
     'interface' => [
         "UdFormInterface.php",
@@ -50,26 +56,26 @@ $resources = [
         "User.php",
         "Alert.php",
     ],
+];
+
+$source = [
     'forms' => [
         "UdLoginForm.php",
         "UdRegisterForm.php",
-        "UdRecoveryForm.php"
+        "UdRecoveryForm.php",
+    ],
+    'controllers' => [
+        'RegisterController.php',
+        'RecoveryController.php',
+        'IndexController.php',
+        'LogoutController.php',
+        'NotificationController.php',
     ]
 ];
 
-foreach($resources as $directory => $fileList) {
-    # Iterate Folder
-    foreach($fileList as $resourceFile) {
-        # Include Files
-        require_once UD_DIR . "/bundles/{$directory}/{$resourceFile}";
-    }
-}
+$parseComponents($bundles, 'bundles');
+$parseComponents($source, 'src');
 
 # Initialize Ud;
 
 Ud::instance()->init();
-
-/**
- * The uss dashboard module requires database connection to work properly
- * Check if database connect is allowed
- */

@@ -33,8 +33,10 @@ abstract class AbstractUd
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    protected array $configs;
+
     private bool $initialized = false;
+    protected array $configs = [];
+    private array $defaultPages = [];
 
     // Inline Class Methods;
 
@@ -44,14 +46,14 @@ abstract class AbstractUd
 
             if($this->databaseEnabled()) {
 
-                // Initialize Ud with default configurations
-                $this->defaultConfigs();
-
                 // Configure (create) database values, forms, and template directory
                 $this->configureSystem();
 
                 // Configure logged in user information and authentication
                 $this->configureUser();
+
+                // Initialize Ud with default configurations
+                $this->configureDefaultPages();
 
                 $this->initialized = true;
 
@@ -64,103 +66,58 @@ abstract class AbstractUd
         }
     }
 
+    public function getDefaultPage(string $pageName): ?UdPage
+    {
+        $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
+            return $page->name === $pageName;
+        }));
+        return $defaultPages[0] ?? null;
+    }
+
+    public function removeDefaultPage(string $pageName): null|bool
+    {
+        $page = $this->getDefaultPage($pageName);
+        if($page) {
+            if($page->name === 'login') {
+                throw new \Exception(
+                    sprintf(
+                        "%s Error: Default login page can only be modified but cannot be removed; Please make changes to the page attributes instead",
+                        __METHOD__
+                    )
+                );
+            }
+            $key = array_search($page, $this->defaultPages, true);
+            if($key !== false) {
+                unset($this->defaultPages[$key]);
+            };
+        };
+        return null;
+    }
+
+    /**
+     * Get the URL associated with a page name from the configuration.
+     *
+     * @param string $pagename The name of the page.
+     *
+     * @return string|null The URL associated with the page name, or null if not found.
+     */
+    public function getPageUrl(string $pagename): ?string
+    {
+        $ud = Ud::instance();
+        $page = $ud->getDefaultPage($pagename);
+        if(!$page) {
+            return null;
+        }
+        $urlGenerator = new UrlGenerator($page->get('route'));
+        return $urlGenerator->getResult();
+    }
+
     // Get the route declared by the child class
 
-    private function dashboardRoute(): string
+    private function mainRoute(): string
     {
         $class = get_called_class();
         return constant("$class::ROUTE");
-    }
-
-    private function defaultConfigs(): void
-    {
-
-        $this->configs = array(
-
-            'debug' => true,
-
-            /**
-             * HINTS:
-             * - There is no login page file, there is only a "login template" and "login form class"
-             * - The login template will render by default on any page when a user tries to access the page without sufficient permission
-             * - The "handleSubmission()" method is called within the "login form class" itself
-             */
-            'templates:login' => '@Ud/security/login.html.twig',
-
-            /**
-             * This is the first page user will enter when they visit the dashboards
-             * However, a login page will be displayed if user has no permission
-             */
-            'pages:index' => [
-                'route' => $this->dashboardRoute(),
-                'file' => self::SRC_DIR . '/index.php',
-                'template' => '@Ud/pages/welcome.html.twig',
-                'menu-item' => [
-                    'category' => 'menu',
-                    'name' => 'index',
-                    'item' => [
-                        'label' => 'dashboard',
-                        'href' => new UrlGenerator(),
-                        'icon' => 'bi bi-speedometer',
-                    ]
-                ]
-            ],
-
-            'pages:register' => [
-                'route' => $this->dashboardRoute() . '/register',
-                'file' => self::SRC_DIR . "/register.php",
-                'template' => '@Ud/security/register.html.twig'
-            ],
-
-            'pages:recovery' => [
-                'route' => $this->dashboardRoute() . '/reset',
-                'file' => self::SRC_DIR . "/recovery.php",
-                'template' => '@Ud/security/recovery.html.twig',
-            ],
-
-            'pages:logout' => [
-                'route' => $this->dashboardRoute() . '/logout',
-                'file' => self::SRC_DIR . "/logout.php",
-                'template' => null,
-                'menu-item' => [
-                    'category' => 'user-menu',
-                    'name' => 'logout',
-                    'item' => [
-                        'label' => 'logout',
-                        'href' => new UrlGenerator('/logout'),
-                        'icon' => 'bi bi-power',
-                        'order' => 1024
-                    ]
-                ],
-                'endpoint' => new UrlGenerator('/')
-            ],
-
-            'pages:notifications' => [
-                'route' => $this->dashboardRoute() . '/notifications',
-                'file' => self::SRC_DIR . "/notifications.php",
-                'template' => '@Ud/pages/notifications.html.twig',
-            ]
-
-            /*'pages:account' => [
-                'route' => self::ROUTE . '/account',
-                'file' => self::SRC_DIR . '/account.php',
-                'template' => '@Ud/account.html.twig'
-            ],
-
-            'pages:affiliate' => [
-                'route' => self::ROUTE . '/affiliate',
-                'file' => self::SRC_DIR . '/affiliate.php',
-                'template' => '@Ud/affiliate.html.twig'
-            ],
-
-            'pages:hierarchy' => [
-                'route' => self::ROUTE . '/hierarchy',
-                'file' => self::SRC_DIR . '/hierarchy.php',
-                'template' => '@Ud/hierarchy.html.twig'
-            ],*/
-
-        );
-
     }
 
     private function databaseEnabled(): bool
@@ -236,12 +193,66 @@ abstract class AbstractUd
             'parentTable' => User::TABLE,
         ]);
 
-        $this->setConfig('forms:login', new UdLoginForm('login'));
-        $this->setConfig('forms:register', new UdRegisterForm('register'));
-        $this->setConfig('forms:recovery', new UdRecoveryForm('recovery'));
-
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
+    }
+
+    /**
+     * Create all default pages uses in Ud
+     *
+     * These pages can then be modified by modules:
+     * The UdPage instance allows module to update single properties of the page such as
+     * Controllers, Template, Route, MenuItems etc
+     */
+    private function configureDefaultPages(): void
+    {
+        $this->defaultPages = [
+
+            (new UdPage('login'))
+                ->set('template', '@Ud/security/login.html.twig')
+                ->set('form', UdLoginForm::class),
+
+            (new UdPage('index'))
+                ->set('route', '/')
+                ->set('template', '@Ud/pages/welcome.html.twig')
+                ->set('controller', IndexController::class)
+                ->addMenuItem('index', new TreeNode('dashboard', [
+                    'label' => 'dashboard',
+                    'href' => new UrlGenerator('/'),
+                    'icon' => 'bi bi-speedometer',
+                ]), $this->menu),
+
+            (new UdPage('register'))
+                ->set('route', '/register')
+                ->set('template', '@Ud/security/register.html.twig')
+                ->set('controller', RegisterController::class)
+                ->set('form', UdRegisterForm::class),
+
+            (new UdPage('recovery'))
+                ->set('route', '/recovery')
+                ->set('template', '@Ud/security/register.html.twig')
+                ->set('controller', RecoveryController::class)
+                ->set('form', UdRecoveryForm::class),
+
+            (new UdPage('notifications'))
+                ->set('route', '/notifications')
+                ->set('template', '@Ud/pages/notifications.html.twig')
+                ->set('controller', NotificationController::class),
+
+            (new UdPage('logout'))
+                ->set('route', '/logout')
+                ->set('template', null)
+                ->set('controller', LogoutController::class)
+                ->setCustom('endpoint', new UrlGenerator('/'))
+                ->addMenuItem('logout', new TreeNode('logout', [
+                    'label' => 'logout',
+                    'href' => new UrlGenerator('/logout'),
+                    'icon' => 'bi bi-power',
+                    'order' => 1024
+                ]), $this->userMenu),
+
+        ];
+
     }
 
     /**
@@ -249,41 +260,15 @@ abstract class AbstractUd
      */
     private function dispatchEvent(): void
     {
-        (new Event())->addListener('Modules:loaded', function () {
+        Event::instance()->addListener('Modules:loaded', function () {
 
             // Inform all modules that Ud has started
-            (new Event())->dispatch('Ud:ready');
+            Event::instance()->dispatch('Ud:ready');
 
-            // Get all available pages
-            $pages = $this->getConfig("pages:", true);
-
-            // Parse Menu
-            $this->parseMenuItems($pages);
-
-            // Sort Menu Based On Order Attribute
-            $this->recursiveMenuConfig($this->menu, 'Main Menu');
-            $this->recursiveMenuConfig($this->userMenu, 'User Menu');
-
-            foreach($pages as $index => $pageInfo) {
-
-                if(is_array($pageInfo)) {
-
-                    $pageInfo['_key'] = $index;
-
-                    call_user_func(function () use ($pageInfo) {
-
-                        (new Event())->dispatch('Ud:pageload', $pageInfo);
-
-                        require_once $pageInfo['file'];
-
-                    });
-                
-                };
-
-            }
+            $this->buildDefaultPages();
 
             // Inform all modules that Ud has ended
-            (new Event())->dispatch('Ud:ended');
+            Event::instance()->dispatch('Ud:ended');
 
         });
     }
@@ -333,63 +318,49 @@ abstract class AbstractUd
 
     }
 
-    private function parseMenuItems(array $pages): void
+    /**
+     * Build Default Pages
+     */
+    private function buildDefaultPages(): void
     {
-        foreach($pages as $key => $page) {
+        $this->compileMenuItems();
 
-            $menuItem = $page['menu-item'] ?? null;
-            $item = $menuItem['item'] ?? null;
+        $this->recursiveMenuConfig($this->menu, 'Main Menu');
+        $this->recursiveMenuConfig($this->userMenu, 'User Menu');
 
-            if(is_array($menuItem) && is_array($item)) {
-
-                $category = $this->getMenuCategory($key, strtolower($menuItem['category'] ?? null));
-
-                if(empty($menuItem['name'])) {
-                    $this->throwConfigException(
-                        "Menu item `name` must be defined for key '{$key}'"
-                    );
-                };
-
-                $menuTree = $category == 'menu' ? $this->menu : $this->userMenu;
-                $menuTree->add($menuItem['name'], $item);
-
-            }
-
+        foreach($this->defaultPages as $singlePage) {
+            $this->activateDefaultPage($singlePage);
         }
     }
 
-    private function getMenuCategory(string $key, string $category): string
+    private function compileMenuItems(): void
     {
-        $error = null;
-        $categories = ['menu', 'user-menu'];
+        foreach($this->defaultPages as $page) {
+            foreach($page->getMenuItems() as $name => $menuItem) {
+                $item = $menuItem['item'];
+                $menuItem['parent']->add($name, $item);
+            };
+        }
+    }
 
-        if(empty($category)) {
-            $error = "Menu item `category` must be defined for key '{$key}'";
-        } elseif(!in_array($category, $categories)) {
-            $error = sprintf(
-                'Menu item `category` "%s" for key "%s" must be subset of [%s]',
-                $category,
-                $key,
-                implode(", ", $categories)
-            );
+    private function activateDefaultPage(UdPage $page): void
+    {
+        $uss = Uss::instance();
+
+        $pageRoute = $page->get('route');
+
+        if(empty($pageRoute)) {
+            return;
         };
 
-        if(!empty($error)) {
-            $this->throwConfigException($error);
-        }
+        $route = $this->mainRoute() . "/" . $pageRoute;
+        $route = $uss->filterContext($route);
 
-        return $category;
-    }
+        $controller = $page->get('controller');
+        $method = $page->get('method');
 
-    private function throwConfigException(string $error): void
-    {
-        throw new Exception(
-            sprintf(
-                "%s configuration error: %s",
-                get_called_class(),
-                $error
-            )
-        );
+        $routeInstance = new Route($route, new $controller($page), $method);
+        $routeInstance->loadController();
     }
 
 }
