@@ -93,10 +93,10 @@ final class Ud extends AbstractUd
         $user = new User();
 
         if($this->firewallEnabled && !$user->getFromSession()) {
-            $loginContext = $this->forceLoginPage();
-            if(!empty($loginContext)) {
-                $template = $loginContext['template'];
-                $options['form'] = $loginContext['form'];
+            $__login = $this->forceLoginPage();
+            if(!empty($__login)) {
+                $template = $__login['template'];
+                $options['form'] = $__login['form'];
             }
         };
 
@@ -146,12 +146,58 @@ final class Ud extends AbstractUd
         return new UrlGenerator($path, $param);
     }
 
+    public function getPage(string $pageName): ?UdPage
+    {
+        $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
+            return $page->name === $pageName;
+        }));
+        return $defaultPages[0] ?? null;
+    }
+
+    public function removePage(string $pageName): null|bool
+    {
+        $page = $this->getPage($pageName);
+        if($page) {
+            if($page->name === 'login') {
+                throw new \Exception(
+                    sprintf(
+                        "%s Error: Default login page can only be modified but cannot be removed; Please make changes to the page attributes instead",
+                        __METHOD__
+                    )
+                );
+            }
+            $key = array_search($page, $this->defaultPages, true);
+            if($key !== false) {
+                unset($this->defaultPages[$key]);
+            };
+        };
+        return null;
+    }
+
+    /**
+     * Get the URL associated with a page name from the configuration.
+     *
+     * @param string $pagename The name of the page.
+     *
+     * @return string|null The URL associated with the page name, or null if not found.
+     */
+    public function getPageUrl(string $pagename): ?string
+    {
+        $ud = Ud::instance();
+        $page = $ud->getPage($pagename);
+        if(!$page || is_null($page->get('route'))) {
+            return null;
+        }
+        $urlGenerator = new UrlGenerator($page->get('route'));
+        return $urlGenerator->getResult();
+    }
+
     private function forceLoginPage(): ?array
     {
         $options = [];
 
-        $loginPage = $this->getDefaultPage('login');
-
+        $loginPage = $this->getPage('login');
+        
         if(!$loginPage->equalsCurrentRoute()) {
 
             $loginForm = $loginPage->get('form');

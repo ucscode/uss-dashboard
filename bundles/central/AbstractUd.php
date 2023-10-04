@@ -10,6 +10,10 @@ abstract class AbstractUd
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
     abstract public function enableFirewall(bool $enable = true): void;
+    abstract public function getPage(string $pageName): ?UdPage;
+    abstract public function removePage(string $pageName): null|bool;
+    abstract public function getPageUrl(string $pagename): ?string;
+
     abstract public function render(
         string $template,
         array $options = [],
@@ -34,9 +38,9 @@ abstract class AbstractUd
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
 
-    private bool $initialized = false;
     protected array $configs = [];
-    private array $defaultPages = [];
+    protected array $defaultPages = [];
+    private bool $initialized = false;
 
     // Inline Class Methods;
 
@@ -53,7 +57,7 @@ abstract class AbstractUd
                 $this->configureUser();
 
                 // Initialize Ud with default configurations
-                $this->configureDefaultPages();
+                $this->configurePages();
 
                 $this->initialized = true;
 
@@ -64,52 +68,6 @@ abstract class AbstractUd
             }
 
         }
-    }
-
-    public function getDefaultPage(string $pageName): ?UdPage
-    {
-        $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
-            return $page->name === $pageName;
-        }));
-        return $defaultPages[0] ?? null;
-    }
-
-    public function removeDefaultPage(string $pageName): null|bool
-    {
-        $page = $this->getDefaultPage($pageName);
-        if($page) {
-            if($page->name === 'login') {
-                throw new \Exception(
-                    sprintf(
-                        "%s Error: Default login page can only be modified but cannot be removed; Please make changes to the page attributes instead",
-                        __METHOD__
-                    )
-                );
-            }
-            $key = array_search($page, $this->defaultPages, true);
-            if($key !== false) {
-                unset($this->defaultPages[$key]);
-            };
-        };
-        return null;
-    }
-
-    /**
-     * Get the URL associated with a page name from the configuration.
-     *
-     * @param string $pagename The name of the page.
-     *
-     * @return string|null The URL associated with the page name, or null if not found.
-     */
-    public function getPageUrl(string $pagename): ?string
-    {
-        $ud = Ud::instance();
-        $page = $ud->getDefaultPage($pagename);
-        if(!$page) {
-            return null;
-        }
-        $urlGenerator = new UrlGenerator($page->get('route'));
-        return $urlGenerator->getResult();
     }
 
     // Get the route declared by the child class
@@ -204,7 +162,7 @@ abstract class AbstractUd
      * The UdPage instance allows module to update single properties of the page such as
      * Controllers, Template, Route, MenuItems etc
      */
-    private function configureDefaultPages(): void
+    private function configurePages(): void
     {
         $this->defaultPages = [
 
