@@ -7,7 +7,7 @@
 
     {% set cssPath = constant('Ud::ASSETS_DIR') ~ '/css/default.css' %}
 
-    <link rel="stylesheet" href="{{ Uss.getUrl(cssPath) }}">
+    <link rel="stylesheet" href="{{ Uss.abspathToUrl(cssPath) }}">
 
 {% endblock head_css %}
 
@@ -173,7 +173,7 @@
     {{ parent() }}
 
     {% if (user and user.id is not empty) %}
-	    <script src="{{ Uss.getUrl(dashboardJs) }}"></script>
+	    <script src="{{ Uss.abspathToUrl(dashboardJs) }}"></script>
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('__alert') %}

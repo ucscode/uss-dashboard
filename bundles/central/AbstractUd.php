@@ -85,7 +85,7 @@ abstract class AbstractUd
                     'text-primary'
                 ),
                 "message_class" => "mb-5",
-                "image" => $uss->getUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image" => $uss->abspathToUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
             ]);
         } else {
@@ -301,17 +301,17 @@ abstract class AbstractUd
         $uss = Uss::instance();
 
         $pageRoute = $page->get('route');
-        
+
         if(empty($pageRoute) || $page->name === UdPage::LOGIN) {
             return;
         };
-        
+
         $route = $this->mainRoute() . "/" . $pageRoute;
         $route = $uss->filterContext($route);
 
         $controller = $page->get('controller');
         $method = $page->get('method');
-        
+
         new Route($route, new $controller($page), $method);
     }
 

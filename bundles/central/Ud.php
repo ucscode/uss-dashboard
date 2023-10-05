@@ -93,7 +93,7 @@ final class Ud extends AbstractUd
     {
         $user = new User();
 
-        if($this->firewallEnabled && !$user->getFromSession()) {
+        if(!$user->getFromSession() && $this->firewallEnabled) {
             $this->activateLoginPage($user, $template, $options);
         };
 
@@ -191,8 +191,8 @@ final class Ud extends AbstractUd
 
     /**
      * Activate login page
-     * 
-     * Login page do not need controller or route. 
+     *
+     * Login page do not need controller or route.
      * The login page will automatically appear on any route once the user is not authorized
      * Unless the firewall is disabled before the render method is called
      */

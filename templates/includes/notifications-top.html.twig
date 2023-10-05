@@ -1,4 +1,4 @@
-{% set notifications = user.getNotifications(null, 0, 5) %}
+{% set notifications = user.getNotifications(null, 0, 4) %}
 
 {% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
 
@@ -27,7 +27,7 @@
                                 <img src="{{ notification.image ? notification.image : user.avatar }}" alt="" />
                             </div>
                             <div class="content">
-                                <p>{{ notification.message ~ '&hellip;' }}</p>
+                                <p class='line-clamp clamp-3'>{{ Uss.call_user_func('strip_tags', notification.message) }}</p>
                                 <span>{{ Uss.elapse(notification.period) }}</span>
                             </div>
                         </a>

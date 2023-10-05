@@ -163,6 +163,10 @@
 	background-color: var(--bs-highlight-bg);
 }
 
+.header .header-right .notification-box a.unviewed .content p {
+	font-weight: 500;
+}
+
 .header .header-right .dropdown-menu {
 	max-width: 99vw;
 }

@@ -15,9 +15,7 @@ class IndexController implements RouteInterface
     {
         $ud = Ud::instance();
 
-        $ud->render($this->page->get('template'), [
-
-        ]);
+        $ud->render($this->page->get('template'));
     }
 
 };

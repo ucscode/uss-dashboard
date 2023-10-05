@@ -33,16 +33,34 @@
             Ud::instance()->config('templates:login', '@namespace/path/to/new/template.html.twig')
 
     #}
-    
-    {{ form.getHTML(1)|raw }} {# form is an instance of UdRegisterForm #}
 
-	<div class='mt-4'>
-        <p class="text-sm text-medium text-dark text-center">
-            Already have an account? 
-            <a href="{{ Ud.getPageUrl('index') }}" class='text-nowrap'>
-                Sign In
+    {% if user.exists() == false %}
+
+        {{ form.getHTML(1)|raw }} {# form is an instance of UdRegisterForm #}
+
+        <div class='mt-4'>
+            <p class="text-sm text-medium text-dark text-center">
+                Already have an account? 
+                <a href="{{ Ud.getPageUrl('index') }}" class='text-nowrap'>
+                    Sign In
+                </a>
+            </p>
+        </div>
+
+    {% else %}
+
+        <div class='text-center'>
+            <h4>You are logged in</h4>
+            <p>Logout to create a new account</p>
+            <hr/>
+            <a href='{{ Ud.getPageUrl('logout') }}' class='btn btn-outline-danger d-block mb-3'>
+                <i class='bi bi-escape me-1'></i> Logout now
             </a>
-        </p>
-    </div>
+            <a href='{{ Ud.getPageUrl('index') }}' class='btn btn-outline-primary d-block'>
+                <i class='bi bi-person-circle me-1'></i> Back to dashboard
+            </a>
+        </div>
+
+    {% endif %}
 
 {% endblock %}

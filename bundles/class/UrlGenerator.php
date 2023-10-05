@@ -33,7 +33,7 @@ class UrlGenerator
     public function getResult()
     {
         $uss = Uss::instance();
-        $result = $uss->getUrl(ROOT_DIR . "/" . Ud::ROUTE);
+        $result = $uss->abspathToUrl(ROOT_DIR . "/" . Ud::ROUTE);
         if(!empty($this->path)) {
             $result .= "/{$this->path}";
         };
