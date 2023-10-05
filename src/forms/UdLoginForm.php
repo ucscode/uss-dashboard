@@ -7,12 +7,7 @@ class UdLoginForm extends AbstractUdForm
 {
     private string $error;
     protected ?array $user;
-
-    protected function beforeBuild()
-    {
-        $this->handleSubmission();
-    }
-
+    
     protected function buildForm()
     {
 

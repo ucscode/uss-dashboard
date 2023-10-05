@@ -15,6 +15,7 @@ final class Ud extends AbstractUd
 
     /** @ignore */
     private bool $firewallEnabled = true;
+    private bool $isRecursiveRender = false;
 
     /**
      * Set a configuration property to a given value.
@@ -88,21 +89,17 @@ final class Ud extends AbstractUd
      *
      * @return void
      */
-    public function render(string $template, array $options = [], ?UssTwigBlockManager $ussTwigBlockManager = null): void
+    public function render(string $template, array $options = []): void
     {
         $user = new User();
 
         if($this->firewallEnabled && !$user->getFromSession()) {
-            $__login = $this->forceLoginPage();
-            if(!empty($__login)) {
-                $template = $__login['template'];
-                $options['form'] = $__login['form'];
-            }
+            $this->activateLoginPage($user, $template, $options);
         };
 
         $options['user'] = $user;
 
-        Uss::instance()->render($template, $options, $ussTwigBlockManager);
+        Uss::instance()->render($template, $options);
     }
 
     /**
@@ -177,14 +174,14 @@ final class Ud extends AbstractUd
     /**
      * Get the URL associated with a page name from the configuration.
      *
-     * @param string $pagename The name of the page.
+     * @param string $pageName The name of the page.
      *
      * @return string|null The URL associated with the page name, or null if not found.
      */
-    public function getPageUrl(string $pagename): ?string
+    public function getPageUrl(string $pageName): ?string
     {
         $ud = Ud::instance();
-        $page = $ud->getPage($pagename);
+        $page = $ud->getPage($pageName);
         if(!$page || is_null($page->get('route'))) {
             return null;
         }
@@ -192,25 +189,26 @@ final class Ud extends AbstractUd
         return $urlGenerator->getResult();
     }
 
-    private function forceLoginPage(): ?array
+    /**
+     * Activate login page
+     * 
+     * Login page do not need controller or route. 
+     * The login page will automatically appear on any route once the user is not authorized
+     * Unless the firewall is disabled before the render method is called
+     */
+    private function activateLoginPage(User &$user, string &$template, array &$options): void
     {
-        $options = [];
+        $loginPage = $this->getPage(UdPage::LOGIN);
 
-        $loginPage = $this->getPage('login');
-        
-        if(!$loginPage->equalsCurrentRoute()) {
+        // Get login form and handles submission
+        $options['form'] = new ($loginPage->get('form'))(UdPage::LOGIN);
+        $options['form']->handleSubmission();
 
-            $loginForm = $loginPage->get('form');
-
-            $options['template'] = $loginPage->get('template');
-
-            $options['form'] = new $loginForm($loginPage->name);
-            $options['form']->handleSubmission();
-
-            return $options;
-        };
-
-        return null;
+        // After form submission has been handled, checks again if user is authorized
+        if(!$user->getFromSession()) {
+            // If not, display login page
+            $template = $loginPage->get('template');
+        }
     }
 
 }

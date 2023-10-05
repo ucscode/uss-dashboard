@@ -65,6 +65,7 @@ $source = [
         "UdRecoveryForm.php",
     ],
     'controllers' => [
+        //'LoginController.php',
         'RegisterController.php',
         'RecoveryController.php',
         'IndexController.php',

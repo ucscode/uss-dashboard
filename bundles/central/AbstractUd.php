@@ -13,12 +13,7 @@ abstract class AbstractUd
     abstract public function getPage(string $pageName): ?UdPage;
     abstract public function removePage(string $pageName): null|bool;
     abstract public function getPageUrl(string $pagename): ?string;
-
-    abstract public function render(
-        string $template,
-        array $options = [],
-        ?UssTwigBlockManager $ussTwigBlockManager = null
-    ): void;
+    abstract public function render(string $template, array $options = []): void;
 
     // Default Class Constants
 
@@ -166,7 +161,7 @@ abstract class AbstractUd
     {
         $this->defaultPages = [
 
-            (new UdPage('login'))
+            (new UdPage(UdPage::LOGIN))
                 ->set('template', '@Ud/security/login.html.twig')
                 ->set('form', UdLoginForm::class),
 
@@ -306,19 +301,18 @@ abstract class AbstractUd
         $uss = Uss::instance();
 
         $pageRoute = $page->get('route');
-
-        if(empty($pageRoute)) {
+        
+        if(empty($pageRoute) || $page->name === UdPage::LOGIN) {
             return;
         };
-
+        
         $route = $this->mainRoute() . "/" . $pageRoute;
         $route = $uss->filterContext($route);
 
         $controller = $page->get('controller');
         $method = $page->get('method');
-
-        $routeInstance = new Route($route, new $controller($page), $method);
-        $routeInstance->loadController();
+        
+        new Route($route, new $controller($page), $method);
     }
 
 }

@@ -4,6 +4,8 @@ use Ucscode\Packages\TreeNode;
 
 class UdPage
 {
+    public const LOGIN = 'login';
+
     public readonly string $name;
 
     private array $attributes = [
@@ -133,6 +135,8 @@ class UdPage
             $this->controllerException($value);
         } elseif($key === 'method') {
             $this->methodException($value);
+        } elseif($key === 'form') {
+            $this->formException($value);
         }
         return $key;
     }
@@ -152,7 +156,7 @@ class UdPage
     private function controllerException($value): void
     {
         $interface = "RouteInterface";
-
+        
         if(empty($value) || !is_string($value)) {
             throw new \Exception(
                 sprintf(
@@ -214,6 +218,22 @@ class UdPage
                 )
             );
         };
+    }
+
+    private function formException($value): void
+    {
+        $interface = UdFormInterface::class;
+        if(!in_array($interface, class_implements($value))) {
+            throw new Exception(
+                sprintf(
+                        'The class "%s" provided to %s::%s("form", ...) must implement "%s".',
+                        $value,
+                        __CLASS__,
+                        'set',
+                        $interface
+                    )
+            );
+        }
     }
 
 }
