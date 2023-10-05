@@ -188,6 +188,10 @@
 	border-radius: 6px;
 }
 
+.single-notification .notification {
+	max-width: calc(100% - 45px);
+}
+
 .single-notification .notification-redirect.unviewed {
 	background-color: rgb(255 223 117 / 12%);
 }

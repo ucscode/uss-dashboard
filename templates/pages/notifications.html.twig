@@ -41,10 +41,10 @@
                                             </div>
                                             <div class="content">
                                                 <div class='notification-wrapper text-sm text-gray'>
-                                                    {{ notification.message }}
+                                                    {{ notification.message|raw }}
                                                 </div>
                                                 <span class="text-sm text-medium text-gray">
-                                                    {{ Ud.elapse(notification.period) }}
+                                                    {{ Uss.elapse(notification.period) }}
                                                     {% if notification.redirect %}
                                                         <i class='mdi mdi-vector-link ms-1'></i>
                                                     {% endif %}

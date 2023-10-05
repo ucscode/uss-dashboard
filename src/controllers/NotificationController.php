@@ -4,9 +4,11 @@ defined('ROOT_DIR') || die(':NOTIFICATION');
 
 class NotificationController implements RouteInterface
 {
+    private $parseDown;
+
     public function __construct(private UdPage $page)
     {
-
+        $this->parseDown = new Parsedown;
     }
 
     public function onload($pageInfo)
@@ -27,6 +29,11 @@ class NotificationController implements RouteInterface
             $startFrom = ($currentPage - 1) * $itemsPerPage;
 
             $notifications = $user->getNotifications(null, $startFrom, $itemsPerPage);
+
+            $notifications = array_map(function($data) {
+                $data['message'] = $this->parseDown->text($data['message']);
+                return $data;
+            }, $notifications);
 
             $paginator = new Paginator($totalItems, $itemsPerPage, $currentPage, $urlPattern);
             
