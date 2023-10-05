@@ -2,6 +2,12 @@
 
 {% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
 
+{% macro mini(message) %}
+    {% set message = Uss.call_user_func('strip_tags', message) %}
+    {% set message = Uss.call_user_func('substr', message, 0, 200) %}
+    {{ message }}
+{% endmacro %}
+
 <div class="notification-box ml-15">
     <div class='d-sm-flex'>
     
@@ -27,7 +33,7 @@
                                 <img src="{{ notification.image ? notification.image : user.avatar }}" alt="" />
                             </div>
                             <div class="content">
-                                <p class='line-clamp clamp-3'>{{ Uss.call_user_func('strip_tags', notification.message) }}</p>
+                                <p class='line-clamp clamp-3'>{{ _self.mini(notification.message) }}</p>
                                 <span>{{ Uss.elapse(notification.period) }}</span>
                             </div>
                         </a>

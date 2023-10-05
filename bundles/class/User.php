@@ -414,7 +414,7 @@ class User implements UserInterface
      *
      * @return bool: true if the session information is found and the User instance was populated, false otherwise
      */
-    public function getFromSession(): bool|self
+    public function getFromSession(): self|bool
     {
         if(empty($this->user['id']) && !empty($_SESSION['UssUser']) && is_string($_SESSION['UssUser'])) {
             $detail = explode(":", $_SESSION['UssUser']);

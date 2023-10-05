@@ -14,8 +14,52 @@ class NotificationController implements RouteInterface
 
         $ud = Ud::instance();
 
-        $ud->render($this->page->get('template'));
+        $user = (new User())->getFromSession();
+        
+        if($user) {
 
+            $totalItems = $user->countNotifications();
+            $itemsPerPage = 20;
+
+            $currentPage = $this->getCurrentPage( $totalItems, $itemsPerPage );
+            $urlPattern = $ud->getPageUrl('notification') . '?page=(:num)';
+
+            $startFrom = ($currentPage - 1) * $itemsPerPage;
+
+            $notifications = $user->getNotifications(null, $startFrom, $itemsPerPage);
+
+            $paginator = new Paginator($totalItems, $itemsPerPage, $currentPage, $urlPattern);
+            
+            $paginator->setMaxPagesToShow(3);
+
+        } else {
+
+            $paginator = null;
+
+        }
+        
+        $ud->render($this->page->get('template'), [
+            'notifications' => $notifications,
+            'paginator' => $paginator
+        ]);
+
+    }
+
+    private function getCurrentPage(int $totalItems, int $itemsPerPage) {
+        $index = $_GET['page'] ?? null;
+        if(!is_numeric($index)) {
+            $index = 1;
+        }
+        $index = abs($index);
+        if($index < 1 || !$totalItems) {
+            $index = 1;
+        } else {
+            $maxPage = ceil($totalItems / $itemsPerPage);
+            if($index > $maxPage) {
+                $index = $maxPage;
+            };
+        };
+        return $index;
     }
 
 };

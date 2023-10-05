@@ -1,0 +1,38 @@
+{% if (paginator is defined) and (paginator is not null) and (paginator.numPages > 1) %}
+
+    <nav class='{{ nav_class|default('navigation') }}'>
+
+        <ul class="pagination">
+            {% if paginator.prevUrl %}
+                <li class='page-item'>
+                    <a class='page-link' href="{{ paginator.prevUrl }}">
+                        &laquo; {{ paginator.previousText }}
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for page in paginator.pages %}
+                
+                {% if page.url %}
+                    <li class='page-item {{ page.isCurrent ? 'active' : '' }}'>
+                        <a class='page-link' href="{{ page.url }}">{{ page.num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class='page-link'>{{ page.num }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if paginator.nextUrl %}
+                <li class='page-item'>
+                    <a class='page-link' href="{{ paginator.nextUrl }}">
+                        {{ paginator.nextText }} &raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+
+    </nav>
+
+{% endif %}

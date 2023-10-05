@@ -55,6 +55,7 @@ $bundles = [
         "Hierarchy.php",
         "User.php",
         "Alert.php",
+        "Paginator.php",
     ],
 ];
 

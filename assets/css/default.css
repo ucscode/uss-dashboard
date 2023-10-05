@@ -233,6 +233,11 @@
 
 .pagination {
 	--bs-pagination-border-radius: 0.275rem;
+	flex-wrap: wrap;
+}
+
+.pagination .page-item {
+	margin-bottom: 2px;
 }
 
 .pagination .page-item:not(:last-child) .page-link {
@@ -241,7 +246,8 @@
 
 .pagination .page-item .page-link {
 	min-width: 40px;
-	border-radius: 5px;
+    border-radius: 2px;
+    text-align: center;
 }
 
 .form-label {
