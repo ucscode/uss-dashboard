@@ -41,7 +41,7 @@
         <div class='mt-4'>
             <p class="text-sm text-medium text-dark text-center">
                 Already have an account? 
-                <a href="{{ Ud.getPageUrl('index') }}" class='text-nowrap'>
+                <a href="{{ Ud.getArchiveUrl('index') }}" class='text-nowrap'>
                     Sign In
                 </a>
             </p>
@@ -53,10 +53,10 @@
             <h4>You are logged in</h4>
             <p>Logout to create a new account</p>
             <hr/>
-            <a href='{{ Ud.getPageUrl('logout') }}' class='btn btn-outline-danger d-block mb-3'>
+            <a href='{{ Ud.getArchiveUrl('logout') }}' class='btn btn-outline-danger d-block mb-3'>
                 <i class='bi bi-escape me-1'></i> Logout now
             </a>
-            <a href='{{ Ud.getPageUrl('index') }}' class='btn btn-outline-primary d-block'>
+            <a href='{{ Ud.getArchiveUrl('index') }}' class='btn btn-outline-primary d-block'>
                 <i class='bi bi-person-circle me-1'></i> Back to dashboard
             </a>
         </div>

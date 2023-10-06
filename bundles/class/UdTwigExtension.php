@@ -38,9 +38,9 @@ final class UdTwigExtension extends \Twig\Extension\AbstractExtension implements
         return Ud::instance()->urlGenerator($path, $param)->getResult();
     }
 
-    public function getPageUrl(string $pagename): ?string
+    public function getArchiveUrl(string $pagename): ?string
     {
-        return Ud::instance()->getPageUrl($pagename);
+        return Ud::instance()->getArchiveUrl($pagename);
     }
 
 }

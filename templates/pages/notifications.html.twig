@@ -10,8 +10,8 @@
                 {% block notification_widgets %}
 
                     {% if notifications|length %}
-                        <div class='text-end mb-2 nx-marker {{ row_size }}'>
-                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-mark>
+                        <div class='text-end mb-2 {{ row_size }}' data-widget='marker'>
+                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success'>
                                 Mark all as read
                             </a>
                         </div>
@@ -21,18 +21,17 @@
 
                 {% block notification_content %}
 
-                    <div class='mb-4 nx-block {{ row_size }}'>
+                    <div class='mb-4 {{ row_size }}'>
                         <div class='card' id='notification-list'>
                             
                             {% if notifications|length %}
 
                                 {% for notification in notifications %}
 
-                                    <div class="single-notification p-3">
+                                    <div class="single-notification p-3" data-id='{{ notification.id }}'>
                                         
                                         <a href='{{ notification.redirect ?? 'javascript:void(0)' }}' 
-                                            class='notification-redirect {{ notification.viewed is same as('0') ? 'unviewed' : null }}' 
-                                            data-id='{{ notification.id }}'></a>
+                                            class='notification-redirect {{ notification.viewed is same as('0') ? 'unviewed' : null }}' data-viewed='1'></a>
                                         
                                         <div class="notification">
                                             <div class="image ">
@@ -59,12 +58,12 @@
                                             
                                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
                                                 <li class="dropdown-item">                                                    
-                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='remove'>
+                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-viewed='1'>
                                                         <i class='bi bi-check-circle me-1'></i> Mark as read
                                                     </a>
                                                 </li>
                                                 <li class="dropdown-item">
-                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='remove'>
+                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-hidden='1'>
                                                         <i class='bi bi-trash me-1'></i> Remove
                                                     </a>
                                                 </li>
@@ -76,24 +75,19 @@
 
                                 {% endfor %}
                             
-                            {% else %}
-
-                                <div class='text-center py-5'>
-                                    <div class='px-md-5'>
-                                        
-                                        <div class='row'>
-                                            <div class='col-sm-8 m-auto col-lg-6'>
-                                                {% set errorImage = constant('Ud::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
-                                                <img src='{{ Uss.abspathToUrl(errorImage) }}' class='img-fluid'>
-                                            </div>
-                                        </div>
-                                        
-                                        <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
-                                    
-                                    </div>
-                                </div>
-                                
                             {% endif %}
+
+                            <div class='text-center py-5 {{ notifications|length ? 'd-none' : null }}' id='notification-empty'>
+                                <div class='px-md-5'>
+                                    <div class='row'>
+                                        <div class='col-sm-8 m-auto col-lg-6'>
+                                            {% set errorImage = constant('Ud::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
+                                            <img src='{{ Uss.abspathToUrl(errorImage) }}' class='img-fluid'>
+                                        </div>
+                                    </div>
+                                    <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
+                                </div>
+                            </div>
                                 
                         </div>
                     </div>
@@ -114,5 +108,5 @@
 {% block body_js %}
     {{ parent() }}
     {% set notification_js = constant('Ud::ASSETS_DIR') ~ '/js/notifications.js' %}
-    <script src='{{ Uss.abspathToUrl(notification_js) }}'></script>
+    <script type='module' src='{{ Uss.abspathToUrl(notification_js) }}'></script>
 {% endblock %}

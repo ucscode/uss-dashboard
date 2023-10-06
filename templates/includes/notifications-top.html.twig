@@ -1,4 +1,4 @@
-{% set notifications = user.getNotifications(null, 0, 4) %}
+{% set notifications = user.getNotifications({ "hidden": 0 }, 0, 4) %}
 
 {% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
 
@@ -18,16 +18,16 @@
             {% endif %}
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification" data-nx-container='header'>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification" id="notification-dropdown">
             
             {% if notifications|length %}
 
                 {% for notification in notifications %}
                     
-                    <li>
+                    <li data-id='{{ notification.id }}'>
                         <a href="{{ (notification.redirect is not empty) ? notification.redirect : 'javascript:void(0)' }}" 
-                            class='{{ notification.viewed is same as('0') ? "unviewed" : null }}' 
-                            data-nx='id-num'
+                            class='{{ notification.viewed is same as('0') ? "unviewed" : null }}'
+                            data-viewed='1'
                         >
                             <div class="image">
                                 <img src="{{ notification.image ? notification.image : user.avatar }}" alt="" />
@@ -44,7 +44,7 @@
                 <li>
                     {# The route is hard coded: Please change it #}
                     
-                    <a href="{{ Ud.getPageUrl('notifications') }}" class='d-block text-center'>
+                    <a href="{{ Ud.getArchiveUrl('notifications') }}" class='d-block text-center'>
                         <small> <i class='bi bi-bell me-1'></i> View all </small>
                     </a>
                 </li>

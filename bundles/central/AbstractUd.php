@@ -10,9 +10,9 @@ abstract class AbstractUd
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
     abstract public function enableFirewall(bool $enable = true): void;
-    abstract public function getPage(string $pageName): ?UdArchive;
-    abstract public function removePage(string $pageName): null|bool;
-    abstract public function getPageUrl(string $pagename): ?string;
+    abstract public function getArchive(string $pageName): ?UdArchive;
+    abstract public function removeArchive(string $pageName): null|bool;
+    abstract public function getArchiveUrl(string $pagename): ?string;
     abstract public function render(string $template, array $options = []): void;
 
     // Default Class Constants
@@ -141,6 +141,7 @@ abstract class AbstractUd
     private function configureUser(): void
     {
         $uss = Uss::instance();
+
         $this->usermeta = new Pairs($uss->mysqli, User::META_TABLE);
         $this->usermeta->linkParentTable([
             'parentTable' => User::TABLE,
@@ -148,6 +149,14 @@ abstract class AbstractUd
 
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
+
+        $installment = [
+            'url' => (new UrlGenerator())->getResult(),
+            'nonce' => $uss->nonce('Ud'),
+            'loggedIn' => !!(new User())->getFromSession()
+        ];
+
+        $uss->addJsProperty('ud', $installment);
     }
 
     /**

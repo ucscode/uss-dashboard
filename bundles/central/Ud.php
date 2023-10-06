@@ -143,7 +143,7 @@ final class Ud extends AbstractUd
         return new UrlGenerator($path, $param);
     }
 
-    public function getPage(string $pageName): ?UdArchive
+    public function getArchive(string $pageName): ?UdArchive
     {
         $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
             return $page->name === $pageName;
@@ -151,9 +151,9 @@ final class Ud extends AbstractUd
         return $defaultPages[0] ?? null;
     }
 
-    public function removePage(string $pageName): null|bool
+    public function removeArchive(string $pageName): null|bool
     {
-        $page = $this->getPage($pageName);
+        $page = $this->getArchive($pageName);
         if($page) {
             if($page->name === 'login') {
                 throw new \Exception(
@@ -178,10 +178,10 @@ final class Ud extends AbstractUd
      *
      * @return string|null The URL associated with the page name, or null if not found.
      */
-    public function getPageUrl(string $pageName): ?string
+    public function getArchiveUrl(string $pageName): ?string
     {
         $ud = Ud::instance();
-        $page = $ud->getPage($pageName);
+        $page = $ud->getArchive($pageName);
         if(!$page || is_null($page->get('route'))) {
             return null;
         }
@@ -198,7 +198,7 @@ final class Ud extends AbstractUd
      */
     private function activateLoginPage(User &$user, string &$template, array &$options): void
     {
-        $loginPage = $this->getPage(UdArchive::LOGIN);
+        $loginPage = $this->getArchive(UdArchive::LOGIN);
 
         // Get login form and handles submission
         $options['form'] = new ($loginPage->get('form'))(UdArchive::LOGIN);

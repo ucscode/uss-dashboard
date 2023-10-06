@@ -11,24 +11,30 @@ class NotificationController implements RouteInterface
         $this->parseDown = new Parsedown();
     }
 
-    public function onload($pageInfo)
+    public function onload($pageInfo) 
     {
-
         $ud = Ud::instance();
 
         $user = (new User())->getFromSession();
 
+        $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($ud, $user) : $this->postRequest($ud, $user);    
+    }
+
+    protected function getRequest(Ud $ud, ?User $user): void
+    {
         if($user) {
 
             $totalItems = $user->countNotifications();
             $itemsPerPage = 20;
 
             $currentPage = $this->getCurrentPage($totalItems, $itemsPerPage);
-            $urlPattern = $ud->getPageUrl('notification') . '?page=(:num)';
+            $urlPattern = $ud->getArchiveUrl('notification') . '?page=(:num)';
 
             $startFrom = ($currentPage - 1) * $itemsPerPage;
 
-            $notifications = $user->getNotifications(null, $startFrom, $itemsPerPage);
+            $notifications = $user->getNotifications([
+                'hidden' => 0
+            ], $startFrom, $itemsPerPage);
 
             $notifications = array_map(function ($data) {
                 $data['message'] = $this->parseDown->text($data['message']);
@@ -41,7 +47,7 @@ class NotificationController implements RouteInterface
 
         } else {
 
-            $paginator = null;
+            $paginator = $notifications = null;
 
         }
 
@@ -49,7 +55,44 @@ class NotificationController implements RouteInterface
             'notifications' => $notifications,
             'paginator' => $paginator
         ]);
+    }
 
+    protected function postRequest(Ud $ud, ?User $user): void
+    {
+        $nonce = $_POST['notificationNonce'] ?? null;
+
+        if(!$user) {
+            if(empty($nonce)) {
+                $indexArchiveUrl = $ud->getArchiveUrl('index');
+                header("location: " . $indexArchiveUrl);
+                exit;
+            }
+        }
+
+        $uss = Uss::instance();
+
+        $trusted = $uss->nonce('Ud', $nonce);
+
+        if($trusted) {
+
+            $data = array_filter($uss->sanitize($_POST), function($key) {
+                return in_array($key, [
+                    'viewed',
+                    'hidden',
+                    'id'
+                ]);
+            }, ARRAY_FILTER_USE_KEY);
+
+            $updated = $user->updateNotification($data, $data['id']);
+
+            $remaining = $user->countNotifications([
+                'hidden' => 0,
+                'viewed' => 0
+            ]);
+
+            $uss->exit($updated, $remaining);
+
+        }
     }
 
     private function getCurrentPage(int $totalItems, int $itemsPerPage)
