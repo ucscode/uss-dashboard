@@ -6,13 +6,12 @@
 
     <div class='container-fluid'>
         <div class='row'>
-            <div class=''>
 
                 {% block notification_widgets %}
 
                     {% if notifications|length %}
                         <div class='text-end mb-2 nx-marker {{ row_size }}'>
-                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-nx-marker>
+                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-mark>
                                 Mark all as read
                             </a>
                         </div>
@@ -22,8 +21,8 @@
 
                 {% block notification_content %}
 
-                    <div class='mb-4 nx-block {{ row_size }}' data-nxurl='%{udash.ajax}'>
-                        <div class='card' id='notification-list' data-nx-container='body'>
+                    <div class='mb-4 nx-block {{ row_size }}'>
+                        <div class='card' id='notification-list'>
                             
                             {% if notifications|length %}
 
@@ -33,7 +32,7 @@
                                         
                                         <a href='{{ notification.redirect ?? 'javascript:void(0)' }}' 
                                             class='notification-redirect {{ notification.viewed is same as('0') ? 'unviewed' : null }}' 
-                                            data-nx='{{ notification.id }}'></a>
+                                            data-id='{{ notification.id }}'></a>
                                         
                                         <div class="notification">
                                             <div class="image ">
@@ -59,8 +58,13 @@
                                             </button>
                                             
                                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
+                                                <li class="dropdown-item">                                                    
+                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='remove'>
+                                                        <i class='bi bi-check-circle me-1'></i> Mark as read
+                                                    </a>
+                                                </li>
                                                 <li class="dropdown-item">
-                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-nx-action='remove'>
+                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='remove'>
                                                         <i class='bi bi-trash me-1'></i> Remove
                                                     </a>
                                                 </li>
@@ -102,9 +106,13 @@
 
                 {% endblock %}
 
-            </div>
         </div>
     </div>
-    
 
+{% endblock %}
+    
+{% block body_js %}
+    {{ parent() }}
+    {% set notification_js = constant('Ud::ASSETS_DIR') ~ '/js/notifications.js' %}
+    <script src='{{ Uss.abspathToUrl(notification_js) }}'></script>
 {% endblock %}

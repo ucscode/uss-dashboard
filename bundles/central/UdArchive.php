@@ -2,7 +2,7 @@
 
 use Ucscode\Packages\TreeNode;
 
-class UdPage
+class UdArchive
 {
     public const LOGIN = 'login';
 

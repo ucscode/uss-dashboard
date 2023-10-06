@@ -4,9 +4,9 @@ defined('Ud::DIR') or die(':INDEX');
 
 class IndexController implements RouteInterface
 {
-    private UdPage $page;
+    private UdArchive $page;
 
-    public function __construct(UdPage $page)
+    public function __construct(UdArchive $page)
     {
         $this->page = $page;
     }

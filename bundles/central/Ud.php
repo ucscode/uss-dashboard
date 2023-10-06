@@ -143,7 +143,7 @@ final class Ud extends AbstractUd
         return new UrlGenerator($path, $param);
     }
 
-    public function getPage(string $pageName): ?UdPage
+    public function getPage(string $pageName): ?UdArchive
     {
         $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
             return $page->name === $pageName;
@@ -198,10 +198,10 @@ final class Ud extends AbstractUd
      */
     private function activateLoginPage(User &$user, string &$template, array &$options): void
     {
-        $loginPage = $this->getPage(UdPage::LOGIN);
+        $loginPage = $this->getPage(UdArchive::LOGIN);
 
         // Get login form and handles submission
-        $options['form'] = new ($loginPage->get('form'))(UdPage::LOGIN);
+        $options['form'] = new ($loginPage->get('form'))(UdArchive::LOGIN);
         $options['form']->handleSubmission();
 
         // After form submission has been handled, checks again if user is authorized

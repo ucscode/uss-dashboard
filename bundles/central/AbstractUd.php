@@ -10,7 +10,7 @@ abstract class AbstractUd
     abstract public function getConfig(?string $property, bool $group): mixed;
     abstract public function removeConfig(string $property): void;
     abstract public function enableFirewall(bool $enable = true): void;
-    abstract public function getPage(string $pageName): ?UdPage;
+    abstract public function getPage(string $pageName): ?UdArchive;
     abstract public function removePage(string $pageName): null|bool;
     abstract public function getPageUrl(string $pagename): ?string;
     abstract public function render(string $template, array $options = []): void;
@@ -154,18 +154,18 @@ abstract class AbstractUd
      * Create all default pages uses in Ud
      *
      * These pages can then be modified by modules:
-     * The UdPage instance allows module to update single properties of the page such as
+     * The UdArchive instance allows module to update single properties of the page such as
      * Controllers, Template, Route, MenuItems etc
      */
     private function configurePages(): void
     {
         $this->defaultPages = [
 
-            (new UdPage(UdPage::LOGIN))
+            (new UdArchive(UdArchive::LOGIN))
                 ->set('template', '@Ud/security/login.html.twig')
                 ->set('form', UdLoginForm::class),
 
-            (new UdPage('index'))
+            (new UdArchive('index'))
                 ->set('route', '/')
                 ->set('template', '@Ud/pages/welcome.html.twig')
                 ->set('controller', IndexController::class)
@@ -175,24 +175,24 @@ abstract class AbstractUd
                     'icon' => 'bi bi-speedometer',
                 ]), $this->menu),
 
-            (new UdPage('register'))
+            (new UdArchive('register'))
                 ->set('route', '/register')
                 ->set('template', '@Ud/security/register.html.twig')
                 ->set('controller', RegisterController::class)
                 ->set('form', UdRegisterForm::class),
 
-            (new UdPage('recovery'))
+            (new UdArchive('recovery'))
                 ->set('route', '/recovery')
                 ->set('template', '@Ud/security/register.html.twig')
                 ->set('controller', RecoveryController::class)
                 ->set('form', UdRecoveryForm::class),
 
-            (new UdPage('notifications'))
+            (new UdArchive('notifications'))
                 ->set('route', '/notifications')
                 ->set('template', '@Ud/pages/notifications.html.twig')
                 ->set('controller', NotificationController::class),
 
-            (new UdPage('logout'))
+            (new UdArchive('logout'))
                 ->set('route', '/logout')
                 ->set('template', null)
                 ->set('controller', LogoutController::class)
@@ -296,13 +296,13 @@ abstract class AbstractUd
         }
     }
 
-    private function activateDefaultPage(UdPage $page): void
+    private function activateDefaultPage(UdArchive $page): void
     {
         $uss = Uss::instance();
 
         $pageRoute = $page->get('route');
 
-        if(empty($pageRoute) || $page->name === UdPage::LOGIN) {
+        if(empty($pageRoute) || $page->name === UdArchive::LOGIN) {
             return;
         };
 

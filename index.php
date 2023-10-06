@@ -34,7 +34,7 @@ $bundles = [
     'central' => [
         'AbstractUd.php',
         'Ud.php',
-        'UdPage.php',
+        'UdArchive.php',
     ],
     'interface' => [
         "UdFormInterface.php",
