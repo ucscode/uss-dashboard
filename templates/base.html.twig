@@ -168,12 +168,14 @@
 
 {% block body_js %}
     
-    {% set dashboardJs = constant('Ud::ASSETS_DIR') ~ '/js/dashboard.js' %}
-
     {{ parent() }}
 
+    {% set dashboardJS = constant('Ud::ASSETS_DIR') ~ '/js/dashboard.js' %}
+    {% set notificationJS = constant('Ud::ASSETS_DIR') ~ '/js/notifications.js' %}
+
     {% if (user and user.id is not empty) %}
-	    <script src="{{ Uss.abspathToUrl(dashboardJs) }}"></script>
+	    <script src="{{ Uss.abspathToUrl(dashboardJS) }}"></script>
+        <script type='module' src='{{ Uss.abspathToUrl(notificationJS) }}'></script>
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('__alert') %}

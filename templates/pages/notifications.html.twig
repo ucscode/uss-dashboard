@@ -104,9 +104,3 @@
     </div>
 
 {% endblock %}
-    
-{% block body_js %}
-    {{ parent() }}
-    {% set notification_js = constant('Ud::ASSETS_DIR') ~ '/js/notifications.js' %}
-    <script type='module' src='{{ Uss.abspathToUrl(notification_js) }}'></script>
-{% endblock %}
