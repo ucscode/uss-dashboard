@@ -10,8 +10,8 @@
                 {% block notification_widgets %}
 
                     {% if notifications|length %}
-                        <div class='text-end mb-2 {{ row_size }}' data-widget='marker'>
-                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success'>
+                        <div class='text-end mb-2 {{ row_size }}' id='notification-widget' data-id='*'>
+                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-viewed='1'>
                                 Mark all as read
                             </a>
                         </div>

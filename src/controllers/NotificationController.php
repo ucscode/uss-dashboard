@@ -75,15 +75,18 @@ class NotificationController implements RouteInterface
 
         if($trusted) {
 
-            $data = array_filter($uss->sanitize($_POST), function($key) {
+            $_POST = $uss->sanitize($_POST);
+
+            $data = array_filter($_POST, function($key) {
                 return in_array($key, [
                     'viewed',
                     'hidden',
-                    'id'
                 ]);
             }, ARRAY_FILTER_USE_KEY);
 
-            $updated = $user->updateNotification($data, $data['id']);
+            $parser = $_POST['id'] == '*' ? [] : $_POST['id'];
+            
+            $updated = $user->updateNotification($data, $parser);
 
             $remaining = $user->countNotifications([
                 'hidden' => 0,

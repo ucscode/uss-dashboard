@@ -2,21 +2,26 @@
 
 import Ud from './Ud.js';
 
+function jQueryNode(id) {
+    const dataset = id === '*' ? `[data-id]` : `[data-id='${id}']`;
+    return $(`#notification-list ${dataset}, #notification-dropdown ${dataset}`);
+}
+
 function unview(id) {
-    $(`#notification-list [data-id='${id}'], #notification-dropdown [data-id='${id}']`)
+    jQueryNode(id)
     .find('.unviewed')
     .removeClass('unviewed');
 }
 
 function remove(id) {
-    $(`#notification-list [data-id='${id}'], #notification-dropdown [data-id='${id}']`)
+    jQueryNode(id)
     .fadeOut(300, function() {
         $(this).remove();
         if(!$('#notification-list [data-id]').length) {
             const emptyNode = $('#notification-empty');
             if(emptyNode.length) {
                 emptyNode.removeClass('d-none');
-                $(`[data-widget='marker']`).addClass('d-none');
+                $(`#notification-widget`).addClass('d-none');
             }       
         }
     });
@@ -48,7 +53,8 @@ function updateNotification(id, data, action) {
     });
 }
 
-$('#notification-list, #notification-dropdown').on('click', 'a[data-viewed], a[data-hidden]', function() {
+$('#notification-list, #notification-dropdown, #notification-widget')
+.on('click', 'a[data-viewed], a[data-hidden]', function() {
     const parentBlock = $(this).parents('[data-id]')
     const id = parentBlock.attr('data-id');
     const data = Object.assign({}, this.dataset);
