@@ -75,19 +75,21 @@
 
                                 {% endfor %}
                             
-                            {% endif %}
+                            {% else %}
 
-                            <div class='text-center py-5 {{ notifications|length ? 'd-none' : null }}' id='notification-empty'>
-                                <div class='px-md-5'>
-                                    <div class='row'>
-                                        <div class='col-sm-8 m-auto col-lg-6'>
-                                            {% set errorImage = constant('Ud::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
-                                            <img src='{{ Uss.abspathToUrl(errorImage) }}' class='img-fluid'>
+                                <div class='text-center py-5' id='notification-empty'>
+                                    <div class='px-md-5'>
+                                        <div class='row'>
+                                            <div class='col-sm-8 m-auto col-lg-6'>
+                                                {% set errorImage = constant('Ud::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
+                                                <img src='{{ Uss.abspathToUrl(errorImage) }}' class='img-fluid'>
+                                            </div>
                                         </div>
+                                        <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
                                     </div>
-                                    <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
                                 </div>
-                            </div>
+
+                            {% endif %}
                                 
                         </div>
                     </div>

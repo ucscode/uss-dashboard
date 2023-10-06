@@ -17,12 +17,9 @@ function remove(id) {
     jQueryNode(id)
     .fadeOut(300, function() {
         $(this).remove();
-        if(!$('#notification-list [data-id]').length) {
-            const emptyNode = $('#notification-empty');
-            if(emptyNode.length) {
-                emptyNode.removeClass('d-none');
-                $(`#notification-widget`).addClass('d-none');
-            }       
+        const list = $('#notification-list');
+        if(list.length && !list.find('[data-id]').length) {
+            window.location.href = '';     
         }
     });
 }
