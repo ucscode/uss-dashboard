@@ -64,7 +64,7 @@ final class Ud extends AbstractUd
     {
         $archives = [
 
-            (new UdArchive('login'))
+            (new UdArchive(UdArchive::LOGIN))
             ->set('form', UdLoginForm::class)
             ->set('template', '@Ud/security/login.html.twig'),
 
@@ -126,28 +126,6 @@ final class Ud extends AbstractUd
         ];
 
         $uss->addJsProperty('ud', $installment);
-    }
-
-    /**
-     * Activate login page
-     *
-     * Login page do not need controller or route.
-     * The login page will automatically appear on any route once the user is not authorized
-     * Unless the firewall is disabled before the render method is called
-     */
-    private function activateLoginPage(User &$user, string &$template, array &$options): void
-    {
-        $loginPage = $this->getArchive(UdArchive::LOGIN);
-
-        // Get login form and handles submission
-        $options['form'] = new ($loginPage->get('form'))(UdArchive::LOGIN);
-        $options['form']->handleSubmission();
-
-        // After form submission has been handled, checks again if user is authorized
-        if(!$user->getFromSession()) {
-            // If not, display login page
-            $template = $loginPage->get('template');
-        }
     }
 
 }

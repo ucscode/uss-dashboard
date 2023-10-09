@@ -26,18 +26,16 @@ abstract class AbstractUdBase implements UdBaseInterface
 
     public function createProject(array $config): void
     {
-        if(!$this->initialized) {
-
-            if($this->databaseEnabled()) {
-
+        if(!$this->initialized) 
+        {
+            if($this->databaseEnabled()) 
+            {
                 $this->configureSetUp($config);
                 $this->configureDatabase();
                 $this->configureDatabaseOptions();
                 $this->configureUser();
                 $this->initialized = true;
-
             }
-
         }
     }
 

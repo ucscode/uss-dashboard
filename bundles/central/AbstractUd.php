@@ -80,11 +80,10 @@ abstract class AbstractUd extends AbstractUdBase
 
     public function render(string $template, array $options = []): void
     {
-        $user = new User();
-        if(!$user->getFromSession() && $this->firewallEnabled) {
-            //$this->activateLoginarchive($user, $template, $options);
+        $options['user'] = new User();
+        if(!$options['user']->getFromSession() && $this->firewallEnabled) {
+            $option['user'] = $this->renderLoginArchive($template, $options);
         };
-        $options['user'] = $user;
         Uss::instance()->render($template, $options);
     }
 
@@ -96,6 +95,26 @@ abstract class AbstractUd extends AbstractUdBase
             ->where($parameter, $value);
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
+    }
+
+    protected function renderLoginArchive(string $template, array $options): ?User
+    {
+        $loginPage = $this->getArchive(UdArchive::LOGIN);
+        $loginForm = $loginPage->get('form');
+
+        $form = new $loginForm(UdArchive::LOGIN);
+        $form->handleSubmission();
+        
+        $user = $options['user']->getFromSession();
+
+        if(!$user) {
+            $template = $loginPage->get('template');
+            $options['form'] = $form;
+            Uss::instance()->render($template, $options);
+        };
+
+        return $user;
+
     }
 
 }
