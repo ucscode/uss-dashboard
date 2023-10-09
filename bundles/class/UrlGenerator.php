@@ -3,17 +3,25 @@
 class UrlGenerator
 {
     private string $path;
+    private string $base;
     private array $query = [];
 
-    public function __construct(string $path = '/', array $param = [])
+    public function __construct(string $path = '/', array $param = [], string $base = '')
     {
         $this->init($path);
         $this->query = array_merge($this->query, $param);
+        $this->setBase($base ?: Ud::instance()->route);
     }
 
     public function __toString()
     {
         return $this->getResult();
+    }
+
+    public function setBase(string $base): self
+    {
+        $this->base = Uss::instance()->filterContext($base);
+        return $this;
     }
 
     public function setParam(string $key, ?string $value): self
@@ -33,7 +41,7 @@ class UrlGenerator
     public function getResult()
     {
         $uss = Uss::instance();
-        $result = $uss->abspathToUrl(ROOT_DIR . "/" . Ud::ROUTE);
+        $result = $uss->abspathToUrl(ROOT_DIR . "/" . $this->base);
         if(!empty($this->path)) {
             $result .= "/{$this->path}";
         };

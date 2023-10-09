@@ -11,13 +11,13 @@ class NotificationController implements RouteInterface
         $this->parseDown = new Parsedown();
     }
 
-    public function onload($pageInfo) 
+    public function onload($pageInfo)
     {
         $ud = Ud::instance();
 
         $user = (new User())->getFromSession();
 
-        $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($ud, $user) : $this->postRequest($ud, $user);    
+        $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($ud, $user) : $this->postRequest($ud, $user);
     }
 
     protected function getRequest(Ud $ud, ?User $user): void
@@ -77,7 +77,7 @@ class NotificationController implements RouteInterface
 
             $_POST = $uss->sanitize($_POST);
 
-            $data = array_filter($_POST, function($key) {
+            $data = array_filter($_POST, function ($key) {
                 return in_array($key, [
                     'viewed',
                     'hidden',
@@ -85,7 +85,7 @@ class NotificationController implements RouteInterface
             }, ARRAY_FILTER_USE_KEY);
 
             $parser = $_POST['id'] == '*' ? [] : $_POST['id'];
-            
+
             $updated = $user->updateNotification($data, $parser);
 
             $remaining = $user->countNotifications([

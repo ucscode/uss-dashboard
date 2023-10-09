@@ -32,6 +32,8 @@ $parseComponents = function (array $components, string $folder): void {
 
 $bundles = [
     'central' => [
+        'UdBaseInterface.php',
+        'AbstractUdBase.php',
         'AbstractUd.php',
         'Ud.php',
         'UdArchive.php',
@@ -48,7 +50,6 @@ $bundles = [
     ],
     'class' => [
         "UrlGenerator.php",
-        "UdTwigExtension.php",
         "UdCrud.php",
         //"DOMTablet.php",
         "Roles.php",
@@ -59,25 +60,13 @@ $bundles = [
     ],
 ];
 
-$source = [
-    'forms' => [
-        "UdLoginForm.php",
-        "UdRegisterForm.php",
-        "UdRecoveryForm.php",
-    ],
-    'controllers' => [
-        //'LoginController.php',
-        'RegisterController.php',
-        'RecoveryController.php',
-        'IndexController.php',
-        'LogoutController.php',
-        'NotificationController.php',
-    ]
-];
-
 $parseComponents($bundles, 'bundles');
-$parseComponents($source, 'src');
 
 # Initialize Ud;
 
-Ud::instance()->init();
+Ud::instance()->createProject([
+    'route' => '/dashboard',
+    'namespace' => 'Ud',
+    'templatePath' => Ud::TEMPLATE_DIR
+]);
+;

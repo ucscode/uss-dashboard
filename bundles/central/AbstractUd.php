@@ -1,327 +1,101 @@
 <?php
 
-use Ucscode\Event\Event;
-use Ucscode\Packages\Pairs;
-use Ucscode\Packages\TreeNode;
+use Ucscode\SQuery\SQuery;
 
-abstract class AbstractUd
+/**
+ * @author Uchenna Ajah <uche23mail@gmail.com>
+ */
+abstract class AbstractUd extends AbstractUdBase
 {
-    abstract public function setConfig(string $property, mixed $value): bool;
-    abstract public function getConfig(?string $property, bool $group): mixed;
-    abstract public function removeConfig(string $property): void;
-    abstract public function enableFirewall(bool $enable = true): void;
-    abstract public function getArchive(string $pageName): ?UdArchive;
-    abstract public function removeArchive(string $pageName): null|bool;
-    abstract public function getArchiveUrl(string $pagename): ?string;
-    abstract public function render(string $template, array $options = []): void;
+    protected bool $isRecursiveRender = false;
 
-    // Default Class Constants
-
-    public const DIR = UD_DIR;
-    public const ASSETS_DIR = self::DIR . "/assets";
-    public const SRC_DIR = self::DIR . "/src";
-    public const VIEW_DIR = self::DIR . "/view";
-    public const RES_DIR = self::DIR . "/bundles";
-    public const CENTRAL_DIR = self::RES_DIR . "/central";
-    public const CLASS_DIR = self::RES_DIR . "/class";
-    public const CONFIG_DIR = self::RES_DIR . "/configs";
-    public const TEMPLATES_DIR = self::DIR . "/templates";
-
-    // Default Class Variables
-
-    public readonly Pairs $usermeta;
-    public readonly TreeNode $menu;
-    public readonly TreeNode $userMenu;
-
-    protected array $configs = [];
-    protected array $defaultPages = [];
-    private bool $initialized = false;
-
-    // Inline Class Methods;
-
-    public function init()
+    public function setConfig(?string $property = null, mixed $value = null): void
     {
-        if(!$this->initialized) {
+        $this->configs[$property] = $value;
+    }
 
-            if($this->databaseEnabled()) {
+    public function getConfig(?string $property = null): mixed
+    {
+        if(is_null($property)) {
+            return $this->configs;
+        };
+        return $this->configs[$property] ?? null;
+    }
 
-                // Configure (create) database values, forms, and template directory
-                $this->configureSystem();
+    public function removeConfig(string $property): void
+    {
+        if(array_key_exists($property, $this->configs)) {
+            unset($this->configs[$property]);
+        };
+    }
 
-                // Configure logged in user information and authentication
-                $this->configureUser();
+    public function addArchive(UdArchive $archive): void
+    {
+        $this->archives[] = $archive;
+    }
 
-                // Initialize Ud with default configurations
-                $this->configurePages();
+    public function getArchive(string $archiveName): ?UdArchive
+    {
+        $archives = array_values(array_filter($this->archives, function ($archive) use ($archiveName) {
+            return $archive->name === $archiveName;
+        }));
+        return $archives[0] ?? null;
+    }
 
-                $this->initialized = true;
-
-                // Send Signal to alter other modules update any of the configuration
-                // Then render the default pages
-                $this->dispatchEvent();
-
+    public function removeArchive(string $archiveName): null|bool
+    {
+        $archive = $this->getArchive($archiveName);
+        if($archive) {
+            if($archive->name === 'login') {
+                throw new \Exception(
+                    sprintf(
+                        "%s Error: Default login archive can only be modified but cannot be removed; Please make changes to the archive attributes instead",
+                        __METHOD__
+                    )
+                );
             }
-
-        }
-    }
-
-    // Get the route declared by the child class
-
-    private function mainRoute(): string
-    {
-        $class = get_called_class();
-        return constant("$class::ROUTE");
-    }
-
-    private function databaseEnabled(): bool
-    {
-        $uss = Uss::instance();
-        if(!DB_ENABLED) {
-            $uss->render('@Uss/error.html.twig', [
-                "subject" => "Database Connection Disabled",
-                "message" => sprintf(
-                    "<span class='%s'>PROBLEM</span> : define('DB_ENABLED', <span class='%s'>false</span>)",
-                    'text-danger',
-                    'text-primary'
-                ),
-                "message_class" => "mb-5",
-                "image" => $uss->abspathToUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
-                "image_style" => "width: 150px"
-            ]);
-        } else {
-            $uss->addTwigExtension(UdTwigExtension::class);
-        }
-        return !!DB_ENABLED;
-    }
-
-    /**
-     * Configure Ud
-     */
-    private function configureSystem(): void
-    {
-        require_once self::CENTRAL_DIR . "/database.php";
-
-        # Default Ud Configuration
-        $defaultConfigs = [
-            'user:disable-signup' => 0,
-            'user:collect-username' => 0,
-            'user:confirm-email' => 0,
-            'user:lock-email' => 0,
-            'user:reconfirm-email' => 1,
-            'user:default-role' => 'member',
-            'user:affiliation' => 0,
-            'user:remove-inactive-after-day' => 7, // 0 or null to ignore
-            'web:icon' => Uss::$globals['icon'],
-            'web:title' => Uss::$globals['title'],
-            'web:headline' => Uss::$globals['headline'],
-            'web:description' => Uss::$globals['description'],
-            'admin:email' => 'admin@example.com',
-            'smtp:state' => 'default'
-        ];
-
-        $uss = Uss::instance();
-
-        # Setup Global Config
-        foreach($defaultConfigs as $key => $value) {
-            if(is_null($uss->options->get($key))) {
-                $uss->options->set($key, $value);
+            $key = array_search($archive, $this->archives, true);
+            if($key !== false) {
+                unset($this->archives[$key]);
             };
         };
-
-        # Set Base Template Directory
-        $uss->addTwigFilesystem(self::TEMPLATES_DIR, 'Ud');
-
+        return null;
     }
 
-    /**
-     * Configure the user settings.
-     *
-     * @return void
-     */
-    private function configureUser(): void
+    public function getArchiveUrl(string $archiveName): ?string
     {
-        $uss = Uss::instance();
-
-        $this->usermeta = new Pairs($uss->mysqli, User::META_TABLE);
-        $this->usermeta->linkParentTable([
-            'parentTable' => User::TABLE,
-        ]);
-
-        $this->menu = new TreeNode('MenuContainer');
-        $this->userMenu = new TreeNode('UserMenuContainer');
-
-        $installment = [
-            'url' => (new UrlGenerator())->getResult(),
-            'nonce' => $uss->nonce('Ud'),
-            'loggedIn' => !!(new User())->getFromSession()
-        ];
-
-        $uss->addJsProperty('ud', $installment);
-    }
-
-    /**
-     * Create all default pages uses in Ud
-     *
-     * These pages can then be modified by modules:
-     * The UdArchive instance allows module to update single properties of the page such as
-     * Controllers, Template, Route, MenuItems etc
-     */
-    private function configurePages(): void
-    {
-        $this->defaultPages = [
-
-            (new UdArchive(UdArchive::LOGIN))
-                ->set('template', '@Ud/security/login.html.twig')
-                ->set('form', UdLoginForm::class),
-
-            (new UdArchive('index'))
-                ->set('route', '/')
-                ->set('template', '@Ud/pages/welcome.html.twig')
-                ->set('controller', IndexController::class)
-                ->addMenuItem('index', new TreeNode('dashboard', [
-                    'label' => 'dashboard',
-                    'href' => new UrlGenerator('/'),
-                    'icon' => 'bi bi-speedometer',
-                ]), $this->menu),
-
-            (new UdArchive('register'))
-                ->set('route', '/register')
-                ->set('template', '@Ud/security/register.html.twig')
-                ->set('controller', RegisterController::class)
-                ->set('form', UdRegisterForm::class),
-
-            (new UdArchive('recovery'))
-                ->set('route', '/recovery')
-                ->set('template', '@Ud/security/register.html.twig')
-                ->set('controller', RecoveryController::class)
-                ->set('form', UdRecoveryForm::class),
-
-            (new UdArchive('notifications'))
-                ->set('route', '/notifications')
-                ->set('template', '@Ud/pages/notifications.html.twig')
-                ->set('controller', NotificationController::class),
-
-            (new UdArchive('logout'))
-                ->set('route', '/logout')
-                ->set('template', null)
-                ->set('controller', LogoutController::class)
-                ->setCustom('endpoint', new UrlGenerator('/'))
-                ->addMenuItem('logout', new TreeNode('logout', [
-                    'label' => 'logout',
-                    'href' => new UrlGenerator('/logout'),
-                    'icon' => 'bi bi-power',
-                    'order' => 1024
-                ]), $this->userMenu),
-
-        ];
-
-    }
-
-    /**
-     *
-     */
-    private function dispatchEvent(): void
-    {
-        Event::instance()->addListener('Modules:loaded', function () {
-
-            // Inform all modules that Ud has started
-            Event::instance()->dispatch('Ud:ready');
-
-            $this->buildDefaultPages();
-
-            // Inform all modules that Ud has ended
-            Event::instance()->dispatch('Ud:ended');
-
-        });
-    }
-
-    /**
-     * Sort Ud Menu
-     * All menu children will be sorted according to the "order" attribute
-     */
-    private function recursiveMenuConfig(TreeNode $menu, string $title): void
-    {
-
-        if(empty($menu->getAttr('label')) && !empty($menu->level)) {
-            $name = $menu->name;
-            throw new \Exception("{$title}: (Item: {$name}) must have a label attribute");
-        };
-
-        $menu->sortChildren(function ($a, $b) {
-            $aOrder = (int)($a->getAttr('order') ?? 0);
-            $bOrder = (int)($b->getAttr('order') ?? 0);
-            return $aOrder <=> $bOrder;
-        });
-
-        if(empty($menu->getAttr('target'))) {
-            $menu->setAttr('target', '_self');
-        };
-
-        if(empty($menu->getAttr('href'))) {
-            $menu->setAttr('href', 'javascript:void(0)');
-        };
-
-        if(!empty($menu->children)) {
-            $menu->setAttr('href', 'javascript:void(0)');
-            $menu->setAttr('target', '_self');
-            foreach($menu->children as $childMenu) {
-                $this->recursiveMenuConfig($childMenu, $title);
-            }
+        $ud = Ud::instance();
+        $archive = $ud->getArchive($archiveName);
+        if(!$archive || is_null($archive->get('route'))) {
+            return null;
         }
-
-        if($menu->getAttr('active')) {
-            $parentNode = $menu->parentNode;
-            $x = 0;
-            while($parentNode && $parentNode->level) {
-                $parentNode->setAttr('isExpanded', true);
-                $parentNode = $parentNode->parentNode;
-            }
-        }
-
+        $urlGenerator = new UrlGenerator($archive->get('route'));
+        return $urlGenerator->getResult();
     }
 
-    /**
-     * Build Default Pages
-     */
-    private function buildDefaultPages(): void
+    public function enableFirewall(bool $enable = true): void
     {
-        $this->compileMenuItems();
-
-        $this->recursiveMenuConfig($this->menu, 'Main Menu');
-        $this->recursiveMenuConfig($this->userMenu, 'User Menu');
-
-        foreach($this->defaultPages as $singlePage) {
-            $this->activateDefaultPage($singlePage);
-        }
+        $this->firewallEnabled = $enable;
     }
 
-    private function compileMenuItems(): void
+    public function render(string $template, array $options = []): void
     {
-        foreach($this->defaultPages as $page) {
-            foreach($page->getMenuItems() as $name => $menuItem) {
-                $item = $menuItem['item'];
-                $menuItem['parent']->add($name, $item);
-            };
-        }
-    }
-
-    private function activateDefaultPage(UdArchive $page): void
-    {
-        $uss = Uss::instance();
-
-        $pageRoute = $page->get('route');
-
-        if(empty($pageRoute) || $page->name === UdArchive::LOGIN) {
-            return;
+        $user = new User();
+        if(!$user->getFromSession() && $this->firewallEnabled) {
+            //$this->activateLoginarchive($user, $template, $options);
         };
+        $options['user'] = $user;
+        Uss::instance()->render($template, $options);
+    }
 
-        $route = $this->mainRoute() . "/" . $pageRoute;
-        $route = $uss->filterContext($route);
-
-        $controller = $page->get('controller');
-        $method = $page->get('method');
-
-        new Route($route, new $controller($page), $method);
+    public function fetchData(string $table, mixed $value, $column = 'id'): ?array
+    {
+        $parameter = is_iterable($value) ? $value : $column;
+        $SQL = (new SQuery())->select()
+            ->from($table)
+            ->where($parameter, $value);
+        $result = Uss::instance()->mysqli->query($SQL);
+        return $result->fetch_assoc();
     }
 
 }

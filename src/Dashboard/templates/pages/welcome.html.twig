@@ -8,6 +8,8 @@
                 
                 <h2 class='display-5 mb-3'>Welcome To User Synthetics</h2>
                 
+                <div id='pop'></div>
+                
                 <h3 class='mb-3'>Dashboard V3.0.0</h3>
 
                 <p>Experience a difference in simplicity</p>
@@ -15,5 +17,13 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+    <script>
+        party.confetti(document.body.querySelector('#pop'), {
+            count: party.variation.range(20, 40),
+            size: party.variation.range(0.8, 1.2)
+        });
+    </script>
 
 {% endblock %}

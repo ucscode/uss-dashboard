@@ -1,192 +1,131 @@
 <?php
 
-use Ucscode\SQuery\SQuery;
+use Ucscode\Packages\TreeNode;
 
 final class Ud extends AbstractUd
 {
     use SingletonTrait;
 
-    /**
-     * Dashboard Route
-     *
-     * The default dashboard route to asses udash
-     */
-    public const ROUTE = 'dashboard';
+    public const DIR = self::SRC_DIR . '/Dashboard';
+    public const TEMPLATE_DIR = self::DIR . "/templates";
+    public const FORMS_DIR = self::DIR . '/forms';
+    public const CONTROLLER_DIR = self::DIR . '/controllers';
 
-    /** @ignore */
-    private bool $firewallEnabled = true;
-    private bool $isRecursiveRender = false;
-
-    /**
-     * Set a configuration property to a given value.
-     *
-     * @param string $property The name of the property to set.
-     * @param mixed $value The value to assign to the property.
-     *
-     * @return bool True if the configuration property was successfully set, false otherwise.
-     */
-    public function setConfig(?string $property = null, mixed $value = null): bool
+    public function createProject(array $config): void
     {
-        $this->configs[$property] = $value;
-        return isset($this->configs[$property]);
+        parent::createProject($config);
+
+        $this->includeControllers();
+        $this->registerComponents();
+        $this->registerArchives();
+        $this->configureJS();
+
+        parent::emitEvents();
     }
 
-    /**
-     * Get a configuration property's value.
-     *
-     * @param string|null $property The name of the property to retrieve. If null, returns the entire configuration.
-     * @param bool $group If true, retrieve an array of configurations matching the property name; otherwise, get the value of the specified property.
-     *
-     * @return mixed The value of the configuration property or the entire configuration group.
-     */
-    public function getConfig(?string $property = null, bool $group = false): mixed
+    protected function includeControllers(): void
     {
-        if(func_num_args() === 0) {
-            return $this->configs;
-        } else {
-            if($group) {
-                $group = array_filter($this->configs, function ($value, $key) use ($property) {
-                    $property = str_replace("/", "\\/", $property);
-                    return preg_match("/^" . $property . "/", $key);
-                }, ARRAY_FILTER_USE_BOTH);
-                return $group;
+        $projectFile = [
+
+            self::DIR => [
+                'UdTwigExtension.php',
+            ],
+
+            self::FORMS_DIR => [
+                "UdLoginForm.php",
+                "UdRegisterForm.php",
+                "UdRecoveryForm.php",
+            ],
+
+            self::CONTROLLER_DIR => [
+                //'LoginController.php',
+                'RegisterController.php',
+                'RecoveryController.php',
+                'IndexController.php',
+                'LogoutController.php',
+                'NotificationController.php',
+            ]
+
+        ];
+
+        foreach($projectFile as $directory => $files) {
+            foreach($files as $filename) {
+                require_once $directory . '/' . $filename;
             }
-            return $this->configs[$property] ?? null;
-        };
-    }
-
-    /** Remove a configuration property.
-     *
-     * @param string $property The name of the property to remove.
-     *
-     * @return void
-     */
-    public function removeConfig(string $property): void
-    {
-        if(isset($this->configs[$property])) {
-            unset($this->configs[$property]);
-        };
-    }
-
-    /**
-     * Enable or disable a firewall. I.E Prevent or allow unauthorized user to access a page
-     *
-     * @param bool $enable True to enable the firewall, false to disable it. Defaults to true.
-     *
-     * @return void
-     */
-    public function enableFirewall(bool $enable = true): void
-    {
-        $this->firewallEnabled = $enable;
-    }
-
-    /**
-     * Render a template with optional rendering options and a Twig block manager.
-     *
-     * @param string $template The name or path of the template to render.
-     * @param array $options An array of rendering options.
-     * @param UssTwigBlockManager|null $ussTwigBlockManager A Twig block manager instance (optional).
-     *
-     * @return void
-     */
-    public function render(string $template, array $options = []): void
-    {
-        $user = new User();
-
-        if(!$user->getFromSession() && $this->firewallEnabled) {
-            $this->activateLoginPage($user, $template, $options);
-        };
-
-        $options['user'] = $user;
-
-        Uss::instance()->render($template, $options);
-    }
-
-    /**
-     * Perform a simple database query to retrieve a single row based on a specified value and column.
-     *
-     * This method constructs and executes a SELECT query to fetch a single row from the specified database table
-     * where the specified column matches the provided value.
-     *
-     * @param string $tableName   The name of the database table to query.
-     * @param string $value       The value to match in the specified column.
-     * @param string $columnName  (Optional) The name of the column to search for the specified value. Default is 'id'.
-     *
-     * @return array|null         An associative array representing the fetched row, or null if no matching row is found.
-     */
-    public function fetchData(string $tableName, null|int|string|array $value, $columnName = 'id')
-    {
-        $parameter = is_array($value) ? $value : $columnName;
-
-        $SQL = (new SQuery())->select()
-            ->from($tableName)
-            ->where($parameter, $value);
-
-        $result = Uss::instance()->mysqli->query($SQL);
-
-        return $result->fetch_assoc();
-    }
-
-    /**
-    * Generates a URL based on the provided path and parameters.
-    *
-    * @param string $path The path for the URL.
-    * @param array $param An associative array of query parameters.
-    *
-    * @return object An anonymous class representing the generated URL with methods to manipulate parameters.
-    *               - setParam(string $key, ?string $value): Set or update a query parameter.
-    *               - removeParam(string $key): Remove a query parameter.
-    *               - getResult(): Get the final generated URL as a string.
-    */
-    public function urlGenerator(string $path = '/', array $param = []): object
-    {
-        return new UrlGenerator($path, $param);
-    }
-
-    public function getArchive(string $pageName): ?UdArchive
-    {
-        $defaultPages = array_values(array_filter($this->defaultPages, function ($page) use ($pageName) {
-            return $page->name === $pageName;
-        }));
-        return $defaultPages[0] ?? null;
-    }
-
-    public function removeArchive(string $pageName): null|bool
-    {
-        $page = $this->getArchive($pageName);
-        if($page) {
-            if($page->name === 'login') {
-                throw new \Exception(
-                    sprintf(
-                        "%s Error: Default login page can only be modified but cannot be removed; Please make changes to the page attributes instead",
-                        __METHOD__
-                    )
-                );
-            }
-            $key = array_search($page, $this->defaultPages, true);
-            if($key !== false) {
-                unset($this->defaultPages[$key]);
-            };
-        };
-        return null;
-    }
-
-    /**
-     * Get the URL associated with a page name from the configuration.
-     *
-     * @param string $pageName The name of the page.
-     *
-     * @return string|null The URL associated with the page name, or null if not found.
-     */
-    public function getArchiveUrl(string $pageName): ?string
-    {
-        $ud = Ud::instance();
-        $page = $ud->getArchive($pageName);
-        if(!$page || is_null($page->get('route'))) {
-            return null;
         }
-        $urlGenerator = new UrlGenerator($page->get('route'));
-        return $urlGenerator->getResult();
+    }
+
+    protected function registerComponents(): void
+    {
+        Uss::instance()->addTwigExtension(UdTwigExtension::class);
+    }
+
+    protected function registerArchives(): void
+    {
+        $archives = [
+
+            (new UdArchive('login'))
+            ->set('form', UdLoginForm::class)
+            ->set('template', '@Ud/security/login.html.twig'),
+
+            (new UdArchive('index'))
+                ->set('route', '/')
+                ->set('template', '@Ud/pages/welcome.html.twig')
+                ->set('controller', IndexController::class)
+                ->addMenuItem('index', new TreeNode('dashboard', [
+                    'label' => 'dashboard',
+                    'href' => new UrlGenerator('/'),
+                    'icon' => 'bi bi-speedometer',
+                ]), $this->menu),
+
+            (new UdArchive('register'))
+            ->set('route', '/register')
+            ->set('template', '@Ud/security/register.html.twig')
+            ->set('controller', RegisterController::class)
+            ->set('form', UdRegisterForm::class),
+
+            (new UdArchive('recovery'))
+                ->set('route', '/recovery')
+                ->set('template', '@Ud/security/register.html.twig')
+                ->set('controller', RecoveryController::class)
+                ->set('form', UdRecoveryForm::class),
+
+            (new UdArchive('notifications'))
+                ->set('route', '/notifications')
+                ->set('template', '@Ud/pages/notifications.html.twig')
+                ->set('controller', NotificationController::class),
+
+            (new UdArchive('logout'))
+                ->set('route', '/logout')
+                ->set('template', null)
+                ->set('controller', LogoutController::class)
+                ->setCustom('endpoint', new UrlGenerator('/'))
+                ->addMenuItem('logout', new TreeNode('logout', [
+                    'label' => 'logout',
+                    'href' => new UrlGenerator('/logout'),
+                    'icon' => 'bi bi-power',
+                    'order' => 1024
+                ]), $this->userMenu),
+
+        ];
+
+        foreach($archives as $archive) {
+            $this->addArchive($archive);
+        };
+
+    }
+
+    protected function configureJS(): void
+    {
+        $uss = Uss::instance();
+
+        $installment = [
+            'url' => (new UrlGenerator())->getResult(),
+            'nonce' => $uss->nonce('Ud'),
+            'loggedIn' => !!(new User())->getFromSession()
+        ];
+
+        $uss->addJsProperty('ud', $installment);
     }
 
     /**

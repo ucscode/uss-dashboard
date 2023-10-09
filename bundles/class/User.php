@@ -171,11 +171,11 @@ class User implements UserInterface
 
             $filter['userid'] = $this->user['id'];
             $filter = $uss->sanitize($filter, Uss::SANITIZE_SQL);
-            
+
             $SQL = (new SQuery())
                 ->update(self::NOTIFICATION_TABLE, $data)
                 ->where($filter);
-            
+
             $update = $uss->mysqli->query($SQL);
 
             return $update;
