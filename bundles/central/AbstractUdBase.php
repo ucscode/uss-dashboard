@@ -10,12 +10,12 @@ use Ucscode\Packages\TreeNode;
  *
  * @author Uchenna Ajah <uche23mail@gmail.com>
  */
-abstract class AbstractUdBase implements UdBaseInterface
+abstract class AbstractUdBase implements UdInterface
 {
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    public readonly string $route;
+    public readonly string $base;
 
     protected bool $firewallEnabled = true;
     protected array $archives = [];
@@ -73,7 +73,7 @@ abstract class AbstractUdBase implements UdBaseInterface
     {
         $uss = Uss::instance();
 
-        $required = ['namespace', 'templatePath', 'route'];
+        $required = ['namespace', 'templatePath', 'base'];
 
         $missingKeys = array_diff($required, array_keys($config));
 
@@ -92,11 +92,10 @@ abstract class AbstractUdBase implements UdBaseInterface
             return in_array($key, $required);
         }, ARRAY_FILTER_USE_KEY);
 
-        $config['route'] = $uss->filterContext($config['route']);
+        $this->base = $uss->filterContext($config['base']);
 
         $uss->addTwigFilesystem($config['templatePath'], $config['namespace']);
 
-        $this->route = $config['route'];
     }
 
     private function configureDatabase(): void
@@ -260,17 +259,17 @@ abstract class AbstractUdBase implements UdBaseInterface
 
     }
 
-    private function activateDefaultPage(UdArchive $archive): void
+    private function activateDefaultPage(Archive $archive): void
     {
         $uss = Uss::instance();
 
         $archiveRoute = $archive->get('route');
 
-        if(empty($archiveRoute) || $archive->name === UdArchive::LOGIN) {
+        if(empty($archiveRoute) || $archive->name === Archive::LOGIN) {
             return;
         };
 
-        $fullRoute = $uss->filterContext($this->route . "/" . $archiveRoute);
+        $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
 
         $controller = $archive->get('controller');
         $method = $archive->get('method');

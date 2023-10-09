@@ -4,7 +4,7 @@ defined('ROOT_DIR') || die(':REGISTER');
 
 class RegisterController implements RouteInterface
 {
-    public function __construct(private UdArchive $page)
+    public function __construct(private Archive $page)
     {
 
     }

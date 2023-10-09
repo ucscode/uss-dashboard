@@ -6,8 +6,12 @@ use Ucscode\SQuery\SQuery;
  * @author Uchenna Ajah <uche23mail@gmail.com>
  */
 abstract class AbstractUd extends AbstractUdBase
-{
+{   
     protected bool $isRecursiveRender = false;
+
+    public function urlGenerator(string $path = '/', array $param = []) {
+        return new UrlGenerator($path, $param, $this);
+    }
 
     public function setConfig(?string $property = null, mixed $value = null): void
     {
@@ -29,12 +33,12 @@ abstract class AbstractUd extends AbstractUdBase
         };
     }
 
-    public function addArchive(UdArchive $archive): void
+    public function addArchive(Archive $archive): void
     {
         $this->archives[] = $archive;
     }
 
-    public function getArchive(string $archiveName): ?UdArchive
+    public function getArchive(string $archiveName): ?Archive
     {
         $archives = array_values(array_filter($this->archives, function ($archive) use ($archiveName) {
             return $archive->name === $archiveName;
@@ -99,10 +103,10 @@ abstract class AbstractUd extends AbstractUdBase
 
     protected function renderLoginArchive(string $template, array $options): ?User
     {
-        $loginPage = $this->getArchive(UdArchive::LOGIN);
+        $loginPage = $this->getArchive(Archive::LOGIN);
         $loginForm = $loginPage->get('form');
 
-        $form = new $loginForm(UdArchive::LOGIN);
+        $form = new $loginForm(Archive::LOGIN);
         $form->handleSubmission();
         
         $user = $options['user']->getFromSession();

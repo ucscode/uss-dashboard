@@ -6,7 +6,7 @@ class NotificationController implements RouteInterface
 {
     private $parseDown;
 
-    public function __construct(private UdArchive $page)
+    public function __construct(private Archive $page)
     {
         $this->parseDown = new Parsedown();
     }

@@ -6,11 +6,11 @@ class UrlGenerator
     private string $base;
     private array $query = [];
 
-    public function __construct(string $path = '/', array $param = [], string $base = '')
+    public function __construct(string $path = '/', array $param = [], ?UdInterface $baseInterface = null)
     {
         $this->init($path);
         $this->query = array_merge($this->query, $param);
-        $this->setBase($base ?: Ud::instance()->route);
+        $this->setBase($baseInterface);
     }
 
     public function __toString()
@@ -18,9 +18,12 @@ class UrlGenerator
         return $this->getResult();
     }
 
-    public function setBase(string $base): self
+    public function setBase(?UdInterface $baseInterface): self
     {
-        $this->base = Uss::instance()->filterContext($base);
+        if(empty($baseInterface)) {
+            $baseInterface = Ud::instance();
+        }      
+        $this->base = $baseInterface->base;
         return $this;
     }
 

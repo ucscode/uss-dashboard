@@ -64,11 +64,11 @@ final class Ud extends AbstractUd
     {
         $archives = [
 
-            (new UdArchive(UdArchive::LOGIN))
+            (new Archive(Archive::LOGIN))
             ->set('form', UdLoginForm::class)
             ->set('template', '@Ud/security/login.html.twig'),
 
-            (new UdArchive('index'))
+            (new Archive('index'))
                 ->set('route', '/')
                 ->set('template', '@Ud/pages/welcome.html.twig')
                 ->set('controller', IndexController::class)
@@ -78,31 +78,31 @@ final class Ud extends AbstractUd
                     'icon' => 'bi bi-speedometer',
                 ]), $this->menu),
 
-            (new UdArchive('register'))
+            (new Archive('register'))
             ->set('route', '/register')
             ->set('template', '@Ud/security/register.html.twig')
             ->set('controller', RegisterController::class)
             ->set('form', UdRegisterForm::class),
 
-            (new UdArchive('recovery'))
+            (new Archive('recovery'))
                 ->set('route', '/recovery')
                 ->set('template', '@Ud/security/register.html.twig')
                 ->set('controller', RecoveryController::class)
                 ->set('form', UdRecoveryForm::class),
 
-            (new UdArchive('notifications'))
+            (new Archive('notifications'))
                 ->set('route', '/notifications')
                 ->set('template', '@Ud/pages/notifications.html.twig')
                 ->set('controller', NotificationController::class),
 
-            (new UdArchive('logout'))
+            (new Archive('logout'))
                 ->set('route', '/logout')
                 ->set('template', null)
                 ->set('controller', LogoutController::class)
-                ->setCustom('endpoint', new UrlGenerator('/'))
+                ->setCustom('endpoint', $this->urlGenerator('/'))
                 ->addMenuItem('logout', new TreeNode('logout', [
                     'label' => 'logout',
-                    'href' => new UrlGenerator('/logout'),
+                    'href' => $this->urlGenerator('/logout'),
                     'icon' => 'bi bi-power',
                     'order' => 1024
                 ]), $this->userMenu),
@@ -120,7 +120,7 @@ final class Ud extends AbstractUd
         $uss = Uss::instance();
 
         $installment = [
-            'url' => (new UrlGenerator())->getResult(),
+            'url' => $this->urlGenerator()->getResult(),
             'nonce' => $uss->nonce('Ud'),
             'loggedIn' => !!(new User())->getFromSession()
         ];

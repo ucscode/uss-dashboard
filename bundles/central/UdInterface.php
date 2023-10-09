@@ -3,7 +3,7 @@
 /**
  * @author Uchenna Ajah <uche23mail@gmail.com>
  */
-interface UdBaseInterface
+interface UdInterface
 {
     public const BASE_DIR = UD_DIR;
     public const ASSETS_DIR = self::BASE_DIR . "/assets";
@@ -16,8 +16,8 @@ interface UdBaseInterface
     public function setConfig(string $property, mixed $value): void;
     public function getConfig(?string $property): mixed;
     public function removeConfig(string $property): void;
-    public function addArchive(UdArchive $archive): void;
-    public function getArchive(string $pagename): ?UdArchive;
+    public function addArchive(Archive $archive): void;
+    public function getArchive(string $pagename): ?Archive;
     public function getArchiveUrl(string $pagename): ?string;
     public function removeArchive(string $pageName): null|bool;
     public function enableFirewall(bool $enable = true): void;

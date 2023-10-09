@@ -32,11 +32,12 @@ $parseComponents = function (array $components, string $folder): void {
 
 $bundles = [
     'central' => [
-        'UdBaseInterface.php',
+        'UdInterface.php',
         'AbstractUdBase.php',
         'AbstractUd.php',
         'Ud.php',
-        'UdArchive.php',
+        'Ua.php',
+        'Archive.php',
     ],
     'interface' => [
         "UdFormInterface.php",
@@ -65,8 +66,13 @@ $parseComponents($bundles, 'bundles');
 # Initialize Ud;
 
 Ud::instance()->createProject([
-    'route' => '/dashboard',
+    'base' => '/dashboard',
     'namespace' => 'Ud',
     'templatePath' => Ud::TEMPLATE_DIR
 ]);
-;
+
+Ua::instance()->createProject([
+    'base' => '/admin',
+    'namespace' => 'Ua',
+    'templatePath' => Ua::TEMPLATE_DIR
+]);
