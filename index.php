@@ -37,7 +37,6 @@ $bundles = [
         'AbstractUd.php',
         'Ud.php',
         'Ua.php',
-        'Archive.php',
     ],
     'interface' => [
         "UdFormInterface.php",
@@ -52,6 +51,7 @@ $bundles = [
     'class' => [
         "UrlGenerator.php",
         "UdCrud.php",
+        'Archive.php',
         //"DOMTablet.php",
         "Roles.php",
         "Hierarchy.php",

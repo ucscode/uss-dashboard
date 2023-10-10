@@ -14,13 +14,11 @@ final class Ud extends AbstractUd
     public function createProject(array $config): void
     {
         parent::createProject($config);
-
         $this->includeControllers();
         $this->registerComponents();
         $this->registerArchives();
         $this->configureJS();
-
-        parent::emitEvents();
+        $this->emitEvents();
     }
 
     protected function includeControllers(): void

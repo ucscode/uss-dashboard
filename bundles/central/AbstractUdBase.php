@@ -15,7 +15,10 @@ abstract class AbstractUdBase implements UdInterface
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
+
     public readonly string $base;
+    public readonly string $templatePath;
+    public readonly string $namespace;
 
     protected bool $firewallEnabled = true;
     protected array $archives = [];
@@ -93,7 +96,7 @@ abstract class AbstractUdBase implements UdInterface
         }, ARRAY_FILTER_USE_KEY);
 
         $this->base = $uss->filterContext($config['base']);
-
+        
         $uss->addTwigFilesystem($config['templatePath'], $config['namespace']);
 
     }
@@ -270,7 +273,7 @@ abstract class AbstractUdBase implements UdInterface
         };
 
         $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
-
+        
         $controller = $archive->get('controller');
         $method = $archive->get('method');
 

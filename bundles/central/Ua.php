@@ -11,12 +11,30 @@ class Ua extends AbstractUd
     public function createProject(array $config): void
     {
         parent::createProject($config);
+        $this->includeControllers();
         $this->registerArchives();
-        parent::emitEvents();
+        $this->emitEvents();
+    }
+
+    protected function includeControllers() {
+
+        $source = [
+            self::CONTROLLER_DIR => [
+                'IndexController.php',
+            ]
+        ];
+
+        foreach($source as $path => $files) {
+            foreach($files as $file) {
+                $controller = $path . '/' . $file;
+                require_once $controller;
+            }
+        }
+
     }
 
     protected function registerArchives(): void {
-
+        
         $archives = [
 
             (new Archive(Archive::LOGIN))
