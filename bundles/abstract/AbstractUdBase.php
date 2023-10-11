@@ -196,7 +196,7 @@ abstract class AbstractUdBase implements UdInterface
         $request = implode('/', Uss::instance()->splitUri());
         $match = preg_match('#^' . $this->base . '#', $request);
         if($match) {
-            $this->createProject();
+        $this->createProject();
         }
         $this->buildArchives();
     }

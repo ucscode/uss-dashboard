@@ -45,8 +45,6 @@ $bundles = [
         "AbstractUdForm.php",
     ],
     'class' => [
-        'Ud.php',
-        'Ua.php',
         "UrlGenerator.php",
         'Archive.php',
         "User.php",
@@ -59,18 +57,17 @@ $bundles = [
     ],
 ];
 
+$projects = [
+    'Dashboard' => [
+        'Ud.php',
+        'UdSetup.php'
+    ],
+    'Admin' => [
+        'Ua.php',
+        'UaSetup.php'
+    ]
+];
+
 $parseComponents($bundles, 'bundles');
+$parseComponents($projects, 'src');
 
-# Initialize Ud;
-
-Ud::instance()->setUp([
-    'base' => '/dashboard',
-    'namespace' => 'Ud',
-    'templatePath' => Ud::TEMPLATE_DIR
-]);
-
-Ua::instance()->setUp([
-    'base' => '/admin',
-    'namespace' => 'Ua',
-    'templatePath' => Ua::TEMPLATE_DIR
-]);
