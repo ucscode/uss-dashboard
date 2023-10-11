@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-use Uss\Route;
 use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 

@@ -1,7 +1,5 @@
 <?php
 
-namespace Ud;
-
 class DOMTablet extends DOMTableWidget
 {
     protected $paginateNode;

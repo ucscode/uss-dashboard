@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-use Uss\Event;
 use Ucscode\SQuery\SQuery;
 
 /**

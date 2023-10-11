@@ -1,12 +1,5 @@
 <?php
 
-namespace Ua;
-
-use Uss\SingletonTrait;
-use Ud\AbstractUd;
-use Ud\Archive;
-use Ud\UdLoginForm;
-
 class Ua extends AbstractUd
 {
     use SingletonTrait;

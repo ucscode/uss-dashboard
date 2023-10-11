@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-use Uss\RouteInterface;
 use Ucscode\Packages\TreeNode;
 
 class Archive

@@ -1,12 +1,8 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-use Uss\SingletonTrait;
 use Ucscode\Packages\TreeNode;
 
-final class Ud extends AbstractUd
+class Ud extends AbstractUd
 {
     use SingletonTrait;
 

@@ -1,7 +1,5 @@
 <?php
 
-namespace Ud;
-
 interface UdFormInterface
 {
     /**

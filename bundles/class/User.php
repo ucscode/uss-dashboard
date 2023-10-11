@@ -1,8 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
 use Ucscode\Packages\Pairs;
 use Ucscode\SQuery\SQuery;
 

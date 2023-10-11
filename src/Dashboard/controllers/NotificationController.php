@@ -1,10 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-use Uss\RouteInterface;
-
 class NotificationController implements RouteInterface
 {
     private $parseDown;

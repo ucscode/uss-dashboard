@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\RouteInterface;
-
 class IndexController implements RouteInterface
 {
     private Archive $page;

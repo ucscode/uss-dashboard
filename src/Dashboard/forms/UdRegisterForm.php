@@ -1,8 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
 use Ucscode\UssForm\UssForm;
 
 // Create custom Registration Form By extending this class

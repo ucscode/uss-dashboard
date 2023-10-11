@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\RouteInterface;
-
 class RegisterController implements RouteInterface
 {
     public function __construct(private Archive $page)

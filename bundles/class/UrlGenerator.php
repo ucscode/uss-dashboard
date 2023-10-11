@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
-
 class UrlGenerator
 {
     private string $url;

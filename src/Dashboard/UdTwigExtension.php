@@ -1,7 +1,5 @@
 <?php
 
-namespace Ud;
-
 use Ucscode\Packages\TreeNode;
 
 /**

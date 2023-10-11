@@ -1,26 +1,5 @@
 <?php
 
-namespace Ud;
-
-/**
- * Display a Team Tree
- *
- * ### PROBLEM WITH HIERARCHY HANDLING BY SQL ENGINE
- *
- * - MYSQL that is less than 8.0 does not support `Recursive Table Expression`!
- * - MYSQL "stored procedure" does not allow more than 225 recursions
- *
- * - The only option for cross server compactibility is `Nested Set Model`
- * - However, `uss dashboard` uses `Adjacency List Model`
- *
- * - Fortunately, most modern server uses `MariaDB` on PHPMYAdmin
- * - `MariaDB` is a forked version of MYSQL which supports `Recursive Table Expression`
- *
- * - If you use MYSQL below 8.0, this page will not work
- * - However, the hierarchy class may be enhanced for cross compactibility in upgraded version
- *
-*/
-
 class Hierarchy
 {
     /**

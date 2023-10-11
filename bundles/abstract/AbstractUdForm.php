@@ -1,8 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\Uss;
 use Ucscode\UssForm\UssForm;
 
 abstract class AbstractUdForm extends UssForm implements UdFormInterface

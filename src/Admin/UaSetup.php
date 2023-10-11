@@ -1,7 +1,5 @@
 <?php
 
-namespace Ua;
-
 Ua::instance()->setUp([
     'base' => '/admin',
     'namespace' => 'Ua',

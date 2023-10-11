@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use Uss\RouteInterface;
-
 class LogoutController implements RouteInterface
 {
     public function onload($pageInfo)

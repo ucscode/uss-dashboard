@@ -1,7 +1,5 @@
 <?php
 
-namespace Ud;
-
 interface UdInterface
 {
     public const BASE_DIR = UD_DIR;
