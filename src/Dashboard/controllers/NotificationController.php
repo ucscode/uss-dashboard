@@ -2,6 +2,7 @@
 
 namespace Ud;
 
+use Uss\Uss;
 use Uss\RouteInterface;
 
 class NotificationController implements RouteInterface

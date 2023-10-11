@@ -139,7 +139,7 @@ abstract class AbstractUdBase implements UdInterface
                     throw new \Exception($uss->mysqli->error);
                 }
 
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
 
                 $uss->render('@Uss/error.html.twig', [
                     "subject" => "Ud: Database Setup Error",
