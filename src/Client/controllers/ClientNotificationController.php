@@ -1,6 +1,6 @@
 <?php
 
-class NotificationController implements RouteInterface
+class ClientNotificationController implements RouteInterface
 {
     private $parseDown;
 

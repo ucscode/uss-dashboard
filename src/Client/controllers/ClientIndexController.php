@@ -1,6 +1,6 @@
 <?php
 
-class IndexController implements RouteInterface
+class ClientIndexController implements RouteInterface
 {
     private Archive $page;
 

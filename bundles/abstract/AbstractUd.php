@@ -2,9 +2,6 @@
 
 use Ucscode\SQuery\SQuery;
 
-/**
- * @author Uchenna Ajah <uche23mail@gmail.com>
- */
 abstract class AbstractUd extends AbstractUdBase
 {
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator

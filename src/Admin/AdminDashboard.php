@@ -1,6 +1,6 @@
 <?php
 
-class Ua extends AbstractUd
+class AdminDashboard extends AbstractUd
 {
     use SingletonTrait;
 

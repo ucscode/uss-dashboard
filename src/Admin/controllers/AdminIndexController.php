@@ -1,6 +1,6 @@
 <?php
 
-class IndexController implements RouteInterface
+class AdminIndexController implements RouteInterface
 {
     public function onload(array $matches)
     {

@@ -2,9 +2,7 @@
 
 use Ucscode\UssForm\UssForm;
 
-// Create custom Registration Form By extending this class
-
-class UdRegisterForm extends AbstractUdForm
+class ClientRegisterForm extends AbstractUdForm
 {
     protected User $user;
 

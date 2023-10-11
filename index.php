@@ -44,13 +44,13 @@ $bundles = [
 ];
 
 $projects = [
-    'Dashboard' => [
-        'Ud.php',
-        'UdSetup.php'
+    'Client' => [
+        'ClientDashboard.php',
+        'Setup.php'
     ],
     'Admin' => [
-        'Ua.php',
-        //'UaSetup.php'
+        'AdminDashboard.php',
+        'Setup.php'
     ]
 ];
 

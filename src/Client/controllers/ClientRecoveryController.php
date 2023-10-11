@@ -1,6 +1,6 @@
 <?php
 
-class RecoveryController implements RouteInterface
+class ClientRecoveryController implements RouteInterface
 {
     public function onload($pageInfo)
     {

@@ -1,6 +1,6 @@
 <?php
 
-class RegisterController implements RouteInterface
+class ClientRegisterController implements RouteInterface
 {
     public function __construct(private Archive $page)
     {

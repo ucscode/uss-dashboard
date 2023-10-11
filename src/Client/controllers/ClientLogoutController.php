@@ -1,6 +1,6 @@
 <?php
 
-class LogoutController implements RouteInterface
+class ClientLogoutController implements RouteInterface
 {
     public function onload($pageInfo)
     {

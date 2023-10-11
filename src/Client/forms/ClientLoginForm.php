@@ -3,7 +3,7 @@
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssElement\UssElement;
 
-class UdLoginForm extends AbstractUdForm
+class ClientLoginForm extends AbstractUdForm
 {
     private string $error;
     protected ?array $user;
