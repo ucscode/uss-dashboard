@@ -22,11 +22,7 @@ class ClientDashboard extends AbstractUd
     protected function includeControllers(): void
     {
         $projectFile = [
-
-            self::DIR => [
-                'UdTwigExtension.php',
-            ],
-
+        
             self::FORMS_DIR => [
                 "ClientLoginForm.php",
                 "ClientRegisterForm.php",

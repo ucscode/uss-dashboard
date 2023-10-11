@@ -31,6 +31,7 @@ $bundles = [
         "AbstractUdForm.php",
     ],
     'class' => [
+        'UdTwigExtension.php',
         "UrlGenerator.php",
         'Archive.php',
         "User.php",
