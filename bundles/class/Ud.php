@@ -70,7 +70,7 @@ final class Ud extends AbstractUd
                 ->set('controller', IndexController::class)
                 ->addMenuItem('index', new TreeNode('dashboard', [
                     'label' => 'dashboard',
-                    'href' => new UrlGenerator('/'),
+                    'href' => $this->urlGenerator('/'),
                     'icon' => 'bi bi-speedometer',
                 ]), $this->menu),
 

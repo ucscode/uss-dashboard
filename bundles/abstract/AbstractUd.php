@@ -1,5 +1,6 @@
 <?php
 
+use Ucscode\Event\Event;
 use Ucscode\SQuery\SQuery;
 
 /**
@@ -7,8 +8,13 @@ use Ucscode\SQuery\SQuery;
  */
 abstract class AbstractUd extends AbstractUdBase
 {   
-    public function urlGenerator(string $path = '/', array $param = []) {
-        return new UrlGenerator($path, $param, $this);
+    public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
+    {
+        $urlGenerator = new UrlGenerator($path, $this->base);
+        foreach($query as $key => $value) {
+            $urlGenerator->setQuery($key, $value);
+        }
+        return $urlGenerator;
     }
 
     public function setStorage(?string $property = null, mixed $value = null): void
@@ -71,7 +77,7 @@ abstract class AbstractUd extends AbstractUdBase
         if(!$archive || is_null($archive->get('route'))) {
             return null;
         }
-        $urlGenerator = new UrlGenerator($archive->get('route'));
+        $urlGenerator = $ud->urlGenerator($archive->get('route'));
         return $urlGenerator->getResult();
     }
 
@@ -82,11 +88,13 @@ abstract class AbstractUd extends AbstractUdBase
 
     public function render(string $template, array $options = []): void
     {
-        $options['user'] = new User();
-        if(!$options['user']->getFromSession() && $this->firewallEnabled) {
-            $option['user'] = $this->renderLoginArchive($template, $options);
-        };
-        Uss::instance()->render($template, $options);
+        Event::instance()->addListener('modules:loaded', function() use(&$template, &$options) {
+            $options['user'] = new User();
+            if(!$options['user']->getFromSession() && $this->firewallEnabled) {
+                $option['user'] = $this->renderLoginArchive($template, $options);
+            };
+            Uss::instance()->render($template, $options);
+        });
     }
 
     public function fetchData(string $table, mixed $value, $column = 'id'): ?array

@@ -48,14 +48,14 @@ $bundles = [
         'Ud.php',
         'Ua.php',
         "UrlGenerator.php",
-        "UdCrud.php",
         'Archive.php',
-        //"DOMTablet.php",
-        "Roles.php",
-        "Hierarchy.php",
         "User.php",
         "Alert.php",
         "Paginator.php",
+        "UdCrud.php",
+        //"DOMTablet.php",
+        "Roles.php",
+        "Hierarchy.php",
     ],
 ];
 

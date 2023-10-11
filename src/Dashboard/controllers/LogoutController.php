@@ -14,7 +14,7 @@ class LogoutController implements RouteInterface
         $endpoint = $pageInfo['endpoint'] ?? null;
 
         if(!($endpoint instanceof UrlGenerator) && !is_string($endpoint)) {
-            $endpoint = new UrlGenerator();
+            $endpoint = Ud::instance()->urlGenerator();
         };
 
         header("location: " . $endpoint);

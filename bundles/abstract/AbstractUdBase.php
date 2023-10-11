@@ -37,7 +37,6 @@ abstract class AbstractUdBase implements UdInterface
                 $this->configureUser();
                 $this->initialized = true;
                 $this->isolateProject();
-                $this->buildArchives();
             }
         }
     }
@@ -199,6 +198,7 @@ abstract class AbstractUdBase implements UdInterface
         if($match) {
             $this->createProject();
         }
+        $this->buildArchives();
     }
 
     private function buildArchives(): void
