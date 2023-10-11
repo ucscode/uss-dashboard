@@ -1,6 +1,9 @@
 <?php
 
-use Ucscode\Event\Event;
+namespace Ud;
+
+use Uss\Uss;
+use Uss\Route;
 use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 
@@ -86,7 +89,7 @@ abstract class AbstractUdBase implements UdInterface
         }, ARRAY_FILTER_USE_KEY);
 
         $this->base = $uss->filterContext($config['base']);
-        
+
         $uss->addTwigFilesystem($config['templatePath'], $config['namespace']);
 
     }
@@ -192,12 +195,9 @@ abstract class AbstractUdBase implements UdInterface
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
 
-    private function isolateProject() {
-        $request = implode('/', Uss::instance()->splitUri());
-        $match = preg_match('#^' . $this->base . '#', $request);
-        if($match) {
+    private function isolateProject(): void
+    {
         $this->createProject();
-        }
         $this->buildArchives();
     }
 
@@ -272,7 +272,7 @@ abstract class AbstractUdBase implements UdInterface
         };
 
         $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
-        
+
         $controller = $archive->get('controller');
         $method = $archive->get('method');
 

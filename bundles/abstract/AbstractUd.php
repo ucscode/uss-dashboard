@@ -1,13 +1,16 @@
 <?php
 
-use Ucscode\Event\Event;
+namespace Ud;
+
+use Uss\Uss;
+use Uss\Event;
 use Ucscode\SQuery\SQuery;
 
 /**
  * @author Uchenna Ajah <uche23mail@gmail.com>
  */
 abstract class AbstractUd extends AbstractUdBase
-{   
+{
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
         $urlGenerator = new UrlGenerator($path, $this->base);
@@ -88,7 +91,7 @@ abstract class AbstractUd extends AbstractUdBase
 
     public function render(string $template, array $options = []): void
     {
-        Event::instance()->addListener('modules:loaded', function() use(&$template, &$options) {
+        Event::instance()->addListener('modules:loaded', function () use (&$template, &$options) {
             $options['user'] = new User();
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $option['user'] = $this->renderLoginArchive($template, $options);
@@ -114,7 +117,7 @@ abstract class AbstractUd extends AbstractUdBase
 
         $form = new $loginForm(Archive::LOGIN);
         $form->handleSubmission();
-        
+
         $user = $options['user']->getFromSession();
 
         if(!$user) {

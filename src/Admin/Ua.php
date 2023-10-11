@@ -1,5 +1,12 @@
 <?php
 
+namespace Ua;
+
+use Uss\SingletonTrait;
+use Ud\AbstractUd;
+use Ud\Archive;
+use Ud\UdLoginForm;
+
 class Ua extends AbstractUd
 {
     use SingletonTrait;
@@ -14,7 +21,7 @@ class Ua extends AbstractUd
         $this->registerArchives();
     }
 
-    protected function includeControllers() 
+    protected function includeControllers()
     {
         $source = [
             self::CONTROLLER_DIR => [
@@ -31,8 +38,9 @@ class Ua extends AbstractUd
 
     }
 
-    protected function registerArchives(): void {
-        
+    protected function registerArchives(): void
+    {
+
         $archives = [
 
             (new Archive(Archive::LOGIN))
@@ -43,7 +51,7 @@ class Ua extends AbstractUd
                 ->set('template', '@Ua/index.html.twig')
                 ->set('controller', IndexController::class)
                 ->set('route', '/'),
-            
+
         ];
 
         foreach($archives as $archive) {

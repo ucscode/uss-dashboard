@@ -1,6 +1,8 @@
 <?php
 
-defined('ROOT_DIR') || die(':LOGOUT');
+namespace Ud;
+
+use Uss\RouteInterface;
 
 class LogoutController implements RouteInterface
 {

@@ -1,5 +1,9 @@
 <?php
 
+namespace Ud;
+
+use Uss\Uss;
+use Uss\RouteInterface;
 use Ucscode\Packages\TreeNode;
 
 class Archive
@@ -66,8 +70,6 @@ class Archive
      */
     public function addMenuItem(string $name, array|TreeNode $menu, string|TreeNode $parentMenu): self
     {
-        $ud = Ud::instance();
-
         // Validate Menu Item
         if($parentMenu === $menu) {
             throw new \Exception(
@@ -155,7 +157,7 @@ class Archive
 
     private function controllerException($value): void
     {
-        $interface = "RouteInterface";
+        $interface = RouteInterface::class;
 
         if(empty($value) || !is_string($value)) {
             throw new \Exception(
@@ -224,7 +226,7 @@ class Archive
     {
         $interface = UdFormInterface::class;
         if(!in_array($interface, class_implements($value))) {
-            throw new Exception(
+            throw new \Exception(
                 sprintf(
                     'The class "%s" provided to %s::%s("form", ...) must implement "%s".',
                     $value,

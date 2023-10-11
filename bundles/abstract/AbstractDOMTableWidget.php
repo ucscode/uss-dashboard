@@ -1,5 +1,7 @@
 <?php
 
+namespace Ud;
+
 use Ucscode\DOMTable\DOMTable;
 
 abstract class DOMTableWidget extends DOMTable

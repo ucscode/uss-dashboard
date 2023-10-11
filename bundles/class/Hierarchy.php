@@ -1,5 +1,6 @@
 <?php
 
+namespace Ud;
 
 /**
  * Display a Team Tree

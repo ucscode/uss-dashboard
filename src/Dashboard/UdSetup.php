@@ -1,5 +1,7 @@
 <?php
 
+namespace Ud;
+
 Ud::instance()->setUp([
     'base' => '/dashboard',
     'namespace' => 'Ud',

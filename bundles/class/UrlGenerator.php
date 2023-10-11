@@ -1,5 +1,9 @@
 <?php
 
+namespace Ud;
+
+use Uss\Uss;
+
 class UrlGenerator
 {
     private string $url;
@@ -48,7 +52,7 @@ class UrlGenerator
             $result .= '/' . $this->base;
         }
         if(!empty($this->path)) {
-            $path = preg_replace_callback('/\{(\w+)\}/', function($match) {
+            $path = preg_replace_callback('/\{(\w+)\}/', function ($match) {
                 $key = trim($match[1]);
                 $value = $this->parameters[$key] ?? null;
                 if(is_null($value)) {
@@ -60,7 +64,7 @@ class UrlGenerator
                             $this->path,
                             $key
                         )
-                    );  
+                    );
                 };
                 return $value;
             }, $this->path);

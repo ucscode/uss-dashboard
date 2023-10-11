@@ -1,5 +1,10 @@
 <?php
 
+namespace Ud;
+
+use Uss\Uss;
+use Uss\UssTwigBlockManager;
+
 class Alert
 {
     protected string $type = 'modal'; // notification

@@ -1,6 +1,8 @@
 <?php
 
-defined('Ud::DIR') or die(':INDEX');
+namespace Ud;
+
+use Uss\RouteInterface;
 
 class IndexController implements RouteInterface
 {

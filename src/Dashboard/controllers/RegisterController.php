@@ -1,6 +1,8 @@
 <?php
 
-defined('ROOT_DIR') || die(':REGISTER');
+namespace Ud;
+
+use Uss\RouteInterface;
 
 class RegisterController implements RouteInterface
 {

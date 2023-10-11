@@ -1,6 +1,8 @@
 <?php
 
-class Paginator extends JasonGrimes\Paginator
+namespace Ud;
+
+class Paginator extends \JasonGrimes\Paginator
 {
     public function getPreviousText()
     {

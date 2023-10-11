@@ -1,6 +1,8 @@
 <?php
 
-defined('ROOT_DIR') || die(':NOTIFICATION');
+namespace Ud;
+
+use Uss\RouteInterface;
 
 class NotificationController implements RouteInterface
 {
@@ -8,7 +10,7 @@ class NotificationController implements RouteInterface
 
     public function __construct(private Archive $page)
     {
-        $this->parseDown = new Parsedown();
+        $this->parseDown = new \Parsedown();
     }
 
     public function onload($pageInfo)

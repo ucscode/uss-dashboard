@@ -22,8 +22,8 @@ if(!defined('UD_DIR')) {
     define('UD_DIR', __DIR__);
 };
 
-$parseComponents = function (array $components, string $folder): void {
-    foreach($components as $directory => $fileList) {
+$iterateElements = function (array $element, string $folder): void {
+    foreach($element as $directory => $fileList) {
         foreach($fileList as $resourceFile) {
             require_once UD_DIR . "/{$folder}/{$directory}/{$resourceFile}";
         }
@@ -68,6 +68,5 @@ $projects = [
     ]
 ];
 
-$parseComponents($bundles, 'bundles');
-$parseComponents($projects, 'src');
-
+$iterateElements($bundles, 'bundles');
+$iterateElements($projects, 'src');

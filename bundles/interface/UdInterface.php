@@ -1,8 +1,7 @@
 <?php
 
-/**
- * @author Uchenna Ajah <uche23mail@gmail.com>
- */
+namespace Ud;
+
 interface UdInterface
 {
     public const BASE_DIR = UD_DIR;
