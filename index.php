@@ -16,7 +16,7 @@
  * @package Uss\Dashboard
  */
 
-defined('ROOT_DIR') || die("Uss Dashboard: Permission Denied");
+defined('ROOT_DIR') || die("@USS_DASHBOARD");
 
 if(!defined('UD_DIR')) {
     define('UD_DIR', __DIR__);
@@ -31,14 +31,8 @@ $parseComponents = function (array $components, string $folder): void {
 };
 
 $bundles = [
-    'central' => [
-        'UdInterface.php',
-        'AbstractUdBase.php',
-        'AbstractUd.php',
-        'Ud.php',
-        'Ua.php',
-    ],
     'interface' => [
+        'UdInterface.php',
         "UdFormInterface.php",
         "UserInterface.php",
     ],
@@ -46,9 +40,13 @@ $bundles = [
         //
     ],
     'abstract' => [
+        'AbstractUdBase.php',
+        'AbstractUd.php',
         "AbstractUdForm.php",
     ],
     'class' => [
+        'Ud.php',
+        'Ua.php',
         "UrlGenerator.php",
         "UdCrud.php",
         'Archive.php',
@@ -65,13 +63,13 @@ $parseComponents($bundles, 'bundles');
 
 # Initialize Ud;
 
-Ud::instance()->createProject([
+Ud::instance()->setUp([
     'base' => '/dashboard',
     'namespace' => 'Ud',
     'templatePath' => Ud::TEMPLATE_DIR
 ]);
 
-Ua::instance()->createProject([
+Ua::instance()->setUp([
     'base' => '/admin',
     'namespace' => 'Ua',
     'templatePath' => Ua::TEMPLATE_DIR

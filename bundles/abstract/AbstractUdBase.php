@@ -12,6 +12,8 @@ use Ucscode\Packages\TreeNode;
  */
 abstract class AbstractUdBase implements UdInterface
 {
+    abstract protected function createProject(): void;
+
     public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
@@ -22,33 +24,22 @@ abstract class AbstractUdBase implements UdInterface
 
     protected bool $firewallEnabled = true;
     protected array $archives = [];
-    protected array $configs = [
-        'debug' => true
-    ];
+    protected array $storage = ['debug' => true];
     private bool $initialized = false;
 
-    public function createProject(array $config): void
+    public function setUp(array $config): void
     {
-        if(!$this->initialized) 
-        {
-            if($this->databaseEnabled()) 
-            {
-                $this->configureSetUp($config);
+        if(!$this->initialized) {
+            $this->configureSetUp($config);
+            if($this->databaseEnabled()) {
                 $this->configureDatabase();
                 $this->configureDatabaseOptions();
                 $this->configureUser();
                 $this->initialized = true;
+                $this->isolateProject();
+                $this->buildArchives();
             }
         }
-    }
-
-    protected function emitEvents(): void
-    {
-        Event::instance()->addListener('Modules:loaded', function () {
-            Event::instance()->emit('Ud:ready');
-            $this->manageArchives();
-            Event::instance()->emit('Ud:ended');
-        });
     }
 
     private function databaseEnabled(): bool
@@ -150,7 +141,7 @@ abstract class AbstractUdBase implements UdInterface
 
                 $uss->render('@Uss/error.html.twig', [
                     "subject" => "Ud: Database Setup Error",
-                    "message" => $this->getConfig('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
+                    "message" => $this->getStorage('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
                 ]);
 
                 die();
@@ -202,7 +193,15 @@ abstract class AbstractUdBase implements UdInterface
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
 
-    private function manageArchives(): void
+    private function isolateProject() {
+        $request = implode('/', Uss::instance()->splitUri());
+        $match = preg_match('#^' . $this->base . '#', $request);
+        if($match) {
+            $this->createProject();
+        }
+    }
+
+    private function buildArchives(): void
     {
         $this->compileMenuItems();
         $this->recursiveMenuConfig($this->menu, 'Main Menu');

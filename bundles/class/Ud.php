@@ -11,14 +11,12 @@ final class Ud extends AbstractUd
     public const FORMS_DIR = self::DIR . '/forms';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
 
-    public function createProject(array $config): void
+    protected function createProject(): void 
     {
-        parent::createProject($config);
         $this->includeControllers();
         $this->registerComponents();
         $this->registerArchives();
         $this->configureJS();
-        $this->emitEvents();
     }
 
     protected function includeControllers(): void

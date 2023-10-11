@@ -7,29 +7,27 @@ use Ucscode\SQuery\SQuery;
  */
 abstract class AbstractUd extends AbstractUdBase
 {   
-    protected bool $isRecursiveRender = false;
-
     public function urlGenerator(string $path = '/', array $param = []) {
         return new UrlGenerator($path, $param, $this);
     }
 
-    public function setConfig(?string $property = null, mixed $value = null): void
+    public function setStorage(?string $property = null, mixed $value = null): void
     {
-        $this->configs[$property] = $value;
+        $this->storage[$property] = $value;
     }
 
-    public function getConfig(?string $property = null): mixed
+    public function getStorage(?string $property = null): mixed
     {
         if(is_null($property)) {
-            return $this->configs;
+            return $this->storage;
         };
-        return $this->configs[$property] ?? null;
+        return $this->storage[$property] ?? null;
     }
 
-    public function removeConfig(string $property): void
+    public function removeStorage(string $property): void
     {
-        if(array_key_exists($property, $this->configs)) {
-            unset($this->configs[$property]);
+        if(array_key_exists($property, $this->storage)) {
+            unset($this->storage[$property]);
         };
     }
 

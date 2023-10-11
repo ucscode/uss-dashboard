@@ -8,16 +8,14 @@ class Ua extends AbstractUd
     public const TEMPLATE_DIR = self::DIR . '/templates';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
 
-    public function createProject(array $config): void
+    protected function createProject(): void
     {
-        parent::createProject($config);
         $this->includeControllers();
         $this->registerArchives();
-        $this->emitEvents();
     }
 
-    protected function includeControllers() {
-
+    protected function includeControllers() 
+    {
         $source = [
             self::CONTROLLER_DIR => [
                 'IndexController.php',

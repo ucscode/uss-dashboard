@@ -13,9 +13,9 @@ interface UdInterface
     public const CENTRAL_DIR = self::RES_DIR . "/central";
     public const CLASS_DIR = self::RES_DIR . "/class";
 
-    public function setConfig(string $property, mixed $value): void;
-    public function getConfig(?string $property): mixed;
-    public function removeConfig(string $property): void;
+    public function setStorage(string $property, mixed $value): void;
+    public function getStorage(?string $property): mixed;
+    public function removeStorage(string $property): void;
     public function addArchive(Archive $archive): void;
     public function getArchive(string $pagename): ?Archive;
     public function getArchiveUrl(string $pagename): ?string;
