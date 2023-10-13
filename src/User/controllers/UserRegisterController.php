@@ -1,6 +1,6 @@
 <?php
 
-class ClientRegisterController implements RouteInterface
+class UserRegisterController implements RouteInterface
 {
     public function __construct(private Archive $page)
     {
@@ -9,7 +9,7 @@ class ClientRegisterController implements RouteInterface
 
     public function onload($regex)
     {
-        $ud = Ud::instance();
+        $ud = UserDashboard::instance();
 
         $template = $this->page->get('template');
         $registerForm = $this->page->get('form');

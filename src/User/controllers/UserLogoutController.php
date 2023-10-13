@@ -1,6 +1,6 @@
 <?php
 
-class ClientLogoutController implements RouteInterface
+class UserLogoutController implements RouteInterface
 {
     public function onload($pageInfo)
     {
@@ -12,7 +12,7 @@ class ClientLogoutController implements RouteInterface
         $endpoint = $pageInfo['endpoint'] ?? null;
 
         if(!($endpoint instanceof UrlGenerator) && !is_string($endpoint)) {
-            $endpoint = Ud::instance()->urlGenerator();
+            $endpoint = UserDashboard::instance()->urlGenerator();
         };
 
         header("location: " . $endpoint);

@@ -1,6 +1,6 @@
 <?php
 
-class ClientNotificationController implements RouteInterface
+class UserNotificationController implements RouteInterface
 {
     private $parseDown;
 
@@ -11,7 +11,7 @@ class ClientNotificationController implements RouteInterface
 
     public function onload($pageInfo)
     {
-        $ud = Ud::instance();
+        $ud = UserDashboard::instance();
 
         $user = (new User())->getFromSession();
 

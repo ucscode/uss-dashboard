@@ -17,7 +17,7 @@ final class UdTwigExtension extends \Twig\Extension\AbstractExtension implements
 
     public function __construct()
     {
-        $ud = Ud::instance();
+        $ud = AbstractDashboard::instance();
 
         $this->menu = $ud->menu;
         $this->userMenu = $ud->userMenu;

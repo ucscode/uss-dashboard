@@ -17,23 +17,28 @@ $iterateElements = function (array $element, string $folder): void {
 };
 
 $bundles = [
+    'constants' => [
+        'DashboardImmutable.php',
+    ],
     'interface' => [
-        'UdInterface.php',
-        "UdFormInterface.php",
+        'DashboardInterface.php',
+        "DashboardFormInterface.php",
         "UserInterface.php",
     ],
     'trait' => [
         //
     ],
     'abstract' => [
-        'AbstractUdBase.php',
-        'AbstractUd.php',
-        "AbstractUdForm.php",
+        'AbstractDashboardComposition.php',
+        'AbstractDashboard.php',
+        "AbstractDashboardForm.php",
     ],
     'class' => [
-        'UdTwigExtension.php',
+        'DashboardConfig.php',
+        'DashboardTwigExtension.php',
         "UrlGenerator.php",
         'Archive.php',
+        'ArchiveRepository.php',
         "User.php",
         "Alert.php",
         "Paginator.php",
@@ -45,13 +50,13 @@ $bundles = [
 ];
 
 $projects = [
-    'Client' => [
-        'ClientDashboard.php',
+    'User' => [
+        'UserDashboard.php',
         'Setup.php'
     ],
     'Admin' => [
-        'AdminDashboard.php',
-        'Setup.php'
+        //'AdminDashboard.php',
+        //'Setup.php'
     ]
 ];
 

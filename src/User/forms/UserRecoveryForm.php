@@ -1,6 +1,6 @@
 <?php
 
-class ClientRecoveryForm extends AbstractUdForm
+class UserRecoveryForm extends AbstractUdForm
 {
     protected function buildForm()
     {

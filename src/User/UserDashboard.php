@@ -2,11 +2,11 @@
 
 use Ucscode\Packages\TreeNode;
 
-class ClientDashboard extends AbstractUd
+class UserDashboard extends AbstractDashboard
 {
     use SingletonTrait;
 
-    public const DIR = self::SRC_DIR . '/Client';
+    public const DIR = DashboardImmutable::SRC_DIR . '/User';
     public const TEMPLATE_DIR = self::DIR . "/templates";
     public const FORMS_DIR = self::DIR . '/forms';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
@@ -24,18 +24,18 @@ class ClientDashboard extends AbstractUd
         $projectFile = [
         
             self::FORMS_DIR => [
-                "ClientLoginForm.php",
-                "ClientRegisterForm.php",
-                "ClientRecoveryForm.php",
+                "UserLoginForm.php",
+                "UserRegisterForm.php",
+                "UserRecoveryForm.php",
             ],
 
             self::CONTROLLER_DIR => [
                 //'LoginController.php',
-                'ClientRegisterController.php',
-                'ClientRecoveryController.php',
-                'ClientIndexController.php',
-                'ClientLogoutController.php',
-                'ClientNotificationController.php',
+                'UserRegisterController.php',
+                'UserRecoveryController.php',
+                'UserIndexController.php',
+                'UserLogoutController.php',
+                'UserNotificationController.php',
             ]
 
         ];
@@ -57,13 +57,13 @@ class ClientDashboard extends AbstractUd
         $archives = [
 
             (new Archive(Archive::LOGIN))
-            ->set('form', ClientLoginForm::class)
+            ->set('form', UserLoginForm::class)
             ->set('template', '@Ud/security/login.html.twig'),
 
             (new Archive('index'))
                 ->set('route', '/')
                 ->set('template', '@Ud/pages/welcome.html.twig')
-                ->set('controller', ClientIndexController::class)
+                ->set('controller', UserIndexController::class)
                 ->addMenuItem('index', new TreeNode('dashboard', [
                     'label' => 'dashboard',
                     'href' => $this->urlGenerator('/'),
@@ -73,24 +73,24 @@ class ClientDashboard extends AbstractUd
             (new Archive('register'))
             ->set('route', '/register')
             ->set('template', '@Ud/security/register.html.twig')
-            ->set('controller', ClientRegisterController::class)
-            ->set('form', ClientRegisterForm::class),
+            ->set('controller', UserRegisterController::class)
+            ->set('form', UserRegisterForm::class),
 
             (new Archive('recovery'))
                 ->set('route', '/recovery')
                 ->set('template', '@Ud/security/register.html.twig')
-                ->set('controller', ClientRecoveryController::class)
-                ->set('form', ClientRecoveryForm::class),
+                ->set('controller', UserRecoveryController::class)
+                ->set('form', UserRecoveryForm::class),
 
             (new Archive('notifications'))
                 ->set('route', '/notifications')
                 ->set('template', '@Ud/pages/notifications.html.twig')
-                ->set('controller', ClientNotificationController::class),
+                ->set('controller', UserNotificationController::class),
 
             (new Archive('logout'))
                 ->set('route', '/logout')
                 ->set('template', null)
-                ->set('controller', ClientLogoutController::class)
+                ->set('controller', UserLogoutController::class)
                 ->setCustom('endpoint', $this->urlGenerator('/'))
                 ->addMenuItem('logout', new TreeNode('logout', [
                     'label' => 'logout',
@@ -101,8 +101,10 @@ class ClientDashboard extends AbstractUd
 
         ];
 
+        $ar = new ArchiveRepository($this::class);
+
         foreach($archives as $archive) {
-            $this->addArchive($archive);
+            $ar->addArchive($archive->name, $archive);
         };
 
     }

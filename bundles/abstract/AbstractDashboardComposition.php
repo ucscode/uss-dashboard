@@ -3,40 +3,29 @@
 use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 
-/**
- * This class contains only private methods and should not be extended as it is dedicated to AbstractUd
- * which contains the public methods for readability
- *
- * @author Uchenna Ajah <uche23mail@gmail.com>
- */
-abstract class AbstractUdBase implements UdInterface
+abstract class AbstractDashboardComposition implements DashboardInterface
 {
     abstract protected function createProject(): void;
 
-    public readonly Pairs $usermeta;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-
-    public readonly string $base;
-    public readonly string $templatePath;
-    public readonly string $namespace;
+    public readonly Pairs $usermeta;
+    public readonly DashboardConfig $config;
+    public readonly ArchiveRepository $archiveRepository;
 
     protected bool $firewallEnabled = true;
-    protected array $archives = [];
-    protected array $storage = ['debug' => true];
-    private bool $initialized = false;
+    protected array $attributes = [
+        'debug' => true
+    ];
 
-    public function setUp(array $config): void
+    public function configureDashboard(DashboardConfig $config): void
     {
-        if(!$this->initialized) {
+        if($this->databaseEnabled()) {
             $this->configureSetUp($config);
-            if($this->databaseEnabled()) {
-                $this->configureDatabase();
-                $this->configureDatabaseOptions();
-                $this->configureUser();
-                $this->initialized = true;
-                $this->isolateProject();
-            }
+            $this->configureDatabase();
+            $this->configureDatabaseOptions();
+            $this->configureUser();
+            $this->isolateProject();
         }
     }
 
@@ -53,7 +42,7 @@ abstract class AbstractUdBase implements UdInterface
                     'text-primary'
                 ),
                 "message_class" => "mb-5",
-                "image" => $uss->abspathToUrl(self::ASSETS_DIR . '/images/database-error-icon.webp'),
+                "image" => $uss->abspathToUrl(DashboardImmutable::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
             ]);
         };
@@ -61,33 +50,12 @@ abstract class AbstractUdBase implements UdInterface
         return !!DB_ENABLED;
     }
 
-    private function configureSetUp(array $config): void
+    private function configureSetUp(DashboardConfig $config): void
     {
         $uss = Uss::instance();
-
-        $required = ['namespace', 'templatePath', 'base'];
-
-        $missingKeys = array_diff($required, array_keys($config));
-
-        foreach($missingKeys as $key) {
-            throw new \Exception(
-                sprintf(
-                    '%s::%s() array argument requires `%s` offset with value of type string',
-                    get_called_class(),
-                    'setUp',
-                    $key
-                )
-            );
-        }
-
-        $config = array_filter($config, function ($key) use ($required) {
-            return in_array($key, $required);
-        }, ARRAY_FILTER_USE_KEY);
-
-        $this->base = $uss->filterContext($config['base']);
-
-        $uss->addTwigFilesystem($config['templatePath'], $config['namespace']);
-
+        $uss->addTwigFilesystem($config->getTemplateDirectory(), $config->getTemplateNamespace());
+        $this->config = $config;
+        $this->archiveRepository = new ArchiveRepository($this::class);
     }
 
     private function configureDatabase(): void
@@ -139,7 +107,7 @@ abstract class AbstractUdBase implements UdInterface
 
                 $uss->render('@Uss/error.html.twig', [
                     "subject" => "Ud: Database Setup Error",
-                    "message" => $this->getStorage('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
+                    "message" => $this->getAttribute('debug') ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
                 ]);
 
                 die();
@@ -202,14 +170,17 @@ abstract class AbstractUdBase implements UdInterface
         $this->compileMenuItems();
         $this->recursiveMenuConfig($this->menu, 'Main Menu');
         $this->recursiveMenuConfig($this->userMenu, 'User Menu');
-        foreach($this->archives as $singlePage) {
+
+        $archives = $this->archiveRepository->getAllArchives();
+        foreach($archives as $singlePage) {
             $this->activateDefaultPage($singlePage);
         }
     }
 
     private function compileMenuItems(): void
     {
-        foreach($this->archives as $page) {
+        $archives = $this->archiveRepository->getAllArchives();
+        foreach($archives as $page) {
             foreach($page->getMenuItems() as $name => $menuItem) {
                 $item = $menuItem['item'];
                 $menuItem['parent']->add($name, $item);
@@ -267,7 +238,7 @@ abstract class AbstractUdBase implements UdInterface
             return;
         };
 
-        $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
+        $fullRoute = $uss->filterContext($this->config->getBase() . "/" . $archiveRoute);
 
         $controller = $archive->get('controller');
         $method = $archive->get('method');

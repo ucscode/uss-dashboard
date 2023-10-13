@@ -2,7 +2,7 @@
 
 use Ucscode\UssForm\UssForm;
 
-class ClientRegisterForm extends AbstractUdForm
+class UserRegisterForm extends AbstractUdForm
 {
     protected User $user;
 

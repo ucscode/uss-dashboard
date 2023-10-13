@@ -1,6 +1,6 @@
 <?php
 
-class ClientIndexController implements RouteInterface
+class UserIndexController implements RouteInterface
 {
     private Archive $page;
 
@@ -11,7 +11,7 @@ class ClientIndexController implements RouteInterface
 
     public function onload(array $matches)
     {
-        $ud = Ud::instance();
+        $ud = UserDashboard::instance();
         $ud->render($this->page->get('template'));
     }
 
