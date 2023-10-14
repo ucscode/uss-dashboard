@@ -19,6 +19,7 @@ $iterateElements = function (array $element, string $folder): void {
 $bundles = [
     'constants' => [
         'DashboardImmutable.php',
+        'RoleImmutable.php',
     ],
     'interface' => [
         'DashboardInterface.php',
@@ -43,7 +44,6 @@ $bundles = [
         "Paginator.php",
         "UdCrud.php",
         //"DOMTablet.php",
-        "Roles.php",
         "Hierarchy.php",
     ],
 ];

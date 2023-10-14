@@ -251,7 +251,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $controller = $archive->get('controller');
         $method = $archive->get('method');
 
-        new Route($fullRoute, new $controller($archive), $method);
+        new Route($fullRoute, new $controller($archive, $this), $method);
     }
 
     private function configureJS(): void
