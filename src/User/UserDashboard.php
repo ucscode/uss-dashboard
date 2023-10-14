@@ -15,13 +15,12 @@ class UserDashboard extends AbstractDashboard
     {
         $this->includeControllers();
         $this->registerArchives();
-        $this->configureJS();
     }
 
     protected function includeControllers(): void
     {
         $projectFile = [
-        
+
             self::FORMS_DIR => [
                 "UserLoginForm.php",
                 "UserRegisterForm.php",
@@ -101,19 +100,6 @@ class UserDashboard extends AbstractDashboard
             $ar->addArchive($archive->name, $archive);
         };
 
-    }
-
-    protected function configureJS(): void
-    {
-        $uss = Uss::instance();
-
-        $installment = [
-            'url' => $this->urlGenerator()->getResult(),
-            'nonce' => $uss->nonce('Ud'),
-            'loggedIn' => !!(new User())->getFromSession()
-        ];
-
-        $uss->addJsProperty('ud', $installment);
     }
 
 }

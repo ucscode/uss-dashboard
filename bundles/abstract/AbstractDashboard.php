@@ -4,6 +4,14 @@ use Ucscode\SQuery\SQuery;
 
 abstract class AbstractDashboard extends AbstractDashboardComposition
 {
+    public function isActiveDashboard(): bool
+    {
+        $uss = Uss::instance();
+        $regex = '#^' . $uss->filterContext($this->config->getBase()) . '(?!\w)#is';
+        $request = $uss->filterContext($uss->splitUri());
+        return preg_match($regex, $request);
+    }
+
     public function getArchiveUrl(string $name): ?string
     {
         $ar = new ArchiveRepository($this::class);

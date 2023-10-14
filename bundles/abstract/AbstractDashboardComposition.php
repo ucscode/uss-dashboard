@@ -6,6 +6,7 @@ use Ucscode\Packages\TreeNode;
 abstract class AbstractDashboardComposition implements DashboardInterface
 {
     abstract protected function createProject(): void;
+    abstract public function urlGenerator(string $path = '/', array $queries = []): UrlGenerator;
 
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
@@ -17,6 +18,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     protected array $attributes = [
         'debug' => true
     ];
+    protected array $dashboardJSProperty = [];
 
     public function configureDashboard(DashboardConfig $config): void
     {
@@ -162,8 +164,12 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     private function isolateProject(): void
     {
         $uss = Uss::instance();
-        $uss->addTwigExtension(new DashboardTwigExtension($this));
+        if($this->isActiveDashboard()) {
+            $uss->addTwigExtension(new DashboardTwigExtension($this));
+        }
+        $this->configureJs();
         $this->createProject();
+        $uss->addJsProperty('dashboard', $this->dashboardJSProperty);
         $this->buildArchives();
     }
 
@@ -246,6 +252,16 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $method = $archive->get('method');
 
         new Route($fullRoute, new $controller($archive), $method);
+    }
+
+    private function configureJS(): void
+    {
+        $uss = Uss::instance();
+        $this->dashboardJSProperty = [
+            'url' => $this->urlGenerator()->getResult(),
+            'nonce' => $uss->nonce('Ud'),
+            'loggedIn' => !!(new User())->getFromSession()
+        ];
     }
 
 }

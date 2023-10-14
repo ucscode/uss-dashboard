@@ -1,7 +1,8 @@
 <?php
 
-AdminDashboard::instance()->setUp([
-    'base' => '/admin',
-    'namespace' => 'Ua',
-    'templatePath' => AdminDashboard::TEMPLATE_DIR
-]);
+$config = (new DashboardConfig())
+    ->setBase('/admin')
+    ->setTemplateDirectory(AdminDashboard::TEMPLATE_DIR)
+    ->setTemplateNamespace('Ua');
+
+AdminDashboard::instance()->configureDashboard($config);

@@ -54,8 +54,8 @@ $projects = [
         'Setup.php'
     ],
     'Admin' => [
-        //'AdminDashboard.php',
-        //'Setup.php'
+        'AdminDashboard.php',
+        'Setup.php'
     ]
 ];
 

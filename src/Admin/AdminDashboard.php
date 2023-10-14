@@ -1,12 +1,13 @@
 <?php
 
-class AdminDashboard extends AbstractUd
+class AdminDashboard extends AbstractDashboard
 {
     use SingletonTrait;
 
-    public const DIR = self::SRC_DIR . '/Admin';
+    public const DIR = DashboardImmutable::SRC_DIR . '/Admin';
     public const TEMPLATE_DIR = self::DIR . '/templates';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
+    public const FORM_DIR = self::DIR . '/forms';
 
     protected function createProject(): void
     {
@@ -18,7 +19,7 @@ class AdminDashboard extends AbstractUd
     {
         $source = [
             self::CONTROLLER_DIR => [
-                'IndexController.php',
+                'AdminIndexController.php',
             ]
         ];
 
@@ -33,23 +34,23 @@ class AdminDashboard extends AbstractUd
 
     protected function registerArchives(): void
     {
-
         $archives = [
 
             (new Archive(Archive::LOGIN))
-                ->set('form', UdLoginForm::class)
+                ->set('form', UserLoginForm::class)
                 ->set('template', '@Ua/security/login.html.twig'),
 
             (new Archive('index'))
                 ->set('template', '@Ua/index.html.twig')
-                ->set('controller', IndexController::class)
+                ->set('controller', AdminIndexController::class)
                 ->set('route', '/'),
 
         ];
+        
+        $ar = new ArchiveRepository($this::class);
 
         foreach($archives as $archive) {
-            $this->addArchive($archive);
+            $ar->addArchive($archive->name, $archive);
         }
-
     }
 }

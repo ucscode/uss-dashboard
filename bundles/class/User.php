@@ -410,11 +410,11 @@ class User implements UserInterface
     /**
      * Get user information from session, decode it and populate the user instance
      *
-     * This will not populate the user instance if the instance already contains a user information
+     * This will not populate the user instance if the instance does not already contains a user information
      *
      * @return bool: true if the session information is found and the User instance was populated, false otherwise
      */
-    public function getFromSession(): self|null
+    public function getFromSession(): ?User
     {
         if(empty($this->user['id']) && !empty($_SESSION['UssUser']) && is_string($_SESSION['UssUser'])) {
             $detail = explode(":", $_SESSION['UssUser']);

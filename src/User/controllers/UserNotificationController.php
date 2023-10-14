@@ -12,13 +12,12 @@ class UserNotificationController implements RouteInterface
     public function onload($pageInfo)
     {
         $ud = UserDashboard::instance();
-
-        $user = (new User())->getFromSession();
-
+        $user = new User();
+        $user->getFromSession();
         $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($ud, $user) : $this->postRequest($ud, $user);
     }
 
-    protected function getRequest(Ud $ud, ?User $user): void
+    protected function getRequest(UserDashboard $ud, ?User $user): void
     {
         if($user) {
 
@@ -55,7 +54,7 @@ class UserNotificationController implements RouteInterface
         ]);
     }
 
-    protected function postRequest(Ud $ud, ?User $user): void
+    protected function postRequest(UserDashboard $ud, ?User $user): void
     {
         $nonce = $_POST['notificationNonce'] ?? null;
 
