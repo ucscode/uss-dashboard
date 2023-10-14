@@ -10,52 +10,82 @@ class UserRegisterForm extends AbstractDashboardForm
     {
 
         if(0) {
-            $this->add('user[username]', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
-                'attr' => [
-                    'placeholder' => 'Username',
-                    'pattern' => '^\s*\w+\s*$'
+            $this->add(
+                'user[username]',
+                UssForm::INPUT,
+                UssForm::TYPE_TEXT,
+                $this->style + [
+                    'attr' => [
+                        'placeholder' => 'Username',
+                        'pattern' => '^\s*\w+\s*$'
+                    ]
                 ]
-            ]);
+            );
         };
 
-        $this->add('user[email]', UssForm::INPUT, UssForm::TYPE_EMAIL, $this->style + [
-            'attr' => [
-                'placeholder' => 'Email'
+        $this->add(
+            'user[email]',
+            UssForm::INPUT,
+            UssForm::TYPE_EMAIL,
+            $this->style + [
+                'attr' => [
+                    'placeholder' => 'Email'
+                ]
             ]
-        ]);
+        );
 
-        $this->add('user[password]', UssForm::INPUT, UssForm::TYPE_PASSWORD, $this->style + [
-            'attr' => [
-                'placeholder' => 'Password',
-                'pattern' => '^.{4,}$'
+        $this->add(
+            'user[password]',
+            UssForm::INPUT,
+            UssForm::TYPE_PASSWORD,
+            $this->style + [
+                'attr' => [
+                    'placeholder' => 'Password',
+                    'pattern' => '^.{4,}$'
+                ]
             ]
-        ]);
+        );
 
-        $this->add('user[confirmPassword]', UssForm::INPUT, UssForm::TYPE_PASSWORD, $this->style + [
-            'attr' => [
-                'placeholder' => 'Confirm Password',
-                'pattern' => '^.{4,}$'
+        $this->add(
+            'user[confirmPassword]',
+            UssForm::INPUT,
+            UssForm::TYPE_PASSWORD,
+            $this->style + [
+                'attr' => [
+                    'placeholder' => 'Confirm Password',
+                    'pattern' => '^.{4,}$'
+                ]
             ]
-        ]);
+        );
 
         $this->addRow('my-2');
 
-        $this->add('user[agreement]', UssForm::INPUT, UssForm::TYPE_CHECKBOX, $this->style + [
-            'required' => true,
-            'label' => "I agree to the Terms of service Privacy policy",
-            'class_label' => null,
-            'ignore' => true
-        ]);
+        $this->add(
+            'user[agreement]',
+            UssForm::INPUT,
+            UssForm::TYPE_CHECKBOX,
+            array_merge($this->style, [
+                'required' => true,
+                'label' => "I agree to the Terms of service Privacy policy",
+                'label_class' => null,
+                'ignore' => true
+            ])
+        );
 
         $this->addRow();
 
-        $this->add('submit', UssForm::BUTTON, UssForm::TYPE_SUBMIT, $this->style + [
-            'class' => 'w-100 btn btn-primary'
-        ]);
+        $this->add(
+            'submit',
+            UssForm::BUTTON,
+            UssForm::TYPE_SUBMIT,
+            $this->style + [
+                'class' => 'w-100 btn btn-primary'
+            ]
+        );
 
     }
 
-    public function isValid(?array $post = null): bool
+    public function isValid(array $post): bool
     {
         $user = $post['user'] ?? [];
         $approved =
@@ -72,17 +102,9 @@ class UserRegisterForm extends AbstractDashboardForm
         $this->populate($post);
     }
 
-    public function prepareEntryData(array $post): array
-    {
-        unset($post['user']['confirmPassword']);
-        $post['user']['email'] = strtolower($post['user']['email']);
-        $post['user']['password'] = password_hash($post['user']['password'], PASSWORD_DEFAULT);
-        $post['user']['usercode'] = Uss::instance()->keygen(7);
-        return $post;
-    }
-
     public function persistEntry(array $data): bool
     {
+        $data = $this->filterData($data);
         $this->user = new User();
         foreach($data['user'] as $key => $value) {
             $this->user->{$key} = $value ?: null;
@@ -101,7 +123,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->sendEmail();
 
-        header("location: " . Ud::instance()->urlGenerator('/'));
+        header("location: " . UserDashboard::instance()->urlGenerator('/'));
 
         exit;
     }
@@ -118,14 +140,14 @@ class UserRegisterForm extends AbstractDashboardForm
      *
      * @ignore
      */
-    protected function validateEmail(string $email)
+    protected function validateEmail(string $email): bool|string
     {
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
         if(!$email) {
             $this->setReport('user[email]', "Invalid email address");
             return false;
         } else {
-            $exists = Ud::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
+            $exists = Uss::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
             if($exists) {
                 $this->setReport('user[email]', 'The email address already exists');
                 return false;
@@ -134,7 +156,7 @@ class UserRegisterForm extends AbstractDashboardForm
         return $email;
     }
 
-    protected function validatePassword(string $password, string $confirmPassword)
+    protected function validatePassword(string $password, string $confirmPassword): bool
     {
         if(strlen($password) < 6) {
             $this->setReport('user[password]', "Password should be at least 6 characters");
@@ -144,6 +166,15 @@ class UserRegisterForm extends AbstractDashboardForm
             return false;
         };
         return true;
+    }
+
+    public function filterData(array $post): array
+    {
+        unset($post['user']['confirmPassword']);
+        $post['user']['email'] = strtolower($post['user']['email']);
+        $post['user']['password'] = password_hash($post['user']['password'], PASSWORD_DEFAULT);
+        $post['user']['usercode'] = Uss::instance()->keygen(7);
+        return $post;
     }
 
     protected function sendEmail()

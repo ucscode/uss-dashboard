@@ -6,14 +6,14 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
 {
     abstract protected function buildForm();
 
+    private string $nonceKey;
+    private string $hashKey = 'udf-hash';
+
     protected array $style = [
         'label_class' => 'd-none',
         'required' => true,
         'column' => 'col-12 mb-2',
     ];
-
-    private string $nonceKey;
-    private string $hashKey = 'udf-hash';
 
     /**
      * A set of reusable data
@@ -219,7 +219,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
             if(count($hash) === 2) {
                 return [
                     'name' => $hash[0],
-                    'value' => $hash[1]
+                    'nonce' => $hash[1]
                 ];
             }
         }

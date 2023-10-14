@@ -10,30 +10,44 @@ class UserLoginForm extends AbstractDashboardForm
 
     protected function buildForm()
     {
-
-        $this->add('user[login]', UssForm::INPUT, UssForm::TYPE_TEXT, $this->style + [
-            'attr' => [
-                'placeholder' => 'Login detail',
-                'pattern' => '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$',
-                'required'
+        $this->add(
+            'user[login]',
+            UssForm::INPUT,
+            UssForm::TYPE_TEXT,
+            $this->style + [
+                'attr' => [
+                    'placeholder' => 'Login detail',
+                    'pattern' => '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$',
+                    'required'
+                ]
             ]
-        ]);
+        );
 
-        $this->add('user[password]', UssForm::INPUT, UssForm::TYPE_PASSWORD, $this->style + [
-            'attr' => [
-                'placeholder' => 'Password',
-                'pattern' => '^.{4,}$',
-                'required'
+        $this->add(
+            'user[password]',
+            UssForm::INPUT,
+            UssForm::TYPE_PASSWORD,
+            $this->style + [
+                'attr' => [
+                    'placeholder' => 'Password',
+                    'pattern' => '^.{4,}$',
+                    'required'
+                ]
             ]
-        ]);
+        );
 
         $this->addRow();
 
         $this->appendField($this->buildMailBlock());
 
-        $this->add('submit', UssForm::BUTTON, UssForm::TYPE_SUBMIT, [
-            'class' => 'btn btn-primary w-100'
-        ]);
+        $this->add(
+            'submit',
+            UssForm::BUTTON,
+            UssForm::TYPE_SUBMIT,
+            [
+                'class' => 'btn btn-primary w-100'
+            ]
+        );
 
     }
 

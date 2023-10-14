@@ -178,7 +178,7 @@
         <script type='module' src='{{ Uss.abspathToUrl(notificationJS) }}'></script>
     {% endif %}
 
-    {% set alerts = Uss.renderBlocks('__alert') %}
+    {% set alerts = Uss.renderBlocks('v-alert') %}
 
     {% if alerts is not null %}
         <script>$(function() { 

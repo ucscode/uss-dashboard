@@ -2,12 +2,18 @@
 
 class Alert
 {
-    protected string $type = 'modal'; // notification
-    protected string $library = 'bootbox';
+    protected const ALERT_TYPES = [
+        'modal' => 'bootbox',
+        'notification' => 'izitoast'
+    ];
+
+    public const SESSID = 'v-alert';
+
     protected array $options = [];
+    protected string $type = 'modal'; 
+    protected string $library = self::ALERT_TYPES['modal'];
     protected string $alertId;
     protected bool $followRedirect = false;
-
     private static $liberated = false;
 
     public function __construct(?string $message = null)
@@ -17,31 +23,33 @@ class Alert
     }
 
     /**
-     * This method is called only once by
-     * UdTwigExtension Class Instance
+     * Set Alert Type (modal|notification): Default = 'modal'
+     * @return self
      */
-    public static function flushAll()
-    {
-        if(!self::$liberated) {
-            $alerts = $_SESSION['UssAlert'] ?? [];
-            foreach(array_keys($alerts) as $key) {
-                $data = $alerts[$key];
-                if(is_array($data)) {
-                    $alert = (new self())
-                        ->type($data['type'])
-                        ->setOption($data['options']);
-                    $alert->display($data['method'], $data['delay']);
-                }
-                unset($_SESSION['UssAlert'][$key]);
-            };
-            self::$liberated = true;
-        }
-        // Garbage Collection
-        if(empty($_SESSION['UssAlert'])) {
-            unset($_SESSION['UssAlert']);
+    public function type(string $type): self
+    {   
+        $key = strtolower(trim($type));
+        $availTypes = array_keys(self::ALERT_TYPES);
+        
+        if(!in_array($key, $availTypes)) {
+            throw new \Exception(
+                sprintf(
+                    "%s() Invalid Type (`%s`) given as argument, type can be one of %s",
+                    __METHOD__,
+                    $type,
+                    implode(", ", array_keys($availTypes))
+                )
+            );
         };
+
+        $this->type = $key;
+        return $this;
     }
 
+    /**
+     * Set Alert Options; E.g Message, Position etc
+     * @return self
+     */
     public function setOption(string|array $option, $value = null): self
     {
         if(is_string($option)) {
@@ -53,27 +61,13 @@ class Alert
         return $this;
     }
 
-    public function type(string $type): self
-    {
-        $types = [
-            'modal' => 'bootbox',
-            'notification' => 'izitoast'
-        ];
-        $key = strtolower(trim($type));
-        if(!in_array($key, array_keys($types))) {
-            $acceptedTypes = implode(", ", array_keys($types));
-            throw new \Exception(__METHOD__ . "() Invalid Type (`{$type}`) given as argument, type can be one of {$acceptedTypes}");
-        };
-        $this->type = $key;
-        $this->library = $types[$key];
-        return $this;
-    }
-
     /**
-     * IMPORTANT:
-     * FOLLOW REDIRECT WILL NOT WORK IF YOU REDIRECT AND DO NOT EXIT THE SCRIPT
+     * Display alert even when redirect occurs
+     * 
+     * Note: This method will not work if you redirect and do not terminate the script
+     * You should call on exit() or die() to terminate the script
      */
-    public function followRedirectAs($name): self
+    public function followRedirectAs(string $name = null): self
     {
         if(!is_string($name)) {
             $name = uniqid();
@@ -83,34 +77,62 @@ class Alert
         return $this;
     }
 
-    public function display(?string $method = null, ?int $delay = 0): void
+    /**
+     * Display the alert
+     * @return void
+     */
+    public function display(?string $method = null, int $delay = 0): void
     {
-        if($this->type === 'modal') {
-            $jsResult = $this->bootBox($method);
-        } else {
-            $jsResult = $this->iziToast($method);
-        }
-
-        $delay = abs($delay ?? 0);
+        $delay = abs($delay);
+        $javascriptOutput = ($this->type === 'modal') ? $this->bootBox($method) : $this->iziToast($method);
 
         if($this->followRedirect) {
-            $_SESSION['UssAlert'] = $_SESSION['UssAlert'] ?? [];
-            $vars = get_object_vars($this);
-            $vars['method'] = $method;
-            $vars['delay'] = $delay;
-            $_SESSION['UssAlert'][$this->alertId] = $vars;
+            $this->preserveAlertSession($method, $delay);
         };
 
         if(!empty($delay)) {
-            $jsResult = "setTimeout(function() { " . $jsResult . " }, {$delay})";
+            $javascriptOutput = sprintf(
+                "%s %s %s",
+                "setTimeout(() => {",
+                $javascriptOutput,
+                "}, {$delay})"
+            );
         };
 
-        UssTwigBlockManager::instance()->appendTo('__alert', $this->alertId, $jsResult);
+        BlockManager::instance()->appendTo(
+            self::SESSID, 
+            $this->alertId, 
+            $javascriptOutput
+        );
+    }
+
+    /**
+     * This method is called only once by
+     * UdTwigExtension Class Instance
+     */
+    public static function flushAll()
+    {
+        if(!self::$liberated) {
+            $alerts = $_SESSION[self::SESSID] ?? [];
+            foreach($alerts as $key => $data) {
+                if(is_array($data)) {
+                    $alert = (new self())
+                        ->type($data['type'])
+                        ->setOption($data['options'])
+                        ->display($data['method'], $data['delay']);
+                }
+                unset($_SESSION[self::SESSID][$key]);
+            };
+            self::$liberated = true;
+        }
     }
 
     protected function bootBox($method): string
     {
-        $method = $this->tryMethod($method, ['alert', 'dialog']);
+        $method = $this->validateMethod($method, [
+            'alert', 
+            'dialog'
+        ]);
 
         $options = $this->getDefaultOptions([
             'message',
@@ -128,7 +150,13 @@ class Alert
 
     protected function iziToast($method)
     {
-        $method = $this->tryMethod($method, ['info', 'success', 'warning', 'error', 'question']);
+        $method = $this->validateMethod($method, [
+            'info', 
+            'success', 
+            'warning', 
+            'error', 
+            'question'
+        ]);
 
         $options = $this->getDefaultOptions([
             'message'
@@ -148,14 +176,18 @@ class Alert
         return $snippet;
     }
 
-    protected function tryMethod(?string $method, array $methods)
+    protected function validateMethod(?string $method, array $methods): string
     {
         $method = trim($method) ?: $methods[0];
         if(!in_array($method, $methods)) {
-            $acceptedMethods = '[' . implode(", ", $methods) . ']';
-            $class = __CLASS__;
             throw new \Exception(
-                "{$class}::display('{$method}', ...): Unaccepted `{$this->type}` prompt used in (#argument 1), try one of the following: {$acceptedMethods}"
+                sprintf(
+                    "%s::display('%s', ...): Unaccepted `%s` prompt used in (#argument 1), try one of the following: %s",
+                    __CLASS__,
+                    $method,
+                    $this->type,
+                    '[' . implode(", ", $methods) . ']'
+                )
             );
         }
         return $method;
@@ -173,9 +205,7 @@ class Alert
             }
         };
         // The user defined options + any missing option generally required for all alert types
-        return $this->options + [
-
-        ];
+        return $this->options + [];
     }
 
     protected function jsEncode(array $options): string
@@ -183,6 +213,15 @@ class Alert
         $options = json_encode($options);
         $jsReverse = "JSON.parse(`" . $options . "`)";
         return $jsReverse;
+    }
+
+    protected function preserveAlertSession($method, $delay): void
+    {
+        $_SESSION[self::SESSID] = $_SESSION[self::SESSID] ?? [];
+        $properties = get_object_vars($this);
+        $properties['method'] = $method;
+        $properties['delay'] = $delay;
+        $_SESSION[self::SESSID][$this->alertId] = $properties;
     }
 
 }
