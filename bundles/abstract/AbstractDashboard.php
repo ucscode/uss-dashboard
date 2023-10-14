@@ -17,10 +17,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        $urlGenerator = new UrlGenerator($path, $this->config->getBase());
-        foreach($query as $key => $value) {
-            $urlGenerator->setQuery($key, $value);
-        }
+        $urlGenerator = new UrlGenerator($path, $query, $this->config->getBase());
         return $urlGenerator;
     }
 

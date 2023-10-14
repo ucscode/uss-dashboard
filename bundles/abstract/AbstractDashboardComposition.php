@@ -161,6 +161,8 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     private function isolateProject(): void
     {
+        $uss = Uss::instance();
+        $uss->addTwigExtension(new DashboardTwigExtension($this));
         $this->createProject();
         $this->buildArchives();
     }

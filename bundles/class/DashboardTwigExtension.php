@@ -2,10 +2,7 @@
 
 use Ucscode\Packages\TreeNode;
 
-/**
- * This extension contains minified version of Ud Object
- */
-final class UdTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
+final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
@@ -15,32 +12,31 @@ final class UdTwigExtension extends \Twig\Extension\AbstractExtension implements
         return ['Ud' => $this];
     }
 
-    public function __construct()
+    public function __construct(
+        private DashboardInterface $dashboard
+    )
     {
-        $ud = AbstractDashboard::instance();
-
-        $this->menu = $ud->menu;
-        $this->userMenu = $ud->userMenu;
-
+        $this->menu = $this->dashboard->menu;
+        $this->userMenu = $this->dashboard->userMenu;
         Alert::flushAll();
     }
 
     /**
      * Uss Methods
      */
-    public function getConfig(string $property)
+    public function getAttribute(string $property)
     {
-        return Ud::instance()->getConfig($property);
+        return $this->dashboard->getAttribute($property);
     }
 
     public function urlGenerator(string $path = '', array $param = []): string
     {
-        return (Ud::instance()->urlGenerator($path, $param))->getResult();
+        return $this->dashboard->urlGenerator($path, $param)->getResult();
     }
 
     public function getArchiveUrl(string $pagename): ?string
     {
-        return Ud::instance()->getArchiveUrl($pagename);
+        return $this->dashboard->getArchiveUrl($pagename);
     }
 
 }

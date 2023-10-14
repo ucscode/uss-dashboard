@@ -14,7 +14,6 @@ class UserDashboard extends AbstractDashboard
     protected function createProject(): void
     {
         $this->includeControllers();
-        $this->registerComponents();
         $this->registerArchives();
         $this->configureJS();
     }
@@ -45,11 +44,6 @@ class UserDashboard extends AbstractDashboard
                 require_once $directory . '/' . $filename;
             }
         }
-    }
-
-    protected function registerComponents(): void
-    {
-        Uss::instance()->addTwigExtension(UdTwigExtension::class);
     }
 
     protected function registerArchives(): void

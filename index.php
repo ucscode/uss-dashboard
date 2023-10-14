@@ -36,7 +36,6 @@ $bundles = [
     'class' => [
         'DashboardConfig.php',
         'DashboardTwigExtension.php',
-        "UrlGenerator.php",
         'Archive.php',
         'ArchiveRepository.php',
         "User.php",
