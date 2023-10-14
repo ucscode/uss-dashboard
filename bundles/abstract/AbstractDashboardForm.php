@@ -2,48 +2,18 @@
 
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractUdForm extends UssForm implements UdFormInterface
+abstract class AbstractDashboardForm extends UssForm implements DashboardFormInterface
 {
     abstract protected function buildForm();
 
-    /**
-     * Default styles and settings for form elements.
-     *
-     * @var array
-     */
     protected array $style = [
         'label_class' => 'd-none',
         'required' => true,
         'column' => 'col-12 mb-2',
     ];
 
-    /**
-     * Whether the form is secured with nonces.
-     *
-     * @var bool
-     */
-    protected bool $secured = false;
-
-    /**
-     * Whether the form is submitted.
-     *
-     * @var bool
-     */
-    private bool $submitted = false;
-
-    /**
-     * Whether the form submission is trusted based on nonce
-     *
-     * @var bool
-     */
-    private bool $trusted = false;
-
-    /**
-     * A key to validate nonce
-     *
-     * @var bool
-     */
     private string $nonceKey;
+    private string $hashKey = 'udf-hash';
 
     /**
      * A set of reusable data
@@ -52,39 +22,30 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
      */
     private array $links = [];
 
-    /**
-     * Constructor for the UdForm class.
-     *
-     * @param string $name The name of the form.
-     * @param string|null $action The URL where the form data will be submitted (default: null, which uses the current request URI).
-     * @param string $method The HTTP method for form submission (default: 'POST').
-     * @param string $enctype The enctype attribute for the form (default: empty string).
-     *
-     * @return void
-     */
-    public function __construct(string $name, ?string $action = null, string $method = 'POST', string $enctype = '')
-    {
-        if(empty($action)) {
-            $action = $_SERVER['REQUEST_URI'];
-        }
+    public function __construct(
+        string $name,
+        ?string $action = null,
+        string $method = 'POST',
+        string $enctype = ''
+    ) {
         parent::__construct($name, $action, $method, $enctype);
-        $this->initForm();
-        $this->beforeBuild();
+        $this->nonceKey = "{$name}:{$method}";
+        $this->onCreate();
         $this->buildForm();
     }
 
     /**
-     * An alternative way to mimic __construct for child class
-     * Since the constructor does many process, trying to redefine all parameters on child class and call parent::__construct()
-     * method can be time wasting. Override the constructor instead
+     * @method onCreate
+     * Child classes should provide their own implementation of this method.
      */
-    protected function beforeBuild()
+    protected function onCreate(): void
     {
-        // Does nothing, just for overriding
+        // @Requires Override
     }
 
     /**
      * This creates a dedicated process for handling form submission
+     * @method handleSubmission
      * @return void
      */
     public function handleSubmission(): void
@@ -93,26 +54,14 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
 
             if($this->isTrusted()) {
 
-                // Get Filtered data from _GET or _POST
-                $post = $this->getFilteredSubmissionData();
+                $data = $this->extractRelevantData();
 
-                // Validate The Data
-                if($this->isValid($post)) {
-
-                    // Get data that should be inserted to database;
-                    $post = $this->prepareEntryData($post);
-
-                    // Update Or Insert Data To Database
-                    $persist = $this->persistEntry($post);
-
-                    if($persist) {
-                        $this->onEntrySuccess($post);
-                    } else {
-                        $this->onEntryFailure($post);
-                    }
+                if($this->isValid($data)) {
+                    
+                    $this->persistEntry($data) ? $this->onEntrySuccess($data) : $this->onEntryFailure($data);
 
                 } else {
-                    $this->handleInvalidRequest($post);
+                    $this->handleInvalidRequest($data);
                 };
 
             } else {
@@ -120,157 +69,107 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
             }
 
         };
-
     }
 
     /**
-     * This method should save information to database and must return true or false regarding whether the data was saved or not
-     *
-     * @param array $data The data to persist to database
-     *
-     * @throws Exception if not overridden
-     *
-     * @return bool `true` if the data saved, `false` otherwise
+     * @method isSubmitted
+     * Child classes should provide their own implementation of this method.
      */
-    public function persistEntry(array $data): bool
+    public function isSubmitted(): bool
     {
-        $this->formulateError(__METHOD__, 'to save entry into database');
-    }
-
-    /**
-     * This method is called if the data failed to save in database
-     *
-     * @param array $data The data that did not save to database
-     *
-     * @throws Exception if not overridden
-     *
-     * @return void
-     */
-    public function onEntryFailure(array $data): void
-    {
-        $this->formulateError(__METHOD__, 'to manage actions upon failure on database entry.');
-    }
-
-    /**
-     * This method is called if the data successfully save to database
-     *
-     * @param array $data The data that saved to database
-     *
-     * @throws Exception if not overridden
-     *
-     * @return void
-     */
-    public function onEntrySuccess(array $data): void
-    {
-        $this->formulateError(__METHOD__, 'to manage actions upon successful database entry.');
-    }
-
-    /**
-     * Get the data to be persisted to the database.
-     *
-     * @param array $data The original data to be processed and persisted.
-     *
-     * @return array The prepared data ready for database storage.
-     */
-    public function prepareEntryData(array $data): array
-    {
-        return $data;
-    }
-
-    /**
-    * Handle an untrusted request.
-    *
-    * This method is called when a request is detected from an invalid source or with an attack.
-    * You can implement custom logic here to handle such requests, such as logging, blocking, or other actions.
-    *
-    * @return void
-    */
-    public function handleUntrustedRequest(): void
-    {
-        // Should be overridden by child class
-    }
-
-    /**
-    * Handle an invalid request.
-    *
-    * This method is called when a request is considered invalid, such as when it contains
-    * invalid data (e.g., an invalid email address).
-    *
-    * @param array|null $post The post data associated with the invalid request.
-    *
-    * @return void
-    */
-    public function handleInvalidRequest(?array $post): void
-    {
-        // Should be overridden by child class
-        $this->populate($post);
-    }
-
-    /**
-    * Check if the provided post data is valid.
-    *
-    * @param array|null $post The post data to validate.
-    *
-    * @return bool Returns true if the post data is empty or null; otherwise, false.
-    */
-    public function isValid(?array $post): bool
-    {
-        if($post === null) {
-            $post = $this->getFilteredSubmissionData();
+        $hash = $this->getSecurityHash();
+        if($hash) {
+            return $hash['name'] === $this->getAttribute('name');
         };
+        return false;
+    }
+
+    /**
+     * @method isTrusted
+     * Child classes should provide their own implementation of this method.
+     */
+    public function isTrusted(): bool
+    {
+        $hash = $this->getSecurityHash();
+        if($hash) {
+            return Uss::instance()->nonce($this->nonceKey, $hash['nonce']);
+        }
+        return false;
+    }
+
+    /**
+     * @method extractRelevantData
+     * Child classes should provide their own implementation of this method.
+     */
+    public function extractRelevantData(): array
+    {
+        $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+        return array_filter($data, function($value, $key) {
+            return $key !== $this->hashKey;
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * @method isValid
+     * Child classes should provide their own implementation of this method.
+     */
+    public function isValid(array $post): bool
+    {
         return !empty($post);
     }
 
     /**
-    * Get filtered submission data.
-    *
-    * @param bool $sanitize Whether to sanitize the data (default: true).
-    *
-    * @return array The filtered submission data.
-    */
-    public function getFilteredSubmissionData(bool $sanitize = true): array
-    {
-        $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
-        if(isset($data['udf-hash'])) {
-            unset($data['udf-hash']);
-        };
-        array_walk_recursive($data, function (&$value) use ($sanitize) {
-            $value = trim($value);
-            if($sanitize) {
-                $value = htmlspecialchars(trim($value), ENT_QUOTES);
-            };
-        });
-        return $data;
-    }
-
-    /**
-     * Check if the form has been submitted and return POST data if submitted.
-     *
-     * @return bool True if the form is submitted; otherwise, false.
+     * @method persistEntry
+     * Child classes must provide their own implementation of this method.
      */
-    public function isSubmitted(): bool
+    public function persistEntry(array $data): bool
     {
-        return $this->submitted;
+        // @Requires Override
+        $this->throwException(__METHOD__, 'to save entry into database');
     }
 
     /**
-     * Check if the form submission is trusted based on nonces.
-     *
-     * @return bool True if the submission is trusted; otherwise, false.
+     * @method onEntryFailure
+     * Child classes must provide their own implementation of this method.
      */
-    public function isTrusted(): bool
+    public function onEntryFailure(array $data): void
     {
-        return $this->trusted;
+        $this->throwException(__METHOD__, 'to manage actions upon failure on database entry.');
     }
 
     /**
-     * Add a security check input then generete FORM HTML
-     *
-     * @return string The generated HTML Form element
+     * @method onEntrySuccess
+     * Child classes must provide their own implementation of this method.
+     */
+    public function onEntrySuccess(array $data): void
+    {
+        $this->throwException(__METHOD__, 'to manage actions upon successful database entry.');
+    }
+
+    /**
+     * @method handleUntrustedRequest
+     * Child classes should provide their own implementation of this method.
+     */
+    public function handleUntrustedRequest(): void
+    {
+        // @Requires Override
+    }
+
+    /**
+     * @method handleInvalidRequest
+     * Child classes should provide their own implementation of this method.
+     */
+    public function handleInvalidRequest(?array $post): void
+    {
+        $this->populate($post);
+    }
+
+    /**
+     * @method getHTML
      */
     public function getHTML(bool $indent = false): string
     {
-        $this->secureForm();
+        $this->setSecurityHash();
         return parent::getHTML($indent);
     }
 
@@ -280,7 +179,6 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
      * @param string $name The name of the form field.
      * @param string $message The report message.
      * @param string $class The CSS class for styling the report.
-     *
      * @return void
      */
     public function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void
@@ -292,78 +190,56 @@ abstract class AbstractUdForm extends UssForm implements UdFormInterface
         };
     }
 
-    protected function onFormBuild()
-    {
-
-    }
-
     /**
-     * Secure the form by adding nonce fields.
-     *
-     * @return void
+     * @method setSecurityHash
      */
-    private function secureForm(): void
+    private function setSecurityHash(): void
     {
-        if(!$this->secured) {
-            // add a nonce
-            $this->add('udf-hash', UssForm::INPUT, UssForm::TYPE_HIDDEN, [
-                'value' => $this->getAttribute('name') . "/" . Uss::instance()->nonce($this->nonceKey)
-            ]);
-            // mark as secured!
-            $this->secured = true;
-        }
-    }
-
-    /**
-     * Filter and sanitize the values in the $_POST array.
-     *
-     * This method trims whitespace from all POST values and removes specific
-     * keys from the $_POST array, such as 'udf-name' and 'udf-hash'.
-     *
-     * @return void
-     */
-    private function initForm()
-    {
-
         $name = $this->getAttribute('name');
-        $method = $this->getAttribute('method');
+        $nonce = Uss::instance()->nonce($this->nonceKey);
 
-        $this->nonceKey = $name . ':' . $method;
-
-        // Check if request method matches
-        if($_SERVER['REQUEST_METHOD'] === $method) {
-
-            // Get submitted data by reference
-            if($method === 'POST') {
-                $data = &$_POST;
-            } else {
-                $data = &$_GET;
-            }
-
-            $hash = explode('/', $data['udf-hash'] ?? '');
-
-            if(count($hash) === 2) {
-
-                list($name, $nonceValue) = $hash;
-
-                // Check if form is submitted
-                $this->submitted = ($name === $this->getAttribute('name'));
-
-                /**
-                 * Check if it is trusted
-                 * This also requires checking for CSRF Attack and other potential hack attempt
-                 */
-                $this->trusted = $this->submitted && Uss::instance()->nonce($this->nonceKey, $nonceValue);
-            }
-
-        };
-
+        $this->add(
+            $this->hashKey,
+            UssForm::INPUT,
+            UssForm::TYPE_HIDDEN,
+            ['value' => "{$name}/{$nonce}"]
+        );
     }
 
-    private function formulateError($method = null, string $error)
+    /**
+     * @method getSecurityHash
+     */
+    protected function getSecurityHash(): ?array
     {
-        $childClass = get_called_class();
-        throw new \Exception($method . " must be overridden on `$childClass` " . $error);
+        $method = strtoupper($this->getAttribute('method'));
+
+        if($_SERVER['REQUEST_METHOD'] === $method) {
+            $data = ($method === 'POST') ? $_POST : $_GET;
+            $hash = explode('/', $data[$this->hashKey] ?? '');
+            if(count($hash) === 2) {
+                return [
+                    'name' => $hash[0],
+                    'value' => $hash[1]
+                ];
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * @method throwException
+     */
+    private function throwException($method = null, string $error)
+    {
+        throw new \Exception(
+            sprintf(
+                "%s must be overridden by `%s` %s",
+                $method,
+                get_called_class(),
+                $error
+            )
+        );
     }
 
 }

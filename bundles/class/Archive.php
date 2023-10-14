@@ -220,7 +220,7 @@ class Archive
 
     private function formException($value): void
     {
-        $interface = UdFormInterface::class;
+        $interface = DashboardFormInterface::class;
         if(!in_array($interface, class_implements($value))) {
             throw new \Exception(
                 sprintf(
