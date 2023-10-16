@@ -4,10 +4,10 @@ use Ucscode\SQuery\SQuery;
 
 abstract class AbstractDashboard extends AbstractDashboardComposition
 {
-    public function isActiveDashboard(): bool
+    public function isActiveBase(): bool
     {
         $uss = Uss::instance();
-        $regex = '#^' . $uss->filterContext($this->config->getBase()) . '(?!\w)#is';
+        $regex = '#^' . $this->base . '(?!\w)#is';
         $request = $uss->filterContext($uss->splitUri());
         return preg_match($regex, $request);
     }
@@ -25,7 +25,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        $urlGenerator = new UrlGenerator($path, $query, $this->config->getBase());
+        $urlGenerator = new UrlGenerator($path, $query, $this->base);
         return $urlGenerator;
     }
 

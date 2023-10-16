@@ -8,10 +8,10 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     abstract protected function createProject(): void;
     abstract public function urlGenerator(string $path = '/', array $queries = []): UrlGenerator;
 
+    public readonly string $base;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
     public readonly Pairs $usermeta;
-    public readonly DashboardConfig $config;
     public readonly ArchiveRepository $archiveRepository;
 
     protected bool $firewallEnabled = true;
@@ -20,14 +20,23 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     ];
     protected array $dashboardJSProperty = [];
 
-    public function configureDashboard(DashboardConfig $config): void
+    private static bool $databaseInitialized = false;
+
+    public function configureDashboard(string $base): void
     {
+        $this->configureSetUp($base);
+
         if($this->databaseEnabled()) {
-            $this->configureSetUp($config);
-            $this->configureDatabase();
-            $this->configureDatabaseOptions();
+
+            if(!self::$databaseInitialized) {
+                $this->configureDatabase();
+                $this->configureDatabaseOptions();
+                self::$databaseInitialized = true;
+            }
+
             $this->configureUser();
-            $this->isolateProject();
+            $this->configureProject();
+
         }
     }
 
@@ -36,7 +45,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $uss = Uss::instance();
 
         if(!DB_ENABLED) {
-            $uss->render('@Uss/error.html.twig', [
+            $message = [
                 "subject" => "Database Connection Disabled",
                 "message" => sprintf(
                     "<span class='%s'>PROBLEM</span> : define('DB_ENABLED', <span class='%s'>false</span>)",
@@ -46,17 +55,17 @@ abstract class AbstractDashboardComposition implements DashboardInterface
                 "message_class" => "mb-5",
                 "image" => $uss->abspathToUrl(DashboardImmutable::ASSETS_DIR . '/images/database-error-icon.webp'),
                 "image_style" => "width: 150px"
-            ]);
+            ];
+            $uss->render('@Uss/error.html.twig', $message);
         };
 
         return !!DB_ENABLED;
     }
 
-    private function configureSetUp(DashboardConfig $config): void
+    private function configureSetUp(string $base): void
     {
         $uss = Uss::instance();
-        $uss->addTwigFilesystem($config->getTemplateDirectory(), $config->getTemplateNamespace());
-        $this->config = $config;
+        $this->base = $uss->filterContext($base);
         $this->archiveRepository = new ArchiveRepository($this::class);
     }
 
@@ -116,7 +125,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
             };
         };
-
     }
 
     private function configureDatabaseOptions(): void
@@ -145,7 +153,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
                 $uss->options->set($key, $value);
             };
         };
-
     }
 
     private function configureUser(): void
@@ -161,10 +168,10 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
 
-    private function isolateProject(): void
+    private function configureProject(): void
     {
         $uss = Uss::instance();
-        if($this->isActiveDashboard()) {
+        if($this->isActiveBase()) {
             $uss->addTwigExtension(new DashboardTwigExtension($this));
         }
         $this->configureJs();
@@ -175,21 +182,21 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     private function buildArchives(): void
     {
-        $this->compileMenuItems();
+        $archives = $this->archiveRepository->getAllArchives();
+
+        $this->compileMenuItems($archives);
         $this->recursiveMenuConfig($this->menu, 'Main Menu');
         $this->recursiveMenuConfig($this->userMenu, 'User Menu');
 
-        $archives = $this->archiveRepository->getAllArchives();
-        foreach($archives as $singlePage) {
-            $this->activateDefaultPage($singlePage);
+        foreach($archives as $archive) {
+            $this->configureArchive($archive);
         }
     }
 
-    private function compileMenuItems(): void
+    private function compileMenuItems(array $archives): void
     {
-        $archives = $this->archiveRepository->getAllArchives();
-        foreach($archives as $page) {
-            foreach($page->getMenuItems() as $name => $menuItem) {
+        foreach($archives as $archive) {
+            foreach($archive->getMenuItems() as $name => $menuItem) {
                 $item = $menuItem['item'];
                 $menuItem['parent']->add($name, $item);
             };
@@ -236,7 +243,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     }
 
-    private function activateDefaultPage(Archive $archive): void
+    private function configureArchive(Archive $archive): void
     {
         $uss = Uss::instance();
 
@@ -246,7 +253,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
             return;
         };
 
-        $fullRoute = $uss->filterContext($this->config->getBase() . "/" . $archiveRoute);
+        $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
 
         $controller = $archive->get('controller');
         $method = $archive->get('method');

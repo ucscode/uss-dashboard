@@ -7,5 +7,5 @@ interface DashboardInterface
     public function removeAttribute(string $property): void;
     public function enableFirewall(bool $enable = true): void;
     public function render(string $template, array $options = []): void;
-    public function isActiveDashboard(): bool;
+    public function isActiveBase(): bool;
 }

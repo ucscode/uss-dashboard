@@ -5,12 +5,15 @@ class AdminDashboard extends AbstractDashboard
     use SingletonTrait;
 
     public const DIR = DashboardImmutable::SRC_DIR . '/Admin';
+
+    public const FORM_DIR = self::DIR . '/forms';
     public const TEMPLATE_DIR = self::DIR . '/templates';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
-    public const FORM_DIR = self::DIR . '/forms';
 
     protected function createProject(): void
     {
+        $uss = Uss::instance();
+        $uss->addTwigFilesystem(self::TEMPLATE_DIR, 'Ua');
         $this->includeControllers();
         $this->registerArchives();
     }
@@ -46,7 +49,7 @@ class AdminDashboard extends AbstractDashboard
                 ->set('route', '/'),
 
         ];
-        
+
         $ar = new ArchiveRepository($this::class);
 
         foreach($archives as $archive) {
