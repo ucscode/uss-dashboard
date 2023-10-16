@@ -107,7 +107,7 @@ class UserDashboard extends AbstractDashboard
 
                 (new Archive('profile'))
                     ->set('route', '/profile')
-                    ->set('template', '@Ud/pages/profile.html.twig')
+                    ->set('template', '@Ud/pages/profile/main.html.twig')
                     ->set('controller', UserProfileController::class)
                     ->addMenuItem('profile', [
                         'label' => 'Profile',

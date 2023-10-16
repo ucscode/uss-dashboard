@@ -1,26 +1,6 @@
-{% extends '@Ud/base.html.twig' %}
+{% extends '@Ud/pages/profile/base.html.twig' %}
 
-{% block dashboard_content %}
-
-    <div class="container-xl px-4 mt-4">
-    
-    {% set profileMenu = Ud.getDashboardProperty('profileMenu') %}
-    {% if profileMenu and profileMenu.children is not empty %}
-        <nav class="nav nav-pills">
-            {% for node in profileMenu.children %}
-                <a class="nav-link active ms-0" href="{{ node.getAttr('href') }}" target="{{ node.getAttr('target') }}">
-                    {% set icon = node.getAttr('icon') %}
-                    {% if icon is not empty %}
-                        <i class='{{ node.getAttr('icon') }} me-1'></i> 
-                    {% endif %}
-                    {{ node.getAttr('label') }}
-                </a>
-            {% endfor %}
-        </nav>
-    {% endif %}
-
-    <hr class="mt-2 mb-4">
-
+{% block profile_content %}
     <form method='POST'>
         <div class="row">
             <div class="col-xl-4">
@@ -76,7 +56,4 @@
             </div>
         </div>
     </form>
-
-</div>
-    
 {% endblock %}
