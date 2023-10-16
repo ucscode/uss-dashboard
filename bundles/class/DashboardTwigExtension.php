@@ -14,11 +14,15 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
 
     public function __construct(
         private DashboardInterface $dashboard
-    )
-    {
+    ) {
         $this->menu = $this->dashboard->menu;
         $this->userMenu = $this->dashboard->userMenu;
         Alert::flushAll();
+    }
+
+    public function getDashboardProperty(string $property): mixed
+    {
+        return $this->dashboard->{$property} ?? null;
     }
 
     /**

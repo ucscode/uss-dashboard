@@ -37,23 +37,31 @@ class AdminDashboard extends AbstractDashboard
 
     protected function registerArchives(): void
     {
-        $archives = [
+        $archiveList = [
 
-            (new Archive(Archive::LOGIN))
+            'security' => [
+
+                (new Archive(Archive::LOGIN))
                 ->set('form', UserLoginForm::class)
                 ->set('template', '@Ua/security/login.html.twig'),
 
-            (new Archive('index'))
+            ],
+
+            'pages' => [
+
+                (new Archive('index'))
                 ->set('template', '@Ua/index.html.twig')
                 ->set('controller', AdminIndexController::class)
                 ->set('route', '/'),
 
+            ],
+
         ];
 
-        $ar = new ArchiveRepository($this::class);
-
-        foreach($archives as $archive) {
-            $ar->addArchive($archive->name, $archive);
+        foreach($archiveList as $section => $archives) {
+            foreach($archives as $archive) {
+                $this->archiveRepository->addArchive($archive->name, $archive);
+            }
         }
     }
 }
