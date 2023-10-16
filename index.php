@@ -35,7 +35,6 @@ $bundles = [
         "AbstractDashboardForm.php",
     ],
     'class' => [
-        'DashboardConfig.php',
         'DashboardTwigExtension.php',
         'Archive.php',
         'ArchiveRepository.php',

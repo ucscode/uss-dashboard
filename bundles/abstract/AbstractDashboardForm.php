@@ -7,20 +7,13 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     abstract protected function buildForm();
 
     private string $nonceKey;
-    private string $hashKey = 'udf-hash';
+    private string $hashKey = 'a7f8b2c4e1d3g6i9';
 
     protected array $style = [
         'label_class' => 'd-none',
         'required' => true,
         'column' => 'col-12 mb-2',
     ];
-
-    /**
-     * A set of reusable data
-     *
-     * @var array
-     */
-    private array $links = [];
 
     public function __construct(
         string $name,
@@ -57,7 +50,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
                 $data = $this->extractRelevantData();
 
                 if($this->isValid($data)) {
-                    
+
                     $this->persistEntry($data) ? $this->onEntrySuccess($data) : $this->onEntryFailure($data);
 
                 } else {
@@ -104,7 +97,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     public function extractRelevantData(): array
     {
         $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
-        return array_filter($data, function($value, $key) {
+        return array_filter($data, function ($value, $key) {
             return $key !== $this->hashKey;
         }, ARRAY_FILTER_USE_BOTH);
     }
@@ -223,7 +216,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
                 ];
             }
         }
-        
+
         return null;
     }
 
