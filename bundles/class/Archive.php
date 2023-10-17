@@ -64,7 +64,7 @@ class Archive
      * Add a menu Item:
      * The parent of the menu item must be specified
      */
-    public function addMenuItem(string $name, array|TreeNode $menu, string|TreeNode $parentMenu): self
+    public function addMenuItem(string $name, array|TreeNode $menu, TreeNode $parentMenu): self
     {
         // Validate Menu Item
         if($parentMenu === $menu) {
@@ -77,6 +77,10 @@ class Archive
             );
         };
 
+        if(is_array($menu)) {
+            $menu = new TreeNode($name, $menu);
+        }
+
         $this->menuItems[$name] = [
             'item' => $menu,
             'parent' => $parentMenu
@@ -88,12 +92,16 @@ class Archive
     /**
      * Get Menu Items
      */
-    public function getMenuItems(?string $name = null): array|null
+    public function getMenuItem(?string $name = null, bool $returnItem = false): array|TreeNode|null
     {
         if(is_null($name)) {
             return $this->menuItems;
         };
-        return $this->menuItems[$name] ?? null;
+        $items = $this->menuItems[$name] ?? null;
+        if($items && $returnItem) {
+            return $items['item'];
+        };
+        return $items;
     }
 
     /**

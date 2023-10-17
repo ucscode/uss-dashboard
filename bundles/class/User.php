@@ -409,12 +409,9 @@ class User implements UserInterface
 
     /**
      * Get user information from session, decode it and populate the user instance
-     *
-     * This will not populate the user instance if the instance does not already contains a user information
-     *
-     * @return bool: true if the session information is found and the User instance was populated, false otherwise
+     * @return bool: true if the session information is found and the User instance is populated, false otherwise
      */
-    public function getFromSession(): ?User
+    public function getFromSession(): bool
     {
         if(empty($this->user['id']) && !empty($_SESSION['UssUser']) && is_string($_SESSION['UssUser'])) {
             $detail = explode(":", $_SESSION['UssUser']);
@@ -424,19 +421,17 @@ class User implements UserInterface
                     $hash = hash('sha256', $user['password'] . $user['usercode']);
                     if($hash === $detail[1]) {
                         $this->user = $user;
-                        return $this;
+                        return true;
                     }
                 };
             };
         };
-        return null;
+        return false;
     }
 
     /**
-     * Private Methods
-     * @ignore
+     * @method getUser
      */
-
     private function getUser(?int $userId): ?array
     {
         if(is_null($userId)) {
@@ -445,6 +440,9 @@ class User implements UserInterface
         return Uss::instance()->fetchData(self::TABLE, $userId);
     }
 
+    /**
+     * @method polyFill
+     */
     private function polyFill(?int $userId): bool
     {
         $columns = Uss::instance()->getTableColumns(self::TABLE);
@@ -475,16 +473,27 @@ class User implements UserInterface
         return false;
     }
 
+    /**
+     * @method validate
+     */
     private function validate(string $key, string $action): void
     {
         if(!array_key_exists($key, $this->user)) {
             $class = __CLASS__;
             throw new \Exception(
-                "Trying to {$action} unknown property {$class}::\${$key}; references to unknown column `{self::TABLE}`.`{$key}`"
+                sprintf(
+                    "Trying to %s unknown property %s::\$%3\$s; references to unknown column `{self::TABLE}`.`%3\$s`",
+                    $action,
+                    __CLASS__,
+                    $key
+                )
             );
         }
     }
 
+    /**
+     * @method filterNotificationData
+     */
     private function filterNotificationData(array $originalArray): array
     {
         $keysToExtract = Uss::instance()->getTableColumns(self::NOTIFICATION_TABLE);

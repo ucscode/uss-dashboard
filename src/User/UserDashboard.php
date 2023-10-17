@@ -21,6 +21,7 @@ class UserDashboard extends AbstractDashboard
         $this->profileMenu = new TreeNode('profileMenu');
         $this->includeControllers();
         $this->registerArchives();
+        $this->preload();
     }
 
     protected function includeControllers(): void
@@ -41,6 +42,7 @@ class UserDashboard extends AbstractDashboard
                 'UserLogoutController.php',
                 'UserNotificationController.php',
                 'UserProfileController.php',
+                'UserSecurityController.php',
             ]
 
         ];
@@ -59,8 +61,8 @@ class UserDashboard extends AbstractDashboard
             'security' => [
 
                 (new Archive(Archive::LOGIN))
-                ->set('form', UserLoginForm::class)
-                ->set('template', '@Ud/security/login.html.twig'),
+                    ->set('form', UserLoginForm::class)
+                    ->set('template', '@Ud/security/login.html.twig'),
 
                 (new Archive('register'))
                     ->set('route', '/register')
@@ -114,10 +116,20 @@ class UserDashboard extends AbstractDashboard
                         'href' => $this->urlGenerator('/profile'),
                         'icon' => 'bi bi-person'
                     ], $this->menu)
-                    ->addMenuItem('profileNav', [
+                    ->addMenuItem('profilePill', [
                         'label' => 'Profile',
                         'href' => $this->urlGenerator('/profile'),
-                        'icon' => 'bi bi-person-circle'
+                        'icon' => 'bi bi-person-circle',
+                    ], $this->profileMenu),
+
+                (new Archive('security'))
+                    ->set('route', '/security')
+                    ->set('template', '@Ud/pages/profile/security.html.twig')
+                    ->set('controller', UserSecurityController::class)
+                    ->addMenuItem('securityPill', [
+                        'label' => 'Security',
+                        'href' => $this->urlGenerator('/security'),
+                        'icon' => 'bi bi-padlock'
                     ], $this->profileMenu),
 
             ],
@@ -130,6 +142,19 @@ class UserDashboard extends AbstractDashboard
             }
         };
 
+    }
+
+    protected function preload() {
+        Event::instance()->addListener('dashboard:render', function() {
+            foreach($this->profileMenu->children as $child) {
+                if($child->getAttr('active')) {
+                    $profileMenu = $this->archiveRepository->getArchive('profile')?->getMenuItem('profile', true);
+                    if($profileMenu) {
+                        $profileMenu->setAttr('active', true);
+                    }
+                }
+            };
+        }, -10);
     }
 
 }

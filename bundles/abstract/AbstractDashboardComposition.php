@@ -171,13 +171,19 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     private function configureProject(): void
     {
         $uss = Uss::instance();
+
         if($this->isActiveBase()) {
             $uss->addTwigExtension(new DashboardTwigExtension($this));
         }
-        $this->configureJs();
+        
+        $this->configureJS($uss);
         $this->createProject();
         $uss->addJsProperty('dashboard', $this->dashboardJSProperty);
-        $this->buildArchives();
+
+        Event::instance()->addListener('modules:loaded', function () {
+            $this->buildArchives();
+            Event::instance()->emit('dashboard:render');
+        }, -10);
     }
 
     private function buildArchives(): void
@@ -196,7 +202,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     private function compileMenuItems(array $archives): void
     {
         foreach($archives as $archive) {
-            foreach($archive->getMenuItems() as $name => $menuItem) {
+            foreach($archive->getMenuItem() as $name => $menuItem) {
                 $item = $menuItem['item'];
                 $menuItem['parent']->add($name, $item);
             };
@@ -206,27 +212,30 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     private function recursiveMenuConfig(TreeNode $menu, string $title): void
     {
         if(empty($menu->getAttr('label')) && !empty($menu->level)) {
-            $name = $menu->name;
-            throw new \Exception("{$title}: (Item: {$name}) must have a label attribute");
+            throw new \Exception(
+                sprintf(
+                    "%s: (Item: %s) must have a label attribute",
+                    $title,
+                    $menu->name
+                )
+            );
         };
 
         $menu->sortChildren(function ($a, $b) {
-            $aOrder = (int)($a->getAttr('order') ?? 0);
-            $bOrder = (int)($b->getAttr('order') ?? 0);
-            return $aOrder <=> $bOrder;
+            $leftOrder = (int)($a->getAttr('order') ?? 0);
+            $rightOrder = (int)($b->getAttr('order') ?? 0);
+            return $leftOrder <=> $rightOrder;
         });
 
-        if(empty($menu->getAttr('target'))) {
-            $menu->setAttr('target', '_self');
-        };
+        $defaultAttr = [
+            'target' => '_self',
+            'href' => 'javascript:void(0)'
+        ];
 
-        if(empty($menu->getAttr('href'))) {
-            $menu->setAttr('href', 'javascript:void(0)');
-        };
-
+        $this->presetMenuAttribute($menu, $defaultAttr);
+        
         if(!empty($menu->children)) {
-            $menu->setAttr('href', 'javascript:void(0)');
-            $menu->setAttr('target', '_self');
+            $this->presetMenuAttribute($menu, $defaultAttr);
             foreach($menu->children as $childMenu) {
                 $this->recursiveMenuConfig($childMenu, $title);
             }
@@ -234,7 +243,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
         if($menu->getAttr('active')) {
             $parentNode = $menu->parentNode;
-            $x = 0;
             while($parentNode && $parentNode->level) {
                 $parentNode->setAttr('isExpanded', true);
                 $parentNode = $parentNode->parentNode;
@@ -243,27 +251,30 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     }
 
+    private function presetMenuAttribute(TreeNode $menu, array $attributes): void 
+    {
+        foreach($attributes as $key => $value) {
+            if(empty($menu->getAttr($key))) {
+                $menu->setAttr($key, $value);
+            };
+        }
+    }
+
     private function configureArchive(Archive $archive): void
     {
         $uss = Uss::instance();
-
         $archiveRoute = $archive->get('route');
 
-        if(empty($archiveRoute) || $archive->name === Archive::LOGIN) {
-            return;
-        };
-
-        $fullRoute = $uss->filterContext($this->base . "/" . $archiveRoute);
-
-        $controller = $archive->get('controller');
-        $method = $archive->get('method');
-
-        new Route($fullRoute, new $controller($archive, $this), $method);
+        if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
+            $route = $uss->filterContext($this->base . "/" . $archiveRoute);
+            $controller = $archive->get('controller');
+            $method = $archive->get('method');
+            new Route($route, new $controller($archive, $this), $method);
+        }
     }
 
-    private function configureJS(): void
+    private function configureJS(Uss $uss): void
     {
-        $uss = Uss::instance();
         $this->dashboardJSProperty = [
             'url' => $this->urlGenerator()->getResult(),
             'nonce' => $uss->nonce('Ud'),

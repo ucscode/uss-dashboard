@@ -42,17 +42,17 @@ class AdminDashboard extends AbstractDashboard
             'security' => [
 
                 (new Archive(Archive::LOGIN))
-                ->set('form', UserLoginForm::class)
-                ->set('template', '@Ua/security/login.html.twig'),
+                    ->set('form', UserLoginForm::class)
+                    ->set('template', '@Ua/security/login.html.twig'),
 
             ],
 
             'pages' => [
 
                 (new Archive('index'))
-                ->set('template', '@Ua/index.html.twig')
-                ->set('controller', AdminIndexController::class)
-                ->set('route', '/'),
+                    ->set('template', '@Ua/index.html.twig')
+                    ->set('controller', AdminIndexController::class)
+                    ->set('route', '/'),
 
             ],
 

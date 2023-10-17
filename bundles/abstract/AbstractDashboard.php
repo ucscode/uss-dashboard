@@ -56,19 +56,19 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function render(string $template, array $options = []): void
     {
-        Event::instance()->addListener('modules:loaded', function () use (&$template, &$options) {
+        $event = Event::instance();
+        $event->addListener('dashboard:render', function () use (&$template, &$options, $event) {
             $options['user'] = new User();
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
-                $option['user'] = $this->renderLoginArchive($template, $options);
+                $this->renderLoginArchive($template, $options);
             };
             Uss::instance()->render($template, $options);
         });
     }
 
-    protected function renderLoginArchive(string $template, array $options): ?User
+    protected function renderLoginArchive(string $template, array $options): void
     {
-        $ar = new ArchiveRepository($this::class);
-        $loginPage = $ar->getArchive(Archive::LOGIN);
+        $loginPage = $this->archiveRepository->getArchive(Archive::LOGIN);
         $loginForm = $loginPage->get('form');
 
         $form = new $loginForm(Archive::LOGIN);
@@ -81,9 +81,6 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
             $options['form'] = $form;
             Uss::instance()->render($template, $options);
         };
-
-        return $user;
-
     }
 
 }

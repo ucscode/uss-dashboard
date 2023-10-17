@@ -8,7 +8,7 @@
     {% if profileMenu and profileMenu.children is not empty %}
         <nav class="nav nav-pills">
             {% for node in profileMenu.children %}
-                <a class="nav-link active ms-0" href="{{ node.getAttr('href') }}" target="{{ node.getAttr('target') }}">
+                <a class="nav-link me-2 {{ node.getAttr('active') ? 'active' : '' }}" href="{{ node.getAttr('href') }}" target="{{ node.getAttr('target') }}">
                     {% set icon = node.getAttr('icon') %}
                     {% if icon is not empty %}
                         <i class='{{ node.getAttr('icon') }} me-1'></i> 
