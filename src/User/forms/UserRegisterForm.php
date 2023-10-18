@@ -114,7 +114,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
     public function onEntrySuccess(array $post): void
     {
-        $this->user->setMeta('role', ['MEMBER']);
+        $this->user->setMeta('user.role', ['MEMBER']);
 
         (new Alert("Your registration was successful"))
             ->type('notification')

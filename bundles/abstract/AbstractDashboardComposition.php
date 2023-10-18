@@ -18,7 +18,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     protected array $attributes = [
         'debug' => true
     ];
-    protected array $dashboardJSProperty = [];
 
     private static bool $databaseInitialized = false;
 
@@ -174,11 +173,10 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
         if($this->isActiveBase()) {
             $uss->addTwigExtension(new DashboardTwigExtension($this));
+            $this->configureJS($uss);
         }
-        
-        $this->configureJS($uss);
+
         $this->createProject();
-        $uss->addJsProperty('dashboard', $this->dashboardJSProperty);
 
         Event::instance()->addListener('modules:loaded', function () {
             $this->buildArchives();
@@ -233,7 +231,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         ];
 
         $this->presetMenuAttribute($menu, $defaultAttr);
-        
+
         if(!empty($menu->children)) {
             $this->presetMenuAttribute($menu, $defaultAttr);
             foreach($menu->children as $childMenu) {
@@ -251,7 +249,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     }
 
-    private function presetMenuAttribute(TreeNode $menu, array $attributes): void 
+    private function presetMenuAttribute(TreeNode $menu, array $attributes): void
     {
         foreach($attributes as $key => $value) {
             if(empty($menu->getAttr($key))) {
@@ -275,11 +273,11 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     private function configureJS(Uss $uss): void
     {
-        $this->dashboardJSProperty = [
+        $uss->addJsProperty('dashboard', [
             'url' => $this->urlGenerator()->getResult(),
             'nonce' => $uss->nonce('Ud'),
             'loggedIn' => !!(new User())->getFromSession()
-        ];
+        ]);
     }
 
 }

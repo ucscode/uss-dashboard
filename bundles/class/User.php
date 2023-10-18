@@ -55,13 +55,14 @@ class User implements UserInterface
 
     public function getAvatar(): ?string
     {
-        $avatar = Uss::instance()->abspathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
-        return $avatar;
+        $default = Uss::instance()->abspathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
+        $avatar = $this->getMeta('user.avatar');
+        return $avatar ?? $default;
     }
 
     public function getRoles(): array
     {
-        return $this->meta->get('user:roles') ?? [];
+        return $this->meta->get('user.roles') ?? [];
     }
 
     public function addRole(string|array $role): bool

@@ -22,7 +22,6 @@ class UserRegisterController implements RouteInterface
         $ud->render($template, [
             'form' => $formInstance
         ]);
-
     }
 
 }

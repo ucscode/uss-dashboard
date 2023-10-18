@@ -4,7 +4,6 @@ class UserLogoutController implements RouteInterface
 {
     public function onload($pageInfo)
     {
-
         if(isset($_SESSION['UssUser'])) {
             unset($_SESSION['UssUser']);
         };
@@ -17,7 +16,6 @@ class UserLogoutController implements RouteInterface
 
         header("location: " . $endpoint);
         exit;
-
     }
 
 };

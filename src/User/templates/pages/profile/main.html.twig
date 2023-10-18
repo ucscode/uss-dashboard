@@ -1,59 +1,86 @@
 {% extends '@Ud/pages/profile/base.html.twig' %}
 
 {% block profile_content %}
-    <form method='POST'>
+
+    <form method='POST' enctype='multipart/form-data'>
         <div class="row">
+        
             <div class="col-xl-4">
-                <!-- Profile picture card-->
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-body">
                         <div class="row g-3">
+
                             <div class="col-sm-4 col-md-3 col-xl-12 text-center mb-2">
                                 <figure class="mb-2">
-                                    <img class="mb-2 img-fluid img-thumbnail" width="140px" src="{{ user.avatar }}" alt="">
+                                    <img class="mb-2 img-fluid img-thumbnail" width="140px" src="{{ user.avatar }}" id="image" alt="">
                                 </figure>
-                                <input type='file' name='avatar' accept=".jpg,.png,.gif,.jpeg,.webp" class='d-none'>
-                                <button class="btn btn-primary" type="button">
+
+                                <input type='file' name='avatar' accept=".jpg,.png,.gif,.jpeg,.webp" class='d-none' id="input" data-ui-preview-uploaded-image-in="#image">
+
+                                <button class="btn btn-primary" type="button" data-ui-transfer-click-event-to="#input">
                                     <i class="bi bi-camera me-1"></i> Change Photo
                                 </button>
                             </div>
+
                             <div class="col-sm-8 col-md-7 col-xl-12 text-center text-sm-start text-xl-center">
                                 <ul class="list-unstyled">
-                                    {% if user.username %}
-                                        <li>
-                                            <span class="text-capitalize fs-5">{{ user.username }}</span>
+
+                                    {% block profile_info %}
+
+                                        {% if user.username %}
+                                            <li>
+                                                <span class="text-capitalize fs-5">{{ user.username }}</span>
+                                            </li>
+                                        {% endif %}
+
+                                        <li class='text-muted mb-2'>
+                                            {{ user.email }}
                                         </li>
-                                    {% endif %}
-                                    <li class='text-muted mb-2'>{{ user.email }}</li>
-                                    <li class='small fw-light mb-0'>Joined: {{ user.register_time|slice(0, 10) }}</li>
-                                    <li class='small fw-light mb-0'>Last seen: {{ Uss.relativeTime(user.last_seen, true) }}</li>
+
+                                        <li class='small fw-light mb-0'>
+                                            Joined: {{ user.register_time|slice(0, 10) }}
+                                        </li>
+
+                                        <li class='small fw-light mb-0'>
+                                            Last seen: {{ Uss.relativeTime(user.last_seen, true) }}
+                                        </li>
+
+                                    {% endblock %}
+
                                 </ul>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-xl-8">
-                <!-- Account details card-->
                 <div class="card mb-4">
+
                     <div class="card-body p-4">
-                        <form>
-                            <!-- Form Group (email address)-->
+
+                        {% block profile_content_right %}
+
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" name="user[email]" value="{{ user.email }}">
+                                <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" name="user[email]" value="{{ user.email }}" required>
                             </div>
-                            <!-- Form Row-->
+
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputBirthday">About</label>
-                                <textarea class="form-control" id="inputBirthday" name="birthday" placeholder="My Bio" rows="5" name="meta[user][about]">{{ user.getMeta("user.about")}}</textarea>
+                                <textarea class="form-control" id="inputBirthday" placeholder="My Bio" rows="5" name="meta[user.about]">{{ user.getMeta("user.about")}}</textarea>
                             </div>
-                            <!-- Save changes button-->
-                            <button class="btn btn-primary" type="submit">Save changes</button>
-                        </form>
+
+                        {% endblock %}
+
+                        <button class="btn btn-primary" type="submit">Save changes</button>
                     </div>
+
                 </div>
             </div>
+
         </div>
     </form>
+
 {% endblock %}
