@@ -2,29 +2,24 @@
 
 interface UserInterface
 {
+    public const USER_TABLE = DB_PREFIX . "users";
+    public const META_TABLE = DB_PREFIX . "usermeta";
+    public const NOTIFICATION_TABLE = DB_PREFIX . "notifications";
+    public const SESSION_KEY = 'user:session';
+
     public function exists(): bool;
 
     public function persist(): bool;
 
     public function delete(): ?bool;
 
-    public function getRoles(): array;
+    public function getUserMeta(string $key, bool $epoch): mixed;
 
-    public function addRole(string|array $role): bool;
+    public function getUserMetaByRegex(string $regex): array;
 
-    public function removeRole(string|array $role): bool;
+    public function setUserMeta(string $key, mixed $value): bool;
 
-    public function hasRole(string $role): bool;
-
-    public function getMeta(string $key, bool $epoch): mixed;
-
-    public function setMeta(string $key, mixed $value): bool;
-
-    public function removeMeta(string $key): ?bool;
-
-    public function getAllMeta(string $regex): array;
-
-    public function errors(): array;
+    public function removeUserMeta(string $key): ?bool;
 
     public function addNotification(array $data): int|bool;
 

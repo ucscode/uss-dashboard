@@ -2,6 +2,8 @@
 
 namespace Ud;
 
+use DashboardImmutable;
+
 defined('ROOT_DIR') || die("@USS_DASHBOARD");
 
 if(!defined('UD_DIR')) {
@@ -33,6 +35,8 @@ $bundles = [
         'AbstractDashboardComposition.php',
         'AbstractDashboard.php',
         "AbstractDashboardForm.php",
+        "AbstractUserFoundation.php",
+        "AbstractUserRepository.php",
     ],
     'class' => [
         'DashboardTwigExtension.php',
@@ -51,13 +55,13 @@ $bundles = [
 $projects = [
     'User' => [
         'UserDashboard.php',
-        'Setup.php'
     ],
     'Admin' => [
         'AdminDashboard.php',
-        'Setup.php'
-    ]
+    ],
 ];
 
 $iterateElements($bundles, 'bundles');
 $iterateElements($projects, 'src');
+
+require_once DashboardImmutable::SRC_DIR . "/ConfigurePanel.php";

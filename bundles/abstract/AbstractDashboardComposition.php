@@ -1,6 +1,5 @@
 <?php
 
-use Ucscode\Packages\Pairs;
 use Ucscode\Packages\TreeNode;
 
 abstract class AbstractDashboardComposition implements DashboardInterface
@@ -11,7 +10,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     public readonly string $base;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    public readonly Pairs $usermeta;
     public readonly ArchiveRepository $archiveRepository;
 
     protected bool $firewallEnabled = true;
@@ -156,13 +154,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     private function configureUser(): void
     {
-        $uss = Uss::instance();
-
-        $this->usermeta = new Pairs($uss->mysqli, User::META_TABLE);
-        $this->usermeta->linkParentTable([
-            'parentTable' => User::TABLE,
-        ]);
-
+        User::hibernate();
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
@@ -180,7 +172,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
         Event::instance()->addListener('modules:loaded', function () {
             $this->buildArchives();
-            Event::instance()->emit('dashboard:render');
         }, -10);
     }
 

@@ -6,7 +6,7 @@ use Ucscode\UssElement\UssElement;
 class UserLoginForm extends AbstractDashboardForm
 {
     private string $error;
-    protected ?array $user;
+    protected User $user;
 
     protected function buildForm()
     {
@@ -53,8 +53,8 @@ class UserLoginForm extends AbstractDashboardForm
 
     public function handleSubmission(): void
     {
-        $user = new User();
-        if(!$user->getFromSession()) {
+        $this->user = new User();
+        if(!$this->user->getFromSession()) {
             parent::handleSubmission();
         };
     }
@@ -62,12 +62,11 @@ class UserLoginForm extends AbstractDashboardForm
     public function persistEntry(array $data): bool
     {
         $column = strpos($data['user']['login'], '@') === false ? 'username' : 'email';
+        
+        $this->user = (new User())->allocate($column, $data['user']['login']);
 
-        $this->user = Uss::instance()->fetchData(User::TABLE, $data['user']['login'], $column);
-
-        if(!empty($this->user)) {
-            $isValidPassword = password_verify($data['user']['password'], $this->user['password']);
-            if($isValidPassword) {
+        if($this->user->exists()) {
+            if($this->user->passwordVerify($data['user']['password'])) {
                 return true;
             };
         };
@@ -89,12 +88,11 @@ class UserLoginForm extends AbstractDashboardForm
 
     public function onEntrySuccess(array $data): void
     {
-        (new User($this->user['id']))->saveToSession();
-
+        $this->user->saveToSession();
+        
         (new Alert("Authentication Successful"))
             ->type('notification')
             ->display('success');
-
     }
 
     protected function buildMailBlock()

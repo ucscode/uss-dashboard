@@ -107,14 +107,17 @@ class UserRegisterForm extends AbstractDashboardForm
         $data = $this->filterData($data);
         $this->user = new User();
         foreach($data['user'] as $key => $value) {
-            $this->user->{$key} = $value ?: null;
+            call_user_func(
+                [$this->user, "set{$key}"],
+                $value ?: null
+            );
         };
         return $this->user->persist();
     }
 
     public function onEntrySuccess(array $post): void
     {
-        $this->user->setMeta('user.role', ['MEMBER']);
+        $this->user->setUserMeta('user.role', ['MEMBER']);
 
         (new Alert("Your registration was successful"))
             ->type('notification')
