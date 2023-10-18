@@ -68,8 +68,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputBirthday">About</label>
-                                <textarea class="form-control" id="inputBirthday" placeholder="My Bio" rows="5" name="meta[user.about]">{{ user.getMeta("user.about")}}</textarea>
+                                <label class="small mb-1" for="about">About</label>
+                                <textarea class="form-control fs-14px" id="about" placeholder="My Bio" rows="7" name="meta[user.about]">{{ user.getUserMeta("user.about")}}</textarea>
                             </div>
 
                         {% endblock %}

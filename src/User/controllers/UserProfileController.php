@@ -25,38 +25,48 @@ class UserProfileController implements RouteInterface
             $uss = Uss::instance();
             
             $userInfo = $uss->sanitize($_POST['user']);
+
             foreach($userInfo as $key => $value) {
-                $user->{$key} = $value;
+                call_user_func([$user, "set{$key}"], $value);
             };
 
-            $metaInfo = $uss->sanitize($_POST['meta'], Uss::SANITIZE_SCRIPT_TAGS | Uss::SANITIZE_SQL);
-            $this->changeAvatar($user, $metaInfo);
-            foreach($metaInfo as $key => $value) {
-                $user->setMeta($key, $value);
-            }
+            if($user->persist()) {
+                $message = ['Your profile has been updated'];
 
-            $user->persist();
+                $metaInfo = $uss->sanitize($_POST['meta'], Uss::SANITIZE_SCRIPT_TAGS);
+
+                $message[] = $this->changeAvatar($user, $metaInfo, $_FILES['avatar']);
+
+                foreach($metaInfo as $key => $value) {
+                    $user->setUserMeta($key, $value);
+                }
+
+                (new Alert(implode('<br>', $message)))->display();
+            }
         }
     }
 
-    public function changeAvatar(User $user, array &$metaInfo): void
+    public function changeAvatar(User $user, array &$metaInfo, array $file): ?string
     {
-        $uploader = new FileUploader($_FILES['avatar'] ?? null);
-        $uploader->addMimeType([
-            'image/png',
-            'image/jpeg',
-            'image/gif',
-            'image/jpg'
-        ]);
-        $uploader->setMaxFileSize(6039);
-        $uploader->setUploadDirectory(DashboardImmutable::ASSETS_DIR . '/images/profile');
-        $uploader->setFilenamePrefix($user->id);
-        if($uploader->uploadFile()) {
-            $filepath = $uploader->getUploadedFilepath();
-            $fileUrl = Uss::instance()->abspathToUrl($filepath);
-            $metaInfo['user.avatar'] = $fileUrl;
-        } else {
-
-        };
+        if($file['error'] != 4) {
+            $uploader = new FileUploader($file);
+            $uploader->addMimeType([
+                'image/png',
+                'image/jpeg',
+                'image/gif',
+                'image/jpg'
+            ]);
+            $uploader->setMaxFileSize(1000000);
+            $uploader->setUploadDirectory(DashboardImmutable::ASSETS_DIR . '/images/profile');
+            $uploader->setFilenamePrefix($user->getId());
+            if($uploader->uploadFile()) {
+                $filepath = $uploader->getUploadedFilepath();
+                $fileUrl = Uss::instance()->abspathToUrl($filepath);
+                $metaInfo['user.avatar'] = $fileUrl;
+            } else {
+                return 'Avatar update failed: ' . $uploader->getError();
+            }
+        }
+        return null;
     }
 }

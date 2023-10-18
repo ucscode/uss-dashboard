@@ -17,7 +17,7 @@ class User extends AbstractUserRepository
      */
     public function setUserMeta(string $key, mixed $value): bool
     {
-        if(!$this->getId()) {
+        if($this->getId()) {
             return self::$usermeta->set($key, $value, $this->getId());
         };
         return false;

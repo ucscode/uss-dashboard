@@ -10,7 +10,6 @@ class FileUploader
     private ?string $fileExtension = null;
     private ?string $basename = null;
     private ?string $filepath = null;
-    private bool $required = false;
     private ?string $error = null;
     private bool $uploaded = false;
 
@@ -69,14 +68,6 @@ class FileUploader
     }
 
     /**
-     * @method isRequired
-     */
-    public function setRequired(bool $required): void
-    {
-        $this->required = $required;
-    }
-
-    /**
      * @method setFilename
      */
     public function setFilename(string $filename, ?string $fileExtension = null): void
@@ -110,13 +101,11 @@ class FileUploader
     public function uploadFile(): bool
     {
         try {
-            if($this->fileAvailable()) {
-                $this->validateMimeType();
-                $this->validateFileSize();
-            };
+            $this->fileAvailable();
+            $this->validateMimeType();
+            $this->validateFileSize();
         } catch(\Exception $e) {
-            $this->error = $e->getMessage();
-            return false;
+            return !($this->error = $e->getMessage());
         }
         $this->generateFilepath();
         return $this->moveUploadedPath();
@@ -125,13 +114,23 @@ class FileUploader
     /**
      * @method fileAvailable
      */
-    protected function fileAvailable(): bool
+    protected function fileAvailable(): void
     {
         $fileExists = $this->file && isset($this->file['tmp_name']) && $this->file['error'] === UPLOAD_ERR_OK;
-        if($this->required && !$fileExists) {
-            throw new \Exception("File upload error: " . $this->file['error']);
+        if(!$fileExists) {
+            $errorList = array(
+                0 => 'File is uploaded successfully',
+                1 => 'Uploaded file exceeds the upload_max_filesize limit',
+                2 => 'Uploaded file exceeds the MAX_FILE_SIZE directive specified in the HTML form',
+                3 => 'File is partially uploaded or there is an error in between uploading',
+                4 => 'No file was uploaded',
+                6 => 'Missing a temporary folder',
+                7 => 'Failed to write file to disk',
+                8 => 'A PHP extension stopped the uploading process'
+            );
+            $index = $this->file['error'];
+            throw new \Exception($errorList[$index]);
         };
-        return $fileExists;
     }
 
     /**

@@ -244,13 +244,20 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function persist(): bool
     {
         $uss = Uss::instance();
-        $SQL = (new SQuery())
-            ->insert(self::USER_TABLE, $this->user);
-        $insert = $uss->mysqli->query($SQL);
-        if($insert) {
-            $userid = $uss->mysqli->insert_id;
-            $this->user = $this->getUser($userid);
-        };
+        if(!$this->exists()) {
+            $SQL = (new SQuery())
+                ->insert(self::USER_TABLE, $this->user);
+            $insert = $uss->mysqli->query($SQL);
+            if($insert) {
+                $userid = $uss->mysqli->insert_id;
+                $this->user = $this->getUser($userid);
+            };
+        } else {
+            $SQL = (new SQuery())
+                ->update(self::USER_TABLE, $this->user)
+                ->where('id', $this->getId());
+            $insert = $uss->mysqli->query($SQL);
+        }
         return $insert;
     }
 
