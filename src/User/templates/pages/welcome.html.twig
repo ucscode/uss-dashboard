@@ -5,11 +5,14 @@
     <div class='container-fluid'>
 
         <div class='mb-3'>
-            <a href='' target='_blank' class='btn btn-primary btn-sm rounded-1 m-1'>
+            <a href='{{ official_website }}' target='_blank' class='btn btn-primary btn-sm rounded-1 m-1'>
                 <i class='bi bi-globe me-1'></i> Our Website
             </a>
-            <a href='' target='_blank' class='btn btn-outline-primary btn-sm rounded-1 m-1'>
+            <a href='{{ official_website }}/documentation' target='_blank' class='btn btn-outline-primary btn-sm rounded-1 m-1'>
                 <i class='bi bi-book me-1'></i> Our Documentation
+            </a>
+            <a href='{{ github_repository }}' target='_blank' class='btn btn-secondary btn-sm rounded-1 m-1'>
+                <i class='bi bi-github me-1'></i> Source Code
             </a>
         </div>
 
@@ -62,9 +65,9 @@
                             <h1 class="fs-20px fw-semibold mb-3"> Need Custom Modules?</h1>
                             <p>Build optimized web applications for your business!</p>
                             <p class="fs-10px fw-semibold">Get in touch right away</p>
-                            <button class="btn btn-light fs-12px">
+                            <a class="btn btn-light fs-12px" href='mailto:{{ dev_email }}'>
                                 Contact Developer
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
