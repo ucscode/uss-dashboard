@@ -5,7 +5,7 @@
 
     {{ parent() }}
 
-    {% set cssPath = constant('DashboardImmutable::ASSETS_DIR') ~ '/css/default.css' %}
+    {% set cssPath = constant('UserDashboard::ASSETS_DIR') ~ '/css/default.css' %}
 
     <link rel="stylesheet" href="{{ Uss.abspathToUrl(cssPath) }}">
 
@@ -20,11 +20,13 @@
 
         <aside class="sidebar-nav-wrapper">
 
-            <div class="navbar-logo">
-                <a href="{{ Ud.urlGenerator('/') }}">
-                    <img src="{{ Uss.getOption('web:icon') ?? Uss.globals.icon }}" height='50px' alt="logo" />
-                </a>
-            </div>
+            {% block sidebar_logo %}
+                <div class="navbar-logo">
+                    <a href="{{ Ud.urlGenerator('/') }}">
+                        <img src="{{ Uss.getOption('web:icon') ?? Uss.globals.icon }}" alt="logo" />
+                    </a>
+                </div>
+            {% endblock %}
             
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
@@ -105,7 +107,7 @@
                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
 
                                             <li class='mb-1'>
-                                                <div class='px-3 py-2 text-end bg-light rounded-1 fs-12px'>
+                                                <div class='px-3 py-2 text-end bg-light fs-12px'>
                                                     <span class='text-success'>
                                                         {{ user.username ? user.username : user.email }}
                                                     </span>
@@ -170,8 +172,8 @@
     
     {{ parent() }}
 
-    {% set dashboardJS = constant('DashboardImmutable::ASSETS_DIR') ~ '/js/dashboard.js' %}
-    {% set notificationJS = constant('DashboardImmutable::ASSETS_DIR') ~ '/js/notifications.js' %}
+    {% set dashboardJS = constant('UserDashboard::ASSETS_DIR') ~ '/js/dashboard.js' %}
+    {% set notificationJS = constant('UserDashboard::ASSETS_DIR') ~ '/js/notifications.js' %}
 
     {% if (user and user.id is not empty) %}
 	    <script src="{{ Uss.abspathToUrl(dashboardJS) }}"></script>
@@ -179,7 +181,7 @@
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('v-alert') %}
-
+    
     {% if alerts is not null %}
         <script>$(function() { 
             {{ alerts|raw }} 

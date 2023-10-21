@@ -1,0 +1,142 @@
+.auth-cover-wrapper {
+	background-image: url('../images/pexels-bess-hamiti-36487.jpg');
+}
+
+.header {
+	background-color: var(--bs-gray-200);
+}
+
+.sidebar-nav-wrapper {
+	background-color: #263544;
+	box-shadow: none;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item {
+	border: none;
+	border-left: 3px solid;
+	border-color: transparent;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.active {
+	background-color: var(--bs-gray-700);
+	border-left-color: var(--bs-primary);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item:hover {
+	background-color: var(--bs-gray-600);
+	border-left-color: var(--bs-primary);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item a .icon {
+	color: var(--bs-gray-400);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.active > a {
+	color: var(--bs-gray-400);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item a::before {
+	content: none;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children > a:not(.collapsed) {
+	background-color: #212b3a;
+    color: var(--bs-gray-400);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children > a:not(.collapsed) ~ ul {
+	background-color: var(--bs-gray-700);
+	padding: 0;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item a,
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children > a.collapsed {
+	color: var(--bs-gray-500);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item:hover > a,
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children:hover > a.collapsed {
+	color: var(--bs-gray-300);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-sub-item[data-menu-level='1'],
+.sidebar-nav-wrapper .sidebar-nav ul .nav-sub-item.nav-item-has-children[data-menu-level='1'] {
+	border-radius: 1px;
+    background-color: var(--bs-gray-600);
+    padding-left: 36px;
+	border: none;
+	margin-bottom: 0;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-sub-item.nav-item-has-children[data-menu-level='2'] {
+	border-radius: 1px;
+	margin-bottom: 0 !important;
+	background-color: rgb(54 54 54 / 3%);
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li a {
+	color: var(--bs-gray-400);
+	border-radius: 1px;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li a:hover {
+	border-color: transparent;
+    background-color: transparent;
+    color: #b8cdf5;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li {
+	margin-bottom: 0;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li:hover {
+	background-color: #848287;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li.active {
+	background-color: #6f8a93;
+}
+
+.sidebar-nav-wrapper .sidebar-nav ul .nav-item.nav-item-has-children ul li.active a {
+	color: var(--bs-light);
+}
+
+.header .header-right button {
+	border-radius: 50%;
+    background-color: var(--bs-gray-100);
+}
+
+.settings-log .card {
+	color: var(--bs-gray-700);
+}
+
+.settings-log .card:hover {
+	box-shadow: 0 1px 6px var(--bs-gray-500);
+	transition: 0.3s;
+}
+
+.settings-log .title {
+	font-weight: 300;
+}
+
+.settings-log > .col {
+	margin-bottom: 0.8rem;
+}
+
+.user-avatar.site-icon {
+	width: 80px;
+    height: 80px;
+	border-radius: 0.6rem;
+}
+
+.ticket-cover:hover {
+	background-color: var(--bs-gray-100);
+}
+
+@media (min-width: 992px) {
+	
+	.auth-row > div:first-child {
+		order: 2;
+	}
+
+}

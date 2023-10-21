@@ -9,6 +9,7 @@ class AdminDashboard extends AbstractDashboard
     public const FORM_DIR = self::DIR . '/forms';
     public const TEMPLATE_DIR = self::DIR . '/templates';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
+    public const ASSETS_DIR = self::DIR . '/assets';
 
     protected function createProject(): void
     {

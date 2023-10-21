@@ -2,27 +2,27 @@
 
 {% block dashboard_content %}
 
-    <div class="container-xl px-4 mt-4">
-    
-    {% set profileMenu = Ud.getDashboardProperty('profileMenu') %}
-    {% if profileMenu and profileMenu.children is not empty %}
-        <nav class="nav nav-pills">
-            {% for node in profileMenu.children %}
-                <a class="nav-link me-2 {{ node.getAttr('active') ? 'active' : '' }}" href="{{ node.getAttr('href') }}" target="{{ node.getAttr('target') }}">
-                    {% set icon = node.getAttr('icon') %}
-                    {% if icon is not empty %}
-                        <i class='{{ node.getAttr('icon') }} me-1'></i> 
-                    {% endif %}
-                    {{ node.getAttr('label') }}
-                </a>
-            {% endfor %}
-        </nav>
-    {% endif %}
+    <div class="container-xl px-4 mt-4 profile-base">
+        
+        {% set profileMenu = Ud.getDashboardProperty('profileMenu') %}
+        {% if profileMenu and profileMenu.children is not empty %}
+            <nav class="nav nav-pills profile-base-nav">
+                {% for node in profileMenu.children %}
+                    <a class="nav-link me-2 {{ node.getAttr('active') ? 'active' : '' }}" href="{{ node.getAttr('href') }}" target="{{ node.getAttr('target') }}">
+                        {% set icon = node.getAttr('icon') %}
+                        {% if icon is not empty %}
+                            <i class='{{ node.getAttr('icon') }} me-1'></i> 
+                        {% endif %}
+                        {{ node.getAttr('label') }}
+                    </a>
+                {% endfor %}
+            </nav>
+        {% endif %}
 
-    <hr class="mt-2 mb-4">
+        <hr class="mt-2 mb-4">
 
-    {% block profile_content %}{% endblock %}
+        {% block profile_content %}{% endblock %}
 
-</div>
+    </div>
     
 {% endblock %}

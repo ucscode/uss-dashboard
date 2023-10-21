@@ -7,10 +7,11 @@ class UserDashboard extends AbstractDashboard
     use SingletonTrait;
 
     public const DIR = DashboardImmutable::SRC_DIR . '/User';
-
+    
     public const FORMS_DIR = self::DIR . '/forms';
     public const TEMPLATE_DIR = self::DIR . "/templates";
     public const CONTROLLER_DIR = self::DIR . '/controllers';
+    public const ASSETS_DIR = self::DIR . '/assets';
 
     public readonly TreeNode $profileMenu;
 
