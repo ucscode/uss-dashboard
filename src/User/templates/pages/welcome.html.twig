@@ -3,17 +3,71 @@
 {% block dashboard_content %}
 
     <div class='container-fluid'>
-        <div class='card'>
-            <div class='card-body'>
-                
-                <h2 class='display-5 mb-3'>Welcome To User Synthetics</h2>
-                
-                <div id='pop'></div>
-                
-                <h3 class='mb-3'>Dashboard V3.0.0</h3>
 
-                <p>Experience a difference in simplicity</p>
+        <div class='mb-3'>
+            <a href='' target='_blank' class='btn btn-primary btn-sm rounded-1 m-1'>
+                <i class='bi bi-globe me-1'></i> Our Website
+            </a>
+            <a href='' target='_blank' class='btn btn-outline-primary btn-sm rounded-1 m-1'>
+                <i class='bi bi-book me-1'></i> Our Documentation
+            </a>
+        </div>
 
+        <div class='row'>
+            <div class='col-lg-9 mb-4'>
+                <div class='card rounded-0'>
+                    <div class='card-body px-md-5 py-4'>
+                        <h6 class='mb-2 text-danger'>Dashboard V3.0.0</h6>
+                        <h1 class='mb-3'>
+                            {{ title }}
+                        </h1>
+                        <figure class='pop-figure'>
+                            <div id='pop'></div>
+                            {% set image = constant('UserDashboard::ASSETS_DIR') ~ '/images' %}
+                            <div class='d-sm-none'>
+                                <img src='{{ Uss.abspathToUrl(image ~ '/sunset.jpg') }}' class='img-fluid'>
+                            </div>
+                            <div class='d-none d-sm-block'>
+                                <img src='{{ Uss.abspathToUrl(image ~ '/sunset-cropped.jpg') }}' class='img-fluid'>
+                            </div>
+                        </figure>
+                        <hr>
+                        <h4 class='mb-3'>
+                            Thank you for installing {{ title }} Dashboard Module
+                        </h4>
+                        <div class='fs-14px'>
+                            <p class='fs-14px'>
+                                This is the default welcome (landing) page.
+                                You are seeing this page because you have not made any customization.
+                                There are several options available for you to modify this page.
+                                You can manage one of the following:
+                            </p>
+                            <ol>
+                                <li>Archive:</li>
+                                <li>Controller:</li>
+                                <li>Twig Template:</li>
+                            </ol>
+                            <p class='fs-14px'>
+                                For more information, <a href='' target='_blank'>read the documentation</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 stretch-card grid-margin">
+                <div class="card rounded-0 text-bg-dark">
+                    <div class="card-body d-flex align-items-center p-5">
+                        <div class="">
+                            <h1 class="fs-20px fw-semibold mb-3"> Need Custom Modules?</h1>
+                            <p>Build optimized web applications for your business!</p>
+                            <p class="fs-10px fw-semibold">Get in touch right away</p>
+                            <button class="btn btn-light fs-12px">
+                                Contact Developer
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

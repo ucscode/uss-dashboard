@@ -57,7 +57,7 @@ class UserProfileController implements RouteInterface
                 'image/jpg'
             ]);
             $uploader->setMaxFileSize(1000000);
-            $uploader->setUploadDirectory(DashboardImmutable::ASSETS_DIR . '/images/profile');
+            $uploader->setUploadDirectory(UserDashboard::ASSETS_DIR . '/images/profile');
             $uploader->setFilenamePrefix($user->getId());
             if($uploader->uploadFile()) {
                 $filepath = $uploader->getUploadedFilepath();
