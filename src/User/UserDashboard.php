@@ -42,7 +42,7 @@ class UserDashboard extends AbstractDashboard
                 'UserLogoutController.php',
                 'UserNotificationController.php',
                 'UserProfileController.php',
-                'UserSecurityController.php',
+                'UserPasswordController.php',
             ]
 
         ];
@@ -122,14 +122,14 @@ class UserDashboard extends AbstractDashboard
                         'icon' => 'bi bi-person-circle',
                     ], $this->profileMenu),
 
-                (new Archive('security'))
-                    ->set('route', '/security')
-                    ->set('template', '@Ud/pages/profile/security.html.twig')
-                    ->set('controller', UserSecurityController::class)
-                    ->addMenuItem('securityPill', [
-                        'label' => 'Security',
-                        'href' => $this->urlGenerator('/security'),
-                        'icon' => 'bi bi-padlock'
+                (new Archive('password'))
+                    ->set('route', '/password')
+                    ->set('template', '@Ud/pages/profile/password.html.twig')
+                    ->set('controller', UserPasswordController::class)
+                    ->addMenuItem('passwordPill', [
+                        'label' => 'password',
+                        'href' => $this->urlGenerator('/password'),
+                        'icon' => 'bi bi-unlock'
                     ], $this->profileMenu),
 
             ],
@@ -144,8 +144,9 @@ class UserDashboard extends AbstractDashboard
 
     }
 
-    protected function preload() {
-        Event::instance()->addListener('dashboard:render', function() {
+    protected function preload()
+    {
+        Event::instance()->addListener('dashboard:render', function () {
             foreach($this->profileMenu->children as $child) {
                 if($child->getAttr('active')) {
                     $profileMenu = $this->archiveRepository->getArchive('profile')?->getMenuItem('profile', true);

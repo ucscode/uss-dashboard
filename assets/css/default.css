@@ -71,6 +71,7 @@
 .header .header-right .profile-box .profile-info .info .image {
 	box-shadow: none;
 	display: flex;
+    background-color: var(--bs-gray-100);
 }
 
 .header {
@@ -99,6 +100,10 @@
 	font-size: 0.85rem;
 	text-transform: capitalize;
 	padding: 5px 12px;
+}
+
+.header .header-right button {
+    background-color: var(--bs-gray-100);
 }
 
 .main-wrapper.full-width {
