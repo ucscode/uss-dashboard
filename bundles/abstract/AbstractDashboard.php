@@ -16,10 +16,10 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     {
         $ar = new ArchiveRepository($this::class);
         $archive = $ar->getArchive($name);
-        if(!$archive || is_null($archive->get('route'))) {
+        if(!$archive || is_null($archive->getRoute())) {
             return null;
         }
-        $urlGenerator = $this->urlGenerator($archive->get('route'));
+        $urlGenerator = $this->urlGenerator($archive->getRoute());
         return $urlGenerator->getResult();
     }
 
@@ -70,7 +70,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     protected function renderLoginArchive(string $template, array $options): void
     {
         $loginPage = $this->archiveRepository->getArchive(Archive::LOGIN);
-        $loginForm = $loginPage->get('form');
+        $loginForm = $loginPage->getForm();
 
         $form = new $loginForm(Archive::LOGIN);
         $form->handleSubmission();
@@ -78,7 +78,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         $user = $options['user']->getFromSession();
 
         if(!$user) {
-            $template = $loginPage->get('template');
+            $template = $loginPage->getTemplate();
             $options['form'] = $form;
             Uss::instance()->render($template, $options);
         };

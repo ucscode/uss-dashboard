@@ -48,7 +48,7 @@ class UserNotificationController implements RouteInterface
 
         }
 
-        $ud->render($this->page->get('template'), [
+        $ud->render($this->page->getTemplate(), [
             'notifications' => $notifications,
             'paginator' => $paginator
         ]);

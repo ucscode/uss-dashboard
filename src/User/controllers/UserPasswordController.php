@@ -13,7 +13,7 @@ class UserPasswordController implements RouteInterface
     {
         $this->managePassword();
         $this->archive->getMenuItem('passwordPill', true)?->setAttr('active', true);
-        $this->dashboard->render($this->archive->get('template'));
+        $this->dashboard->render($this->archive->getTemplate());
     }
 
     public function managePassword(): void

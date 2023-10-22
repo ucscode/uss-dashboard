@@ -127,12 +127,12 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     private function configureArchive(Archive $archive): void
     {
         $uss = Uss::instance();
-        $archiveRoute = $archive->get('route');
-
+        $archiveRoute = $archive->getRoute();
+        
         if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
             $route = $uss->filterContext($this->config->base . "/" . $archiveRoute);
-            $controller = $archive->get('controller');
-            $method = $archive->get('method');
+            $controller = $archive->getController();
+            $method = $archive->getMethods();
             new Route($route, new $controller($archive, $this), $method);
         }
     }

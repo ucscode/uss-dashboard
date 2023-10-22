@@ -2,24 +2,23 @@
 
 class UserRegisterController implements RouteInterface
 {
-    public function __construct(private Archive $page)
+    public function __construct(
+        private Archive $archive, 
+        private DashboardInterface $dashboard
+    )
     {
 
     }
 
     public function onload($regex)
     {
-        $ud = UserDashboard::instance();
-
-        $template = $this->page->get('template');
-        $registerForm = $this->page->get('form');
-
-        $formInstance = new $registerForm($this->page->name);
+        $registerForm = $this->archive->getForm();
+        $formInstance = new $registerForm($this->archive->name);
         $formInstance->handleSubmission();
 
-        $ud->enableFirewall(false);
+        $this->dashboard->enableFirewall(false);
 
-        $ud->render($template, [
+        $this->dashboard->render($this->archive->getTemplate(), [
             'form' => $formInstance
         ]);
     }

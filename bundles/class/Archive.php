@@ -7,17 +7,12 @@ class Archive
     public const LOGIN = 'login';
 
     public readonly string $name;
-
-    private array $attributes = [
-        'route' => null,
-        'template' => null,
-        'controller' => null,
-        'form' => null,
-        'method' => ['GET', 'POST'],
-    ];
-
+    private ?string $route = null;
+    private ?string $template = null;
+    private ?string $controller = null;
+    private ?string $form = null;
+    private array $method = ['GET', 'POST'];
     private array $menuItems = [];
-
     private array $custom = [];
 
     public function __construct(string $pagename)
@@ -25,49 +20,78 @@ class Archive
         $this->name = $pagename;
     }
 
-    /**
-     * Set a new System Defined Attribute
-     */
-    public function set(string $key, string|array|null $value): self
+    public function setRoute(?string $route): self
     {
-        $key = $this->validate($key, $value);
-        $this->attributes[$key] = $value;
+        $this->route = $route;
         return $this;
     }
 
-    /**
-     * Get a System Defined Attribute
-     */
-    public function get(string $key): string|array|null
+    public function getRoute(): ?string
     {
-        return $this->attributes[$key] ?? null;
+        return $this->route;
     }
 
-    /**
-     * Set a new Custom Attribute
-     */
+    public function setTemplate(?string $template): self
+    {
+        $this->template = $template;
+        return $this;
+    }
+
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    public function setController(?string $controller): self
+    {
+        $this->validateController($controller, __METHOD__);
+        $this->controller = $controller;
+        return $this;
+    }
+
+    public function getController(): ?string
+    {
+        return $this->controller;
+    }
+
+    public function setForm(?string $form): self
+    {
+        $this->validateForm($form, __METHOD__);
+        $this->form = $form;
+        return $this;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
+    }
+
+    public function setMethods(array $method): self
+    {
+        $this->validateMethod($method, __METHOD__);
+        $this->method = $method;
+        return $this;
+    }
+
+    public function getMethods(): array
+    {
+        return $this->method;
+    }
+
     public function setCustom(string $key, mixed $value): self
     {
         $this->custom[$key] = $value;
         return $this;
     }
 
-    /**
-     * Get a Custom Attribute
-     */
     public function getCustom(string $key): mixed
     {
         return $this->custom[$key];
     }
 
-    /**
-     * Add a menu Item:
-     * The parent of the menu item must be specified
-     */
     public function addMenuItem(string $name, array|TreeNode $menu, TreeNode $parentMenu): self
     {
-        // Validate Menu Item
-        if($parentMenu === $menu) {
+        if ($parentMenu === $menu) {
             throw new \Exception(
                 sprintf(
                     '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
@@ -75,118 +99,72 @@ class Archive
                     TreeNode::class
                 )
             );
-        };
+        }
 
-        if(is_array($menu)) {
+        if (is_array($menu)) {
             $menu = new TreeNode($name, $menu);
         }
 
         $this->menuItems[$name] = [
             'item' => $menu,
-            'parent' => $parentMenu
+            'parent' => $parentMenu,
         ];
 
         return $this;
     }
 
-    /**
-     * Get Menu Items
-     */
     public function getMenuItem(?string $name = null, bool $returnItem = false): array|TreeNode|null
     {
-        if(is_null($name)) {
+        if (is_null($name)) {
             return $this->menuItems;
-        };
+        }
         $items = $this->menuItems[$name] ?? null;
-        if($items && $returnItem) {
+        if ($items && $returnItem) {
             return $items['item'];
-        };
+        }
         return $items;
     }
 
-    /**
-     * Check if Page matches Current Route
-     */
     public function equalsCurrentRoute(): bool
     {
         $uss = Uss::instance();
-        $route = $this->attributes['route'];
+        $route = $this->route;
 
-        if(!is_null($route)) {
-
+        if (!is_null($route)) {
             $route = $uss->filterContext();
             $requestArray = $uss->splitUri();
 
-            if(!empty($requestArray)) {
-
+            if (!empty($requestArray)) {
                 array_shift($requestArray);
                 $request = implode("/", $requestArray);
                 $request = $uss->filterContext($request);
 
                 return $request === $route;
-
-            };
-
+            }
         }
 
         return false;
     }
 
-    private function validate(string $key, string|array|null $value): string
-    {
-        $key = strtolower($key);
-        if(!array_key_exists($key, $this->attributes)) {
-            $this->requirementException($key);
-        } elseif($key === 'controller') {
-            $this->controllerException($value);
-        } elseif($key === 'method') {
-            $this->methodException($value);
-        } elseif($key === 'form') {
-            $this->formException($value);
-        }
-        return $key;
-    }
-
-    private function requirementException(string $key)
-    {
-        throw new \Exception(
-            sprintf(
-                'The attribute "%s" does not exist, use "%s::%s()" to define custom attributes instead',
-                $key,
-                __CLASS__,
-                'setCustom'
-            )
-        );
-    }
-
-    private function controllerException($value): void
+    private function validateController(string $controller, string $caller): void
     {
         $interface = RouteInterface::class;
 
-        if(empty($value) || !is_string($value)) {
-            throw new \Exception(
-                sprintf(
-                    "%s Controller Error: Controller value must be a Fully Qualified Class Name that implements %s",
-                    __CLASS__,
-                    $interface
-                )
-            );
-        } elseif(!class_exists($value)) {
+        if(!class_exists($controller)) {
             throw new \Exception(
                 sprintf(
                     "%s Controller Error: Class '%s' does not exist and could not be loaded",
                     __CLASS__,
-                    $value
+                    $controller
                 )
             );
         } else {
-            if (!in_array($interface, class_implements($value))) {
+            if (!in_array($interface, class_implements($controller))) {
                 throw new \Exception(
                     sprintf(
-                        'The class "%s" provided to %s::%s("controller", ...) must implement "%s".',
-                        $value,
-                        __CLASS__,
-                        'set',
+                        'The class "%s" provided to %s() must implement "%s".',
+                        $controller,
+                        $caller,
                         $interface
                     )
                 );
@@ -194,7 +172,7 @@ class Archive
         }
     }
 
-    private function methodException($value): void
+    private function validateMethod(array $method, string $caller): void
     {
         $methods = [
             'GET',
@@ -204,42 +182,39 @@ class Archive
             'DELETE'
         ];
 
-        if(is_null($value)) {
-            $value = $methods[0];
-        } elseif(is_string($value)) {
-            $value = [$value];
+        if(is_null($method)) {
+            $method = $methods[0];
+        } elseif(is_string($method)) {
+            $method = [$method];
         }
 
-        $value = array_values(array_map(function ($val) {
+        $method = array_values(array_map(function ($val) {
             return strtoupper(trim($val));
-        }, $value));
+        }, $method));
 
-        foreach(array_diff($value, $methods) as $method) {
+        foreach(array_diff($method, $methods) as $method) {
             throw new \Exception(
                 sprintf(
-                    "Invalid Request Method '%s' provided in argument 2 of %s::%s('method', ...) ",
+                    "Invalid Request Method '%s' provided in argument 2 of %s('method', ...) ",
                     $method,
-                    __CLASS__,
-                    'set'
+                    $caller
                 )
             );
         };
     }
 
-    private function formException($value): void
+    private function validateForm(string $form, string $caller): void
     {
         $interface = DashboardFormInterface::class;
-        if(!in_array($interface, class_implements($value))) {
+        if(!in_array($interface, class_implements($form))) {
             throw new \Exception(
                 sprintf(
-                    'The class "%s" provided to %s::%s("form", ...) must implement "%s".',
-                    $value,
-                    __CLASS__,
-                    'set',
+                    'The class "%s" provided to %s() must implement "%s".',
+                    $form,
+                    $caller,
                     $interface
                 )
             );
         }
     }
-
 }

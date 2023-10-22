@@ -57,29 +57,27 @@ class UserDashboard extends AbstractDashboard
     protected function registerArchives(): void
     {
         $archiveList = [
-
             'security' => [
-
                 (new Archive(Archive::LOGIN))
-                    ->set('form', UserLoginForm::class)
-                    ->set('template', '@Ud/security/login.html.twig'),
-
+                    ->setForm(UserLoginForm::class)
+                    ->setTemplate('@Ud/security/login.html.twig'),
+        
                 (new Archive('register'))
-                    ->set('route', '/register')
-                    ->set('template', '@Ud/security/register.html.twig')
-                    ->set('controller', UserRegisterController::class)
-                    ->set('form', UserRegisterForm::class),
-
+                    ->setRoute('/register')
+                    ->setTemplate('@Ud/security/register.html.twig')
+                    ->setController(UserRegisterController::class)
+                    ->setForm(UserRegisterForm::class),
+        
                 (new Archive('recovery'))
-                    ->set('route', '/recovery')
-                    ->set('template', '@Ud/security/register.html.twig')
-                    ->set('controller', UserRecoveryController::class)
-                    ->set('form', UserRecoveryForm::class),
-
+                    ->setRoute('/recovery')
+                    ->setTemplate('@Ud/security/register.html.twig')
+                    ->setController(UserRecoveryController::class)
+                    ->setForm(UserRecoveryForm::class),
+        
                 (new Archive('logout'))
-                    ->set('route', '/logout')
-                    ->set('template', null)
-                    ->set('controller', UserLogoutController::class)
+                    ->setRoute('/logout')
+                    ->setTemplate(null)
+                    ->setController(UserLogoutController::class)
                     ->setCustom('endpoint', $this->urlGenerator('/'))
                     ->addMenuItem('logout', new TreeNode('logout', [
                         'label' => 'logout',
@@ -87,30 +85,28 @@ class UserDashboard extends AbstractDashboard
                         'icon' => 'bi bi-power',
                         'order' => 1024
                     ]), $this->userMenu),
-
             ],
-
+        
             'pages' => [
-
                 (new Archive('index'))
-                    ->set('route', '/')
-                    ->set('template', '@Ud/pages/welcome.html.twig')
-                    ->set('controller', UserIndexController::class)
+                    ->setRoute('/')
+                    ->setTemplate('@Ud/pages/welcome.html.twig')
+                    ->setController(UserIndexController::class)
                     ->addMenuItem('index', new TreeNode('dashboard', [
                         'label' => 'dashboard',
                         'href' => $this->urlGenerator('/'),
                         'icon' => 'bi bi-speedometer',
                     ]), $this->menu),
-
+        
                 (new Archive('notifications'))
-                    ->set('route', '/notifications')
-                    ->set('template', '@Ud/pages/notifications.html.twig')
-                    ->set('controller', UserNotificationController::class),
-
+                    ->setRoute('/notifications')
+                    ->setTemplate('@Ud/pages/notifications.html.twig')
+                    ->setController(UserNotificationController::class),
+        
                 (new Archive('profile'))
-                    ->set('route', '/profile')
-                    ->set('template', '@Ud/pages/profile/main.html.twig')
-                    ->set('controller', UserProfileController::class)
+                    ->setRoute('/profile')
+                    ->setTemplate('@Ud/pages/profile/main.html.twig')
+                    ->setController(UserProfileController::class)
                     ->addMenuItem('profile', [
                         'label' => 'Profile',
                         'href' => $this->urlGenerator('/profile'),
@@ -121,21 +117,19 @@ class UserDashboard extends AbstractDashboard
                         'href' => $this->urlGenerator('/profile'),
                         'icon' => 'bi bi-person-circle',
                     ], $this->profileMenu),
-
+        
                 (new Archive('password'))
-                    ->set('route', '/password')
-                    ->set('template', '@Ud/pages/profile/password.html.twig')
-                    ->set('controller', UserPasswordController::class)
+                    ->setRoute('/password')
+                    ->setTemplate('@Ud/pages/profile/password.html.twig')
+                    ->setController(UserPasswordController::class)
                     ->addMenuItem('passwordPill', [
                         'label' => 'password',
                         'href' => $this->urlGenerator('/password'),
                         'icon' => 'bi bi-unlock'
                     ], $this->profileMenu),
-
             ],
-
         ];
-
+        
         foreach($archiveList as $section => $archives) {
             foreach($archives as $archive) {
                 $this->archiveRepository->addArchive($archive->name, $archive);

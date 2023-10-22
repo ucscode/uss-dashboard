@@ -1,15 +1,15 @@
 <?php
 
-class DashboardConfig 
+final class DashboardConfig 
 {
     public readonly string $base;
     public readonly string $templateFilesystem;
     public readonly string $namespace;
 
-    public function setBase(string $route): self 
+    public function setBase(string $base): self 
     {
         $uss = Uss::instance();
-        $this->base = $uss->filterContext($route);
+        $this->base = $uss->filterContext($base);
         return $this;
     }
 
