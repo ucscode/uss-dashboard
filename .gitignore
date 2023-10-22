@@ -1,1 +1,2 @@
-assets/images/profile/*
+**/assets/images/profile/*
+!**/assets/images/profile/.gitkeep
