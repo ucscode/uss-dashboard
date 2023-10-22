@@ -14,7 +14,6 @@ class AdminDashboard extends AbstractDashboard
     protected function createProject(): void
     {
         $uss = Uss::instance();
-        $uss->addTwigFilesystem(self::TEMPLATE_DIR, 'Ua');
         $this->includeControllers();
         $this->registerArchives();
     }

@@ -18,7 +18,6 @@ class UserDashboard extends AbstractDashboard
     protected function createProject(): void
     {
         $uss = Uss::instance();
-        $uss->addTwigFilesystem(self::TEMPLATE_DIR, 'Ud');
         $this->profileMenu = new TreeNode('profileMenu');
         $this->includeControllers();
         $this->registerArchives();

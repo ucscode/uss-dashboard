@@ -31,7 +31,7 @@
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
                     {% block dashboard_menu_items %}
-                        {% include '@Ud/includes/menu-items.html.twig' %}
+                        {% include namespace ~ '/includes/menu-items.html.twig' %}
                     {% endblock %}
                 </ul>
             </nav>
@@ -82,7 +82,7 @@
 
                                 {% block dashboard_header_notification %}
 
-                                    {% include "@Ud/includes/notifications-top.html.twig" %}
+                                    {% include namespace ~ "/includes/notifications-top.html.twig" %}
                                 
                                 {% endblock %}
 

@@ -7,7 +7,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     public function isActiveBase(): bool
     {
         $uss = Uss::instance();
-        $regex = '#^' . $this->base . '(?!\w)#is';
+        $regex = '#^' . $this->config->base . '(?!\w)#is';
         $request = $uss->filterContext($uss->splitUri());
         return preg_match($regex, $request);
     }
@@ -25,7 +25,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        $urlGenerator = new UrlGenerator($path, $query, $this->base);
+        $urlGenerator = new UrlGenerator($path, $query, $this->config->base);
         return $urlGenerator;
     }
 
@@ -59,6 +59,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         $event = Event::instance();
         $event->addListener('dashboard:render', function () use (&$template, &$options, $event) {
             $options['user'] = new User();
+            $options['namespace'] = '@' . $this->config->namespace;
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $this->renderLoginArchive($template, $options);
             };

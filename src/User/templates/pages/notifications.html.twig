@@ -1,4 +1,4 @@
-{% extends '@Ud/base.html.twig' %}
+{% extends namespace ~ '/base.html.twig' %}
 
 {% block dashboard_content %}
 
@@ -98,7 +98,7 @@
 
                 {% block notification_pagination %}
 
-                    {% include '@Ud/includes/paginator.html.twig' with {'nav_class': row_size} %}
+                    {% include namespace ~ '/includes/paginator.html.twig' with {'nav_class': row_size} %}
 
                 {% endblock %}
 

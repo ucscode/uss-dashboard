@@ -1,9 +1,5 @@
 <?php
 
-namespace Ud;
-
-use DashboardImmutable;
-
 defined('ROOT_DIR') || die("@USS_DASHBOARD");
 
 if(!defined('UD_DIR')) {
@@ -27,6 +23,10 @@ $bundles = [
         'DashboardInterface.php',
         "DashboardFormInterface.php",
         "UserInterface.php",
+    ],
+    'configurator' => [
+        'DatabaseConfigurator.php',
+        'DashboardConfig.php',
     ],
     'trait' => [
         //
