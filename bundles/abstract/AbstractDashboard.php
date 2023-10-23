@@ -56,32 +56,44 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function render(string $template, array $options = []): void
     {
-        $event = Event::instance();
-        $event->addListener('dashboard:render', function () use (&$template, &$options, $event) {
+        Event::instance()->addListener('dashboard:render', function () use (&$template, &$options) {
+            $uss = Uss::instance();
             $options['user'] = new User();
             $options['namespace'] = '@' . $this->config->namespace;
+            $uss->addTwigExtension(new DashboardTwigExtension($this));
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $this->renderLoginArchive($template, $options);
             };
-            Uss::instance()->render($template, $options);
+            $uss->render($template, $options);
         });
     }
 
-    protected function renderLoginArchive(string $template, array $options): void
+    /**
+     * Parameters are passed by reference I.E The original value and not a copy
+     * @method renderLoginArchive
+     */
+    protected function renderLoginArchive(string &$template, array &$options): void
     {
-        $loginPage = $this->archiveRepository->getArchive(Archive::LOGIN);
-        $loginForm = $loginPage->getForm();
+        $archive = $this->archiveRepository->getArchive(Archive::LOGIN);
+        $loginFormClass = $archive->getForm();
 
-        $form = new $loginForm(Archive::LOGIN);
-        $form->handleSubmission();
+        // Handle Login Request
+        $formInstance = new $loginFormClass(Archive::LOGIN);
+        $formInstance->handleSubmission();
 
+        // Check again if the user login session was successful
         $user = $options['user']->getFromSession();
 
         if(!$user) {
-            $template = $loginPage->getTemplate();
-            $options['form'] = $form;
-            Uss::instance()->render($template, $options);
+            $template = $archive->getTemplate();
+            $options['form'] = $formInstance;
         };
     }
 
+    protected function bindNamespace(string $template): string
+    {
+        $namespace = $this->config->namespace;
+        $dymanicTemplate = '@' . $namespace . '/' . $template;
+        return Uss::instance()->filterContext($dymanicTemplate);
+    }
 }

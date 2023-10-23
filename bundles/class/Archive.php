@@ -11,7 +11,7 @@ class Archive
     private ?string $template = null;
     private ?string $controller = null;
     private ?string $form = null;
-    private array $method = ['GET', 'POST'];
+    private array $requestMethods = ['GET', 'POST'];
     private array $menuItems = [];
     private array $custom = [];
 
@@ -20,28 +20,43 @@ class Archive
         $this->name = $pagename;
     }
 
+    /**
+     * @method setRoute
+     */
     public function setRoute(?string $route): self
     {
         $this->route = $route;
         return $this;
     }
 
+    /**
+     * @method getRoute
+     */
     public function getRoute(): ?string
     {
         return $this->route;
     }
 
+    /**
+     * @method setTemplate
+     */
     public function setTemplate(?string $template): self
     {
         $this->template = $template;
         return $this;
     }
 
+    /**
+     * @method getTemplate
+     */
     public function getTemplate(): ?string
     {
         return $this->template;
     }
 
+    /**
+     * @method setController
+     */
     public function setController(?string $controller): self
     {
         $this->validateController($controller, __METHOD__);
@@ -49,11 +64,17 @@ class Archive
         return $this;
     }
 
+    /**
+     * @method getController
+     */
     public function getController(): ?string
     {
         return $this->controller;
     }
 
+    /**
+     * @method setForm
+     */
     public function setForm(?string $form): self
     {
         $this->validateForm($form, __METHOD__);
@@ -61,45 +82,55 @@ class Archive
         return $this;
     }
 
+    /**
+     * @method getForm
+     */
     public function getForm(): ?string
     {
         return $this->form;
     }
 
-    public function setMethods(array $method): self
+    /**
+     * @method setRequestMethods
+     */
+    public function setRequestMethods(array $methods): self
     {
-        $this->validateMethod($method, __METHOD__);
-        $this->method = $method;
+        $this->validateMethod($methods, __METHOD__);
+        $this->requestMethods = $methods;
         return $this;
     }
 
-    public function getMethods(): array
+    /**
+     * @method getRequestMethods
+     */
+    public function getRequestMethods(): array
     {
-        return $this->method;
+        return $this->requestMethods;
     }
 
+    /**
+     * @method setCustom
+     */
     public function setCustom(string $key, mixed $value): self
     {
         $this->custom[$key] = $value;
         return $this;
     }
 
+    /**
+     * @method getCustom
+     */
     public function getCustom(string $key): mixed
     {
         return $this->custom[$key];
     }
 
+    /**
+     * @method addMenuItem
+     */
     public function addMenuItem(string $name, array|TreeNode $menu, TreeNode $parentMenu): self
     {
-        if ($parentMenu === $menu) {
-            throw new \Exception(
-                sprintf(
-                    '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
-                    __METHOD__,
-                    TreeNode::class
-                )
-            );
-        }
+        $this->validateMenuItem($menu, $parentMenu, __METHOD__);
 
         if (is_array($menu)) {
             $menu = new TreeNode($name, $menu);
@@ -113,18 +144,27 @@ class Archive
         return $this;
     }
 
+    /**
+     * @method getMenuItem
+     */
     public function getMenuItem(?string $name = null, bool $returnItem = false): array|TreeNode|null
     {
         if (is_null($name)) {
             return $this->menuItems;
         }
+
         $items = $this->menuItems[$name] ?? null;
+
         if ($items && $returnItem) {
             return $items['item'];
         }
+
         return $items;
     }
 
+    /**
+     * @method setRoute
+     */
     public function equalsCurrentRoute(): bool
     {
         $uss = Uss::instance();
@@ -188,8 +228,8 @@ class Archive
             $method = [$method];
         }
 
-        $method = array_values(array_map(function ($val) {
-            return strtoupper(trim($val));
+        $method = array_values(array_map(function ($value) {
+            return strtoupper(trim($value));
         }, $method));
 
         foreach(array_diff($method, $methods) as $method) {
@@ -213,6 +253,19 @@ class Archive
                     $form,
                     $caller,
                     $interface
+                )
+            );
+        }
+    }
+
+    private function validateMenuItem(array|TreeNode $menu, TreeNode $parentMenu, string $caller): void
+    {
+        if ($parentMenu === $menu) {
+            throw new \Exception(
+                sprintf(
+                    '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
+                    $caller,
+                    TreeNode::class
                 )
             );
         }

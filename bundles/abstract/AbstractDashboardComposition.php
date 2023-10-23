@@ -16,20 +16,15 @@ abstract class AbstractDashboardComposition implements DashboardInterface
 
     public function configureDashboard(DashboardConfig $config): void
     {
-        $this->configureSetUp($config);
+        $this->config = $config;
+        $this->archiveRepository = new ArchiveRepository($this::class);
         $this->configureUser();
         $this->configureProject();
     }
 
-    private function configureSetUp(DashboardConfig $config): void
-    {
-        $this->config = $config;
-        $this->archiveRepository = new ArchiveRepository($this::class);
-    }
-
     private function configureUser(): void
     {
-        User::hibernate();
+        User::establish();
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
@@ -39,7 +34,6 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $uss = Uss::instance();
 
         if($this->isActiveBase()) {
-            $uss->addTwigExtension(new DashboardTwigExtension($this));
             $this->configureJS($uss);
         }
 
@@ -128,11 +122,11 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     {
         $uss = Uss::instance();
         $archiveRoute = $archive->getRoute();
-        
+
         if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
             $route = $uss->filterContext($this->config->base . "/" . $archiveRoute);
             $controller = $archive->getController();
-            $method = $archive->getMethods();
+            $method = $archive->getRequestMethods();
             new Route($route, new $controller($archive, $this), $method);
         }
     }

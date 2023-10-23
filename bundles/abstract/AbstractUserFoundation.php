@@ -1,9 +1,10 @@
-<?php 
+<?php
+
 
 use Ucscode\Packages\Pairs;
 
-abstract class AbstractUserFoundation implements UserInterface {
-    
+abstract class AbstractUserFoundation implements UserInterface
+{
     protected array $user;
     protected ?string $error = null;
     protected static ?Pairs $usermeta = null;
@@ -14,9 +15,10 @@ abstract class AbstractUserFoundation implements UserInterface {
     }
 
     /**
-     * @method hibernate
+     * @method establish
      */
-    public static function hibernate() {
+    public static function establish()
+    {
         self::$usermeta = new Pairs(Uss::instance()->mysqli, self::META_TABLE);
         self::$usermeta->linkParentTable([
             'parentTable' => self::USER_TABLE,
