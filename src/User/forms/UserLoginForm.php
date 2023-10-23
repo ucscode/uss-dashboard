@@ -12,7 +12,7 @@ class UserLoginForm extends AbstractDashboardForm
     {
         $this->add(
             'user[login]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_TEXT,
             $this->style + [
                 'attr' => [
@@ -25,7 +25,7 @@ class UserLoginForm extends AbstractDashboardForm
 
         $this->add(
             'user[password]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_PASSWORD,
             $this->style + [
                 'attr' => [
@@ -42,7 +42,7 @@ class UserLoginForm extends AbstractDashboardForm
 
         $this->add(
             'submit',
-            UssForm::BUTTON,
+            UssForm::NODE_BUTTON,
             UssForm::TYPE_SUBMIT,
             [
                 'class' => 'btn btn-primary w-100'

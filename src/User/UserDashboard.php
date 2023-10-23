@@ -16,9 +16,9 @@ class UserDashboard extends AbstractDashboard
 
     /**
      * This is the entry method for any class that extends AbstractDashboard
-     * @method createProject
+     * @method main
      */
-    protected function createProject(): void
+    protected function main(): void
     {
         $this->profileMenu = new TreeNode('profileMenu');
         $this->getUserControllers();
@@ -118,7 +118,7 @@ class UserDashboard extends AbstractDashboard
             ->setRoute('/recovery')
             ->setController(UserRecoveryController::class)
             ->setForm(UserRecoveryForm::class)
-            ->setTemplate($this->bindNamespace('security/register.html.twig'));
+            ->setTemplate($this->bindNamespace('security/recovery.html.twig'));
 
         yield (new Archive('logout'))
             ->setRoute('/logout')

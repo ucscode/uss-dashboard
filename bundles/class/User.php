@@ -3,7 +3,7 @@
 use Ucscode\SQuery\SQuery;
 
 class User extends AbstractUserRepository
-{    
+{
     /**
      * @method getUserMeta
      */
@@ -54,11 +54,11 @@ class User extends AbstractUserRepository
                 throw new \Exception(
                     sprintf(
                         "%s(): `message` offset is required (with value of type: string)",
-                        __METHOD__ 
+                        __METHOD__
                     )
                 );
             };
-            
+
             $data['userid'] = $this->getId();
             $data = $uss->sanitize($data, Uss::SANITIZE_SCRIPT_TAGS | Uss::SANITIZE_SQL);
 
@@ -76,12 +76,11 @@ class User extends AbstractUserRepository
      * @method getNotification
      */
     public function getNotifications(
-        ?array $filter = null, 
-        int $start = 0, 
-        int $limit = 20, 
+        ?array $filter = null,
+        int $start = 0,
+        int $limit = 20,
         string $order = 'DESC'
-    ): ?array
-    {
+    ): ?array {
         $data = [];
 
         if($this->exists()) {

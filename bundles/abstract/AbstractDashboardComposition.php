@@ -4,8 +4,7 @@ use Ucscode\Packages\TreeNode;
 
 abstract class AbstractDashboardComposition implements DashboardInterface
 {
-    abstract protected function createProject(): void;
-    abstract public function urlGenerator(string $path = '/', array $queries = []): UrlGenerator;
+    abstract protected function main(): void;
 
     public readonly DashboardConfig $config;
     public readonly TreeNode $menu;
@@ -19,7 +18,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $this->config = $config;
         $this->archiveRepository = new ArchiveRepository($this::class);
         $this->configureUser();
-        $this->configureProject();
+        $this->startProject();
     }
 
     private function configureUser(): void
@@ -29,16 +28,9 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $this->userMenu = new TreeNode('UserMenuContainer');
     }
 
-    private function configureProject(): void
+    private function startProject(): void
     {
-        $uss = Uss::instance();
-
-        if($this->isActiveBase()) {
-            $this->configureJS($uss);
-        }
-
-        $this->createProject();
-
+        $this->main();
         Event::instance()->addListener('modules:loaded', function () {
             $this->buildArchives();
         }, -10);
@@ -129,14 +121,5 @@ abstract class AbstractDashboardComposition implements DashboardInterface
             $method = $archive->getRequestMethods();
             new Route($route, new $controller($archive, $this), $method);
         }
-    }
-
-    private function configureJS(Uss $uss): void
-    {
-        $uss->addJsProperty('dashboard', [
-            'url' => $this->urlGenerator()->getResult(),
-            'nonce' => $uss->nonce('Ud'),
-            'loggedIn' => !!(new User())->getFromSession()
-        ]);
     }
 }

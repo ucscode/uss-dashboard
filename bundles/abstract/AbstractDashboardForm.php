@@ -193,7 +193,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
 
         $this->add(
             $this->hashKey,
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_HIDDEN,
             ['value' => "{$name}/{$nonce}"]
         );

@@ -12,7 +12,7 @@ class UserRegisterForm extends AbstractDashboardForm
         if(0) {
             $this->add(
                 'user[username]',
-                UssForm::INPUT,
+                UssForm::NODE_INPUT,
                 UssForm::TYPE_TEXT,
                 $this->style + [
                     'attr' => [
@@ -25,7 +25,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->add(
             'user[email]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_EMAIL,
             $this->style + [
                 'attr' => [
@@ -36,7 +36,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->add(
             'user[password]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_PASSWORD,
             $this->style + [
                 'attr' => [
@@ -48,7 +48,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->add(
             'user[confirmPassword]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_PASSWORD,
             $this->style + [
                 'attr' => [
@@ -62,7 +62,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->add(
             'user[agreement]',
-            UssForm::INPUT,
+            UssForm::NODE_INPUT,
             UssForm::TYPE_CHECKBOX,
             array_merge($this->style, [
                 'required' => true,
@@ -76,7 +76,7 @@ class UserRegisterForm extends AbstractDashboardForm
 
         $this->add(
             'submit',
-            UssForm::BUTTON,
+            UssForm::NODE_BUTTON,
             UssForm::TYPE_SUBMIT,
             $this->style + [
                 'class' => 'w-100 btn btn-primary'

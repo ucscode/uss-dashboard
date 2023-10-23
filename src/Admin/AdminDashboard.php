@@ -11,7 +11,7 @@ class AdminDashboard extends AbstractDashboard
     public const CONTROLLER_DIR = self::DIR . '/controllers';
     public const ASSETS_DIR = self::DIR . '/assets';
 
-    protected function createProject(): void
+    protected function main(): void
     {
         $uss = Uss::instance();
         $this->includeControllers();
@@ -43,14 +43,14 @@ class AdminDashboard extends AbstractDashboard
                     ->setForm(UserLoginForm::class)
                     ->setTemplate('@Ua/security/login.html.twig'),
             ],
-        
+
             'pages' => [
                 (new Archive('index'))
                     ->setTemplate('@Ua/index.html.twig')
                     ->setController(AdminIndexController::class)
                     ->setRoute('/'),
             ],
-        ];        
+        ];
 
         foreach($archiveList as $section => $archives) {
             foreach($archives as $archive) {

@@ -2,39 +2,7 @@
 
 {% block main_right_form_element %}
 
-    {# 
-        The form rendered in this page was build by creating a "UdLoginForm" Class which extends UssForm
-        
-        An instance of the "UdLoginForm" can be gotten by calling
-
-            Ud::instance()->config('forms:login'); 
-
-        From there, you can modify the form. 
-        But if you want a totally new custom from, there are 3 options. You can either
-
-        1. Extend the "UssForm" class and pass an instance of the new class to config. For example
-
-            class MyCustomForm extends UssForm {
-                ... 
-            }
-
-            Ud::instance()->config('forms:login', new MyCustomForm());
-
-        2. Extend the "UdLoginForm" and change only the required methods, then pass the instance to config
-
-            class MyCustomForm extends UssLoginForm {
-                ...
-            }
-
-            Ud::instance()->config('forms:login', new MyCustomForm());
-
-        3. Change the template that renders the form
-
-            Ud::instance()->config('templates:login', '@namespace/path/to/new/template.html.twig')
-
-    #}
-
-    {{ form.getHTML(1)|raw }} {# form is an instance of UdLoginForm #}
+    {{ form.getHTML(1)|raw }} 
 
 	<div class="mt-2">
 		<p class="text-sm text-center">

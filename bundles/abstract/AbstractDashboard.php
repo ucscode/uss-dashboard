@@ -64,6 +64,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $this->renderLoginArchive($template, $options);
             };
+            $this->javaScriptInfo($options['user']);
             $uss->render($template, $options);
         });
     }
@@ -95,5 +96,15 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         $namespace = $this->config->namespace;
         $dymanicTemplate = '@' . $namespace . '/' . $template;
         return Uss::instance()->filterContext($dymanicTemplate);
+    }
+
+    protected function javaScriptInfo(User $user): void
+    {
+        $uss = Uss::instance();
+        $uss->addJsProperty('dashboard', [
+            'url' => $this->urlGenerator()->getResult(),
+            'nonce' => $uss->nonce('Ud'),
+            'loggedIn' => $user->exists()
+        ]);
     }
 }

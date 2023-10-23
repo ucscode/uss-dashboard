@@ -3,10 +3,9 @@
 class UserRegisterController implements RouteInterface
 {
     public function __construct(
-        private Archive $archive, 
+        private Archive $archive,
         private DashboardInterface $dashboard
-    )
-    {
+    ) {
 
     }
 
