@@ -106,9 +106,9 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
      * @method isValid
      * Child classes should provide their own implementation of this method.
      */
-    public function isValid(array $post): bool
+    public function isValid(array $data): bool
     {
-        return !empty($post);
+        return !empty($data);
     }
 
     /**
@@ -118,7 +118,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     public function persistEntry(array $data): bool
     {
         // @Requires Override
-        $this->throwException(__METHOD__, 'to save entry into database');
+        $this->throwException(__METHOD__, 'in order to save entry into database');
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
      */
     public function onEntryFailure(array $data): void
     {
-        $this->throwException(__METHOD__, 'to manage actions upon failure on database entry.');
+        $this->throwException(__METHOD__, 'in order to manage actions upon failure on database entry.');
     }
 
     /**
@@ -136,7 +136,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
      */
     public function onEntrySuccess(array $data): void
     {
-        $this->throwException(__METHOD__, 'to manage actions upon successful database entry.');
+        $this->throwException(__METHOD__, 'in order to manage actions upon successful database entry.');
     }
 
     /**
@@ -146,15 +146,17 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     public function handleUntrustedRequest(): void
     {
         // @Requires Override
+        $this->devError("You have failed to handle invalid request");
     }
 
     /**
      * @method handleInvalidRequest
      * Child classes should provide their own implementation of this method.
      */
-    public function handleInvalidRequest(?array $post): void
+    public function handleInvalidRequest(?array $data): void
     {
-        $this->populate($post);
+        $this->populate($data);
+        $this->devError("You have failed to handle invalid request");
     }
 
     /**
@@ -227,7 +229,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     {
         throw new \Exception(
             sprintf(
-                "%s must be overridden by `%s` %s",
+                "%s() must be overridden in class `%s` %s",
                 $method,
                 get_called_class(),
                 $error
@@ -235,4 +237,16 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
         );
     }
 
+    /**
+     * @method devError
+     */
+    private function devError(string $error): void 
+    {
+        if(UssImmutable::DEBUG) {
+            $box = "<div class='text-bg-danger p-2 fs-12px'>
+                <i class='bi bi-x-octagon me-1'></i> %s
+            </div>";
+            BlockManager::instance()->appendTo('body_intro', 'dev_error', sprintf($box, $error));
+        };
+    }
 }
