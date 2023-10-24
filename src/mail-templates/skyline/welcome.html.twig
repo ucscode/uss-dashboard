@@ -2,7 +2,11 @@
 
 {% block mail_content %}
 
-Dear {{ user_title }},<br><br>
+{% if user_title is not empty %}
+    Dear {{ user_title }}, 
+{% else %}
+    Hi there,
+{% endif %}<br><br>
 
 We are delighted to welcome you to {{ company_name }}. You have joined a team of dedicated and passionate professionals who are committed to making a positive impact in our field. <br><br>
 
@@ -11,6 +15,6 @@ Your skills and perspective are valuable and we can't wait to see the impact you
 Here's to a fantastic journey with us!<br><br>
 
 Sincerely,<br>
-The Team
+The {{ company_name }} Team
 
 {% endblock %}

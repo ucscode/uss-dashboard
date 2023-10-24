@@ -83,7 +83,7 @@ final class DatabaseConfigurator
     private function setDatabaseOptions(): void
     {
         $uss = Uss::instance();
-        
+
         $configuration = [
             'user:disable-signup' => 0,
             'user:collect-username' => 0,
@@ -93,10 +93,10 @@ final class DatabaseConfigurator
             'user:default-role' => 'member',
             'user:affiliation' => 0,
             'user:remove-inactive-after-day' => 7, // 0 or null to ignore
-            'web:icon' => Uss::$globals['icon'],
-            'web:title' => Uss::$globals['title'],
-            'web:headline' => Uss::$globals['headline'],
-            'web:description' => Uss::$globals['description'],
+            'company:icon' => Uss::$globals['icon'],
+            'company:name' => Uss::$globals['title'],
+            'company:headline' => Uss::$globals['headline'],
+            'company:description' => Uss::$globals['description'],
             'admin:email' => 'admin@example.com',
             'smtp:state' => 'default'
         ];

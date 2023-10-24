@@ -12,7 +12,11 @@
 
                 {% block mail_content_intro %}
 
-                  Dear {{ user_title }},<br><br>
+                  {% if user_title is not empty %}
+                    Hi {{ user_title }}, 
+                  {% else %}
+                    Hello,
+                  {% endif %}<br><br>
 
                   Thank you for choosing our platform. To activate your {{ element|default('product') }}, please enter the following activation code: <br>
 
@@ -48,7 +52,7 @@
               <br>
                 {% block mail_content_outro %}
 
-                  If you have any questions or issues, please contact our support team.
+                  If you have any questions or issues, please contact our support team{% if company_email is not empty %} at <a href='mailto:{{ company_email }}'>{{ company_email }}</a>{% endif %}.
 
                 {% endblock %}
               <br>

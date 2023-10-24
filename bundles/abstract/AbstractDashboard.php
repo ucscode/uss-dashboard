@@ -1,7 +1,5 @@
 <?php
 
-use Ucscode\SQuery\SQuery;
-
 abstract class AbstractDashboard extends AbstractDashboardComposition
 {
     public function isActiveBase(): bool
@@ -16,10 +14,10 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     {
         $ar = new ArchiveRepository($this::class);
         $archive = $ar->getArchive($name);
-        if(!$archive || is_null($archive->getRoute())) {
+        if(!$archive) {
             return null;
         }
-        $urlGenerator = $this->urlGenerator($archive->getRoute());
+        $urlGenerator = $this->urlGenerator($archive->getRoute() ?? '');
         return $urlGenerator->getResult();
     }
 

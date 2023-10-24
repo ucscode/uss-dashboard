@@ -4,28 +4,156 @@
         </td>
       </tr>
       <tr>
-        <td style="background-color:#c2c2c2;">
+        <td style="background-color:#000000;" class="footer">
 
           <center>
-            <table cellspacing="0" cellpadding="0" width="500" class="w320">
+
+            <table>
               <tr>
-                <td>
-                  <table cellspacing="0" cellpadding="30" width="100%">
-                    <tr>
-                      <td style="text-align:center;">
-                        <a href="#">
-                          <img width="61" height="51" src="https://d1ergv6ync1qqr.cloudfront.net/bX7T2303QvGErnERR8zW_businessv1_07.gif" alt="twitter" />
-                        </a>
-                        <a href="#">
-                          <img width="61" height="51" src="https://d1ergv6ync1qqr.cloudfront.net/P5up1GlESjmj7R2pZHvn_businessv1_08.gif" alt="google plus" />
-                        </a>
-                        <a href="#">
-                          <img width="61" height="51" src="https://d1ergv6ync1qqr.cloudfront.net/bLCHO5G6QCa1ESY6BSS1_businessv1_09.gif" alt="facebook" />
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
+                <td><br></td>
+              </tr>
+            </table>
+
+            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="500" class="w320" style="margin: auto;">
+              <tbody>
+                <tr>
+                  <td valign="middle" class="mobile-padding">
+                    <table>
+                      <tbody>
+
+                        {% block about_section %}
+
+                          <tr>
+                            <td valign="top" style="padding-top: 20px;">
+                              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tbody>
+                                  <tr>
+                                    <td style="text-align: left; padding-right: 10px;">
+
+                                      <h3 class="heading">About</h3>
+
+                                      {% block about_content %}
+
+                                        {% set fake_about = 'At ' ~ company_name ~ ', we are more than just a business — We are a company that provides innovative solutions for your business needs. Our team of experts are passionate about delivering high-quality results and creating value for you and all of our clients.' %}
+
+                                        <p>{{ company_about|default(fake_about) }}</p>
+
+                                      {% endblock %}
+
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+
+                        {% endblock %}
+
+                        {% block contact_section %}
+
+                          {% if contact_info is defined %}
+
+                            <tr>
+                              <td valign="top" style="padding-top: 20px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                  <tbody>
+                                    <tr>
+                                      <td style="text-align: left; padding-left: 5px; padding-right: 5px;">
+                                      
+                                        <h3 class="heading">Contact Info</h3>
+
+                                        {% block contact_content %}
+
+                                          {% if contact_info is defined and contact_info is iterable %}
+                                            <ul class="list">
+                                              {% for key, value in contact_info %}
+                                                <li>
+                                                  <span class="text">{{ value }}</span>
+                                                </li>
+                                              {% endfor %}
+                                            </ul>
+                                            {% endif %}
+
+                                        {% endblock %}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+
+                          {% endif %}
+
+                        {% endblock %}
+
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td valign="middle" class="footer">
+                    <table width="100%">
+                      <tbody>
+                        <tr>
+                          <td valign="top" class="mobile-padding">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                              <tbody>
+                                <tr>
+                                  <td style="text-align: center; padding-right: 10px;">
+
+                                    <p>Copyright © {{ "now"|date('Y') }}. All Rights Reserved</p>
+
+                                    {% if unsubscribe_url is defined %}
+
+                                      <div>
+                                        <a href="{{ unsubscribe_url }}" style="color: rgba(255,255,255,.4);" target='_blank'>Unsubcribe</a>
+                                      </div>
+
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {% block social_media_section %}
+
+              {% if social_media is defined and social_media is iterable %}
+
+                <table cellspacing="0" cellpadding="0" width="500" class="w320">
+                  <tr>
+                    <td>
+                      <table cellspacing="0" cellpadding="30" width="100%">
+                        <tr>
+                          <td style="text-align:center;">
+
+                            {% for icon, url in social_media %}
+                              <a href="{{ url }}" target='_blank'>
+                                <img height="35" src="{{ baseurl ~ '/images/' ~ icon ~ '.png' }}" alt="{{ icon }}" />
+                              </a>
+                            {% endfor %}
+
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+              </table>
+
+              {% endif %}
+
+            {% endblock %}
+            <table>
+              <tr>
+                <td><br></td>
               </tr>
             </table>
           </center>

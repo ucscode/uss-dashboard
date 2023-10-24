@@ -10,7 +10,7 @@ class Alert
     public const SESSID = 'v-alert';
 
     protected array $options = [];
-    protected string $type = 'modal'; 
+    protected string $type = 'modal';
     protected string $library = self::ALERT_TYPES['modal'];
     protected string $alertId;
     protected bool $followRedirect = false;
@@ -27,10 +27,10 @@ class Alert
      * @return self
      */
     public function type(string $type): self
-    {   
+    {
         $key = strtolower(trim($type));
         $availTypes = array_keys(self::ALERT_TYPES);
-        
+
         if(!in_array($key, $availTypes)) {
             throw new \Exception(
                 sprintf(
@@ -63,7 +63,7 @@ class Alert
 
     /**
      * Display alert even when redirect occurs
-     * 
+     *
      * Note: This method will not work if you redirect and do not terminate the script
      * You should call on exit() or die() to terminate the script
      */
@@ -100,8 +100,8 @@ class Alert
         };
 
         BlockManager::instance()->appendTo(
-            self::SESSID, 
-            $this->alertId, 
+            self::SESSID,
+            $this->alertId,
             $javascriptOutput
         );
     }
@@ -130,7 +130,7 @@ class Alert
     protected function bootBox($method): string
     {
         $method = $this->validateMethod($method, [
-            'alert', 
+            'alert',
             'dialog'
         ]);
 
@@ -140,7 +140,7 @@ class Alert
         ]);
 
         $options += [
-            'title' => Uss::instance()->options->get('web:title')
+            'title' => Uss::instance()->options->get('company:name')
         ];
 
         $snippet = "bootbox.{$method}(" . $this->jsEncode($options) . ");";
@@ -151,10 +151,10 @@ class Alert
     protected function iziToast($method)
     {
         $method = $this->validateMethod($method, [
-            'info', 
-            'success', 
-            'warning', 
-            'error', 
+            'info',
+            'success',
+            'warning',
+            'error',
             'question'
         ]);
 

@@ -13,7 +13,7 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     }
 
     public function __construct(
-        private DashboardInterface $dashboard
+        private AbstractDashboard $dashboard
     ) {
         $this->menu = $this->dashboard->menu;
         $this->userMenu = $this->dashboard->userMenu;

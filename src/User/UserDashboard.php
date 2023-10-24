@@ -84,6 +84,7 @@ class UserDashboard extends AbstractDashboard
             self::FORMS_DIR => [
                 "UserLoginForm.php",
                 "UserRegisterForm.php",
+                'AbstractUserRecoveryForm.php',
                 "UserRecoveryForm.php",
             ],
             self::CONTROLLER_DIR => [

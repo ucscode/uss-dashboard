@@ -1,26 +1,74 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
-use PHPMailer\PHPMailer\PHPMailer;
 
-class UserRecoveryForm extends AbstractDashboardForm
+class UserRecoveryForm extends AbstractUserRecoveryForm
 {
-    protected User $user;
+    protected ?string $reportKey = null;
+    protected ?string $reportError = null;
+    protected bool $passwordUpdated;
+
+    protected function onCreate(): void
+    {
+        $this->defineStage();
+    }
 
     protected function buildForm()
     {
-        $this->add(
-            'email',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_EMAIL,
-            [
-                'label' => "Email",
-                'attr' => [
-                    'placeholder' => 'Enter your account email',
-                    'required'
+        if(!$this->stage) {
+            
+            // email stage
+            $this->add(
+                'email',
+                UssForm::NODE_INPUT,
+                UssForm::TYPE_EMAIL,
+                [
+                    'label' => "Email",
+                    'attr' => [
+                        'placeholder' => 'Enter your account email',
+                        'required'
+                    ]
                 ]
-            ]
-        );
+            );
+
+        } else {
+
+            // password reset stage
+            $this->add(
+                'user[password]',
+                UssForm::NODE_INPUT,
+                UssForm::TYPE_PASSWORD,
+                [
+                    'label' => 'New Password',
+                    'attr' => [
+                        'required',
+                        'placeholder' => 'Enter your new password'
+                    ]
+                ]
+            );
+
+            $this->add(
+                'user[confirm_password]',
+                UssForm::NODE_INPUT,
+                UssForm::TYPE_PASSWORD,
+                [
+                    'label' => 'Confirm Password',
+                    'attr' => [
+                        'required',
+                        'placeholder' => 'Confirm your new password'
+                    ]
+                ]
+            );
+            
+            $this->add(
+                'user[id]',
+                UssForm::NODE_INPUT,
+                UssForm::TYPE_HIDDEN,
+                [
+                    'value' => $this->user->getId()
+                ]
+            );
+        }
 
         $this->add(
             'submit',
@@ -36,37 +84,61 @@ class UserRecoveryForm extends AbstractDashboardForm
 
     public function isValid(array $data): bool
     {
-        if(!empty($data['email'])) {
+        if(!$this->stage) {
+            // email stage
+            $this->reportKey = 'email';
+            $this->reportError = "The email address is not valid";
             return filter_var($data['email'], FILTER_VALIDATE_EMAIL);
+        } else {
+            // password reset stage
+            if(strlen($data['user']['password']) < 6) {
+                $this->reportKey = 'user[password]';
+                $this->reportError = 'Password should be at least 6 characters';
+            } else if($data['user']['password'] !== $data['user']['confirm_password']) {
+                $this->reportKey = 'user[confirm_password]';
+                $this->reportError = 'Password does not match';
+            }
         }
-        return false;
+        return empty($this->reportKey);
     }
 
     public function handleInvalidRequest(?array $data): void
     {
-        $this->populate($data);
-        if(!empty($data['email'])) {
-            $this->setReport('email', "The email address is not valid");
+        if(!$this->stage) {
+            $this->populate($data);
         };
+        $this->setReport($this->reportKey, $this->reportError);
     }
 
     public function persistEntry(array $data): bool
     {
-        $this->user = new User();
-        $this->user->allocate('email', $data['email']);
-        return $this->user->exists();
+        if(!$this->stage) {
+            // email stage
+            $this->user = new User();
+            $this->user->allocate('email', $data['email']);
+            return $this->user->exists();
+        } else {
+            // password reset stage
+            $this->user = new User($data['user']['id'] ?? 0);
+            $userExists = $this->user->exists();
+            if($userExists) {
+                $this->user->setPassword($data['user']['password'], true);
+                $this->status = $this->user->persist();
+            }
+            return $userExists;
+        }
     }
 
     public function onEntrySuccess(array $data): void
     {
-        $uss = Uss::instance();
-        $dir = 'skyline';
-        $file = 'verification-code.html.twig';
-        $template = '@mail' . '/' . $dir . '/' . $file;
-        $uss->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'mail');
-        $uss->render($template, [
-            'iconic' => 'https://d1ergv6ync1qqr.cloudfront.net/RiSABbLdTIKLLeKSoLaI_businessv_03.gif'
-        ]);
+        if(!$this->stage) {
+            // email stage
+            $this->status = $this->sendRecoveryEmail($this->user);
+        } else {
+            if($this->status) {
+                $this->user->removeUserMeta('user.recovery_code');
+            }
+        }
     }
 
     public function onEntryFailure(array $data): void

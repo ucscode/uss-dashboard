@@ -17,7 +17,7 @@
 
                                 {% block main_left_content_image %}
 
-                                    {% set icon = Uss.getOption('web:icon') %}
+                                    {% set icon = Uss.getOption('company:icon') %}
 
                                     {% if icon is not empty %}
                                         <div class='mb-2'>
@@ -29,13 +29,13 @@
 
                                 {% block main_left_content_title %}
                                     <h1 class="text-white mb-2">
-                                        {{ Uss.getOption('web:title') }}
+                                        {{ Uss.getOption('company:name') }}
                                     </h1>
                                 {% endblock %}
 
                                 {% block main_left_content_description %}
                                     <p class="text-light">
-                                        {{ Uss.getOption('web:description') }}
+                                        {{ Uss.getOption('company:description') }}
                                     </p>
                                 {% endblock %}
 

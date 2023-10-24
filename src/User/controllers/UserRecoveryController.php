@@ -17,6 +17,7 @@ class UserRecoveryController implements RouteInterface
         $formInstance->handleSubmission();
 
         $this->dashboard->enableFirewall(false);
+        
         $this->dashboard->render($this->archive->getTemplate(), [
             'form' => $formInstance
         ]);

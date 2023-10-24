@@ -790,8 +790,8 @@ abstract class UdAbstract
      */
     public static function refresh_site_vars()
     {
-        foreach(['title', 'tagline', 'description', 'icon'] as $key) {
-            $value = Uss::$global['options']->get("site:{$key}");
+        foreach(['name', 'tagline', 'description', 'icon'] as $key) {
+            $value = Uss::$global['options']->get("company:{$key}");
             if(!empty($value)) {
                 if($key == 'icon') {
                     $value = Uss::instance()->getUrl(MOD_DIR . "/{$value}");

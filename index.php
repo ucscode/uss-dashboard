@@ -49,6 +49,7 @@ $bundles = [
         "UdCrud.php",
         //"DOMTablet.php",
         "Hierarchy.php",
+        "DashboardFactory.php",
     ],
 ];
 

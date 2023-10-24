@@ -12,11 +12,15 @@
             <br>
                 {% block mail_content_intro %}
 
-                    Dear {{ user_title }}, <br><br>
+                    {% if user_title is not empty %}
+                      Hi {{ user_title }}, 
+                    {% else %}
+                      Hello,
+                    {% endif %}<br><br>
 
                     Thank you for registering an account with us. We are delighted to have you as part of our community. <br><br>
 
-                    To activate your account, please click on the link below and follow the instructions. This link will expire in {{ expiry_hour|default(24) }} hours, so please do it as soon as possible.
+                    To activate your account, please click on the link below and follow the instructions. The link will expire in {{ expiry_hour|default(24) }} hours:
 
                 {% endblock %}
             </td>
@@ -67,10 +71,10 @@
             <br>
                 {% block mail_content_outro %}
 
-                    If you have any questions or issues, please contact our support team at support@example.com. <br><br>
+                    If you have any questions or issues, please contact our support team{% if company_email is not empty %} at <a href='mailto:{{ company_email }}'>{{ company_email }}</a>{% endif %}. <br><br>
 
                     Sincerely, <br>
-                    The Team
+                    The {{ company_name }} Team
 
                 {% endblock %}
             </td>

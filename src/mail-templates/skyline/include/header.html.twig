@@ -5,8 +5,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-	<title>{{ subject }}</title>
-
   {% block stylesheet %}
     {% include baselink ~ '/include/theme.style.html.twig' %}
   {% endblock %}
@@ -30,7 +28,7 @@
                     {% block company_info %}
 
                       {% if company_icon is defined %}
-                        <img width="250" height="62" src="{{ company_icon }}">
+                        <img height="62" src="{{ company_icon }}">
                       {% else %}
                         <h3>{{ company_name }}</h3>
                       {% endif %}
@@ -48,20 +46,20 @@
 
           <tr>
 
-            <td background="{{ cover_photo }}" bgcolor="#64594b" valign="top" style="background: url({{ cover_photo }}) no-repeat center; background-color: #64594b; background-position: center; background-size: cover;">
-
-              <div>
+            <td class='hero' background="{{ cover_photo }}" bgcolor="#64594b" valign="top" style="background: url({{ cover_photo }}) no-repeat center; background-color: #64594b; background-position: center; background-size: {{ cover_photo_size|default('cover') }}">
+              <div class='overlay'></div>
+              <div style='position: relative;'>
                 <center>
-                  <table cellspacing="0" cellpadding="0" width="530" height="303" class="w320">
+                  <table cellspacing="0" cellpadding="0" width="530" height="{{ cover_height }}" class="w320">
                     <tr>
-                      <td valign="middle" style="vertical-align:middle; padding-right: 15px; padding-left: 15px; text-align:left;" class="mobile-center" height="303">
+                      <td valign="middle" style="vertical-align:middle; padding-right: 15px; padding-left: 15px; text-align:left;" class="mobile-center" height="{{ cover_height }}">
 
-                        {% block heading %}
+                        {% block hero_content %}
 
                           {% set headline = headline|default('The excellent industry for an unbelievable experience') %}
 
-                          <h1 class='text-white bold'>WELCOME TO {{ company_name|raw }}</h1><br>
-                          <h2 class='text-white'>{{ headline|raw }}</h2>
+                          <h2 class='text-white bold'>WELCOME TO {{ company_name }}</h2><br>
+                          <h2 class='text-white' style='font-size: 18px'>{{ company_headline|raw }}</h2>
 
                         {% endblock %}
 
