@@ -1,0 +1,83 @@
+{% extends '@Mail/skyline/base.html.twig' %}
+
+{% block mail_content_wrapper %}
+
+<table cellspacing="0" cellpadding="0" width="500" class="w320">
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td class="mobile-padding" style="text-align:left;">
+            <br>
+            <br>
+                {% block mail_content_intro %}
+
+                    Dear {{ user_title }}, <br><br>
+
+                    Thank you for registering an account with us. We are delighted to have you as part of our community. <br><br>
+
+                    To activate your account, please click on the link below and follow the instructions. This link will expire in {{ expiry_hour|default(24) }} hours, so please do it as soon as possible.
+
+                {% endblock %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="mobile-padding">
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td style="width:150px;">
+                <br>
+                <br>
+              <div>
+                {% block mail_content_button %}
+
+                    <a href="{{ activation_link|default('#') }}">
+                        <table cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <td style="{{ button_style }}">
+                                    <span style="color:#ffffff">
+                                        {{ activation_text|default('Activate your account') }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </a>
+                    
+                {% endblock %}
+              </div>
+            </td>
+            <td>
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td class="mobile-padding" style="text-align:left;">
+            <br>
+            <br>
+                {% block mail_content_outro %}
+
+                    If you have any questions or issues, please contact our support team at support@example.com. <br><br>
+
+                    Sincerely, <br>
+                    The Team
+
+                {% endblock %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+</table>
+
+{% endblock %}

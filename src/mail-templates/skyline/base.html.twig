@@ -1,0 +1,60 @@
+{# predefined variables #}
+
+{% set template = 'skyline' %}
+
+{% set basedir = constant('DashboardImmutable::MAIL_TEMPLATE_DIR') ~ '/' ~ template %}
+
+{% set baseurl = Uss.abspathToUrl(basedir) %}
+
+{% set baselink = '@Mail/' ~ template %}
+
+{% set button_color = button_color|default('#1a568b') %}
+
+{% set button_style = "background-color:" ~ button_color ~ ";border-radius:0px;color:#ffffff;display:inline-block;font-family:'Lato', Helvetica, Arial, sans-serif;font-weight:bold;font-size:13px;line-height:38px;text-align:center;text-decoration:none;width:200px;-webkit-text-size-adjust:none;mso-hide:all;color:#ffffff" %}
+
+{% set cover_photo = cover_photo|default(baseurl ~ '/images/sunset.jpg') %}
+
+{% set company_name = company_name|default('Your Company INC') %}
+
+{# content area #}
+
+{% include baselink ~ '/include/header.html.twig' %}
+
+{% block mail_content_wrapper %}
+
+  <table cellspacing="0" cellpadding="0" width="500" class="w320">
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td class="mobile-padding" style="text-align:left;">
+            <br>
+            <br>
+                {% block mail_content %}
+
+                    Hi {{ client_name }},<br><br>
+
+                    Your account settings have been updated. If you did not update your settings, please <a href="#">contact support</a>
+                    <br>
+
+                    <br>
+                    Thanks for being a customer!<br>
+                    Awesome Inc
+
+                {% endblock %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="mobile-padding">
+        <br>
+        <br>
+      </td>
+    </tr>
+  </table>
+
+{% endblock %}
+
+{% include baselink ~ '/include/footer.html.twig' %}

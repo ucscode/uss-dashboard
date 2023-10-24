@@ -12,4 +12,5 @@ final class DashboardImmutable
     public const CLASS_DIR = self::RES_DIR . "/class";
     public const CENTRAL_DIR = self::RES_DIR . "/central";
     public const THEME_DIR = self::BASE_DIR . "/themes";
+    public const MAIL_TEMPLATE_DIR = self::SRC_DIR . '/mail-templates';
 }

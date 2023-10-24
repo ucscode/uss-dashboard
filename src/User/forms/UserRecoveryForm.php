@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class UserRecoveryForm extends AbstractDashboardForm
 {
@@ -9,9 +10,9 @@ class UserRecoveryForm extends AbstractDashboardForm
     protected function buildForm()
     {
         $this->add(
-            'email', 
-            UssForm::NODE_INPUT, 
-            UssForm::TYPE_EMAIL, 
+            'email',
+            UssForm::NODE_INPUT,
+            UssForm::TYPE_EMAIL,
             [
                 'label' => "Email",
                 'attr' => [
@@ -58,7 +59,22 @@ class UserRecoveryForm extends AbstractDashboardForm
 
     public function onEntrySuccess(array $data): void
     {
-        var_dump($data);
+        $uss = Uss::instance();
+        $dir = 'skyline';
+        $file = 'verification-code.html.twig';
+        $template = '@mail' . '/' . $dir . '/' . $file;
+        $uss->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'mail');
+        $uss->render($template, [
+            'iconic' => 'https://d1ergv6ync1qqr.cloudfront.net/RiSABbLdTIKLLeKSoLaI_businessv_03.gif'
+        ]);
+    }
+
+    public function onEntryFailure(array $data): void
+    {
+        $this->populate($data);
+        if(!empty($data['email'])) {
+            $this->setReport('email', 'We could find the email in our database');
+        }
     }
 
 }
