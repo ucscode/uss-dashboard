@@ -3,8 +3,8 @@
 
 {% block head_css %}
     {{ parent() }}
-    {% set cssPath = constant('UserDashboard::ASSETS_DIR') ~ '/css/default.css' %}
-    <link rel="stylesheet" href="{{ Uss.abspathToUrl(cssPath) }}">
+    {% set cssPath = DashboardExtension.themeUrl ~ '/assets/css/default.css' %}
+    <link rel="stylesheet" href="{{ cssPath }}">
 {% endblock head_css %}
 
 
@@ -16,7 +16,7 @@
 
             {% block sidebar_logo %}
                 <div class="navbar-logo">
-                    <a href="{{ Ud.urlGenerator('/') }}">
+                    <a href="{{ DashboardExtension.urlGenerator('/') }}">
                         <img src="{{ Uss.getOption('company:icon') ?? Uss.globals.icon }}" alt="logo" />
                     </a>
                 </div>

@@ -6,6 +6,23 @@
 {% block dashboard_content %}
 
     <div class='container-fluid'>
+        <div class='mb-3 border rounded-2 p-3'>
+            <div class='mb-1 fs-14px'>
+                {% for x in range(0, 4) %}
+                    <i class='bi bi-star-fill text-warning'></i> 
+                {% endfor %}
+            </div>
+            <p class='fw-light fs-15px'>
+                Support <span class='text-primary'>{{ title }}</span> Project with BTC Donation
+            </p>
+            <div class='input-group'>
+                <input type='text' readonly class='form-control' value='bc1qerasn0dtsf2h0sssyz5auqnj6qzugrmw0n4wm9'>
+                <button class='btn btn-outline-success'>
+                    <i class='bi bi-copy'></i>
+                </button>
+            </div>
+        </div>
+
         <div class="card card-waves mb-4">
             <div class="card-body p-5">
 
