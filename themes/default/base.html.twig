@@ -3,7 +3,7 @@
 
 {% block head_css %}
     {{ parent() }}
-    {% set cssPath = DashboardExtension.themeUrl ~ '/assets/css/default.css' %}
+    {% set cssPath = DashboardExtension.themeUrl('/assets/css/default.css') %}
     <link rel="stylesheet" href="{{ cssPath }}">
 {% endblock head_css %}
 
@@ -104,11 +104,14 @@
     
     {{ parent() }}
 
+    {% set dataMagicJS = constant('DashboardImmutable::ASSETS_DIR') ~ '/js/dataMagic.js' %}
+    <script src="{{ Uss.abspathToUrl(dataMagicJS) }}"></script>
+
     {% if (user and user.exists()) %}
-        {% set dashboardJS = constant('UserDashboard::ASSETS_DIR') ~ '/js/dashboard.js' %}
-        {% set notificationJS = constant('UserDashboard::ASSETS_DIR') ~ '/js/notifications.js' %}
-	    <script src="{{ Uss.abspathToUrl(dashboardJS) }}"></script>
-        <script type='module' src='{{ Uss.abspathToUrl(notificationJS) }}'></script>
+        {% set dashboardJS = DashboardExtension.themeUrl('/assets/js/dashboard.js') %}
+        {% set notificationJS = DashboardExtension.themeUrl('/assets/js/notifications.js') %}
+	    <script src="{{ dashboardJS }}"></script>
+        <script type='module' src='{{ notificationJS }}'></script>
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('v-alert') %}

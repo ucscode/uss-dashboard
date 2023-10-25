@@ -6,6 +6,7 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
 {
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
+    private Uss $uss;
     public readonly string $themeName;
     public readonly string $themePath;
     public readonly string $themeNamespace;
@@ -21,6 +22,27 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     ) {
         $this->setInitialValues();
         Alert::flushAll();
+    }
+
+    /**
+     * @method themePath
+     */
+    public function themePath(string $path = ''): string
+    {
+        $path = $this->uss->filterContext($path);
+        $themePath = DashboardImmutable::THEME_DIR . '/' . $this->themeName;
+        if(!empty($path)) {
+            $themePath .= '/' . $path;
+        };
+        return $themePath;
+    }
+
+    /**
+     * @method themeUrl
+     */
+    public function themeUrl(string $path = ''): string
+    {
+        return $this->uss->abspathToUrl($this->themePath($path));
     }
 
     /**
@@ -52,12 +74,10 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
      */
     public function setInitialValues(): void
     {
-        $uss = Uss::instance();
+        $this->uss = Uss::instance();
         $this->menu = $this->dashboard->menu;
         $this->userMenu = $this->dashboard->userMenu;
         $this->themeName = $this->dashboard->config->theme;
-        $this->themePath = DashboardImmutable::THEME_DIR . '/' . $this->themeName;
         $this->themeNamespace = '@Theme/' . $this->themeName;
-        $this->themeUrl = $uss->abspathToUrl($this->themePath);
     }
 }

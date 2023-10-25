@@ -23,7 +23,7 @@ class UserProfileController implements RouteInterface
 
         if($user->exists() && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $uss = Uss::instance();
-            
+
             $userInfo = $uss->sanitize($_POST['user']);
 
             foreach($userInfo as $key => $value) {
@@ -57,7 +57,7 @@ class UserProfileController implements RouteInterface
                 'image/jpg'
             ]);
             $uploader->setMaxFileSize(1000000);
-            $uploader->setUploadDirectory(UserDashboard::ASSETS_DIR . '/images/profile');
+            $uploader->setUploadDirectory(DashboardImmutable::ASSETS_DIR . '/images/profile');
             $uploader->setFilenamePrefix($user->getId());
             if($uploader->uploadFile()) {
                 $filepath = $uploader->getUploadedFilepath();
