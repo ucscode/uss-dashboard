@@ -57,10 +57,11 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         Event::instance()->addListener('dashboard:render', function () use (&$template, &$options) {
             $uss = Uss::instance();
             $options['user'] = new User();
-            $uss->addTwigExtension(new DashboardTwigExtension($this));
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $this->renderLoginArchive($template, $options);
             };
+            $this->evalutatePermission($template, $options);
+            $uss->addTwigExtension(new DashboardTwigExtension($this));
             $this->javaScriptInfo($options['user']);
             $options['_theme'] = '@Theme/' . $this->config->getTheme();
             $uss->render($template, $options);
@@ -74,9 +75,8 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     protected function renderLoginArchive(string &$template, array &$options): void
     {
         $archive = $this->archiveRepository->getArchive(Archive::LOGIN);
+        
         $loginFormClass = $archive->getForm();
-
-        // Handle Login Request
         $formInstance = new $loginFormClass(Archive::LOGIN);
         $formInstance->handleSubmission();
 
@@ -86,6 +86,31 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         if(!$user) {
             $template = $archive->getTemplate();
             $options['form'] = $formInstance;
+        };
+    }
+
+    /**
+     * @method evaluateRestrictions
+     */
+    protected function evalutatePermission(&$template, &$options): void 
+    {
+        $user = $options['user'];
+        if($user->exists()) {
+
+            $dashboardPermission = $this->config->getPermissions();
+            $userRoles = $user->getUserMeta('user.roles');
+            $authorities = array_intersect($dashboardPermission, $userRoles);
+            
+            if(empty($authorities)) {
+                $archive = $this->archiveRepository->getArchive('restriction');
+                if($archive) {
+                    $template = $archive->getTemplate();
+                } else {
+                    throw new \Exception(
+                        "Restricted: 403 Template not found"
+                    );
+                }
+            };
         };
     }
 

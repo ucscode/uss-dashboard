@@ -311,4 +311,14 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
         };
         return null;
     }
+
+    /**
+     * @method destroySession
+     */
+    public function destroySession(): void
+    {
+        if(isset($_SESSION[self::SESSION_KEY])) {
+            unset($_SESSION[self::SESSION_KEY]);
+        };
+    }
 }
