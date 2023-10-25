@@ -107,19 +107,19 @@ class UserDashboard extends AbstractDashboard
     {
         yield (new Archive(Archive::LOGIN))
             ->setForm(UserLoginForm::class)
-            ->setTemplate($this->bindNamespace('security/login.html.twig'));
+            ->setTemplate($this->useTheme('/pages/security/login.html.twig'));
 
         yield (new Archive('register'))
             ->setRoute('/register')
             ->setController(UserRegisterController::class)
             ->setForm(UserRegisterForm::class)
-            ->setTemplate($this->bindNamespace('security/register.html.twig'));
+            ->setTemplate($this->useTheme('/pages/security/register.html.twig'));
 
         yield (new Archive('recovery'))
             ->setRoute('/recovery')
             ->setController(UserRecoveryController::class)
             ->setForm(UserRecoveryForm::class)
-            ->setTemplate($this->bindNamespace('security/recovery.html.twig'));
+            ->setTemplate($this->useTheme('/pages/security/recovery.html.twig'));
 
         yield (new Archive('logout'))
             ->setRoute('/logout')
@@ -142,7 +142,7 @@ class UserDashboard extends AbstractDashboard
         yield (new Archive('index'))
             ->setRoute('/')
             ->setController(UserIndexController::class)
-            ->setTemplate($this->bindNamespace('/pages/welcome.html.twig'))
+            ->setTemplate($this->useTheme('/pages/user/welcome.html.twig'))
             ->addMenuItem('index', new TreeNode('dashboard', [
                 'label' => 'dashboard',
                 'href' => $this->urlGenerator('/'),
@@ -152,12 +152,12 @@ class UserDashboard extends AbstractDashboard
         yield (new Archive('notifications'))
             ->setRoute('/notifications')
             ->setController(UserNotificationController::class)
-            ->setTemplate($this->bindNamespace('/pages/notifications.html.twig'));
+            ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
 
         yield (new Archive('profile'))
             ->setRoute('/profile')
             ->setController(UserProfileController::class)
-            ->setTemplate($this->bindNamespace('/pages/profile/main.html.twig'))
+            ->setTemplate($this->useTheme('/pages/user/profile/main.html.twig'))
             ->addMenuItem('profile', [
                 'label' => 'Profile',
                 'href' => $this->urlGenerator('/profile'),
@@ -172,7 +172,7 @@ class UserDashboard extends AbstractDashboard
         yield (new Archive('password'))
             ->setRoute('/password')
             ->setController(UserPasswordController::class)
-            ->setTemplate($this->bindNamespace('pages/profile/password.html.twig'))
+            ->setTemplate($this->useTheme('/pages/user/profile/password.html.twig'))
             ->addMenuItem('passwordPill', [
                 'label' => 'password',
                 'href' => $this->urlGenerator('/password'),

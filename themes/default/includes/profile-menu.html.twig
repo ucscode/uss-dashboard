@@ -1,0 +1,41 @@
+<div class="profile-box ml-1">
+
+    <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="profile-info">
+            <div class="info">
+                <div class="image">
+                    <img src="{{ user.avatar }}" alt=""/>
+                    <span class="status"></span>
+                </div>
+            </div>
+        </div>
+        <i class="bi bi-chevron-down"></i>
+    </button>
+    
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
+
+        <li class='mb-1'>
+            <div class='px-3 py-2 text-end bg-light fs-12px'>
+                <span class='text-success'>
+                    {{ user.username ? user.username : user.email }}
+                </span>
+                <i class='bi bi-info-circle ms-1'></i>
+            </div>
+        </li>
+
+        {% block dashboard_user_menu_items %}
+
+            {% for item in Ud.userMenu.children %}
+                <li>
+                    <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
+                        <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
+                        {{ item.getAttr('label') }} 
+                    </a>
+                </li>
+            {% endfor %}  
+
+        {% endblock %}
+
+    </ul>
+    
+</div>

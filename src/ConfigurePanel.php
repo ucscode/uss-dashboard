@@ -5,14 +5,16 @@ new DatabaseConfigurator();
 /**
  * Register Email Template Directory
  */
-Uss::instance()->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'mail');
+$uss = Uss::instance();
+$uss->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'Mail');
+$uss->addTwigFilesystem(DashboardImmutable::THEME_DIR, 'Theme');
 
 /**
  * Configure User Dashboard
  */
 $userDashboardConfig = (new DashboardConfig())
     ->setBase('/dashboard')
-    ->setTemplateFilesystem(UserDashboard::TEMPLATE_DIR, 'Ud');
+    ->setTheme('default');
 
 UserDashboard::instance()->configureDashboard($userDashboardConfig);
 
@@ -21,7 +23,7 @@ UserDashboard::instance()->configureDashboard($userDashboardConfig);
  */
 $adminDashboardConfig = (new DashboardConfig())
     ->setBase("/admin")
-    ->setTemplateFilesystem(AdminDashboard::TEMPLATE_DIR, 'Ua');
+    ->setTheme('default');
 
 AdminDashboard::instance()->configureDashboard($adminDashboardConfig);
 

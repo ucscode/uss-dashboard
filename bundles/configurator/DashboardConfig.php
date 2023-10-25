@@ -1,24 +1,23 @@
 <?php
 
-final class DashboardConfig 
+final class DashboardConfig
 {
     public readonly string $base;
-    public readonly string $templateFilesystem;
     public readonly string $namespace;
+    public readonly string $theme;
+    public readonly string $parentTheme;
 
-    public function setBase(string $base): self 
+    public function setBase(string $base): self
     {
         $uss = Uss::instance();
         $this->base = $uss->filterContext($base);
         return $this;
     }
 
-    public function setTemplateFilesystem(string $filesystem, string $namespace): self
+    public function setTheme(string $theme, string $parentTheme = 'default'): self
     {
-        $this->templateFilesystem = $filesystem;
-        $this->namespace = $namespace;
-        $uss = Uss::instance();
-        $uss->addTwigFilesystem($this->templateFilesystem, $this->namespace);
+        $this->theme = $theme;
+        $this->parentTheme = $parentTheme;
         return $this;
     }
 }

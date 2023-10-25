@@ -4,20 +4,21 @@ class UserNotificationController implements RouteInterface
 {
     private $parseDown;
 
-    public function __construct(private Archive $page)
-    {
+    public function __construct(
+        private Archive $page,
+        private DashboardInterface $dashboard
+    ) {
         $this->parseDown = new \Parsedown();
     }
 
     public function onload($pageInfo)
     {
-        $ud = UserDashboard::instance();
         $user = new User();
         $user->getFromSession();
-        $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($ud, $user) : $this->postRequest($ud, $user);
+        $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($user) : $this->postRequest($user);
     }
 
-    protected function getRequest(UserDashboard $ud, ?User $user): void
+    protected function getRequest(?User $user): void
     {
         if($user) {
 
@@ -25,7 +26,7 @@ class UserNotificationController implements RouteInterface
             $itemsPerPage = 20;
 
             $currentPage = $this->getCurrentPage($totalItems, $itemsPerPage);
-            $urlPattern = $ud->getArchiveUrl('notification') . '?page=(:num)';
+            $urlPattern = $this->dashboard->getArchiveUrl('notification') . '?page=(:num)';
 
             $startFrom = ($currentPage - 1) * $itemsPerPage;
 
@@ -48,19 +49,19 @@ class UserNotificationController implements RouteInterface
 
         }
 
-        $ud->render($this->page->getTemplate(), [
+        $this->dashboard->render($this->page->getTemplate(), [
             'notifications' => $notifications,
             'paginator' => $paginator
         ]);
     }
 
-    protected function postRequest(UserDashboard $ud, ?User $user): void
+    protected function postRequest(?User $user): void
     {
         $nonce = $_POST['notificationNonce'] ?? null;
 
         if(!$user) {
             if(empty($nonce)) {
-                $indexArchiveUrl = $ud->getArchiveUrl('index');
+                $indexArchiveUrl = $this->dashboard->getArchiveUrl('index');
                 header("location: " . $indexArchiveUrl);
                 exit;
             }

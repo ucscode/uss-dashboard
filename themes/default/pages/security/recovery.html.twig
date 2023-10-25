@@ -1,4 +1,4 @@
-{% extends namespace ~ '/security/layout.html.twig' %}
+{% extends _theme ~ '/security/layout.html.twig' %}
 
 {% block main_right_form_element %}
     
@@ -62,7 +62,7 @@
 
         {% set action = 'reset your account password' %}
         
-        {% include namespace ~ '/security/await.html.twig' %}
+        {% include _theme ~ '/security/await.html.twig' %}
 
     {% endif %}
 

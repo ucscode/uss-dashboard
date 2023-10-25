@@ -37,25 +37,44 @@ class AdminDashboard extends AbstractDashboard
 
     protected function registerArchives(): void
     {
-        $archiveList = [
-            'security' => [
-                (new Archive(Archive::LOGIN))
-                    ->setForm(UserLoginForm::class)
-                    ->setTemplate('@Ua/security/login.html.twig'),
-            ],
-
-            'pages' => [
-                (new Archive('index'))
-                    ->setTemplate('@Ua/index.html.twig')
-                    ->setController(AdminIndexController::class)
-                    ->setRoute('/'),
-            ],
-        ];
-
-        foreach($archiveList as $section => $archives) {
-            foreach($archives as $archive) {
-                $this->archiveRepository->addArchive($archive->name, $archive);
-            }
+        $archives = $this->createArchives();
+        foreach($archives as $archive) {
+            $this->archiveRepository->addArchive($archive->name, $archive);
         }
+    }
+
+    protected function createArchives(): iterable
+    {
+        $dashboard = UserDashboard::instance();
+
+        yield (new Archive(Archive::LOGIN))
+            ->setForm(UserLoginForm::class)
+            ->setTemplate($this->useTheme('/pages/security/login.html.twig'));
+
+        yield (new Archive('index'))
+            ->setController(AdminIndexController::class)
+            ->setRoute('/')
+            ->setTemplate($this->useTheme('/pages/admin/index.html.twig'))
+            ->addMenuItem('index', [
+                'label' => 'Dashboard',
+                'icon' => 'bi bi-microsoft',
+                'href' => $this->urlGenerator()
+            ], $this->menu);
+
+        yield (new Archive('logout'))
+            ->setController(UserLogoutController::class)
+            ->setRoute('/logout')
+            ->addMenuItem('logout', [
+                'icon' => 'bi bi-power',
+                'order' => 1024,
+                'label' => 'logout',
+                'href' => $this->urlGenerator('/logout')
+            ], $this->userMenu)
+            ->setCustom('endpoint', $this->urlGenerator());
+
+        yield (new Archive('notifications'))
+            ->setRoute('/notifications')
+            ->setController(UserNotificationController::class)
+            ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
     }
 }

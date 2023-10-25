@@ -57,12 +57,12 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         Event::instance()->addListener('dashboard:render', function () use (&$template, &$options) {
             $uss = Uss::instance();
             $options['user'] = new User();
-            $options['namespace'] = '@' . $this->config->namespace;
             $uss->addTwigExtension(new DashboardTwigExtension($this));
             if(!$options['user']->getFromSession() && $this->firewallEnabled) {
                 $this->renderLoginArchive($template, $options);
             };
             $this->javaScriptInfo($options['user']);
+            $options['_theme'] = '@Theme/' . $this->config->theme;
             $uss->render($template, $options);
         });
     }
@@ -89,10 +89,10 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         };
     }
 
-    protected function bindNamespace(string $template): string
+    protected function useTheme(string $template): string
     {
-        $namespace = $this->config->namespace;
-        $dymanicTemplate = '@' . $namespace . '/' . $template;
+        $theme = $this->config->theme;
+        $dymanicTemplate = "@Theme/{$theme}/{$template}";
         return Uss::instance()->filterContext($dymanicTemplate);
     }
 
