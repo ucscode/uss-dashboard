@@ -1,8 +1,8 @@
 <?php
 
-class RoleImmutable 
+class RoleImmutable
 {
-    public const ROLE_SUPER_ADMIN = 'SUPER_ADMIN';
+    public const ROLE_SUPERADMIN = 'SUPERADMIN';
     public const ROLE_ADMIN = 'ADMIN';
     public const ROLE_USER = 'USER';
     public const ROLE_MEMEBER = 'MEMBER';

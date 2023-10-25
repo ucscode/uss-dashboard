@@ -116,7 +116,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $archiveRoute = $archive->getRoute();
 
         if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
-            $route = $uss->filterContext($this->config->base . "/" . $archiveRoute);
+            $route = $uss->filterContext($this->config->getBase() . "/" . $archiveRoute);
             $controller = $archive->getController();
             $method = $archive->getRequestMethods();
             new Route($route, new $controller($archive, $this), $method);

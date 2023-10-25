@@ -83,7 +83,7 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     public function setInitialValues(): void
     {
         $this->uss = Uss::instance();
-        $this->themeName = $this->dashboard->config->theme;
+        $this->themeName = $this->dashboard->config->getTheme();
         $this->themeNamespace = '@Theme/' . $this->themeName;
     }
 }

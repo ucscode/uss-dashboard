@@ -5,7 +5,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     public function isActiveBase(): bool
     {
         $uss = Uss::instance();
-        $regex = '#^' . $this->config->base . '(?!\w)#is';
+        $regex = '#^' . $this->config->getBase() . '(?!\w)#is';
         $request = $uss->filterContext($uss->splitUri());
         return preg_match($regex, $request);
     }
@@ -23,7 +23,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        $urlGenerator = new UrlGenerator($path, $query, $this->config->base);
+        $urlGenerator = new UrlGenerator($path, $query, $this->config->getBase());
         return $urlGenerator;
     }
 
@@ -62,7 +62,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                 $this->renderLoginArchive($template, $options);
             };
             $this->javaScriptInfo($options['user']);
-            $options['_theme'] = '@Theme/' . $this->config->theme;
+            $options['_theme'] = '@Theme/' . $this->config->getTheme();
             $uss->render($template, $options);
         });
     }
@@ -91,7 +91,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
 
     protected function useTheme(string $template): string
     {
-        $theme = $this->config->theme;
+        $theme = $this->config->getTheme();
         $dymanicTemplate = "@Theme/{$theme}/{$template}";
         return Uss::instance()->filterContext($dymanicTemplate);
     }

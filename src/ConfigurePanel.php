@@ -14,7 +14,8 @@ $uss->addTwigFilesystem(DashboardImmutable::THEME_DIR, 'Theme');
  */
 $userDashboardConfig = (new DashboardConfig())
     ->setBase('/dashboard')
-    ->setTheme('default');
+    ->setTheme('default')
+    ->addPermission(RoleImmutable::ROLE_USER);
 
 UserDashboard::instance()->configureDashboard($userDashboardConfig);
 
@@ -23,7 +24,11 @@ UserDashboard::instance()->configureDashboard($userDashboardConfig);
  */
 $adminDashboardConfig = (new DashboardConfig())
     ->setBase("/admin")
-    ->setTheme('default');
+    ->setTheme('default')
+    ->setPermissions([
+        RoleImmutable::ROLE_SUPERADMIN,
+        RoleImmutable::ROLE_ADMIN
+    ]);
 
 AdminDashboard::instance()->configureDashboard($adminDashboardConfig);
 
