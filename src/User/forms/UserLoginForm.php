@@ -38,7 +38,7 @@ class UserLoginForm extends AbstractDashboardForm
 
         $this->addRow();
 
-        $this->appendField($this->buildMailBlock());
+        $this->appendFieldToRow($this->buildMailBlock());
 
         $this->add(
             'submit',
@@ -62,7 +62,7 @@ class UserLoginForm extends AbstractDashboardForm
     public function persistEntry(array $data): bool
     {
         $column = strpos($data['user']['login'], '@') === false ? 'username' : 'email';
-        
+
         $this->user = (new User())->allocate($column, $data['user']['login']);
 
         if($this->user->exists()) {
@@ -89,7 +89,7 @@ class UserLoginForm extends AbstractDashboardForm
     public function onEntrySuccess(array $data): void
     {
         $this->user->saveToSession();
-        
+
         (new Alert("Authentication Successful"))
             ->type('notification')
             ->display('success');
@@ -98,7 +98,8 @@ class UserLoginForm extends AbstractDashboardForm
     protected function buildMailBlock()
     {
         $div1 = (new UssElement(UssForm::NODE_DIV))
-            ->setAttribute('class', 'd-flex justify-content-between my-3 col-12');
+            ->setAttribute('class', 'd-flex justify-content-between my-3 col-12')
+            ->setAttribute('id', 'reactive-mailer');
         $div2 = (new UssElement(UssForm::NODE_DIV))
             ->setAttribute('class', 'resend-email ms-auto');
         $a = (new UssElement(UssForm::NODE_A))

@@ -16,7 +16,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     protected function buildForm()
     {
         if(!$this->stage) {
-            
+
             // email stage
             $this->add(
                 'email',
@@ -59,7 +59,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
                     ]
                 ]
             );
-            
+
             $this->add(
                 'user[id]',
                 UssForm::NODE_INPUT,
@@ -85,20 +85,25 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     public function isValid(array $data): bool
     {
         if(!$this->stage) {
+
             // email stage
             $this->reportKey = 'email';
             $this->reportError = "The email address is not valid";
             return filter_var($data['email'], FILTER_VALIDATE_EMAIL);
+
         } else {
+
             // password reset stage
             if(strlen($data['user']['password']) < 6) {
                 $this->reportKey = 'user[password]';
                 $this->reportError = 'Password should be at least 6 characters';
-            } else if($data['user']['password'] !== $data['user']['confirm_password']) {
+            } elseif($data['user']['password'] !== $data['user']['confirm_password']) {
                 $this->reportKey = 'user[confirm_password]';
                 $this->reportError = 'Password does not match';
             }
+
         }
+
         return empty($this->reportKey);
     }
 
@@ -113,18 +118,23 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     public function persistEntry(array $data): bool
     {
         if(!$this->stage) {
+
             // email stage
             $this->user = new User();
             $this->user->allocate('email', $data['email']);
             return $this->user->exists();
+
         } else {
+
             // password reset stage
             $this->user = new User($data['user']['id'] ?? 0);
             $userExists = $this->user->exists();
+
             if($userExists) {
                 $this->user->setPassword($data['user']['password'], true);
                 $this->status = $this->user->persist();
             }
+
             return $userExists;
         }
     }
@@ -134,6 +144,11 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
         if(!$this->stage) {
             // email stage
             $this->status = $this->sendRecoveryEmail($this->user);
+            if(!$this->status) {
+                (new Alert('Email failed to send'))
+                    ->type('notification')
+                    ->display('warning');
+            }
         } else {
             if($this->status) {
                 $this->user->removeUserMeta('user.recovery_code');
@@ -144,7 +159,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     public function onEntryFailure(array $data): void
     {
         $this->populate($data);
-        if(!empty($data['email'])) {
+        if(!$this->stage) {
             $this->setReport('email', 'We could find the email in our database');
         }
     }

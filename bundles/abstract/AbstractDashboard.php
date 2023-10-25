@@ -62,7 +62,6 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                 $this->renderLoginArchive($template, $options);
             };
             $this->javaScriptInfo($options['user']);
-            $options['theme_folder'] = $this->config->theme;
             $options['_theme'] = '@Theme/' . $this->config->theme;
             $uss->render($template, $options);
         });

@@ -21,6 +21,9 @@ class AdminDashboard extends AbstractDashboard
     protected function includeControllers()
     {
         $source = [
+            self::FORM_DIR => [
+                'AdminLoginForm.php',
+            ],
             self::CONTROLLER_DIR => [
                 'AdminIndexController.php',
             ]
@@ -48,8 +51,8 @@ class AdminDashboard extends AbstractDashboard
         $dashboard = UserDashboard::instance();
 
         yield (new Archive(Archive::LOGIN))
-            ->setForm(UserLoginForm::class)
-            ->setTemplate($this->useTheme('/pages/security/login.html.twig'));
+            ->setForm(AdminLoginForm::class)
+            ->setTemplate($this->useTheme('/pages/admin/security/login.html.twig'));
 
         yield (new Archive('index'))
             ->setController(AdminIndexController::class)

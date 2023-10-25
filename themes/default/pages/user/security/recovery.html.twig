@@ -1,4 +1,4 @@
-{% extends _theme ~ '/security/layout.html.twig' %}
+{% extends _theme ~ '/pages/user/security/layout.html.twig' %}
 
 {% block main_right_form_element %}
     
@@ -8,13 +8,15 @@
         
             {{ form.getHTML(true)|raw }}
 
-            <div class='mt-2'>
-                <p class="text-sm text-medium text-dark text-center">
-                    <a href="{{ DashboardExtension.getArchiveUrl('index') }}" class='btn btn-outline-secondary'>
-                        Go Back To Login
-                    </a>
-                </p>
-            </div>
+            {% block after_form %}
+                <div class='mt-2'>
+                    <p class="text-sm text-medium text-dark text-center">
+                        <a href="{{ DashboardExtension.getArchiveUrl('index') }}" class='btn btn-outline-secondary'>
+                            Go Back To Login
+                        </a>
+                    </p>
+                </div>
+            {% endblock %}
 
         {% else %}
 
@@ -62,7 +64,7 @@
 
         {% set action = 'reset your account password' %}
         
-        {% include _theme ~ '/security/await.html.twig' %}
+        {% include _theme ~ '/pages/user/security/await.html.twig' %}
 
     {% endif %}
 

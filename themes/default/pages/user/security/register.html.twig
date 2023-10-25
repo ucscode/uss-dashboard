@@ -1,0 +1,28 @@
+{% extends _theme ~ '/pages/user/security/layout.html.twig' %}
+
+{% block main_right_form_element %}
+    
+    {% if user.exists() == false %}
+
+        {{ form.getHTML(1)|raw }} 
+
+        {% block after_form %}
+            <div class='mt-4'>
+                <p class="text-sm text-medium text-dark text-center">
+                    Already have an account? 
+                    <a href="{{ DashboardExtension.getArchiveUrl('index') }}" class='text-nowrap'>
+                        Sign In
+                    </a>
+                </p>
+            </div>
+        {% endblock %}
+
+    {% else %}
+
+        {%set action = 'create a new account' %}
+        
+        {% include _theme ~ '/pages/user/security/await.html.twig' %}
+
+    {% endif %}
+
+{% endblock %}

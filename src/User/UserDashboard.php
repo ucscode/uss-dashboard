@@ -107,19 +107,19 @@ class UserDashboard extends AbstractDashboard
     {
         yield (new Archive(Archive::LOGIN))
             ->setForm(UserLoginForm::class)
-            ->setTemplate($this->useTheme('/pages/security/login.html.twig'));
+            ->setTemplate($this->useTheme('/pages/user/security/login.html.twig'));
 
         yield (new Archive('register'))
             ->setRoute('/register')
             ->setController(UserRegisterController::class)
             ->setForm(UserRegisterForm::class)
-            ->setTemplate($this->useTheme('/pages/security/register.html.twig'));
+            ->setTemplate($this->useTheme('/pages/user/security/register.html.twig'));
 
         yield (new Archive('recovery'))
             ->setRoute('/recovery')
             ->setController(UserRecoveryController::class)
             ->setForm(UserRecoveryForm::class)
-            ->setTemplate($this->useTheme('/pages/security/recovery.html.twig'));
+            ->setTemplate($this->useTheme('/pages/user/security/recovery.html.twig'));
 
         yield (new Archive('logout'))
             ->setRoute('/logout')
@@ -142,7 +142,7 @@ class UserDashboard extends AbstractDashboard
         yield (new Archive('index'))
             ->setRoute('/')
             ->setController(UserIndexController::class)
-            ->setTemplate($this->useTheme('/pages/user/welcome.html.twig'))
+            ->setTemplate($this->useTheme('/pages/user/index.html.twig'))
             ->addMenuItem('index', new TreeNode('dashboard', [
                 'label' => 'dashboard',
                 'href' => $this->urlGenerator('/'),
@@ -152,7 +152,7 @@ class UserDashboard extends AbstractDashboard
         yield (new Archive('notifications'))
             ->setRoute('/notifications')
             ->setController(UserNotificationController::class)
-            ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
+            ->setTemplate($this->useTheme('/pages/user/notifications.html.twig'));
 
         yield (new Archive('profile'))
             ->setRoute('/profile')

@@ -1,0 +1,15 @@
+{% extends _theme ~ '/pages/user/security/layout.html.twig' %}
+
+{% block main_right_form_element %}
+
+	{% block admin_intro %}
+		<div class='text-center mb-4'>
+			{% set admin_icon = DashboardExtension.themeUrl('/assets/images/admin-icon.png') %}
+			<img src='{{ admin_icon }}' class='img-fluid mb-1' width='90px'>
+			<h4 class='fw-light'>Welcome Admin</h4>
+		</div>
+	{% endblock %}
+	
+    {{ form.getHTML(1)|raw }} 
+
+{% endblock %}
