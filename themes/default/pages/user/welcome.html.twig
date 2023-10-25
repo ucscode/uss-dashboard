@@ -26,12 +26,12 @@
                         </h1>
                         <figure class='pop-figure'>
                             <div id='pop'></div>
-                            {% set image = constant('UserDashboard::ASSETS_DIR') ~ '/images' %}
+                            {% set image = DashboardExtension.themeUrl('/assets/images') %}
                             <div class='d-sm-none'>
-                                <img src='{{ Uss.abspathToUrl(image ~ '/sunset.jpg') }}' class='img-fluid'>
+                                <img src='{{ image ~ '/sunset.jpg' }}' class='img-fluid'>
                             </div>
                             <div class='d-none d-sm-block'>
-                                <img src='{{ Uss.abspathToUrl(image ~ '/sunset-cropped.jpg') }}' class='img-fluid'>
+                                <img src='{{ image ~ '/sunset-cropped.jpg' }}' class='img-fluid'>
                             </div>
                         </figure>
                         <hr>
