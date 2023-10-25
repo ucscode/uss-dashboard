@@ -53,5 +53,6 @@
 
 {% endmacro %}
 
+{% set menu = DashboardExtension.getDashboardProperty('menu') %}
 
-{{ _self.createMenuItem(DashboardExtension.menu) }}
+{{ _self.createMenuItem(menu) }}

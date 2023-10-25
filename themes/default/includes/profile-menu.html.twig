@@ -25,7 +25,7 @@
 
         {% block dashboard_user_menu_items %}
 
-            {% for item in DashboardExtension.userMenu.children %}
+            {% for item in DashboardExtension.getDashboardProperty('userMenu').children %}
                 <li>
                     <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
                         <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>

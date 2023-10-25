@@ -4,9 +4,9 @@ use Ucscode\Packages\TreeNode;
 
 final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
+    private Uss $uss;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    private Uss $uss;
     public readonly string $themeName;
     public readonly string $themePath;
     public readonly string $themeNamespace;
@@ -22,6 +22,14 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     ) {
         $this->setInitialValues();
         Alert::flushAll();
+    }
+
+    /**
+     * @method getDashboardProperty
+     */
+    public function getDashboardProperty(string $property): mixed
+    {
+        return $this->dashboard->{$property} ?? null;
     }
 
     /**
@@ -75,8 +83,6 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     public function setInitialValues(): void
     {
         $this->uss = Uss::instance();
-        $this->menu = $this->dashboard->menu;
-        $this->userMenu = $this->dashboard->userMenu;
         $this->themeName = $this->dashboard->config->theme;
         $this->themeNamespace = '@Theme/' . $this->themeName;
     }
