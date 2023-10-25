@@ -10,7 +10,12 @@ class AdminIndexController implements RouteInterface
     }
     public function onload(array $matches)
     {
-        $this->dashboard->render($this->archive->getTemplate());
+        $this->dashboard->render($this->archive->getTemplate(), [
+            'official_website' => UssImmutable::PROJECT_WEBSITE,
+            'title' => UssImmutable::PROJECT_NAME,
+            'dev_email' => UssImmutable::AUTHOR_EMAIL,
+            'github_repository' => DashboardImmutable::GITHUB_REPO
+        ]);
     }
 
 }
