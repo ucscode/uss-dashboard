@@ -1,5 +1,7 @@
 <?php
 
+use Ucscode\Packages\TreeNode;
+
 class AdminDashboard extends AbstractDashboard
 {
     use SingletonTrait;
@@ -27,6 +29,7 @@ class AdminDashboard extends AbstractDashboard
             ],
             self::CONTROLLER_DIR => [
                 'AdminIndexController.php',
+                'AdminUserController.php',
             ]
         ];
 
@@ -80,5 +83,21 @@ class AdminDashboard extends AbstractDashboard
             ->setRoute('/notifications')
             ->setController(UserNotificationController::class)
             ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
+
+        yield (new Archive('users'))
+            ->setRoute('/users')
+            ->setController(AdminUserController::class)
+            ->setTemplate($this->useTheme('/pages/admin/users.html.twig'))
+            ->addMenuItem('users', $this->createUserMenuItem(), $this->menu);
+    }
+
+    protected function createUserMenuItem(): TreeNode
+    {
+        $parentItem = new TreeNode('users', [
+            'label' => 'Users',
+            'icon' => 'bi bi-people-fill',
+            'href' => $this->urlGenerator('/users'),
+        ]);
+        return $parentItem;
     }
 }

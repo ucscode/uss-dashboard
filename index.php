@@ -47,7 +47,7 @@ $bundles = [
         "Alert.php",
         "Paginator.php",
         "FileUploader.php",
-        "UdCrud.php",
+        "CrudManager.php",
         //"DOMTablet.php",
         "Hierarchy.php",
         "DashboardFactory.php",
