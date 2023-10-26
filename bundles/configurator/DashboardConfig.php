@@ -5,9 +5,7 @@ final class DashboardConfig
     protected string $base;
     protected string $theme;
     protected string $parentTheme = 'default';
-    protected array $permissions = [
-        RoleImmutable::ROLE_USER
-    ];
+    protected array $permissions = [];
     protected string $permissionDeniedTemplate = '403.html.twig';
 
     /**
