@@ -15,12 +15,12 @@ abstract class AbstractUserFoundation implements UserInterface
     }
 
     /**
-     * @method establish
+     * @method initialize
      */
-    public static function establish()
+    public static function initialize()
     {
         self::$usermeta = new Pairs(Uss::instance()->mysqli, self::META_TABLE);
-        self::$usermeta->linkParentTable([
+        self::$usermeta->linkToParentTable([
             'parentTable' => self::USER_TABLE,
         ]);
     }

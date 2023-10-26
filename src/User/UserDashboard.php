@@ -18,8 +18,9 @@ class UserDashboard extends AbstractDashboard
      * This is the entry method for any class that extends AbstractDashboard
      * @method main
      */
-    protected function main(): void
+    public function createProject(DashboardConfig $config): void
     {
+        parent::createProject($config);
         $this->profileMenu = new TreeNode('profileMenu');
         $this->getUserControllers();
         $this->registerArchives();
@@ -63,7 +64,7 @@ class UserDashboard extends AbstractDashboard
      */
     protected function beforeRender(): void
     {
-        Event::instance()->addListener('dashboard:render', function () {
+        (new Event())->addListener('dashboard:render', function () {
             foreach($this->profileMenu->children as $child) {
                 if($child->getAttr('active')) {
                     $profileMenu = $this->archiveRepository->getArchive('profile')?->getMenuItem('profile', true);

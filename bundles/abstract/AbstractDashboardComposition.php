@@ -4,8 +4,6 @@ use Ucscode\Packages\TreeNode;
 
 abstract class AbstractDashboardComposition implements DashboardInterface
 {
-    abstract protected function main(): void;
-
     public readonly DashboardConfig $config;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
@@ -13,43 +11,38 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     protected bool $firewallEnabled = true;
     protected array $attributes = [];
 
-    public function configureDashboard(DashboardConfig $config): void
+    /**
+     * Set Initial values such as base(route), theme, user permission etc
+     * Note: child class should override this method but still call it
+     * parent::createProject($config);
+     */
+    public function createProject(DashboardConfig $config): void
     {
         $this->config = $config;
         $this->archiveRepository = new ArchiveRepository($this::class);
-        $this->configureUser();
-        $this->startProject();
-    }
-
-    private function configureUser(): void
-    {
-        User::establish();
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
+        (new Event())->addListener('modules:loaded', fn () => $this->buildArchives(), -10);
     }
 
-    private function startProject(): void
-    {
-        $this->main();
-        Event::instance()->addListener('modules:loaded', function () {
-            $this->buildArchives();
-        }, -10);
-    }
-
+    /**
+     * @method buildArchives
+     */
     private function buildArchives(): void
     {
         $archives = $this->archiveRepository->getAllArchives();
-
-        $this->compileMenuItems($archives);
-        $this->recursiveMenuConfig($this->menu, 'Main Menu');
-        $this->recursiveMenuConfig($this->userMenu, 'User Menu');
-
+        $this->extractMenuItems($archives);
+        $this->configureMenuRecursively($this->menu, 'Main Menu');
+        $this->configureMenuRecursively($this->userMenu, 'User Menu');
         foreach($archives as $archive) {
-            $this->configureArchive($archive);
+            $this->enableArchive($archive);
         }
     }
 
-    private function compileMenuItems(array $archives): void
+    /**
+     * @method extractMenuItems
+     */
+    private function extractMenuItems(array $archives): void
     {
         foreach($archives as $archive) {
             foreach($archive->getMenuItem() as $name => $menuItem) {
@@ -59,7 +52,10 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         }
     }
 
-    private function recursiveMenuConfig(TreeNode $menu, string $title): void
+    /**
+     * @method configureMenuRecursively
+     */
+    private function configureMenuRecursively(TreeNode $menu, string $title): void
     {
         if(empty($menu->getAttr('label')) && !empty($menu->level)) {
             throw new \Exception(
@@ -72,9 +68,9 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         };
 
         $menu->sortChildren(function ($a, $b) {
-            $leftOrder = (int)($a->getAttr('order') ?? 0);
-            $rightOrder = (int)($b->getAttr('order') ?? 0);
-            return $leftOrder <=> $rightOrder;
+            $left = (int)($a->getAttr('order') ?? 0);
+            $right = (int)($b->getAttr('order') ?? 0);
+            return $left <=> $right;
         });
 
         $defaultAttr = [
@@ -82,12 +78,12 @@ abstract class AbstractDashboardComposition implements DashboardInterface
             'href' => 'javascript:void(0)'
         ];
 
-        $this->presetMenuAttribute($menu, $defaultAttr);
+        $this->setDefaultMenuAttributes($menu, $defaultAttr);
 
         if(!empty($menu->children)) {
-            $this->presetMenuAttribute($menu, $defaultAttr);
+            $this->setDefaultMenuAttributes($menu, $defaultAttr);
             foreach($menu->children as $childMenu) {
-                $this->recursiveMenuConfig($childMenu, $title);
+                $this->configureMenuRecursively($childMenu, $title);
             }
         }
 
@@ -98,10 +94,12 @@ abstract class AbstractDashboardComposition implements DashboardInterface
                 $parentNode = $parentNode->parentNode;
             }
         }
-
     }
 
-    private function presetMenuAttribute(TreeNode $menu, array $attributes): void
+    /**
+     * @method setDefaultMenuAttributes
+     */
+    private function setDefaultMenuAttributes(TreeNode $menu, array $attributes): void
     {
         foreach($attributes as $key => $value) {
             if(empty($menu->getAttr($key))) {
@@ -110,13 +108,14 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         }
     }
 
-    private function configureArchive(Archive $archive): void
+    /**
+     * @method enableArchive
+     */
+    private function enableArchive(Archive $archive): void
     {
-        $uss = Uss::instance();
         $archiveRoute = $archive->getRoute();
-
         if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
-            $route = $uss->filterContext($this->config->getBase() . "/" . $archiveRoute);
+            $route = Uss::instance()->filterContext($this->config->getBase() . "/" . $archiveRoute);
             $controller = $archive->getController();
             $method = $archive->getRequestMethods();
             new Route($route, new $controller($archive, $this), $method);

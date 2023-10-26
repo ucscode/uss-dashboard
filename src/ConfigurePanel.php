@@ -1,23 +1,25 @@
 <?php
 
+// get Uss Instance
+$uss = Uss::instance();
+
+// Create Dashboard Database
 new DatabaseConfigurator();
 
-/**
- * Register Email Template Directory
- */
-$uss = Uss::instance();
+// Initialize UserMeta
+User::initialize();
+
+// Register Email & Theme Template Directory
 $uss->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'Mail');
 $uss->addTwigFilesystem(DashboardImmutable::THEME_DIR, 'Theme');
 
-/**
- * Configure User Dashboard
- */
+// Configure User Dashboard
 $userDashboardConfig = (new DashboardConfig())
     ->setBase('/dashboard')
     ->setTheme('default')
     ->addPermission(RoleImmutable::ROLE_USER);
 
-UserDashboard::instance()->configureDashboard($userDashboardConfig);
+UserDashboard::instance()->createProject($userDashboardConfig);
 
 /**
  * Configure Admin Dashboard
@@ -30,11 +32,11 @@ $adminDashboardConfig = (new DashboardConfig())
         RoleImmutable::ROLE_ADMIN
     ]);
 
-AdminDashboard::instance()->configureDashboard($adminDashboardConfig);
+AdminDashboard::instance()->createProject($adminDashboardConfig);
 
 /**
  * Global Modules Configuration;
  */
-Event::instance()->addListener('modules:loaded', function () {
-    Event::instance()->emit('dashboard:render');
+(new Event())->addListener('modules:loaded', function () {
+    Event::emit('dashboard:render');
 }, -9);

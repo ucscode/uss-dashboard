@@ -2,6 +2,7 @@
 
 interface DashboardInterface
 {
+    public function createProject(DashboardConfig $config): void;
     public function setAttribute(string $property, mixed $value): void;
     public function getAttribute(?string $property): mixed;
     public function removeAttribute(string $property): void;

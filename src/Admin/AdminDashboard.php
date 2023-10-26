@@ -11,8 +11,9 @@ class AdminDashboard extends AbstractDashboard
     public const CONTROLLER_DIR = self::DIR . '/controllers';
     public const ASSETS_DIR = self::DIR . '/assets';
 
-    protected function main(): void
+    public function createProject(DashboardConfig $config): void
     {
+        parent::createProject($config);
         $uss = Uss::instance();
         $this->includeControllers();
         $this->registerArchives();
