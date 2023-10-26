@@ -1,12 +1,8 @@
 <?php
 
-use Ucscode\Packages\TreeNode;
-
 final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
     private Uss $uss;
-    public readonly TreeNode $menu;
-    public readonly TreeNode $userMenu;
     public readonly string $themeName;
     public readonly string $themePath;
     public readonly string $themeNamespace;
@@ -33,6 +29,14 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     }
 
     /**
+     * @method getAttribute
+     */
+    public function getDashboardAttribute(string $property)
+    {
+        return $this->dashboard->getAttribute($property);
+    }
+
+    /**
      * @method themePath
      */
     public function themePath(string $path = ''): string
@@ -54,19 +58,16 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     }
 
     /**
-     * @method getAttribute
-     */
-    public function getAttribute(string $property)
-    {
-        return $this->dashboard->getAttribute($property);
-    }
-
-    /**
      * @method urlGenerator
      */
-    public function urlGenerator(string $path = '', array $param = []): string
+    public function urlGenerator(string $path = '', array $param = [], $base = ''): string
     {
-        return $this->dashboard->urlGenerator($path, $param)->getResult();
+        if(!empty($base)) {
+            $urlGenerator = new UrlGenerator($path, $param, $base);
+        } else {
+            $urlGenerator = $this->dashboard->urlGenerator($path, $param);
+        }
+        return $urlGenerator->getResult();
     }
 
     /**
@@ -80,7 +81,7 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     /**
      * @method setInitialValues
      */
-    public function setInitialValues(): void
+    private function setInitialValues(): void
     {
         $this->uss = Uss::instance();
         $this->themeName = $this->dashboard->config->getTheme();

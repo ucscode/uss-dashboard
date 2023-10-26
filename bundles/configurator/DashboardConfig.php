@@ -8,6 +8,7 @@ final class DashboardConfig
     protected array $permissions = [
         RoleImmutable::ROLE_USER
     ];
+    protected string $permissionDeniedTemplate = '403.html.twig';
 
     /**
      * @method setBase
@@ -100,5 +101,22 @@ final class DashboardConfig
             $this->permissions = array_values($this->permissions);
         }
         return $this;
+    }
+
+    /**
+     * @method setPermissionDeniedTemplate
+     */
+    public function setPermissionDeniedTemplate(string $template): self
+    {
+        $this->permissionDeniedTemplate = $template;
+        return $this;
+    }
+
+    /**
+     * @method getPermissionDeniedTemplate
+     */
+    public function getPermissionDeniedTemplate(): string
+    {
+        return $this->permissionDeniedTemplate;
     }
 }

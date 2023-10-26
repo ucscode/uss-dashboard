@@ -27,6 +27,7 @@ $bundles = [
     'configurator' => [
         'DatabaseConfigurator.php',
         'DashboardConfig.php',
+        'DashboardRenderLogic.php',
     ],
     'trait' => [
         //

@@ -22,5 +22,5 @@ class RoleImmutable
     public const ROLE_DEVELOPER = 'DEVELOPER';
     public const ROLE_STUDENT = 'STUDENT';
     public const ROLE_TEACHER = 'TEACHER';
-    public const ROLE_CUSTOMER_SUPPORT = 'CUSTOMER_SUPPORT';
+    public const ROLE_SUPPORT = 'SUPPORT';
 }

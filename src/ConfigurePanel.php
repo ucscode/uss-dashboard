@@ -17,7 +17,8 @@ $uss->addTwigFilesystem(DashboardImmutable::THEME_DIR, 'Theme');
 $userDashboardConfig = (new DashboardConfig())
     ->setBase('/dashboard')
     ->setTheme('default')
-    ->addPermission(RoleImmutable::ROLE_USER);
+    ->addPermission(RoleImmutable::ROLE_USER)
+    ->setPermissionDeniedTemplate('403.html.twig');
 
 UserDashboard::instance()->createProject($userDashboardConfig);
 
@@ -30,7 +31,8 @@ $adminDashboardConfig = (new DashboardConfig())
     ->setPermissions([
         RoleImmutable::ROLE_SUPERADMIN,
         RoleImmutable::ROLE_ADMIN
-    ]);
+    ])
+    ->setPermissionDeniedTemplate('/403.html.twig');
 
 AdminDashboard::instance()->createProject($adminDashboardConfig);
 
