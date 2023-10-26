@@ -77,10 +77,12 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
      */
     public function render(string $template, array $options = []): void
     {
-        (new Event())->addListener('dashboard:render', 
+        (new Event())->addListener(
+            'dashboard:render', 
             new class($this, Uss::instance(), $template, $options) implements EventInterface 
             {
                 protected User $user;
+                protected bool $isLoggedIn;
 
                 public function __construct(
                     protected DashboardInterface $dashboard,
@@ -90,6 +92,7 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                 ){
                     $this->user = new User();
                     $this->user->getFromSession();
+                    $this->isLoggedIn = $this->user->exists();
                 }
 
                 /**
@@ -97,9 +100,10 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                  */
                 public function eventAction(array $data): void
                 {
-                    if(!$this->user->exists() && $this->dashboard->firewallEnabled) {
+                    if(!$this->isLoggedIn && $this->dashboard->firewallEnabled) {
                         $this->enableLoginArchive();
                     };
+                    $this->evalUserPermission();
                     $this->createUserInterface();
                 }
 
@@ -108,43 +112,32 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                  */
                 protected function enableLoginArchive(): void
                 {
-                    $archive = $this->dashboard->archiveRepository->getArchive(Archive::LOGIN);
-                    $loginFormClass = $archive->getForm();
+                    $loginArchive = $this->dashboard->archiveRepository->getArchive(Archive::LOGIN);
+                    $loginFormClass = $loginArchive->getForm();
                     $formInstance = new $loginFormClass(Archive::LOGIN);
                     $formInstance->handleSubmission();
-                    if(!$this->user->getFromSession()) {
-                        $this->template = $archive->getTemplate();
+                    /**
+                     * Check again if the login was successful
+                     * Otherwise, redirect user to login page
+                     */
+                    $this->isLoggedIn = (bool)$this->user->getFromSession();
+                    if(!$this->isLoggedIn) {
+                        $this->template = $loginArchive->getTemplate();
                         $this->options['form'] = $formInstance;
                     };
                 }
 
                 /**
-                 * @method createUserInterface
-                 */
-                protected function createUserInterface(): void
-                {
-                    //$this->evalutatePermission($template, $options);
-                    $dashboardExtension = new DashboardTwigExtension($this->dashboard);
-                    $this->uss->addTwigExtension($dashboardExtension);
-                    $this->updateJavascript();
-                    $this->options['_theme'] = '@Theme/' . $this->dashboard->config->getTheme();
-                    $this->options['user'] = $this->user;
-                    $this->uss->render($this->template, $this->options);
-                }
-
-                /**
                  * @method evaluateRestrictions
                  */
-                protected function evalutatePermission(&$template, &$options): void
+                protected function evalUserPermission(): void
                 {
-                    $user = $options['user'];
-                    if($user->exists()) {
+                    if($this->isLoggedIn) {
+                        $permissions = $this->dashboard->config->getPermissions();
+                        $roles = $this->user->getUserMeta('user.roles');
+                        $matchingRoles = array_intersect($permissions, $roles);
             
-                        $dashboardPermission = $this->dashboard->config->getPermissions();
-                        $userRoles = $user->getUserMeta('user.roles');
-                        $authorities = array_intersect($dashboardPermission, $userRoles);
-            
-                        if(empty($authorities)) {
+                        if(empty($matchingRoles)) {
                             $archive = $this->dashboard->archiveRepository->getArchive('restriction');
                             if($archive) {
                                 $template = $archive->getTemplate();
@@ -157,12 +150,28 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
                     };
                 }
 
-                protected function updateJavascript(): void
+                /**
+                 * @method createUserInterface
+                 */
+                protected function createUserInterface(): void
+                {
+                    $dashboardExtension = new DashboardTwigExtension($this->dashboard);
+                    $this->uss->addTwigExtension($dashboardExtension);
+                    $this->setJSVariables();
+                    $this->options['_theme'] = '@Theme/' . $this->dashboard->config->getTheme();
+                    $this->options['user'] = $this->user;
+                    $this->uss->render($this->template, $this->options);
+                }
+
+                /**
+                 * @method setJSVariables()
+                 */
+                protected function setJSVariables(): void
                 {
                     $this->uss->addJsProperty('dashboard', [
                         'url' => $this->dashboard->urlGenerator()->getResult(),
                         'nonce' => $this->uss->nonce('Ud'),
-                        'loggedIn' => $this->user->exists()
+                        'loggedIn' => $this->isLoggedIn
                     ]);
                 }
             }
