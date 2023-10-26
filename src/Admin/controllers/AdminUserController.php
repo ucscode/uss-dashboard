@@ -1,24 +1,24 @@
 <?php
 
-class AdminUserController implements RouteInterface 
+class AdminUserController implements RouteInterface
 {
     public function __construct(
         protected Archive $archive,
         protected DashboardInterface $dashboard
-    ){  
+    ) {
     }
 
     public function onload(array $matches)
     {
-        $this->createCrud();
+        $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
+        $domTable = $crudIndexManager->getDOMTable();
+        $domTable->setColumn('last_seen', 'last seen');
+        $domTable->setDisplayFooter(true);
+        $domTable->build();
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
-        $this->dashboard->render($template);
-    }  
-
-    protected function createCrud(): CrudManager
-    {
-        $crudManager = new CrudManager(User::USER_TABLE);
-        return $crudManager;
+        $this->dashboard->render($template, [
+            'crudIndex' => $domTable->getHTML()
+        ]);
     }
 }

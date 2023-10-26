@@ -60,9 +60,9 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     /**
      * @method urlGenerator
      */
-    public function urlGenerator(string $path = '', array $param = [], $base = ''): string
+    public function urlGenerator(string $path = '', array $param = [], ?string $base = null): string
     {
-        if(!empty($base)) {
+        if(!is_null($base)) {
             $urlGenerator = new UrlGenerator($path, $param, $base);
         } else {
             $urlGenerator = $this->dashboard->urlGenerator($path, $param);

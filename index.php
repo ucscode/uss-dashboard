@@ -38,6 +38,7 @@ $bundles = [
         "AbstractDashboardForm.php",
         "AbstractUserFoundation.php",
         "AbstractUserRepository.php",
+        'AbstractCrudIndexManager.php',
     ],
     'class' => [
         'DashboardTwigExtension.php',
@@ -47,7 +48,8 @@ $bundles = [
         "Alert.php",
         "Paginator.php",
         "FileUploader.php",
-        "CrudManager.php",
+        "CrudIndexManager.php",
+        "CrudEditManager.php",
         //"DOMTablet.php",
         "Hierarchy.php",
         "DashboardFactory.php",
