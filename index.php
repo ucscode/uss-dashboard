@@ -23,6 +23,8 @@ $bundles = [
         'DashboardInterface.php',
         "DashboardFormInterface.php",
         "UserInterface.php",
+        'CrudIndexInterface.php',
+        'CrudActionInterface.php',
     ],
     'configurator' => [
         'DatabaseConfigurator.php',
@@ -50,6 +52,8 @@ $bundles = [
         "FileUploader.php",
         "CrudIndexManager.php",
         "CrudEditManager.php",
+        'CrudAction.php',
+        'CrudItemIterator.php',
         //"DOMTablet.php",
         "Hierarchy.php",
         "DashboardFactory.php",
