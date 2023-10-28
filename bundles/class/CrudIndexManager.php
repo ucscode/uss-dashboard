@@ -16,7 +16,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->setDefaultItemActions();
     }
 
-    public function createUI(?DOMTableInterface $fabricator = null): string
+    public function createUI(?DOMTableInterface $fabricator = null): UssElement
     {
         $this->mainContainer->appendChild($this->widgetContainer);
         $this->tableContainer->appendChild($this->tableForm);
@@ -26,7 +26,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->buildBulkActionsElement();
         $this->buildDOMTable($fabricator);
 
-        return $this->mainContainer->getHTML(true);
+        return $this->mainContainer;
     }
 
     /**
@@ -144,7 +144,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $columns = ['checkbox' => $checker] + $columns;
         }
 
-        if(!$this->hideItemActions) {
+        if($this->hideItemActions === false) {
             $columns['actions'] = '';
         }
 

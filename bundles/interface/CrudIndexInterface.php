@@ -8,7 +8,7 @@ interface CrudIndexInterface
 {   
     public const PAGE_INDEX_KEY = 'page';
 
-    public function createUI(): string;
+    public function createUI(): UssElement;
 
     public function getTotalItems(): int;
 
@@ -19,7 +19,7 @@ interface CrudIndexInterface
     public function setPrimaryColumn(string $column): self;
 
     public function getPrimaryColumn(): string;
-    
+
     public function setCurrentPage(int $page): self;
     
     public function getCurrentPage(): int;

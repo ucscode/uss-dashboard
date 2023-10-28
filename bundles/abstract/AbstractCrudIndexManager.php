@@ -260,6 +260,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
         if(array_key_exists($name, $this->itemActions)) {
             unset($this->itemActions[$name]);
         };
+        $this->hideItemActions = empty($this->itemActions);
         return $this;
     }
 
@@ -268,7 +269,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function setHideItemActions(bool $status): CrudIndexInterface
     {
-        $this->hideItemActions = $status;
+        $this->hideItemActions = $status && !empty($this->itemActions);
         return $this;
     }
 
