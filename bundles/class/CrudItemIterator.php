@@ -26,10 +26,12 @@ class CrudItemIterator implements DOMTableInterface
         if($this->fabricator) {
             $data = $this->fabricator->forEachItem($data);
         }
-
-        $data = $this->addCheckboxToItem($data);
-        $data = $this->addActionsToItem($data);
-        $data = $this->searchItem($data);
+        
+        if($data) {
+            $data = $this->addCheckboxToItem($data);
+            $data = $this->addActionsToItem($data);
+            $data = $this->searchItem($data);
+        }
 
         return $data;
     }

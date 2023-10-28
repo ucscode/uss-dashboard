@@ -15,21 +15,31 @@ class AdminUserController implements RouteInterface
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
 
-        $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
-        $crudIndexManager->removeTableColumn('id');
-        $crudIndexManager->removeTableColumn('password');
-        $crudIndexManager->setTableColumn('model', 'Model No.');
-        $crudIndexManager->setDisplayItemActionsAsButton(true);
-        //$crudIndexManager->setHideWidgets(true);
-        $crudIndexManager->setItemsPerPage(2);
+        if(($_GET['action'] ?? null) !== 'edit') {
 
-        $ui = $crudIndexManager->createUI(new class implements DOMTableInterface {
-            public function forEachItem(array $data): array
-            {
-                $data['model'] = 'sample ' . $data['id'];
-                return $data;
-            }
-        });
+            $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
+            $crudIndexManager->removeTableColumn('id');
+            $crudIndexManager->removeTableColumn('password');
+            $crudIndexManager->setTableColumn('model', 'Model No.');
+            $crudIndexManager->setDisplayItemActionsAsButton(true);
+            //$crudIndexManager->setHideWidgets(true);
+            $crudIndexManager->setItemsPerPage(2);
+
+            $ui = $crudIndexManager->createUI(new class () implements DOMTableInterface {
+                public function forEachItem(array $data): array
+                {
+                    $data['model'] = 'sample ' . $data['id'];
+                    return $data;
+                }
+            });
+
+        } else {
+
+            $crudEditManager = new CrudEditManager(User::USER_TABLE);
+            
+            $ui = $crudEditManager->createUI();
+
+        }
 
         $this->dashboard->render($template, [
             'crudIndex' => $ui->getHTML(true)

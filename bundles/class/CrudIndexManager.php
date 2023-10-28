@@ -313,13 +313,22 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function createAddNewWidget(): UssElement
     {
+        $uss = Uss::instance();
+        $path = $uss->filterContext($uss->splitUri());
+        $href = new UrlGenerator($path, [
+            'action' => 'edit'
+        ]);
+
         $newContainer = new UssElement(UssElement::NODE_DIV);
         $newContainer->setAttribute('class', 'col-lg-6 ms-auto text-lg-end');
+
         $anchor = new UssElement(UssElement::NODE_A);
         $anchor->setAttribute('class', 'btn btn-success btn-sm');
         $anchor->setContent('<i class="bi bi-plus-circle-dotted me-1"></i>Add New');
-        $anchor->setAttribute('href', '');
+        $anchor->setAttribute('href', $href);
+        
         $newContainer->appendChild($anchor);
+
         return $newContainer;
     }
 
