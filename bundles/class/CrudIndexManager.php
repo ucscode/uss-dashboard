@@ -14,16 +14,20 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->configureProperties();
         $this->setDefaultBulkActions();
         $this->setDefaultItemActions();
+        $this->setDefaultWidgets();
     }
 
     public function createUI(?DOMTableInterface $fabricator = null): UssElement
     {
-        $this->mainContainer->appendChild($this->widgetContainer);
-        $this->tableContainer->appendChild($this->tableForm);
+        $this->combineWidgetElements();
+
+        $this->tableContainer->appendChild(
+            $this->buildTableElements()
+        );
+
         $this->mainContainer->appendChild($this->tableContainer);
         $this->mainContainer->appendChild($this->paginatorContainer);
 
-        $this->buildBulkActionsElement();
         $this->buildDOMTable($fabricator);
 
         return $this->mainContainer;
@@ -43,15 +47,15 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->setMultipleTableColumns($tableColumns);
 
         $divNodes = [
-            'mainContainer' => 'container',
-            'widgetContainer' => 'widget',
-            'paginatorContainer' => 'paginator',
-            'tableContainer' => 'table'
+            'mainContainer' => 'crud-container',
+            'widgetContainer' => 'crud-widget row',
+            'paginatorContainer' => 'crud-paginator',
+            'tableContainer' => 'crud-table'
         ];
 
         foreach($divNodes as $key => $classname) {
             $this->{$key} = new UssElement(UssElement::NODE_DIV);
-            $this->{$key}->setAttribute('class', 'crud-' . $classname);
+            $this->{$key}->setAttribute('class', $classname);
         };
 
         $this->tableForm = new UssForm(
@@ -91,7 +95,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     public function setDefaultItemActions(): void
     {
         $this->addItemAction('edit', new class () implements CrudActionInterface {
-            public function forEachItem(array $data): CrudAction
+            public function forEachItem(array $item): CrudAction
             {
                 $curdAction = new CrudAction();
 
@@ -110,7 +114,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
                 private CrudIndexManager $crudIndexManager
             ){}
 
-            public function forEachItem(array $data): CrudAction
+            public function forEachItem(array $item): CrudAction
             {
                 $crudAction = (new CrudAction())
                     ->setLabel('Delete')
@@ -126,6 +130,18 @@ class CrudIndexManager extends AbstractCrudIndexManager
                 return $crudAction;
             }
         });
+    }
+
+    /**
+     * @method setDefaultWidgets
+     */
+    public function setDefaultWidgets(): void
+    {
+        $searchContainer = $this->createSearchWidget();
+        $this->addWidget('search', $searchContainer);
+
+        $newContainer = $this->createAddNewWidget();
+        $this->addWidget('add-new', $newContainer);
     }
 
     /**
@@ -185,50 +201,133 @@ class CrudIndexManager extends AbstractCrudIndexManager
     }
 
     /**
+     * @method buildTableElements
+     */
+    public function buildTableElements(): UssElement
+    {
+        $tableContainer = $this->domTable->getTableContainerElement();
+        if(!$this->hideBulkActions) {
+            $bulkActionContainer = $this->buildBulkActionsElement();
+            $this->tableForm->appendChild($bulkActionContainer);
+            $this->tableForm->appendChild($tableContainer);
+            return $this->tableForm;
+        }
+        return $tableContainer;
+    }
+
+    /**
      * @method buildBulkActions
      */
-    protected function buildBulkActionsElement(): void
+    protected function buildBulkActionsElement(): UssElement
     {
-        if(!$this->hideBulkActions) {
+        $bulkActionContainer = new UssElement(UssElement::NODE_DIV);
+        $bulkActionContainer->setAttribute('class', 'bulk-actions row my-1 py-1 border-bottom');
 
-            $bulkActionContainer = new UssElement(UssElement::NODE_DIV);
-            $bulkActionContainer->setAttribute('class', 'bulk-actions row my-1 py-1 border-bottom');
+        $bulkActionColumn = new UssElement(UssElement::NODE_DIV);
+        $bulkActionColumn->setAttribute('class', 'col-lg-5 col-md-7 ms-auto d-flex justify-content-end align-items-center');
+        $bulkActionContainer->appendChild($bulkActionColumn);
 
-            $bulkActionColumn = new UssElement(UssElement::NODE_DIV);
-            $bulkActionColumn->setAttribute('class', 'col-lg-5 col-md-7 ms-auto d-flex justify-content-end align-items-center');
-            $bulkActionContainer->appendChild($bulkActionColumn);
+        $bulkSelect = new UssElement(UssElement::NODE_SELECT);
+        $bulkSelect->setAttribute('class', 'form-select form-select-sm mb-1 mx-1');
+        $bulkSelect->setAttribute('name', 'crud[action]');
+        $bulkSelect->setAttribute('required', 'required');
+        $bulkActionColumn->appendChild($bulkSelect);
 
-            $bulkSelect = new UssElement(UssElement::NODE_SELECT);
-            $bulkSelect->setAttribute('class', 'form-select form-select-sm mb-1 mx-1');
-            $bulkSelect->setAttribute('name', 'crud[action]');
-            $bulkSelect->setAttribute('required', 'required');
-            $bulkActionColumn->appendChild($bulkSelect);
+        $bulkButton = new UssElement(UssElement::NODE_BUTTON);
+        $bulkButton->setAttribute('class', 'btn btn-primary btn-sm text-nowrap');
+        $bulkButton->setContent('Apply Action');
+        $bulkActionColumn->appendChild($bulkButton);
 
-            $bulkButton = new UssElement(UssElement::NODE_BUTTON);
-            $bulkButton->setAttribute('class', 'btn btn-primary btn-sm text-nowrap');
-            $bulkButton->setContent('Apply Action');
-            $bulkActionColumn->appendChild($bulkButton);
+        foreach($this->bulkActions as $crudAction) {
 
-            foreach($this->bulkActions as $crudAction) {
+            $option = new UssElement(UssElement::NODE_OPTION);
+            $option->setAttribute('value', $crudAction->getElementAttribute('value'));
+            $option->setContent($crudAction->getLabel());
 
-                $option = new UssElement(UssElement::NODE_OPTION);
-                $option->setAttribute('value', $crudAction->getElementAttribute('value'));
-                $option->setContent($crudAction->getLabel());
-
-                foreach($crudAction->getElementAttributes() as $key => $value) {
-                    $option->setAttribute($key, $value);
-                }
-
-                $bulkSelect->appendChild($option);
+            foreach($crudAction->getElementAttributes() as $key => $value) {
+                $option->setAttribute($key, $value);
             }
 
-            $this->tableForm->appendChild(
-                $bulkActionContainer
-            );
-
-            $this->tableForm->appendChild(
-                $this->domTable->getTableContainerElement()
-            );
+            $bulkSelect->appendChild($option);
         }
+
+        return $bulkActionContainer;
+    }
+
+    /**
+     * @method createSearchWidget
+     */
+    public function createSearchWidget(): UssElement
+    {
+        $searchContainer = new UssElement(UssElement::NODE_DIV);
+        $searchContainer->setAttribute('class', 'col-lg-6 mb-1');
+
+        $form = new UssForm(
+            'search', 
+            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+        );
+
+        $form->add(
+            'search', 
+            UssForm::NODE_INPUT, 
+            UssForm::TYPE_SEARCH, 
+            [
+                'value' => $_GET['search'] ?? null,
+                'label_class' => 'd-none',
+                'column' => 'col-12 mb-0',
+                'group' => [
+                    'append' => (new UssElement('button'))
+                        ->setAttribute('class', 'btn btn-sm btn-outline-secondary')
+                        ->setAttribute('type', 'submit')
+                        ->setContent('<i class="bi bi-search me-1"></i> search')
+                ],
+                'class' => 'form-control form-control-sm',
+                'attr' => [
+                    'placeholder' => 'Search'
+                ]
+            ]
+        );
+
+        foreach($_GET as $key => $value) {
+            if($key !== 'search') {
+                $form->add(
+                    $key, 
+                    UssForm::NODE_INPUT, 
+                    UssForm::TYPE_HIDDEN, 
+                    ['value' => $value]
+                );
+            }
+        }
+
+        $searchContainer->appendChild($form);
+        return $searchContainer;
+    }
+
+    /**
+     * @method combineWidgetElements
+     */
+    public function combineWidgetElements(): void
+    {
+        if(!empty($this->widgets)) {
+            foreach($this->widgets as $widget) {
+                $this->widgetContainer->appendChild($widget);
+            }
+            $this->mainContainer->appendChild($this->widgetContainer);
+        }
+    }
+
+    /**
+     * @method createAddNewWidget
+     */
+    public function createAddNewWidget(): UssElement
+    {
+        $newContainer = new UssElement(UssElement::NODE_DIV);
+        $newContainer->setAttribute('class', 'col-lg-6 ms-auto text-lg-end');
+        $anchor = new UssElement(UssElement::NODE_A);
+        $anchor->setAttribute('class', 'btn btn-success btn-sm');
+        $anchor->setContent('<i class="bi bi-plus-circle-dotted me-1"></i>Add New');
+        $anchor->setAttribute('href', '');
+        $newContainer->appendChild($anchor);
+        return $newContainer;
     }
 }

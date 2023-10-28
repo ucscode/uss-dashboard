@@ -19,9 +19,7 @@ class AdminUserController implements RouteInterface
         $crudIndexManager->removeTableColumn('id');
         $crudIndexManager->removeTableColumn('password');
         $crudIndexManager->setTableColumn('model', 'Model No.');
-        //$crudIndexManager->setDisplayItemActionsAsButton(true);
-        $crudIndexManager->removeItemAction('edit');
-        $crudIndexManager->removeItemAction('delete');
+        $crudIndexManager->setDisplayItemActionsAsButton(true);
 
         $ui = $crudIndexManager->createUI(new class implements DOMTableInterface {
             public function forEachItem(array $data): array
