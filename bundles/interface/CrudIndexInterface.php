@@ -16,6 +16,10 @@ interface CrudIndexInterface
 
     public function getItemsPerPage(): int;
 
+    public function setPrimaryColumn(string $column): self;
+
+    public function getPrimaryColumn(): string;
+    
     public function setCurrentPage(int $page): self;
     
     public function getCurrentPage(): int;
@@ -29,6 +33,8 @@ interface CrudIndexInterface
     public function removeTableColumn(string $column): self;
     
     public function setDisplayTableFooter(bool $status): self;
+
+    public function getDisplayTableFooter(): bool;
     
     public function addWidget(string $name, UssElement $widget): self;
     

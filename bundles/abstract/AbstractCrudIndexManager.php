@@ -4,9 +4,12 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\Packages\TreeNode;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\UssForm;
 
 abstract class AbstractCrudIndexManager implements CrudIndexInterface
 {
+    protected string $primaryColumn = 'id';
+
     protected int $itemsPerPage = 10;
     protected int $currentPage = 1;
     protected array $tableColumns;
@@ -27,6 +30,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     protected UssElement $widgetContainer;
     protected UssElement $paginatorContainer;
     protected UssElement $tableContainer;
+    protected UssForm $tableForm;
 
     protected SQuery $sQuery;
     protected mysqli_result $mysqliResult;
@@ -34,6 +38,23 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     public function __construct(
         public readonly string $tablename
     ){}
+
+    /**
+     * @method setPrimaryColumn
+     */
+    public function setPrimaryColumn(string $column): CrudIndexInterface
+    {
+        $this->primaryColumn = $column;
+        return $this;
+    }
+
+    /**
+     * @method setPrimaryColumn
+     */
+    public function getPrimaryColumn(): string
+    {
+        return $this->primaryColumn;
+    }
 
     /**
      * @method getTotalItems
@@ -118,12 +139,20 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     }
 
     /**
-     * @method displayTableFooter
+     * @method setDisplayTableFooter
      */
     public function setDisplayTableFooter(bool $status): CrudIndexInterface
     {
         $this->displayTfoot = $status;
         return $this;
+    }
+
+    /**
+     * @method getDisplayTableFooter
+     */
+    public function getDisplayTableFooter(): bool
+    {
+        return $this->displayTfoot;
     }
 
     /**

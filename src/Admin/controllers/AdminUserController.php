@@ -1,5 +1,7 @@
 <?php
 
+use Ucscode\DOMTable\DOMTableInterface;
+
 class AdminUserController implements RouteInterface
 {
     public function __construct(
@@ -14,10 +16,21 @@ class AdminUserController implements RouteInterface
         $template = $this->archive->getTemplate();
 
         $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
-        //$crudIndexManager->setDisplayItemActionsAsButton(true);
+        $crudIndexManager->removeTableColumn('id');
+        $crudIndexManager->removeTableColumn('password');
+        $crudIndexManager->setTableColumn('model', 'Model No.');
+        $crudIndexManager->setDisplayItemActionsAsButton(true);
+
+        $ui = $crudIndexManager->createUI(new class implements DOMTableInterface {
+            public function forEachItem(array $data): array
+            {
+                $data['model'] = 'sample ' . $data['id'];
+                return $data;
+            }
+        });
 
         $this->dashboard->render($template, [
-            'crudIndex' => $crudIndexManager->createUI()
+            'crudIndex' => $ui
         ]);
     }
 }

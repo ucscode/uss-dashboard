@@ -1,13 +1,12 @@
 <?php
 
-class CrudAction 
+class CrudAction
 {
     public const TYPE_BUTTON = 'button';
     public const TYPE_ANCHOR = 'anchor';
 
     protected ?string $label = null;
     protected ?string $icon = null;
-    protected ?string $value = null;
     protected ?string $elementType = self::TYPE_BUTTON;
     protected array $elementAttributes = [];
 
@@ -40,26 +39,9 @@ class CrudAction
     /**
      * @method getIcon
      */
-    public function getIcon(): ?string 
+    public function getIcon(): ?string
     {
         return $this->icon;
-    }
-
-    /**
-     * @method setValue
-     */
-    public function setValue(string $value): self
-    {
-        $this->value = $value;
-        return $this;
-    }
-    
-    /**
-     * @method getValue
-     */
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     /**
@@ -104,6 +86,17 @@ class CrudAction
     public function getElementAttribute(string $key): ?string
     {
         return $this->elementAttributes[$key] ?? null;
+    }
+
+    /**
+     * @method removeElementAttribute
+     */
+    public function removeElementAttribute(string $key): self
+    {
+        if(array_key_exists($key, $this->elementAttributes)) {
+            unset($this->elementAttributes[$key]);
+        }
+        return $this;
     }
 
     /**

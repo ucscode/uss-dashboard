@@ -4,7 +4,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\DOMTableInterface;
-use Ud\bundle\DOMTableWidget;
+use Ucscode\UssForm\UssForm;
 
 class CrudIndexManager extends AbstractCrudIndexManager
 {
@@ -16,17 +16,17 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->setDefaultItemActions();
     }
 
-    public function createUI(?DOMTableWidget $fabricator = null): string
+    public function createUI(?DOMTableInterface $fabricator = null): string
     {
         $this->mainContainer->appendChild($this->widgetContainer);
-        $this->tableContainer->appendChild($this->domTable->getTableContainerElement());
+        $this->tableContainer->appendChild($this->tableForm);
         $this->mainContainer->appendChild($this->tableContainer);
         $this->mainContainer->appendChild($this->paginatorContainer);
 
         $this->buildBulkActionsElement();
         $this->buildDOMTable($fabricator);
 
-        return $this->mainContainer->getHTML();
+        return $this->mainContainer->getHTML(true);
     }
 
     /**
@@ -36,15 +36,15 @@ class CrudIndexManager extends AbstractCrudIndexManager
     {
         $uss = Uss::instance();
 
-        $tableColumns = array_map(function($value) {
+        $tableColumns = array_map(function ($value) {
             return str_replace('_', ' ', $value);
         }, $uss->getTableColumns($this->tablename));
 
         $this->setMultipleTableColumns($tableColumns);
 
         $divNodes = [
-            'mainContainer' => 'container', 
-            'widgetContainer' => 'widget', 
+            'mainContainer' => 'container',
+            'widgetContainer' => 'widget',
             'paginatorContainer' => 'paginator',
             'tableContainer' => 'table'
         ];
@@ -54,8 +54,15 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $this->{$key}->setAttribute('class', 'crud-' . $classname);
         };
 
+        $this->tableForm = new UssForm(
+            $this->tablename . '-crud-form',
+            $_SERVER['REQUEST_URI'],
+            'POST'
+        );
+
         $this->domTable = new DOMTable($this->tablename);
         $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped');
+
         $this->sQuery = (new SQuery())->select('*', $this->tablename);
         $this->evalSQueryUpdate();
     }
@@ -67,14 +74,14 @@ class CrudIndexManager extends AbstractCrudIndexManager
     {
         $noAction = (new CrudAction())
             ->setLabel('- Select Action -')
-            ->setValue('');
-        
+            ->setElementAttribute('value', '');
+
         $this->addBulkAction('no-action', $noAction);
 
         $deleteAction = (new CrudAction())
             ->setLabel('Delete')
-            ->setValue('delete');
-            
+            ->setElementAttribute('value', 'delete');
+
         $this->addBulkAction('delete', $deleteAction);
     }
 
@@ -83,8 +90,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     public function setDefaultItemActions(): void
     {
-        $this->addItemAction('edit', new class() implements CrudActionInterface
-        {
+        $this->addItemAction('edit', new class () implements CrudActionInterface {
             public function forEachItem(array $data): CrudAction
             {
                 $curdAction = new CrudAction();
@@ -93,24 +99,31 @@ class CrudIndexManager extends AbstractCrudIndexManager
                     ->setLabel('Edit')
                     ->setIcon('bi bi-person')
                     ->setElementType(CrudAction::TYPE_BUTTON)
-                    ->setValue('button')
-                    ->setElementAttribute('href', 'clone')
-                    ->setElementAttribute('volk', 'sponge');
+                    ->setElementAttribute('type', 'button');
 
                 return $curdAction;
             }
         });
 
-        $this->addItemAction('delete', new class() implements CrudActionInterface
-        {
+        $this->addItemAction('delete', new class ($this) implements CrudActionInterface {
+            public function __construct(
+                private CrudIndexManager $crudIndexManager
+            ){}
+
             public function forEachItem(array $data): CrudAction
             {
-                return (new CrudAction())
+                $crudAction = (new CrudAction())
                     ->setLabel('Delete')
                     ->setIcon('bi bi-trash')
                     ->setElementType(CrudAction::TYPE_ANCHOR)
-                    ->setValue('https://example.com')
+                    ->setElementAttribute('href', 'https://example.com')
                     ->setElementAttribute('target', '_blank');
+                
+                if($this->crudIndexManager->isDisplayItemActionsAsButton()) {
+                    $crudAction->setElementAttribute('class', 'btn btn-outline-danger btn-sm text-nowrap');
+                }
+
+                return $crudAction;
             }
         });
     }
@@ -118,14 +131,14 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method buildDOMTable
      */
-    public function buildDOMTable(?DOMTableInterface $fabricator): void
+    protected function buildDOMTable(?DOMTableInterface $fabricator): void
     {
         $this->domTable->setData($this->mysqliResult);
 
         $columns = $this->getTableColumns();
 
         if(!$this->hideBulkActions) {
-            $columns = ['checkbox' => $this->checker()->getHTML()] + $columns;
+            $columns = ['checkbox' => $this->checker()] + $columns;
         }
 
         if(!$this->hideItemActions) {
@@ -136,7 +149,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->domTable->setCurrentPage($this->paginator->getCurrentPage());
         $this->domTable->setDisplayFooter($this->displayTfoot);
         $this->domTable->setRowsPerPage($this->paginator->getItemsPerPage());
-        
+
         $crudActionParser = new CrudItemIterator(
             $fabricator,
             $this,
@@ -158,7 +171,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $checker->setAttribute('type', 'checkbox');
         $checker->setAttribute('class', 'form-check-input');
         if(!is_null($value)) {
-            $checker->setAttribute('name', 'data[]');
+            $checker->setAttribute('name', 'crud[data][]');
             $checker->setAttribute('value', $value);
         }
         $container->appendChild($checker);
@@ -172,16 +185,16 @@ class CrudIndexManager extends AbstractCrudIndexManager
     {
         if(!$this->hideBulkActions) {
 
-            $bulkActions = new UssElement(UssElement::NODE_DIV);
-            $bulkActions->setAttribute('class', 'bulk-actions row my-1 py-1 border-bottom');
+            $bulkActionContainer = new UssElement(UssElement::NODE_DIV);
+            $bulkActionContainer->setAttribute('class', 'bulk-actions row my-1 py-1 border-bottom');
 
             $bulkActionColumn = new UssElement(UssElement::NODE_DIV);
             $bulkActionColumn->setAttribute('class', 'col-lg-5 col-md-7 ms-auto d-flex justify-content-end align-items-center');
-            $bulkActions->appendChild($bulkActionColumn);
+            $bulkActionContainer->appendChild($bulkActionColumn);
 
             $bulkSelect = new UssElement(UssElement::NODE_SELECT);
             $bulkSelect->setAttribute('class', 'form-select form-select-sm mb-1 mx-1');
-            $bulkSelect->setAttribute('name', 'action');
+            $bulkSelect->setAttribute('name', 'crud[action]');
             $bulkSelect->setAttribute('required', 'required');
             $bulkActionColumn->appendChild($bulkSelect);
 
@@ -193,7 +206,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
             foreach($this->bulkActions as $crudAction) {
 
                 $option = new UssElement(UssElement::NODE_OPTION);
-                $option->setAttribute('value', $crudAction->getValue());
+                $option->setAttribute('value', $crudAction->getElementAttribute('value'));
                 $option->setContent($crudAction->getLabel());
 
                 foreach($crudAction->getElementAttributes() as $key => $value) {
@@ -203,18 +216,13 @@ class CrudIndexManager extends AbstractCrudIndexManager
                 $bulkSelect->appendChild($option);
             }
 
-            $this->tableContainer->insertBefore(
-                $bulkActions, 
+            $this->tableForm->appendChild(
+                $bulkActionContainer
+            );
+
+            $this->tableForm->appendChild(
                 $this->domTable->getTableContainerElement()
             );
         }
-    }
-
-    /**
-     * @method buildItemTools
-     */
-    protected function buildItemTools(): void
-    {
-
     }
 }

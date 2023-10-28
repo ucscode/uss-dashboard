@@ -4,7 +4,7 @@ use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
 
-class CrudItemIterator implements DOMTableInterface 
+class CrudItemIterator implements DOMTableInterface
 {
     private bool $isDropdown;
 
@@ -39,8 +39,10 @@ class CrudItemIterator implements DOMTableInterface
     protected function addCheckboxToItem(array $data): array
     {
         if($this->crudIndexManager->isBulkActionsHidden() === false) {
-            $checker = ($this->checker)();
-            $data = ['checkbox' => $checker->getHTML()] + $data;
+            $key = $this->crudIndexManager->getPrimaryColumn();
+            $value = $data[$key] ?? null;
+            $checker = ($this->checker)($value);
+            $data = ['checkbox' => $checker] + $data;
         };
         return $data;
     }
@@ -50,31 +52,33 @@ class CrudItemIterator implements DOMTableInterface
      */
     public function addActionsToItem(array $data): array
     {
-        if($this->crudIndexManager->isItemActionsHidden() === false) 
-        {
-            $container = $this->createActionContainerElement();
+        if($this->crudIndexManager->isItemActionsHidden() === false) {
+            $nodelist = $this->createActionContainerElement();
             $actionsPerItem = $this->crudIndexManager->getItemActions();
 
             foreach($actionsPerItem as $crudActionInterface) {
                 $crudAction = $crudActionInterface->forEachItem($data);
                 $element = $this->createActionElement($crudAction);
-                $this->appendToContainer($container, $element);
+                $this->appendElementToItem($element, $nodelist['contentBlock'], $crudAction);
             }
 
-            $data['actions'] = $container->getHTML();
+            $data['actions'] = $nodelist['container'];
         };
         return $data;
     }
     /**
      * @method createActionContainerElement
      */
-    protected function createActionContainerElement(): UssElement
+    protected function createActionContainerElement(): array
     {
-        $node = new UssElement(UssElement::NODE_DIV);
+        $nodelist = [
+            'container' => new UssElement(UssElement::NODE_DIV),
+            'contentBlock' => null
+        ];
 
         if($this->isDropdown) {
 
-            $node->setAttribute('class', 'dropdown');
+            $nodelist['container']->setAttribute('class', 'dropdown');
 
             $anchor = new UssElement(UssElement::NODE_A);
             $anchor->setAttribute('class', 'btn btn-outline-secondary btn-sm');
@@ -84,17 +88,18 @@ class CrudItemIterator implements DOMTableInterface
             $anchor->setAttribute('aria-expanded', 'false');
             $anchor->setContent('<i class="bi bi-list"></i>');
 
-            $ul = new UssElement(UssElement::NODE_UL);
-            $ul->setAttribute('class', 'dropdown-menu');
+            $nodelist['contentBlock'] = new UssElement(UssElement::NODE_UL);
+            $nodelist['contentBlock']->setAttribute('class', 'dropdown-menu');
 
-            $node->appendChild($anchor);
-            $node->appendChild($ul);
+            $nodelist['container']->appendChild($anchor);
+            $nodelist['container']->appendChild($nodelist['contentBlock']);
 
         } else {
-            
+
+            $nodelist['contentBlock'] = $nodelist['container'];
         }
 
-        return $node;
+        return $nodelist;
     }
 
     /**
@@ -103,6 +108,7 @@ class CrudItemIterator implements DOMTableInterface
     public function createActionElement(CrudAction $crudAction): UssElement
     {
         $icon = $crudAction->getIcon() ?? '';
+
         if(!empty($icon)) {
             $icon = sprintf("<i class='%s me-1'></i>", $icon);
         }
@@ -110,42 +116,43 @@ class CrudItemIterator implements DOMTableInterface
         if($crudAction->getElementType() === CrudAction::TYPE_ANCHOR) {
             $element = new UssElement(UssElement::NODE_A);
             $element->setAttribute('class', '');
-            $element->setAttribute('href', $crudAction->getValue() ?? '#');
+            $element->setAttribute('href', $crudAction->getElementAttribute('href') ?? '#');
             $element->setContent($icon . $crudAction->getLabel());
         } else {
             $element = new UssElement(UssElement::NODE_BUTTON);
             $element->setAttribute('class', 'btn text-nowrap');
-            $element->setAttribute('value', $crudAction->getValue());
+            $element->setAttribute('type', 'button');
             $element->setContent($icon . $crudAction->getLabel());
+            $crudAction->removeElementAttribute('type');
         };
 
-        foreach($crudAction->getElementAttributes() as $key => $value) {
-            $element->setAttribute($key, $value);
-        }
-
-        if($this->isDropdown) {
-            $parent = new UssElement(UssElement::NODE_LI);
-            $parent->setAttribute('class', 'dropdown-item');
-        } else {
-            $parent = new UssElement(UssElement::NODE_SPAN);
-            $parent->setAttribute('class', 'mb-1 mx-1 d-inline-block');
-            $element->addAttributeValue('class', 'btn btn-primary btn-sm text-nowrap');
-        }
-
-        $parent->appendChild($element);
-
-        return $parent;
+        return $element;
     }
 
     /**
      * @method appendToContainer
      */
-    public function appendToContainer(UssElement $container, UssElement $item): void
+    public function appendElementToItem(UssElement $element, UssElement $container, CrudAction $crudAction): void
     {
-        if(!$this->isDropdown) {
-            $container->appendChild($item);
+        $class = $crudAction->getElementAttribute('class');
+
+        if($this->isDropdown) {
+            $crudAction->setElementAttribute('class', 'dropdown-item ' . $class);
+            $li = new UssElement(UssElement::NODE_LI);
+            $li->appendChild($element);
+            $container->appendChild($li);
         } else {
-            $container->find('ul.dropdown-menu', 0)->appendChild($item);
+            if(empty($class)) {
+                $crudAction->setElementAttribute('class', 'btn btn-outline-primary btn-sm text-nowrap');
+            }
+            $span = new UssElement(UssElement::NODE_SPAN);
+            $span->setAttribute('class', 'mb-1 mx-1 d-inline-block');
+            $span->appendChild($element);
+            $container->appendChild($span);
+        }
+
+        foreach($crudAction->getElementAttributes() as $key => $value) {
+            $element->setAttribute($key, $value);
         }
     }
 }
