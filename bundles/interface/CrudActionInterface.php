@@ -1,5 +1,5 @@
 <?php
 
 interface CrudActionInterface {
-    public function forEachItem(array $data): CrudAction;
+    public function forEachItem(array $item): CrudAction;
 }
