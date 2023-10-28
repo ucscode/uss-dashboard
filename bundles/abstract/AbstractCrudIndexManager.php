@@ -9,9 +9,6 @@ use Ucscode\UssForm\UssForm;
 abstract class AbstractCrudIndexManager implements CrudIndexInterface
 {
     protected string $primaryColumn = 'id';
-
-    protected int $itemsPerPage = 10;
-    protected int $currentPage = 1;
     protected array $tableColumns;
 
     protected bool $displayTfoot = false;
@@ -61,7 +58,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function getTotalItems(): int
     {
-        return $this->mysqliResult->num_rows;
+        return $this->domTable->getTotalItems();
     }
 
     /**
@@ -69,7 +66,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function setItemsPerPage(int $index): CrudIndexInterface
     {
-        $this->itemsPerPage;
+        $this->domTable->setItemsPerPage($index);
         return $this;
     }
 
@@ -78,7 +75,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function getItemsPerPage(): int
     {
-        return $this->itemsPerPage;
+        return $this->domTable->getItemsPerPage();
     }
 
     /**
@@ -86,7 +83,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function setCurrentPage(int $page): CrudIndexInterface
     {
-        $this->currentPage = $page;
+        $this->domTable->setCurrentPage($page);
         return $this;
     }
 
@@ -95,7 +92,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
      */
     public function getCurrentPage(): int
     {
-        return $this->currentPage;
+        return $this->domTable->getCurrentPage();
     }
 
     /**
@@ -315,27 +312,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
             );
         };
         $this->sQuery = $sQuery;
-        $this->evalSQueryUpdate();
-    }
-
-    /**
-     * @method evalSQueryUpdate 
-     */
-    protected function evalSQueryUpdate(): void
-    {
-        $uss = Uss::instance();
-        $this->mysqliResult = $uss->mysqli->query($this->sQuery);
-
-        $currentPage = $_GET[self::PAGE_INDEX_KEY] ?? null;
-        $currentPage = is_numeric($currentPage) ? abs($currentPage) : 1;
-        $this->setCurrentPage($currentPage);
-
-        $this->paginator = new Paginator(
-            $this->getTotalItems(),
-            $this->getItemsPerPage(),
-            $this->getCurrentPage(),
-            $this->getUrlPattern()
-        );
+        $this->mysqliResult = Uss::instance()->mysqli->query($this->sQuery);
     }
 
     /**

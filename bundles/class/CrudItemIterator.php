@@ -21,7 +21,7 @@ class CrudItemIterator implements DOMTableInterface
      * @overrides
      * @method forEachItem
      */
-    public function forEachItem(array $data): array
+    public function forEachItem(array $data): ?array
     {
         if($this->fabricator) {
             $data = $this->fabricator->forEachItem($data);
@@ -29,6 +29,7 @@ class CrudItemIterator implements DOMTableInterface
 
         $data = $this->addCheckboxToItem($data);
         $data = $this->addActionsToItem($data);
+        $data = $this->searchItem($data);
 
         return $data;
     }
@@ -154,5 +155,26 @@ class CrudItemIterator implements DOMTableInterface
         foreach($crudAction->getElementAttributes() as $key => $value) {
             $element->setAttribute($key, $value);
         }
+    }
+
+    /**
+     * @method searchItem
+     */
+    public function searchItem(array $data): ?array
+    {
+        $hasSearch = $this->crudIndexManager->getWidget('search');
+        $keyword = strtolower(trim($_GET['search'] ?? ''));
+        if($hasSearch && !empty($keyword)) {
+            foreach($data as $key => $value) {
+                if(is_scalar($value) && $key != 'id') {
+                    $match = strpos(strtolower($value), $keyword) !== false;
+                    if($match) {
+                        return $data;
+                    }
+                }
+            };
+            return null;
+        }
+        return $data;
     }
 }

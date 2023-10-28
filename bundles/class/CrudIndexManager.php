@@ -26,7 +26,6 @@ class CrudIndexManager extends AbstractCrudIndexManager
         );
 
         $this->mainContainer->appendChild($this->tableContainer);
-        $this->mainContainer->appendChild($this->paginatorContainer);
 
         $this->buildDOMTable($fabricator);
 
@@ -38,11 +37,11 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function configureProperties(): void
     {
-        $uss = Uss::instance();
+        $tableColumns = Uss::instance()->getTableColumns($this->tablename);
 
         $tableColumns = array_map(function ($value) {
             return str_replace('_', ' ', $value);
-        }, $uss->getTableColumns($this->tablename));
+        }, $tableColumns);
 
         $this->setMultipleTableColumns($tableColumns);
 
@@ -67,14 +66,18 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->domTable = new DOMTable($this->tablename);
         $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped');
 
+        $currentPage = $_GET[self::PAGE_INDEX_KEY] ?? null;
+        $currentPage = is_numeric($currentPage) ? abs($currentPage) : 1;
+        $this->setCurrentPage($currentPage);
+
         $this->sQuery = (new SQuery())->select('*', $this->tablename);
-        $this->evalSQueryUpdate();
+        $this->mysqliResult = Uss::instance()->mysqli->query($this->sQuery);
     }
 
     /**
      * @method configureBulkActions
      */
-    public function setDefaultBulkActions(): void
+    protected function setDefaultBulkActions(): void
     {
         $noAction = (new CrudAction())
             ->setLabel('- Select Action -')
@@ -92,7 +95,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method configureItemActions
      */
-    public function setDefaultItemActions(): void
+    protected function setDefaultItemActions(): void
     {
         $this->addItemAction('edit', new class () implements CrudActionInterface {
             public function forEachItem(array $item): CrudAction
@@ -112,7 +115,8 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->addItemAction('delete', new class ($this) implements CrudActionInterface {
             public function __construct(
                 private CrudIndexManager $crudIndexManager
-            ){}
+            ) {
+            }
 
             public function forEachItem(array $item): CrudAction
             {
@@ -122,7 +126,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
                     ->setElementType(CrudAction::TYPE_ANCHOR)
                     ->setElementAttribute('href', 'https://example.com')
                     ->setElementAttribute('target', '_blank');
-                
+
                 if($this->crudIndexManager->isDisplayItemActionsAsButton()) {
                     $crudAction->setElementAttribute('class', 'btn btn-outline-danger btn-sm text-nowrap');
                 }
@@ -135,7 +139,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method setDefaultWidgets
      */
-    public function setDefaultWidgets(): void
+    protected function setDefaultWidgets(): void
     {
         $searchContainer = $this->createSearchWidget();
         $this->addWidget('search', $searchContainer);
@@ -149,12 +153,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function buildDOMTable(?DOMTableInterface $fabricator): void
     {
-        $this->domTable->setData($this->mysqliResult);
-
         $columns = $this->getTableColumns();
 
         if(!$this->hideBulkActions) {
-            $checker = $this->checker(null, function($input) {
+            $checker = $this->checker(null, function ($input) {
                 $input->setAttribute('data-select', 'multiple');
             });
             $columns = ['checkbox' => $checker] + $columns;
@@ -165,9 +167,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         }
 
         $this->domTable->setMultipleColumns($columns);
-        $this->domTable->setCurrentPage($this->paginator->getCurrentPage());
         $this->domTable->setDisplayFooter($this->displayTfoot);
-        $this->domTable->setRowsPerPage($this->paginator->getItemsPerPage());
 
         $crudActionParser = new CrudItemIterator(
             $fabricator,
@@ -176,7 +176,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $this->domTable
         );
 
-        $this->domTable->build($crudActionParser);
+        $this->domTable->setData($this->mysqliResult, $crudActionParser);
+        $this->domTable->build();
+
+        $this->buildPaginatorElement();
     }
 
     /**
@@ -257,20 +260,20 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method createSearchWidget
      */
-    public function createSearchWidget(): UssElement
+    protected function createSearchWidget(): UssElement
     {
         $searchContainer = new UssElement(UssElement::NODE_DIV);
         $searchContainer->setAttribute('class', 'col-lg-6 mb-1');
 
         $form = new UssForm(
-            'search', 
+            'search',
             parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
         );
 
         $form->add(
-            'search', 
-            UssForm::NODE_INPUT, 
-            UssForm::TYPE_SEARCH, 
+            'search',
+            UssForm::NODE_INPUT,
+            UssForm::TYPE_SEARCH,
             [
                 'value' => $_GET['search'] ?? null,
                 'label_class' => 'd-none',
@@ -288,17 +291,6 @@ class CrudIndexManager extends AbstractCrudIndexManager
             ]
         );
 
-        foreach($_GET as $key => $value) {
-            if($key !== 'search') {
-                $form->add(
-                    $key, 
-                    UssForm::NODE_INPUT, 
-                    UssForm::TYPE_HIDDEN, 
-                    ['value' => $value]
-                );
-            }
-        }
-
         $searchContainer->appendChild($form);
         return $searchContainer;
     }
@@ -306,7 +298,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method combineWidgetElements
      */
-    public function combineWidgetElements(): void
+    protected function combineWidgetElements(): void
     {
         if(!empty($this->widgets)) {
             foreach($this->widgets as $widget) {
@@ -319,7 +311,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method createAddNewWidget
      */
-    public function createAddNewWidget(): UssElement
+    protected function createAddNewWidget(): UssElement
     {
         $newContainer = new UssElement(UssElement::NODE_DIV);
         $newContainer->setAttribute('class', 'col-lg-6 ms-auto text-lg-end');
@@ -329,5 +321,25 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $anchor->setAttribute('href', '');
         $newContainer->appendChild($anchor);
         return $newContainer;
+    }
+
+    /**
+     * @method buildPaginatorElement
+     */
+    protected function buildPaginatorElement(): void
+    {
+        $this->paginator = new Paginator(
+            $this->domTable->gettotalItems(),
+            $this->domTable->getItemsPerPage(),
+            $this->domTable->getCurrentPage(),
+            $this->getUrlPattern()
+        );
+        
+        if($this->paginator->getNumPages() > 1) {
+            $this->paginatorContainer->appendChild(
+                $this->paginator->getElement()
+            );
+            $this->mainContainer->appendChild($this->paginatorContainer);
+        }
     }
 }
