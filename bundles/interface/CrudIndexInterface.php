@@ -60,9 +60,6 @@ interface CrudIndexInterface
 
     public function isDisplayItemActionsAsButton(): bool;
 
-    /**
-     * Callable must return a TreeNode Instance
-     */
     public function addItemAction(string $name, CrudActionInterface $action): self;
 
     public function removeItemAction(string $name): self;
@@ -74,4 +71,8 @@ interface CrudIndexInterface
     public function isItemActionsHidden(): bool;
 
     public function updateSQuery(callable $updater): void;
+
+    public function setTableWhiteBackground(bool $status): self;
+
+    public function isTableWhiteBackground(): bool;
 }

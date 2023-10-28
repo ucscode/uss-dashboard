@@ -16,6 +16,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     protected bool $hideBulkActions = false;
     protected bool $hideWidgets = false;
     protected bool $displayItemActionsAsButton = false; // displays as dropdown
+    protected bool $tableWhiteBackground = false;
 
     protected array $bulkActions = [];
     protected array $itemActions = [];
@@ -311,6 +312,23 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     public function isDisplayItemActionsAsButton(): bool
     {
         return $this->displayItemActionsAsButton;
+    }
+
+    /**
+     * @method setTableWhiteBackground
+     */
+    public function setTableWhiteBackground(bool $status = true): CrudIndexInterface
+    {
+        $this->tableWhiteBackground = $status;
+        return $this;
+    }
+
+    /**
+     * @method isTableWhiteBackground
+     */
+    public function isTableWhiteBackground(): bool
+    {
+        return $this->tableWhiteBackground;
     }
 
     /**

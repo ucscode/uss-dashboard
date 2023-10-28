@@ -209,12 +209,18 @@ class CrudIndexManager extends AbstractCrudIndexManager
     public function buildTableElements(): UssElement
     {
         $tableContainer = $this->domTable->getTableContainerElement();
+
+        if($this->isTableWhiteBackground()) {
+            $tableContainer->addAttributeValue('class', 'p-3 bg-white');
+        }
+
         if(!$this->hideBulkActions) {
             $bulkActionContainer = $this->buildBulkActionsElement();
             $this->tableForm->appendChild($bulkActionContainer);
             $this->tableForm->appendChild($tableContainer);
             return $this->tableForm;
         }
+        
         return $tableContainer;
     }
 
