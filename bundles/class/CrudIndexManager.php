@@ -138,7 +138,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $columns = $this->getTableColumns();
 
         if(!$this->hideBulkActions) {
-            $columns = ['checkbox' => $this->checker()] + $columns;
+            $checker = $this->checker(null, function($input) {
+                $input->setAttribute('data-select', 'multiple');
+            });
+            $columns = ['checkbox' => $checker] + $columns;
         }
 
         if(!$this->hideItemActions) {
@@ -163,7 +166,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method checker
      */
-    protected function checker(?string $value = null): UssElement
+    protected function checker(?string $value = null, ?callable $caller = null): UssElement
     {
         $container = new UssElement(UssElement::NODE_DIV);
         $container->setAttribute('class', 'form-check');
@@ -173,6 +176,9 @@ class CrudIndexManager extends AbstractCrudIndexManager
         if(!is_null($value)) {
             $checker->setAttribute('name', 'crud[data][]');
             $checker->setAttribute('value', $value);
+        }
+        if($caller) {
+            call_user_func($caller, $checker);
         }
         $container->appendChild($checker);
         return $container;
