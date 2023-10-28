@@ -28,7 +28,7 @@ class CrudEditManager extends AbstractCrudEditManager
         );
 
         foreach($this->fields as $key => $crudField) {
-            if($crudField->getNodeType() !== CrudField::TYPE_EDITOR) {
+            if($crudField->getType() !== CrudField::TYPE_EDITOR) {
                 $form->add(
                     $key,
                     $this->getNodeName($crudField),
@@ -74,7 +74,7 @@ class CrudEditManager extends AbstractCrudEditManager
     {
         $crudField = (new CrudField())
             ->setLabel(str_replace('_', ' ', $name))
-            ->setNodeType($this->getDefaultNodeType(strtolower($name), strtoupper($type)))
+            ->setType($this->getDefaultNodeType(strtolower($name), strtoupper($type)))
             ->setLineBreak(true);
 
         $this->setField($name, $crudField);
@@ -102,7 +102,7 @@ class CrudEditManager extends AbstractCrudEditManager
      */
     protected function getNodename(CrudField $crudField): string
     {
-        switch($crudField->getNodeType()) {
+        switch($crudField->getType()) {
             case CrudField::TYPE_SELECT:
                 return UssForm::NODE_SELECT;
             case CrudField::TYPE_TEXTAREA;
@@ -118,7 +118,7 @@ class CrudEditManager extends AbstractCrudEditManager
     protected function getFieldContext(CrudField $crudField): array|string|null
     {
         $context = null;
-        $nodeType = $crudField->getNodeType();
+        $nodeType = $crudField->getType();
 
         switch($nodeType) {
             case CrudField::TYPE_SELECT:

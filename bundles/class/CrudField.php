@@ -20,7 +20,7 @@ class CrudField
     public const TYPE_EDITOR = 'EDITOR';
 
     protected ?string $label = null;
-    protected string $nodeType = self::TYPE_INPUT;
+    protected string $type = self::TYPE_INPUT;
     protected bool $mapped = true;
     protected array $attributes = [];
     protected ?string $columnClass = null;
@@ -53,21 +53,20 @@ class CrudField
     }
 
     /**
-     * @method setNodeType
+     * @method setType
      */
-    public function setNodeType(string $type): self
+    public function setType(string $type): self
     {
-        $this->nodeType = $type;
-        $this->setDefaultLook();
+        $this->type = $type;
         return $this;
     }
 
     /**
-     * @method getNodeType
+     * @method getType
      */
-    public function getNodeType(): string
+    public function getType(): string
     {
-        return $this->nodeType;
+        return $this->type;
     }
 
     /**
@@ -124,8 +123,9 @@ class CrudField
     /**
      * @method getColumnClass
      */
-    public function getColumnClass(): string
+    public function getColumnClass(): ?string
     {
+        $this->setDefaultLook();
         return $this->columnClass;
     }
 
@@ -141,8 +141,9 @@ class CrudField
     /**
      * @method getClass
      */
-    public function getClass(): string
+    public function getClass(): ?string
     {
+        $this->setDefaultLook();
         return $this->class;
     }
 
@@ -333,15 +334,9 @@ class CrudField
      */
     protected function setDefaultLook(): void
     {
-        if(is_null($this->class)) {
-            $this->class = $this->nodeType !== self::TYPE_SELECT ?
-                'form-control form-control-sm' :
-                'form-select form-select-sm';
-        }
-
         if(is_null($this->columnClass)) {
             $this->columnClass = 'mb-3 ';
-            switch($this->nodeType) {
+            switch($this->type) {
                 case self::TYPE_NUMBER:
                     $size = 'col-sm-4';
                     break;

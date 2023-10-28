@@ -61,6 +61,17 @@ abstract class AbstractCrudEditManager implements CrudEditInterface
     }
 
     /**
+     * @method removeField
+     */
+    public function removeField(string $name): CrudEditInterface
+    {
+        if(array_key_exists($name, $this->fields)) {
+            unset($this->fields[$name]);
+        }
+        return $this;
+    }
+
+    /**
      * @method setSubmitUrl
      */
     public function setSubmitUrl(string $url): CrudEditInterface

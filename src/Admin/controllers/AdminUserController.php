@@ -37,6 +37,14 @@ class AdminUserController implements RouteInterface
 
             $crudEditManager = new CrudEditManager(User::USER_TABLE);
             
+            $crudEditManager->removeField('id');
+            $crudField = (new CrudField())
+                ->setLabel('worker')
+                ->setType(CrudField::TYPE_INPUT)
+                ->setAttribute('name', 'worked')
+                ;
+
+            $crudEditManager->setField('user[changer]', $crudField);
             $ui = $crudEditManager->createUI();
 
         }

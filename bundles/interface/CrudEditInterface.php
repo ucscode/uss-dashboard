@@ -10,6 +10,8 @@ interface CrudEditInterface
 
     public function getField(string $name): ?CrudField;
 
+    public function removeField(string $name): self;
+
     public function setSubmitUrl(string $url): self;
 
     public function getSubmitUrl(): ?string;
