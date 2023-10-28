@@ -14,6 +14,7 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     protected bool $displayTfoot = false;
     protected bool $hideItemActions = false;
     protected bool $hideBulkActions = false;
+    protected bool $hideWidgets = false;
     protected bool $displayItemActionsAsButton = false; // displays as dropdown
 
     protected array $bulkActions = [];
@@ -178,6 +179,23 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     public function getWidget(string $name): ?UssElement
     {
         return $this->widgets[$name] ?? null;
+    }
+
+    /**
+     * @method setHideWidgets
+     */
+    public function setHideWidgets(bool $status): CrudIndexInterface
+    {
+        $this->hideWidgets = $status && !empty($this->widgets);
+        return $this;
+    }
+
+    /**
+     * @method isWidgetHidden
+     */
+    public function isWidgetsHidden(): bool
+    {
+        return $this->hideWidgets;
     }
 
     /**

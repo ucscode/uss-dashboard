@@ -41,6 +41,10 @@ interface CrudIndexInterface
     public function removeWidget(string $name): self;
     
     public function getWidget(string $name): ?UssElement;
+
+    public function setHideWidgets(bool $status): self;
+
+    public function isWidgetsHidden(): bool;
     
     public function addBulkAction(string $name, CrudAction $action): self;
 

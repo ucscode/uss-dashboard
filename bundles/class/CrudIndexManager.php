@@ -49,7 +49,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
             'mainContainer' => 'crud-container',
             'widgetContainer' => 'crud-widget row',
             'paginatorContainer' => 'crud-paginator',
-            'tableContainer' => 'crud-table'
+            'tableContainer' => 'crud-table border-top border-bottom my-2 py-2'
         ];
 
         foreach($divNodes as $key => $classname) {
@@ -224,7 +224,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     protected function buildBulkActionsElement(): UssElement
     {
         $bulkActionContainer = new UssElement(UssElement::NODE_DIV);
-        $bulkActionContainer->setAttribute('class', 'bulk-actions row my-1 py-1 border-bottom');
+        $bulkActionContainer->setAttribute('class', 'bulk-actions row my-1 py-1');
 
         $bulkActionColumn = new UssElement(UssElement::NODE_DIV);
         $bulkActionColumn->setAttribute('class', 'col-lg-5 col-md-7 ms-auto d-flex justify-content-end align-items-center');
@@ -300,7 +300,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function combineWidgetElements(): void
     {
-        if(!empty($this->widgets)) {
+        if(!empty($this->widgets) && !$this->hideWidgets) {
             foreach($this->widgets as $widget) {
                 $this->widgetContainer->appendChild($widget);
             }
@@ -334,7 +334,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $this->domTable->getCurrentPage(),
             $this->getUrlPattern()
         );
-        
+
         if($this->paginator->getNumPages() > 1) {
             $this->paginatorContainer->appendChild(
                 $this->paginator->getElement()
