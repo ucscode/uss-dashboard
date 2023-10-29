@@ -99,22 +99,40 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function setDefaultItemActions(): void
     {
-        $this->addItemAction('edit', new class () implements CrudActionInterface {
+        /**
+         * UPDATE ACTION
+         */
+        $this->addItemAction(self::ACTION_UPDATE, new class ($this) implements CrudActionInterface 
+        {
+            public function __construct(
+                private CrudIndexManager $crudIndexManager
+            ){}
+
             public function forEachItem(array $item): CrudAction
             {
-                $curdAction = new CrudAction();
+                $key = $this->crudIndexManager->getPrimaryKey();
+                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+                $query = [
+                    'action' => CrudActionImmutableInterface::ACTION_UPDATE,
+                    'entity' => $item[$key] ?? ''
+                ];
 
-                $curdAction
+                $href = $path . "?" . http_build_query($query);
+
+                $curdAction = (new CrudAction())
                     ->setLabel('Edit')
-                    ->setIcon('bi bi-person')
-                    ->setElementType(CrudAction::TYPE_BUTTON)
-                    ->setElementAttribute('type', 'button');
+                    ->setIcon('bi bi-pen')
+                    ->setElementType(CrudAction::TYPE_ANCHOR)
+                    ->setElementAttribute('href', $href);
 
                 return $curdAction;
             }
         });
 
-        $this->addItemAction('delete', new class ($this) implements CrudActionInterface {
+        /**
+         * DELETE ACTION
+         */
+        $this->addItemAction(self::ACTION_DELETE, new class ($this) implements CrudActionInterface {
             public function __construct(
                 private CrudIndexManager $crudIndexManager
             ) {
@@ -122,12 +140,27 @@ class CrudIndexManager extends AbstractCrudIndexManager
 
             public function forEachItem(array $item): CrudAction
             {
+                $key = $this->crudIndexManager->getPrimaryKey();
+                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+                $query = [
+                    'action' => CrudActionImmutableInterface::ACTION_DELETE,
+                    'entity' => $item[$key] ?? ''
+                ];
+
+                $href = $path . "?" . http_build_query($query);
+
+                $modalMessage = "<span class='fs-14px'>
+                    Are you sure you want to delete the item? <br> 
+                    This action cannot be reversed</span>
+                ";
+
                 $crudAction = (new CrudAction())
                     ->setLabel('Delete')
                     ->setIcon('bi bi-trash')
                     ->setElementType(CrudAction::TYPE_ANCHOR)
-                    ->setElementAttribute('href', 'https://example.com')
-                    ->setElementAttribute('target', '_blank');
+                    ->setElementAttribute('href', $href)
+                    ->setElementAttribute('data-ui-confirm', $modalMessage)
+                    ->setElementAttribute('data-ui-size', 'small');
 
                 if($this->crudIndexManager->isDisplayItemActionsAsButton()) {
                     $crudAction->setElementAttribute('class', 'btn btn-outline-danger btn-sm text-nowrap');

@@ -6,6 +6,7 @@ new class {
         this.transferClick();
         this.previewUploadedImage();
         this.copyText();
+        this.confirmHref();
     }
 
     transferClick() {
@@ -65,6 +66,35 @@ new class {
                 })
             }
         })
+    }
+
+    confirmHref() {
+        const selector = 'a[data-ui-confirm]';
+        $(selector).click(function(e) {
+            e.preventDefault();
+            const anchor = this;
+            const message = this.dataset.uiConfirm;
+            const size = this.dataset.uiSize || null;
+            bootbox.confirm({
+                message,
+                callback(ok) {
+                    if(ok) {
+                        const clone = anchor.cloneNode();
+                        clone.click();
+                    }
+                },
+                size,
+                closeButton: false,
+                buttons: {
+                    cancel: {
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    confirm: {
+                        className: 'btn btn-primary btn-sm'
+                    }
+                }
+            })
+        });
     }
 
 }

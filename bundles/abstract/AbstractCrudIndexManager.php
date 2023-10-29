@@ -6,7 +6,8 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractCrudIndexManager implements CrudIndexInterface
+abstract class AbstractCrudIndexManager 
+implements CrudIndexInterface, CrudActionImmutableInterface
 {
     protected string $primaryKey = 'id';
     protected array $tableColumns;
