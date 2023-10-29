@@ -1,7 +1,5 @@
 <?php
 
-use Ucscode\Packages\TreeNode;
-use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 
 interface CrudIndexInterface 
@@ -16,9 +14,9 @@ interface CrudIndexInterface
 
     public function getItemsPerPage(): int;
 
-    public function setPrimaryColumn(string $column): self;
+    public function setPrimaryKey(string $key): self;
 
-    public function getPrimaryColumn(): string;
+    public function getPrimaryKey(): string;
 
     public function setCurrentPage(int $page): self;
     

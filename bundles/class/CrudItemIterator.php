@@ -42,7 +42,7 @@ class CrudItemIterator implements DOMTableInterface
     protected function addCheckboxToItem(array $data): array
     {
         if($this->crudIndexManager->isBulkActionsHidden() === false) {
-            $key = $this->crudIndexManager->getPrimaryColumn();
+            $key = $this->crudIndexManager->getPrimaryKey();
             $value = $data[$key] ?? null;
             $checker = ($this->checker)($value);
             $data = ['checkbox' => $checker] + $data;

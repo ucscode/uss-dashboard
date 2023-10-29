@@ -70,7 +70,9 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $currentPage = is_numeric($currentPage) ? abs($currentPage) : 1;
         $this->setCurrentPage($currentPage);
 
-        $this->sQuery = (new SQuery())->select('*', $this->tablename);
+        $this->sQuery = (new SQuery())
+            ->select('*', $this->tablename)
+            ->orderBy($this->getPrimarykey() . ' DESC');
         $this->mysqliResult = Uss::instance()->mysqli->query($this->sQuery);
     }
 

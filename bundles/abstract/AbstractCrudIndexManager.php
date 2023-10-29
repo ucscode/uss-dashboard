@@ -8,7 +8,7 @@ use Ucscode\UssForm\UssForm;
 
 abstract class AbstractCrudIndexManager implements CrudIndexInterface
 {
-    protected string $primaryColumn = 'id';
+    protected string $primaryKey = 'id';
     protected array $tableColumns;
 
     protected bool $displayTfoot = false;
@@ -41,18 +41,18 @@ abstract class AbstractCrudIndexManager implements CrudIndexInterface
     /**
      * @method setPrimaryColumn
      */
-    public function setPrimaryColumn(string $column): CrudIndexInterface
+    public function setPrimaryKey(string $key): CrudIndexInterface
     {
-        $this->primaryColumn = $column;
+        $this->primaryKey = $key;
         return $this;
     }
 
     /**
      * @method setPrimaryColumn
      */
-    public function getPrimaryColumn(): string
+    public function getPrimaryKey(): string
     {
-        return $this->primaryColumn;
+        return $this->primaryKey;
     }
 
     /**
