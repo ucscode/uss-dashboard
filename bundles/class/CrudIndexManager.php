@@ -197,7 +197,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         if(!$this->hideBulkActions) {
             // Add checkboxes
             $checker = $this->checker(null, function ($input) {
-                $input->setAttribute('data-select', 'multiple');
+                $input->setAttribute('data-ui-checkbox', 'multiple');
             });
             $columns = ['__checkbox__' => $checker] + $columns;
         }
@@ -249,6 +249,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
     {
         $tableElement = $this->domTable->getTableElement();
         $tableElement->addAttributeValue('class', 'table-striped');
+        $tableElement->setAttribute('data-ui-table', 'crud');
 
         if($this->isTableWhiteBackground()) {
             $tableWrapper->addAttributeValue('class', 'p-3 bg-white');

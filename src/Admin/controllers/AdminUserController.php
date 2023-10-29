@@ -29,11 +29,10 @@ class AdminUserController implements RouteInterface
             $crudIndexManager->removeTableColumn('password');
             $crudIndexManager->setTableColumn('model', 'Model No.');
             $crudIndexManager->setDisplayItemActionsAsButton(true);
-
             //$crudIndexManager->setHideWidgets(true);
-
             $crudIndexManager->setItemsPerPage(2);
-            $crudIndexManager->setTableWhiteBackground();
+            //$crudIndexManager->setTableWhiteBackground();
+            $crudIndexManager->setDisplayTableFooter(true);
 
             $ui = $crudIndexManager->createUI(new class () implements DOMTableInterface {
                 public function forEachItem(array $data): array

@@ -46,7 +46,9 @@ class CrudItemIterator implements DOMTableInterface
         if($this->crudIndexManager->isBulkActionsHidden() === false) {
             $key = $this->crudIndexManager->getPrimaryKey();
             $value = $data[$key] ?? null;
-            $checker = ($this->checker)($value);
+            $checker = ($this->checker)($value, function ($input) {
+                $input->setAttribute('data-ui-checkbox', 'single');
+            });
             $data = ['__checkbox__' => $checker] + $data;
         };
         return $data;

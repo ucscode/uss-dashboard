@@ -4,7 +4,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-class CrudEditManager extends AbstractCrudEditManagerLogics
+class CrudEditManager extends AbstractCrudEditLogics
 {
     protected const DO_REDIRECT = 'redirect';
     protected const DO_ALERT = 'alert';
@@ -89,7 +89,9 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
     protected function processFormSubmission(): void
     {
         if(!empty($_POST) && !empty($_POST['__NONCE__'])) {
+
             if($this->validateNonce()) {
+
                 $this->dataToSubmit = $_POST;
 
                 if($this->submitInterface) {

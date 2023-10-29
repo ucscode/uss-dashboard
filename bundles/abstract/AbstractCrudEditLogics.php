@@ -4,7 +4,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractCrudEditManagerLogics extends AbstractCrudEditManager
+abstract class AbstractCrudEditLogics extends AbstractCrudEditManager
 {
     protected UssElement $actionContainer;
     protected UssElement $widgetContainer;

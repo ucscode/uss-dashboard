@@ -48,7 +48,7 @@ $bundles = [
         'AbstractCrudRelativeMethods.php',
         'AbstractCrudIndexManager.php',
         'AbstractCrudEditManager.php',
-        'AbstractCrudEditManagerLogics.php',
+        'AbstractCrudEditLogics.php',
     ],
     'class' => [
         'DashboardTwigExtension.php',

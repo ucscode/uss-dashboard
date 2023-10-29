@@ -7,6 +7,7 @@ new class {
         this.previewUploadedImage();
         this.copyText();
         this.confirmHref();
+        this.enableTableCheckboxes();
     }
 
     transferClick() {
@@ -95,6 +96,25 @@ new class {
                 }
             })
         });
+    }
+
+    enableTableCheckboxes() {
+        const selector = 'table[data-ui-table="crud"]';
+        $(selector).each(function() {
+            const table = this;
+            const checkboxSelector = '[data-ui-checkbox]';
+            const singleCheckboxSelector = checkboxSelector + '[data-ui-checkbox="single"]';
+            const multipleCheckboxSelector = checkboxSelector + '[data-ui-checkbox="multiple"]';
+            $(this).find(checkboxSelector).on('change', function() {
+                if(this.dataset.uiCheckbox === 'multiple') {
+                    $(table).find(checkboxSelector).prop('checked', this.checked);
+                } else {
+                    const singleCheckboxes = $(table).find(singleCheckboxSelector);
+                    const checkedCheckboxes = $(table).find(singleCheckboxSelector + ':checked');
+                    $(multipleCheckboxSelector).prop('checked', singleCheckboxes.length === checkedCheckboxes.length);
+                }
+            });
+        })
     }
 
 }
