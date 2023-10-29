@@ -181,10 +181,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
     protected function setDefaultWidgets(): void
     {
         $searchContainer = $this->createSearchWidget();
-        $this->addWidget('search', $searchContainer);
+        $this->setWidget('search', $searchContainer);
 
         $newContainer = $this->createAddNewWidget();
-        $this->addWidget('add-new', $newContainer);
+        $this->setWidget('add-new', $newContainer);
     }
 
     /**
