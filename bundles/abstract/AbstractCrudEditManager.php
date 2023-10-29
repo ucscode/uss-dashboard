@@ -42,7 +42,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     protected array $actions = [];
     protected ?array $item = null;
     protected bool $alignActionsLeft = false;
-    protected ?string $entityError = null;
+    protected ?string $itemEntityError = null;
 
     public function __construct(
         protected string $tablename
@@ -214,7 +214,11 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
                     ->delete($this->tablename)
                     ->where($key, $value);
                 $mysqli = Uss::instance()->mysqli;
-                //return $mysqli->query($sQuery);
+                try {
+                    return $mysqli->query($sQuery);
+                } catch(\Exception $e) {
+                    $this->itemEntityError = $e->getMessage();
+                }
             }
         }
         return false;
@@ -225,10 +229,8 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function updateItemEntity(?array $item = null): bool
     {
-        $this->entityError = null;
-        if(is_null($item)) {
-            $item = $this->getItem();
-        }
+        $this->itemEntityError = null;
+        $item = is_null($item) ? $this->getItem() : $item;
         if($item) {
             $key = $this->getPrimaryKey();
             $value = $item[$key] ?? null;
@@ -240,7 +242,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
                     $mysqli = Uss::instance()->mysqli;
                     return $mysqli->query($sQuery);
                 } catch(\Exception $e) {
-                    $this->entityError = $e->getMessage();
+                    $this->itemEntityError = $e->getMessage();
                 }
             }
         }
@@ -252,7 +254,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function createItemEntity(?array $item = null): int|bool
     {
-        $this->entityError = null;
+        $this->itemEntityError = null;
         $item = is_null($item) ? $this->getItem() : $item;
         if($item) {
             $sQuery = (new SQuery())->insert($this->tablename, $item);
@@ -261,7 +263,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
                 $status = $mysqli->query($sQuery);
                 return $status ? $mysqli->insert_id : false;
             } catch(\Exception $e) {
-                $this->entityError = $e->getMessage();
+                $this->itemEntityError = $e->getMessage();
             }
         }
         return false;
@@ -272,6 +274,6 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function lastItemEntityError(): ?string
     {
-        return $this->entityError;
+        return $this->itemEntityError;
     }
 }

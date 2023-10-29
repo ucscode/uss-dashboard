@@ -48,19 +48,6 @@ class AdminUserController implements RouteInterface
             $crudEditManager = new CrudEditManager(User::USER_TABLE);
             $crudEditManager->setItemBy('id', $_GET['entity'] ?? null);
 
-            $item = $crudEditManager->getItem();
-            $item['email'] = 'sample@gmail.com';
-            $item['username'] = null;
-            $item['usercode'] = Uss::instance()->keygen();
-            unset($item['id']);
-
-            var_dump(
-                $crudEditManager->updateItemEntity(),
-                $crudEditManager->deleteItemEntity(),
-                $crudEditManager->createItemEntity($item),
-                $crudEditManager->lastItemEntityError()
-            );
-
             $crudEditManager->removeField('id');
 
             $crudField = (new CrudField())
