@@ -24,6 +24,7 @@ class AdminUserController implements RouteInterface
             $crudIndexManager->setDisplayItemActionsAsButton(true);
             //$crudIndexManager->setHideWidgets(true);
             $crudIndexManager->setItemsPerPage(2);
+            $crudIndexManager->setTableWhiteBackground();
 
             $ui = $crudIndexManager->createUI(new class () implements DOMTableInterface {
                 public function forEachItem(array $data): array
@@ -48,6 +49,7 @@ class AdminUserController implements RouteInterface
 
             $crudEditManager->setField('user[changer]', $crudField);
             $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
+
             $ui = $crudEditManager->createUI(new class () implements CrudEditSubmitInterface {
                 private array $data;
                 public function beforeEntry(array $data): array

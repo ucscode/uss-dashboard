@@ -17,19 +17,22 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->setDefaultWidgets();
     }
 
+    /**
+     * @method createUI
+     */
     public function createUI(?DOMTableInterface $fabricator = null): UssElement
     {
         $this->combineWidgetElements();
-
-        $this->tableContainer->appendChild(
+        
+        $this->tableBlock->appendChild(
             $this->buildTableElements()
         );
 
-        $this->mainContainer->appendChild($this->tableContainer);
+        $this->mainBlock->appendChild($this->tableBlock);
 
         $this->buildDOMTable($fabricator);
 
-        return $this->mainContainer;
+        return $this->mainBlock;
     }
 
     /**
@@ -46,10 +49,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->setMultipleTableColumns($tableColumns);
 
         $divNodes = [
-            'mainContainer' => 'crud-container',
-            'widgetContainer' => 'crud-widget row',
-            'paginatorContainer' => 'crud-paginator',
-            'tableContainer' => 'crud-table border-top border-bottom my-2 py-2'
+            'mainBlock' => 'crud-container',
+            'widgetBlock' => 'crud-widget row',
+            'paginatorBlock' => 'crud-paginator',
+            'tableBlock' => 'crud-table border-top border-bottom my-2 py-2'
         ];
 
         foreach($divNodes as $key => $classname) {
@@ -243,20 +246,20 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     public function buildTableElements(): UssElement
     {
-        $tableContainer = $this->domTable->getTableContainerElement();
-
+        $tableElement = $this->tableForm;
+        $tableWrapper = $this->domTable->getTableWrapperElement();
+    
         if($this->isTableWhiteBackground()) {
-            $tableContainer->addAttributeValue('class', 'p-3 bg-white');
+            $tableWrapper->addAttributeValue('class', 'p-3 bg-white');
         }
 
         if(!$this->hideBulkActions) {
             $bulkActionContainer = $this->buildBulkActionsElement();
             $this->tableForm->appendChild($bulkActionContainer);
-            $this->tableForm->appendChild($tableContainer);
-            return $this->tableForm;
+            $this->tableForm->appendChild($tableWrapper);
         }
         
-        return $tableContainer;
+        return $tableElement;
     }
 
     /**
@@ -343,9 +346,9 @@ class CrudIndexManager extends AbstractCrudIndexManager
     {
         if(!empty($this->widgets) && !$this->hideWidgets) {
             foreach($this->widgets as $widget) {
-                $this->widgetContainer->appendChild($widget);
+                $this->widgetBlock->appendChild($widget);
             }
-            $this->mainContainer->appendChild($this->widgetContainer);
+            $this->mainBlock->appendChild($this->widgetBlock);
         }
     }
 
@@ -386,10 +389,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
         );
 
         if($this->paginator->getNumPages() > 1) {
-            $this->paginatorContainer->appendChild(
+            $this->paginatorBlock->appendChild(
                 $this->paginator->getElement()
             );
-            $this->mainContainer->appendChild($this->paginatorContainer);
+            $this->mainBlock->appendChild($this->paginatorBlock);
         }
     }
 }

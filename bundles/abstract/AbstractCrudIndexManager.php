@@ -1,7 +1,6 @@
 <?php
 
 use Ucscode\DOMTable\DOMTable;
-use Ucscode\Packages\TreeNode;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
