@@ -12,7 +12,7 @@ class CrudItemIterator implements DOMTableInterface
         private ?DOMTableInterface $fabricator,
         private CrudIndexManager $crudIndexManager,
         private Closure $checker,
-        private DOMTable $dOMTable
+        private DOMTable $domTable
     ) {
         $this->isDropdown = !$this->crudIndexManager->isDisplayItemActionsAsButton();
     }
@@ -24,13 +24,15 @@ class CrudItemIterator implements DOMTableInterface
     public function forEachItem(array $data): ?array
     {
         if($this->fabricator) {
+            // process developer fabricator
             $data = $this->fabricator->forEachItem($data);
         }
-        
+
         if($data) {
+            // process system fabricator
             $data = $this->addCheckboxToItem($data);
             $data = $this->addActionsToItem($data);
-            $data = $this->searchItem($data);
+            $data = $this->searchEachItem($data);
         }
 
         return $data;
@@ -45,7 +47,7 @@ class CrudItemIterator implements DOMTableInterface
             $key = $this->crudIndexManager->getPrimaryKey();
             $value = $data[$key] ?? null;
             $checker = ($this->checker)($value);
-            $data = ['checkbox' => $checker] + $data;
+            $data = ['__checkbox__' => $checker] + $data;
         };
         return $data;
     }
@@ -56,7 +58,8 @@ class CrudItemIterator implements DOMTableInterface
     public function addActionsToItem(array $data): array
     {
         if($this->crudIndexManager->isItemActionsHidden() === false) {
-            $nodelist = $this->createActionContainerElement();
+
+            $nodelist = $this->createActionContainerElements();
             $actionsPerItem = $this->crudIndexManager->getItemActions();
 
             foreach($actionsPerItem as $crudActionInterface) {
@@ -65,14 +68,14 @@ class CrudItemIterator implements DOMTableInterface
                 $this->appendElementToItem($element, $nodelist['contentBlock'], $crudAction);
             }
 
-            $data['actions'] = $nodelist['container'];
+            $data['__actions__'] = $nodelist['container'];
         };
         return $data;
     }
     /**
      * @method createActionContainerElement
      */
-    protected function createActionContainerElement(): array
+    protected function createActionContainerElements(): array
     {
         $nodelist = [
             'container' => new UssElement(UssElement::NODE_DIV),
@@ -162,7 +165,7 @@ class CrudItemIterator implements DOMTableInterface
     /**
      * @method searchItem
      */
-    public function searchItem(array $data): ?array
+    public function searchEachItem(array $data): ?array
     {
         $hasSearch = $this->crudIndexManager->getWidget('search');
         $keyword = strtolower(trim($_GET['search'] ?? ''));

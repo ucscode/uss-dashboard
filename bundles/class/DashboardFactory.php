@@ -2,7 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-class DashboardFactory 
+class DashboardFactory
 {
     public function createPHPMailer(bool $exception = false): PHPMailer
     {
@@ -16,10 +16,10 @@ class DashboardFactory
             // Uss Dashboard use MailHog for testing
             $PHPMailer->isSMTP();
             $PHPMailer->Host = 'localhost';
-            $PHPMailer->SMTPAuth = false; 
-            $PHPMailer->Port = 1025; 
+            $PHPMailer->SMTPAuth = false;
+            $PHPMailer->Port = 1025;
         }
-        
+
         return $PHPMailer;
     }
 }

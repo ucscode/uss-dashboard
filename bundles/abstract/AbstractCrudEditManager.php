@@ -1,9 +1,9 @@
 <?php
 
+use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudEditManager 
-implements CrudEditInterface, CrudActionImmutableInterface
+abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods implements CrudEditInterface, CrudActionImmutableInterface
 {
     protected const DATASET = [
         'integer' => [
@@ -41,9 +41,9 @@ implements CrudEditInterface, CrudActionImmutableInterface
     protected ?string $submitUrl;
     protected array $fields = [];
     protected array $actions = [];
-    protected array $widgets = [];
     protected ?array $item = null;
     protected bool $alignActionsLeft = false;
+    protected ?string $entityError = null;
 
     public function __construct(
         protected string $tablename
@@ -112,6 +112,26 @@ implements CrudEditInterface, CrudActionImmutableInterface
     }
 
     /**
+     * @method setItemBy
+     */
+    public function setItemBy(string $key, ?string $value): CrudEditInterface
+    {
+        if(!is_null($value)) {
+            $sQuery = (new SQuery())
+                ->select('*')
+                ->from($this->tablename)
+                ->where($key, $value)
+                ->limit(1);
+
+            $result = Uss::instance()->mysqli->query($sQuery);
+            $this->setItem($result->fetch_assoc());
+        } else {
+            $this->setItem(null);
+        }
+        return $this;
+    }
+
+    /**
      * @method setAction
      */
     public function setAction(string $name, CrudAction $action): CrudEditInterface
@@ -148,59 +168,6 @@ implements CrudEditInterface, CrudActionImmutableInterface
     }
 
     /**
-     * @method setWidget
-     */
-    public function setWidget(string $name, UssElement $widget): CrudEditInterface
-    {
-        $this->widgets[$name] = $widget;
-        return $this;
-    }
-
-    /**
-     * @method getWidget
-     */
-    public function getWidget(string $name): ?UssElement
-    {
-        return $this->widgets[$name] ?? null;
-    }
-
-    /**
-     * @method removeWidget
-     */
-    public function removeWidget(string $name): CrudEditInterface
-    {
-        if(array_key_exists($name, $this->widgets)) {
-            unset($this->widgets[$name]);
-        }
-        return $this;
-    }
-
-    /**
-     * @method getWidgets
-     */
-    public function getWidgets(): array
-    {
-        return $this->widgets;
-    }
-
-    /**
-     * @method setPrimaryKey
-     */
-    public function setPrimaryKey(string $key): CrudEditInterface
-    {
-        $this->primaryKey = $key;
-        return $this;
-    }
-
-    /**
-     * @method getPrimaryKey
-     */
-    public function getPrimaryKey(): string
-    {
-        return $this->primaryKey;
-    }
-
-    /**
      * @method setSubmitUrl
      */
     public function setSubmitUrl(?string $url): CrudEditInterface
@@ -232,5 +199,80 @@ implements CrudEditInterface, CrudActionImmutableInterface
     public function getAlignActionsLeft(): bool
     {
         return $this->alignActionsLeft;
+    }
+
+    /**
+     * @method deleteEntity
+     */
+    public function deleteItemEntity(?array $item = null): bool
+    {
+        $item = !is_null($item) ? $item : $this->getItem();
+        if($item) {
+            $key = $this->getPrimaryKey();
+            $value = $item[$key] ?? null;
+            if(!empty($value)) {
+                $sQuery = (new SQuery())
+                    ->delete($this->tablename)
+                    ->where($key, $value);
+                $mysqli = Uss::instance()->mysqli;
+                //return $mysqli->query($sQuery);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @method updateEntity
+     */
+    public function updateItemEntity(?array $item = null): bool
+    {
+        $this->entityError = null;
+        if(is_null($item)) {
+            $item = $this->getItem();
+        }
+        if($item) {
+            $key = $this->getPrimaryKey();
+            $value = $item[$key] ?? null;
+            if(!empty($value)) {
+                $sQuery = (new SQuery())
+                    ->update($this->tablename, $item)
+                    ->where($key, $value);
+                try {
+                    $mysqli = Uss::instance()->mysqli;
+                    return $mysqli->query($sQuery);
+                } catch(\Exception $e) {
+                    $this->entityError = $e->getMessage();
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @method createEntity
+     */
+    public function createItemEntity(?array $item = null): int|bool
+    {
+        $this->entityError = null;
+        $item = is_null($item) ? $this->getItem() : $item;
+        if($item) {
+            $sQuery = (new SQuery())->insert($this->tablename, $item);
+            try {
+                $mysqli = Uss::instance()->mysqli;
+                $status = $mysqli->query($sQuery);
+                return $status ? $mysqli->insert_id : false;
+            } catch(\Exception $e) {
+                $this->entityError = $e->getMessage();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @method lastEntityError
+     */
+    public function lastItemEntityError(): ?string
+    {
+        return $this->entityError;
     }
 }

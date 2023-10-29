@@ -240,7 +240,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     /**
      * @method devError
      */
-    private function devError(string $error): void 
+    private function devError(string $error): void
     {
         if(UssImmutable::DEBUG) {
             $box = "<div class='text-bg-danger p-2 fs-12px'>

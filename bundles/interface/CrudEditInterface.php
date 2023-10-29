@@ -4,7 +4,7 @@ use Ucscode\UssElement\UssElement;
 
 interface CrudEditInterface
 {
-    public function createUI(?CrudEditSubmitInterface $submitInterface): UssElement;
+    public function createUI(?CrudEditSubmitCustomInterface $submitInterface): UssElement;
 
     public function setField(string $name, CrudField $field): self;
 
@@ -18,6 +18,8 @@ interface CrudEditInterface
 
     public function getItem(?string $key): array|string|null;
 
+    public function setItemBy(string $key, string $value): self;
+
     public function setAction(string $name, CrudAction $action): self;
 
     public function getAction(string $name): ?CrudAction;
@@ -26,19 +28,15 @@ interface CrudEditInterface
 
     public function getActions(): array;
 
-    public function setWidget(string $name, UssElement $widget): self;
-
-    public function getWidget(string $name): ?UssElement;
-
-    public function getWidgets(): array;
-
-    public function removeWidget(string $name): self;
-
-    public function setPrimaryKey(string $key): self;
-
-    public function getPrimaryKey(): string;
-
     public function setSubmitUrl(?string $url): self;
 
     public function getSubmitUrl(): ?string;
+
+    public function createItemEntity(?array $item): int|bool;
+
+    public function deleteItemEntity(?array $item): bool;
+
+    public function updateItemEntity(?array $item): bool;
+
+    public function lastItemEntityError(): ?string;
 }

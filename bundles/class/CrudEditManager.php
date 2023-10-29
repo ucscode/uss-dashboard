@@ -48,7 +48,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
         $this->actionContainer = $this->editForm->addRow('action-container')
             ->removeAttributeValue('class', 'row')
             ->addAttributeValue(
-                'class', 
+                'class',
                 sprintf('border-bottom py-2 mb-2 text-%s', $position)
             );
 
@@ -88,10 +88,8 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
      */
     protected function processFormSubmission(): void
     {
-        if(!empty($_POST) && !empty($_POST['__NONCE__'])) 
-        {
-            if($this->validateNonce()) 
-            {
+        if(!empty($_POST) && !empty($_POST['__NONCE__'])) {
+            if($this->validateNonce()) {
                 $this->dataToSubmit = $_POST;
 
                 if($this->submitInterface) {
@@ -103,7 +101,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                 } else {
                     $status = $this->processDataToSubmit();
                 }
-                
+
                 if($this->submitInterface) {
                     $this->takeDefaultAction = $this->submitInterface->afterEntry($status, $this->dataToSubmit);
                 }
@@ -142,11 +140,11 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
 
             if($this->submitAction === self::ACTION_CREATE) {
 
-                $status = $this->validateDataToSubmit(function($sQuery, $uss) {
+                $status = $this->validateDataToSubmit(function ($sQuery, $uss) {
 
                     $sQuery->insert($this->tablename, $this->dataToSubmit);
                     $status = $uss->mysqli->query($sQuery);
-                    
+
                     if($status) {
                         $this->persistion['action'] = self::DO_REDIRECT;
                         $this->persistion['value'] = $this->baseUrl;
@@ -161,10 +159,10 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                 });
 
             } else {
-                
+
                 if(in_array($this->submitAction, [self::ACTION_CREATE, self::ACTION_UPDATE], true)) {
-                    
-                    $status = $this->validateDataToSubmit(function($sQuery, $uss) {
+
+                    $status = $this->validateDataToSubmit(function ($sQuery, $uss) {
 
                         $primaryKey = $this->getPrimaryKey();
                         $primaryValue = $this->getItem($primaryKey);
@@ -211,7 +209,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                                 $this->persistion['mode'] = self::MODE_WARNING;
                                 $this->persistion['value'] = 'The item could not be deleted';
                             }
-                            
+
                         }
 
                         return $status;
@@ -242,9 +240,9 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                         $this->persistion['value'] = 'The process was unsuccessful';
                         $this->persistion['mode'] = self::MODE_WARNING;
                     };
-                    
+
                 }
-            
+
             }
 
         } catch(\Exception $e) {
@@ -284,8 +282,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
     {
         $status = true;
 
-        foreach($this->dataToSubmit as $key => $value) 
-        {
+        foreach($this->dataToSubmit as $key => $value) {
             $crudField = $this->getField($key);
 
             if($crudField) {
@@ -298,7 +295,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                             $crudField->setError('Invalid numeric value');
                         }
                         break;
-                    
+
                     case CrudField::TYPE_DATE:
                         try {
                             $valid = new DateTime($value);
@@ -319,7 +316,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
         }
 
         if($status) {
-            $status = $caller(new SQuery, Uss::instance());
+            $status = $caller(new SQuery(), Uss::instance());
         } else {
             $this->persistion['action'] = self::DO_ALERT;
             $this->persistion['mode'] = self::MODE_WARNING;
@@ -345,7 +342,7 @@ class CrudEditManager extends AbstractCrudEditManagerLogics
                 unset($dataToPopulate[$key]);
             }
         }
-        
+
         if($populate) {
             if($isPost) {
                 $this->editForm->populate($dataToPopulate);

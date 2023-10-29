@@ -15,19 +15,19 @@ class FileUploader
 
     public function __construct(
         private array|null $file
-    ) { 
+    ) {
     }
 
     /**
      * @method addMimeType
      */
-    public function addMimeType(string|array $mimeType): void 
+    public function addMimeType(string|array $mimeType): void
     {
         if(is_string($mimeType)) {
             $mimeType = [$mimeType];
         }
         $mimeType = array_values($mimeType);
-        $this->mimeTypes = array_map(function($value) {
+        $this->mimeTypes = array_map(function ($value) {
             return trim(strtolower($value));
         }, array_unique([...$this->mimeTypes, ...$mimeType]));
     }
@@ -56,9 +56,9 @@ class FileUploader
         }
         $this->uploadDirectory = $uploadDirectory;
     }
-    
+
     /**
-     * You may need to use function like "uniqid()" to generate unique filenames 
+     * You may need to use function like "uniqid()" to generate unique filenames
      * to avoid overwriting existing files
      * @method setFilenamePrefix
      */
@@ -187,7 +187,7 @@ class FileUploader
         if(!$this->fileExtension) {
             $this->fileExtension = pathinfo($this->file['name'], PATHINFO_EXTENSION);
         }
-        
+
         $this->basename = $this->filenamePrefix . $this->filename . "." . $this->fileExtension;
         $this->filepath = $this->uploadDirectory . '/' . $this->basename;
     }

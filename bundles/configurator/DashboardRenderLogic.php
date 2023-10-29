@@ -10,7 +10,7 @@ class DashboardRenderLogic implements EventInterface
         protected Uss $uss,
         protected string $template,
         protected array $options
-    ){
+    ) {
         $this->user = new User();
         $this->user->getFromSession();
         $this->isLoggedIn = $this->user->exists();

@@ -1,7 +1,7 @@
 <?php
 
-class ArchiveRepository {
-
+class ArchiveRepository
+{
     private string $group;
     private static array $archives = [];
 

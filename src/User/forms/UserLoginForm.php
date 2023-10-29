@@ -66,7 +66,7 @@ class UserLoginForm extends AbstractDashboardForm
         $this->user = (new User())->allocate($column, $data['user']['login']);
 
         if($this->user->exists()) {
-            if($this->user->passwordVerify($data['user']['password'])) {
+            if($this->user->isValidPassword($data['user']['password'])) {
                 return true;
             };
         };
@@ -88,6 +88,8 @@ class UserLoginForm extends AbstractDashboardForm
 
     public function onEntrySuccess(array $data): void
     {
+        $this->user->setLastSeen(new DateTime('now'));
+        $this->user->persist();
         $this->user->saveToSession();
 
         (new Alert("Authentication Successful"))

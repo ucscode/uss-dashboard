@@ -15,14 +15,23 @@ class AdminUserController implements RouteInterface
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
 
-        if(($_GET['action'] ?? null) !== 'edit') {
+        $editable = [
+            CrudActionImmutableInterface::ACTION_CREATE,
+            CrudActionImmutableInterface::ACTION_UPDATE,
+            CrudActionImmutableInterface::ACTION_DELETE
+        ];
+
+        if(!in_array(($_GET['action'] ?? null), $editable)) {
 
             $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
+
             $crudIndexManager->removeTableColumn('id');
             $crudIndexManager->removeTableColumn('password');
             $crudIndexManager->setTableColumn('model', 'Model No.');
             $crudIndexManager->setDisplayItemActionsAsButton(true);
+
             //$crudIndexManager->setHideWidgets(true);
+
             $crudIndexManager->setItemsPerPage(2);
             $crudIndexManager->setTableWhiteBackground();
 
@@ -37,6 +46,20 @@ class AdminUserController implements RouteInterface
         } else {
 
             $crudEditManager = new CrudEditManager(User::USER_TABLE);
+            $crudEditManager->setItemBy('id', $_GET['entity'] ?? null);
+
+            $item = $crudEditManager->getItem();
+            $item['email'] = 'sample@gmail.com';
+            $item['username'] = null;
+            $item['usercode'] = Uss::instance()->keygen();
+            unset($item['id']);
+
+            var_dump(
+                $crudEditManager->updateItemEntity(),
+                $crudEditManager->deleteItemEntity(),
+                $crudEditManager->createItemEntity($item),
+                $crudEditManager->lastItemEntityError()
+            );
 
             $crudEditManager->removeField('id');
 

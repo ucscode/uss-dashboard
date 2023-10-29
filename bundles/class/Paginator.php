@@ -35,8 +35,8 @@ class Paginator extends \JasonGrimes\Paginator
         if($this->getPrevUrl()) {
             $ul->appendChild(
                 $this->newItem(
-                    null, 
-                    $this->getPrevUrl(), 
+                    null,
+                    $this->getPrevUrl(),
                     '&laquo; ' . $this->getPreviousText()
                 )
             );
@@ -62,8 +62,8 @@ class Paginator extends \JasonGrimes\Paginator
         if($this->getNextUrl()) {
             $ul->appendChild(
                 $this->newItem(
-                    null, 
-                    $this->getNextUrl(), 
+                    null,
+                    $this->getNextUrl(),
                     $this->getNextText() . ' &raquo;'
                 )
             );

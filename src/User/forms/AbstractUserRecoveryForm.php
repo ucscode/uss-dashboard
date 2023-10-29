@@ -59,7 +59,7 @@ abstract class AbstractUserRecoveryForm extends AbstractDashboardForm
                 'user_title' => $user->getUsername(),
                 'expiry_hour' => $this->expiryHour
             ], true);
-            
+
             try {
                 $PHPMailer = (new DashboardFactory())->createPHPMailer(true);
                 $PHPMailer->Subject = 'Account Activation';

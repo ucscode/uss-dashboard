@@ -46,7 +46,7 @@ final class DashboardConfig
     /**
      * @method setParentTheme
      */
-    public function  setParentTheme(string $parentTheme): self
+    public function setParentTheme(string $parentTheme): self
     {
         $this->parentTheme = $parentTheme;
         return $this;
@@ -55,7 +55,7 @@ final class DashboardConfig
     /**
      * @method getParentTheme
      */
-    public function getParentTheme(): string 
+    public function getParentTheme(): string
     {
         return $this->parentTheme;
     }

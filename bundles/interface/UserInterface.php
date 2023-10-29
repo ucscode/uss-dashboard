@@ -31,4 +31,5 @@ interface UserInterface
 
     public function countNotifications(array $filter): int;
 
+    public function isValidPassword(string $password): bool;
 }

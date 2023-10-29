@@ -4,7 +4,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractCrudEditManagerLogics extends AbstractCrudEditManager 
+abstract class AbstractCrudEditManagerLogics extends AbstractCrudEditManager
 {
     protected UssElement $actionContainer;
     protected UssElement $widgetContainer;
@@ -31,8 +31,8 @@ abstract class AbstractCrudEditManagerLogics extends AbstractCrudEditManager
         $this->currentUser = new User();
         $this->currentUser->getFromSession();
         $this->nonceKey = sprintf(
-            '%s-%s', 
-            $this->tablename, 
+            '%s-%s',
+            $this->tablename,
             $this->currentUser->getId()
         );
     }

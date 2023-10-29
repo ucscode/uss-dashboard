@@ -5,30 +5,26 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractCrudIndexManager 
-implements CrudIndexInterface, CrudActionImmutableInterface
+abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods implements CrudIndexInterface, CrudActionImmutableInterface
 {
-    protected string $primaryKey = 'id';
     protected array $tableColumns;
 
     protected bool $displayTfoot = false;
     protected bool $hideItemActions = false;
     protected bool $hideBulkActions = false;
-    protected bool $hideWidgets = false;
     protected bool $displayItemActionsAsButton = false; // displays as dropdown
     protected bool $tableWhiteBackground = false;
 
     protected array $bulkActions = [];
     protected array $itemActions = [];
-    protected array $widgets = [];
 
     protected DOMTable $domTable;
     protected Paginator $paginator;
 
-    protected UssElement $mainContainer;
-    protected UssElement $widgetContainer;
-    protected UssElement $paginatorContainer;
-    protected UssElement $tableContainer;
+    protected UssElement $mainBlock;
+    protected UssElement $widgetBlock;
+    protected UssElement $paginatorBlock;
+    protected UssElement $tableBlock;
     protected UssForm $tableForm;
 
     protected SQuery $sQuery;
@@ -36,23 +32,7 @@ implements CrudIndexInterface, CrudActionImmutableInterface
 
     public function __construct(
         public readonly string $tablename
-    ){}
-
-    /**
-     * @method setPrimaryColumn
-     */
-    public function setPrimaryKey(string $key): CrudIndexInterface
-    {
-        $this->primaryKey = $key;
-        return $this;
-    }
-
-    /**
-     * @method setPrimaryColumn
-     */
-    public function getPrimaryKey(): string
-    {
-        return $this->primaryKey;
+    ) {
     }
 
     /**
@@ -155,51 +135,6 @@ implements CrudIndexInterface, CrudActionImmutableInterface
     }
 
     /**
-     * @method addWidget
-     */
-    public function addWidget(string $name, UssElement $widget): CrudIndexInterface
-    {
-        $this->widgets[$name] = $widget;
-        return $this;
-    }
-
-    /**
-     * @method removeWidget
-     */
-    public function removeWidget(string $name): CrudIndexInterface
-    {
-        if(array_key_exists($name, $this->widgets)) {
-            unset($this->widgets[$name]);
-        };
-        return $this;
-    }
-
-    /**
-     * @method getWidget
-     */
-    public function getWidget(string $name): ?UssElement
-    {
-        return $this->widgets[$name] ?? null;
-    }
-
-    /**
-     * @method setHideWidgets
-     */
-    public function setHideWidgets(bool $status): CrudIndexInterface
-    {
-        $this->hideWidgets = $status && !empty($this->widgets);
-        return $this;
-    }
-
-    /**
-     * @method isWidgetHidden
-     */
-    public function isWidgetsHidden(): bool
-    {
-        return $this->hideWidgets;
-    }
-
-    /**
      * @method addBulkAction
      */
     public function addBulkAction(string $name, CrudAction $info): CrudIndexInterface
@@ -245,7 +180,7 @@ implements CrudIndexInterface, CrudActionImmutableInterface
      */
     public function isBulkActionsHidden(): bool
     {
-        return $this->hideBulkActions;   
+        return $this->hideBulkActions;
     }
 
     /**
@@ -296,7 +231,7 @@ implements CrudIndexInterface, CrudActionImmutableInterface
     {
         return $this->hideItemActions;
     }
-    
+
     /**
      * @method displayItemActionsAsButton
      */
@@ -305,7 +240,7 @@ implements CrudIndexInterface, CrudActionImmutableInterface
         $this->displayItemActionsAsButton = $status;
         return $this;
     }
-    
+
     /**
      * @method displayItemActionsAsButton
      */

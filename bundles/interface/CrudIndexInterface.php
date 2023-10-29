@@ -1,12 +1,13 @@
 <?php
 
+use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\UssElement\UssElement;
 
-interface CrudIndexInterface 
-{   
+interface CrudIndexInterface
+{
     public const PAGE_INDEX_KEY = 'page';
 
-    public function createUI(): UssElement;
+    public function createUI(?DOMTableInterface $fabricator): UssElement;
 
     public function getTotalItems(): int;
 
@@ -14,36 +15,22 @@ interface CrudIndexInterface
 
     public function getItemsPerPage(): int;
 
-    public function setPrimaryKey(string $key): self;
-
-    public function getPrimaryKey(): string;
-
     public function setCurrentPage(int $page): self;
-    
+
     public function getCurrentPage(): int;
 
     public function setMultipleTableColumns(array $columns): self;
 
     public function getTableColumns(): array;
-    
+
     public function setTableColumn(string $column, ?string $display): self;
-    
+
     public function removeTableColumn(string $column): self;
-    
+
     public function setDisplayTableFooter(bool $status): self;
 
     public function getDisplayTableFooter(): bool;
-    
-    public function addWidget(string $name, UssElement $widget): self;
-    
-    public function removeWidget(string $name): self;
-    
-    public function getWidget(string $name): ?UssElement;
 
-    public function setHideWidgets(bool $status): self;
-
-    public function isWidgetsHidden(): bool;
-    
     public function addBulkAction(string $name, CrudAction $action): self;
 
     public function removeBulkAction(string $name): self;

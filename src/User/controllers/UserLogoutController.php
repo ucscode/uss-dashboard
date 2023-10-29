@@ -5,7 +5,7 @@ class UserLogoutController implements RouteInterface
     public function __construct(
         private Archive $archive,
         private DashboardInterface $dashboard
-    ){  
+    ) {
     }
 
     public function onload($match)

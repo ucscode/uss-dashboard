@@ -79,16 +79,17 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getPassword
      */
-    public function getPassword(): ?string 
+    public function getPassword(): ?string
     {
         return $this->user['password'] ?? null;
     }
 
     /**
      * Use this method only if password is hashed with PHP "password_hash" function
+     *
      * @method isValidPassword
      */
-    public function passwordVerify(string $password): bool 
+    public function isValidPassword(string $password): bool
     {
         return password_verify($password, $this->getPassword() ?? '');
     }
@@ -119,7 +120,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      * @method setUsercode
      */
     public function setUsercode(string $usercode): self
-    {   
+    {
         if(!preg_match('/^[a-z0-9]+$/i', $usercode)) {
             throw new \Exception(
                 sprintf(
@@ -176,7 +177,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getParent
      */
-    public function getParent(bool $getUserInstance = false): User|int|null 
+    public function getParent(bool $getUserInstance = false): User|int|null
     {
         $parent = $this->user['parent'] ?? null;
         if($parent && $getUserInstance) {
@@ -199,7 +200,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
             ->select('*')
             ->from(self::USER_TABLE)
             ->where('parent', $this->getId() ?? -1);
-        
+
         if(is_callable($filter)) {
             $SQL = call_user_func($filter, $SQL);
             if(!($SQL instanceof SQuery)) {
@@ -288,7 +289,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     {
         if(!$this->exists()) {
             $session_value = $_SESSION[self::SESSION_KEY] ?? null;
-            
+
             if(!empty($session_value) && is_string($session_value)) {
                 $detail = explode(":", $session_value);
 
@@ -298,7 +299,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
                     if($user) {
                         $userSecret = $user['password'] . $user['usercode'];
                         $hash = hash('sha256', $userSecret);
-                        
+
                         if($hash === $detail[1]) {
                             $this->user = $user;
                             return $this;

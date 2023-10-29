@@ -75,20 +75,20 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     /**
      * @method firewallEnabled
      */
-    public function isFirewallEnabled(): bool 
+    public function isFirewallEnabled(): bool
     {
         return $this->firewallEnabled;
     }
 
     /**
-     * Override this method and change the logic class if you are 
+     * Override this method and change the logic class if you are
      * not satisified with the system built-in logic
      * @method render
      */
     public function render(string $template, array $options = []): void
     {
         (new Event())->addListener(
-            'dashboard:render', 
+            'dashboard:render',
             new DashboardRenderLogic(
                 $this,
                 Uss::instance(),
