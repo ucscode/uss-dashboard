@@ -394,6 +394,13 @@ fieldset:disabled textarea {
 	border-radius: 2px;
 }
 
+.form-switch .form-check-input {
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+	margin-right: 8px;
+}
+
 @media (min-width: 768px) {
 	
 }

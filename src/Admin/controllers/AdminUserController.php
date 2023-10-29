@@ -36,17 +36,33 @@ class AdminUserController implements RouteInterface
         } else {
 
             $crudEditManager = new CrudEditManager(User::USER_TABLE);
-            
+
             $crudEditManager->removeField('id');
 
             $crudField = (new CrudField())
                 ->setLabel('worker')
-                ->setType(CrudField::TYPE_INPUT)
+                ->setType(CrudField::TYPE_BOOLEAN)
                 ->setAttribute('name', 'worked')
-                ;
+                ->setMapped(false)
+            ;
 
             $crudEditManager->setField('user[changer]', $crudField);
-            $ui = $crudEditManager->createUI();
+            $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
+            $ui = $crudEditManager->createUI(new class () implements CrudEditSubmitInterface {
+                private array $data;
+                public function beforeEntry(array $data): array
+                {
+                    $this->data = $data;
+                    unset($data['worked']);
+                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                    $data['usercode'] = Uss::instance()->keygen(7);
+                    return $data;
+                }
+                public function afterEntry(bool $status, array $data): bool
+                {
+                    return true;
+                }
+            });
 
         }
 

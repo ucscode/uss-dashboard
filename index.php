@@ -26,6 +26,9 @@ $bundles = [
         'CrudIndexInterface.php',
         'CrudActionInterface.php',
         'CrudEditInterface.php',
+        'CrudEditSubmitInterface.php',
+        'CrudEditSubmitCustomInterface.php',
+        'CrudActionImmutableInterface.php',
     ],
     'configurator' => [
         'DatabaseConfigurator.php',
@@ -43,6 +46,7 @@ $bundles = [
         "AbstractUserRepository.php",
         'AbstractCrudIndexManager.php',
         'AbstractCrudEditManager.php',
+        'AbstractCrudEditManagerLogics.php',
     ],
     'class' => [
         'DashboardTwigExtension.php',
