@@ -1,7 +1,6 @@
 <?php
 
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssElement\UssElement;
 
 abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods implements CrudEditInterface, CrudActionImmutableInterface
 {
