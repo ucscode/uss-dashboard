@@ -32,4 +32,12 @@ interface UserInterface
     public function countNotifications(array $filter): int;
 
     public function isValidPassword(string $password): bool;
+
+    public function getRoles(?int $index): array|string|null;
+
+    public function hasRole(string $role): bool;
+
+    public function setRole(string $role): bool;
+
+    public function removeRole(string $role): bool;
 }

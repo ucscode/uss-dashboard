@@ -7,6 +7,8 @@ interface CrudIndexInterface
 {
     public const PAGE_INDEX_KEY = 'page';
 
+    public const CRUD_NAME = 'index';
+
     public function createUI(?DOMTableInterface $fabricator): UssElement;
 
     public function getTotalItems(): int;
@@ -38,6 +40,8 @@ interface CrudIndexInterface
     public function getBulkActions(?string $name): CrudAction|array|null;
 
     public function setHideBulkActions(bool $status): self;
+
+    public function manageBulkActionSubmission(CrudBulkActionsInterface $handler): void;
 
     public function isBulkActionsHidden(): bool;
 

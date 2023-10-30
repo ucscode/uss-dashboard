@@ -8,6 +8,7 @@ new class {
         this.copyText();
         this.confirmHref();
         this.enableTableCheckboxes();
+        this.manageBulkActions();
     }
 
     transferClick() {
@@ -115,6 +116,49 @@ new class {
                 }
             });
         })
+    }
+
+    manageBulkActions() {
+        const selector = 'form[data-ui-crud-form="index"]';
+        $(selector).each(function() {
+            const formElement = this;
+            const selectElement = $(formElement).find('select[data-ui-bulk-select]');
+            if(selectElement.length) {
+                $(formElement).on('submit', function(e) {
+                    e.preventDefault();
+                    const checkedCheckboxes = $(formElement).find('table[data-ui-table="crud"] [data-ui-checkbox="single"]:checked');
+                    if(checkedCheckboxes.length) {
+                        const option = selectElement.find('option:selected').get(0);
+                        let message = option.dataset.uiConfirm || `You are about to perform a bulk action on {{items}} items! <br> Are you sure you want to proceed?`;
+                        message = message.replace('{{items}}', checkedCheckboxes.length);
+                        const size = option.dataset.uiSize || 'small';
+                        bootbox.confirm({
+                            message,
+                            size,
+                            callback: function(ok) {
+                                if(ok) {
+                                    formElement.submit();
+                                }
+                            },
+                            buttons: {
+                                confirm: {
+                                    className: 'btn btn-primary btn-sm'
+                                },
+                                cancel: {
+                                    className: 'btn btn-secondary btn-sm'
+                                }
+                            },
+                            closeButton: false
+                        })
+                    } else {
+                        iziToast.info({
+                            message: "No item was selected",
+                            position: 'topRight'
+                        })
+                    }
+                });
+            }
+        });
     }
 
 }

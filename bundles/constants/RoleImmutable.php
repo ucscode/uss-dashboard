@@ -4,15 +4,15 @@ class RoleImmutable
 {
     public const ROLE_SUPERADMIN = 'SUPERADMIN';
     public const ROLE_ADMIN = 'ADMIN';
+    public const ROLE_MANAGER = 'MANAGER';
+    public const ROLE_EDITOR = 'EDITOR';
+    public const ROLE_AUTHOR = 'AUTHOR';
+    public const ROLE_MODERATOR = 'MODERATOR';
     public const ROLE_USER = 'USER';
     public const ROLE_MEMEBER = 'MEMBER';
     public const ROLE_SUBSCRIBER = 'SUBSCRIBER';
-    public const ROLE_GUEST = 'GUEST';
-    public const ROLE_MANAGER = 'MANAGER';
-    public const ROLE_MODERATOR = 'MODERATOR';
-    public const ROLE_EDITOR = 'EDITOR';
     public const ROLE_VIEWER = 'VIEWER';
-    public const ROLE_AUTHOR = 'AUTHOR';
+    public const ROLE_GUEST = 'GUEST';
     public const ROLE_CONTRIBUTOR = 'CONTRIBUTOR';
     public const ROLE_AUDITOR = 'AUDITOR';
     public const ROLE_ANALYIST = 'ANALYIST';

@@ -21,4 +21,6 @@ interface CrudRelativeInterface
     public function setHideWidgets(bool $status): self;
 
     public function isWidgetsHidden(): bool;
+
+    public function getCurrentAction(): ?string;
 }

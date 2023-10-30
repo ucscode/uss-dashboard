@@ -174,6 +174,7 @@ class CrudItemIterator implements DOMTableInterface
         if($hasSearch && !empty($keyword)) {
             foreach($data as $key => $value) {
                 if(is_scalar($value) && $key != 'id') {
+                    $value = strip_tags($value);
                     $match = strpos(strtolower($value), $keyword) !== false;
                     if($match) {
                         return $data;

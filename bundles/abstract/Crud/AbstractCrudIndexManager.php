@@ -30,11 +30,6 @@ abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods impl
     protected SQuery $sQuery;
     protected mysqli_result $mysqliResult;
 
-    public function __construct(
-        public readonly string $tablename
-    ) {
-    }
-
     /**
      * @method getTotalItems
      */

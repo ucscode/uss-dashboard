@@ -32,6 +32,27 @@ class CrudIndexManager extends AbstractCrudIndexManager
     }
 
     /**
+     * This method should be called before "createUI" to avoid unexpected result output
+     * 
+     * @method manageBulkActionSubmission
+     */
+    public function manageBulkActionSubmission(CrudBulkActionsInterface $handler): void
+    {
+        if($_SERVER['REQUEST_METHOD'] === 'POST' || !empty($_POST['crud'])) {
+            $crud = $_POST['crud'];
+            $isValid = Uss::instance()->nonce(self::CRUD_NAME, $crud['__NONCE__'] ?? '');
+            if(!$isValid) {
+                (new Alert())
+                    ->setOption('message', 'Bulk Action - Invalid authorization token')
+                    ->type('notification')
+                    ->display('warning');
+            } else {
+                $handler->onSubmit($crud['action'], $crud['data']);
+            }
+        }
+    }
+
+    /**
      * @method configureProperties
      */
     protected function configureProperties(): void
@@ -60,6 +81,8 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $_SERVER['REQUEST_URI'],
             'POST'
         );
+
+        $this->tableForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
 
         $this->domTable = new DOMTable($this->tablename);
 
@@ -93,7 +116,8 @@ class CrudIndexManager extends AbstractCrudIndexManager
          */
         $deleteAction = (new CrudAction())
             ->setLabel('Delete')
-            ->setElementAttribute('value', 'delete');
+            ->setElementAttribute('value', 'delete')
+            ->setElementAttribute('data-ui-confirm', '{{items}} items will be deleted! <br> Are you sure you want to proceed?');
 
         $this->addBulkAction(self::ACTION_DELETE, $deleteAction);
     }
@@ -103,6 +127,35 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function setDefaultItemActions(): void
     {
+        /**
+         * READ ACTION
+         */
+        $this->addItemAction(self::ACTION_READ, new class ($this) implements CrudActionInterface {
+            public function __construct(
+                protected CrudIndexManager $crudIndexManager
+            ){}
+
+            public function forEachItem(array $item): CrudAction
+            {
+                $key = $this->crudIndexManager->getPrimaryKey();
+                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+                $query = [
+                    'action' => CrudActionImmutableInterface::ACTION_READ,
+                    'entity' => $item[$key] ?? ''
+                ];
+
+                $href = $path . "?" . http_build_query($query);
+
+                $crudAction = (new CrudAction)
+                    ->setLabel('View')
+                    ->setIcon('bi bi-eye')
+                    ->setElementType(CrudAction::TYPE_ANCHOR)
+                    ->setElementAttribute('href', $href);
+
+                return $crudAction;
+            }
+        });
+
         /**
          * UPDATE ACTION
          */
@@ -153,10 +206,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
 
                 $href = $path . "?" . http_build_query($query);
 
-                $modalMessage = "<span class='fs-14px'>
-                    Are you sure you want to delete the item? <br> 
-                    This action cannot be reversed</span>
-                ";
+                $modalMessage = "This action cannot be reversed! <br> Are you sure you want to proceed?";
 
                 $crudAction = (new CrudAction())
                     ->setLabel('Delete')
@@ -259,6 +309,14 @@ class CrudIndexManager extends AbstractCrudIndexManager
             $bulkActionContainer = $this->buildBulkActionsElement();
             $this->tableForm->appendChild($bulkActionContainer);
             $this->tableForm->appendChild($tableWrapper);
+            $this->tableForm->add(
+                'crud[__NONCE__]',
+                UssForm::NODE_INPUT,
+                UssForm::TYPE_HIDDEN,
+                [
+                    'value' => Uss::instance()->nonce(self::CRUD_NAME)
+                ]
+            );
             $tableElement = $this->tableForm;
         }
 
@@ -281,6 +339,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $bulkSelect->setAttribute('class', 'form-select form-select-sm mb-1 mx-1');
         $bulkSelect->setAttribute('name', 'crud[action]');
         $bulkSelect->setAttribute('required', 'required');
+        $bulkSelect->setAttribute('data-ui-bulk-select', self::CRUD_NAME);
         $bulkActionColumn->appendChild($bulkSelect);
 
         $bulkButton = new UssElement(UssElement::NODE_BUTTON);

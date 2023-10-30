@@ -4,6 +4,12 @@ use Ucscode\UssElement\UssElement;
 
 interface CrudEditInterface
 {
+    public const CRUD_NAME = 'edit';
+
+    public function setReadOnly(bool $readonly): self;
+
+    public function isReadOnly(): bool;
+
     public function createUI(?CrudEditSubmitCustomInterface $submitInterface): UssElement;
 
     public function setField(string $name, CrudField $field): self;

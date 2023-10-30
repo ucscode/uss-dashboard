@@ -15,6 +15,15 @@ class AdminUserController implements RouteInterface
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
 
+        $crudProcessAutomator = new CrudProcessAutomator(User::USER_TABLE);
+        $this->configureIndexManager($crudProcessAutomator->getCrudIndexManager());
+        $this->configureEditManager($crudProcessAutomator->getCrudEditManager());
+
+        //(new FakeUser())->create(20);
+
+        $crudProcessAutomator->processAllActions();
+        $automatorUI = $crudProcessAutomator->getCreatedUI();
+
         $editable = [
             CrudActionImmutableInterface::ACTION_CREATE,
             CrudActionImmutableInterface::ACTION_UPDATE,
@@ -25,22 +34,7 @@ class AdminUserController implements RouteInterface
 
             $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
 
-            $crudIndexManager->removeTableColumn('id');
-            $crudIndexManager->removeTableColumn('password');
-            $crudIndexManager->setTableColumn('model', 'Model No.');
-            $crudIndexManager->setDisplayItemActionsAsButton(true);
-            //$crudIndexManager->setHideWidgets(true);
-            $crudIndexManager->setItemsPerPage(2);
-            //$crudIndexManager->setTableWhiteBackground();
-            $crudIndexManager->setDisplayTableFooter(true);
-
-            $ui = $crudIndexManager->createUI(new class () implements DOMTableInterface {
-                public function forEachItem(array $data): array
-                {
-                    $data['model'] = 'sample ' . $data['id'];
-                    return $data;
-                }
-            });
+            
 
         } else {
 
@@ -78,7 +72,63 @@ class AdminUserController implements RouteInterface
         }
 
         $this->dashboard->render($template, [
-            'crudIndex' => $ui->getHTML(true)
+            'crudIndex' => $automatorUI->getHTML(true)
         ]);
+    }
+
+    protected function configureIndexManager(CrudIndexManager $crudIndexManager): void
+    {
+        $crudIndexManager->removeTableColumn('id');
+        $crudIndexManager->removeTableColumn('password');
+        $crudIndexManager->removeTableColumn('last_seen');
+        $crudIndexManager->removeTableColumn('parent');
+        $crudIndexManager->setTableColumn('role', 'Role');
+        $crudIndexManager->setTableColumn('register_time', 'Registered');
+        $crudIndexManager->setDisplayItemActionsAsButton(true);
+        $crudIndexManager->setItemsPerPage(15);
+        $crudIndexManager->setTableWhiteBackground();
+        //$crudIndexManager->setHideWidgets(true);
+        //$crudIndexManager->setDisplayTableFooter(true);
+        //$crudIndexManager->setHideBulkActions(true);
+
+        /*
+            $crudIndexManager->manageBulkActionSubmission(new class () implements CrudBulkActionsInterface {
+                public function onSubmit(string $action, array $selections): void
+                {
+                    var_dump($action, $selections);
+                }
+            });
+        */
+
+        $ui = $crudIndexManager->createUI(
+            new class () implements DOMTableInterface 
+            {
+                public function forEachItem(array $item): array
+                {
+                    $item = $this->modifyRole($item);
+                    $item['register_time'] = (new \DateTime($item['register_time']))->format('d-M-Y');
+                    return $item;
+                }
+
+                protected function modifyRole(array $item): array
+                {
+                    $user = new User($item['id']);
+                    $count = count($user->getRoles());
+                    if($count > 1) {
+                        $item['role'] = "<span class='text-primary'>" . $count . " Roles</span>";
+                    } else if($count < 1) {
+                        $item['role'] = '<span class="text-danger">None</span>';
+                    } else {
+                        $item['role'] = $user->getRoles(0);
+                    }
+                    return $item;
+                }
+            }
+        );
+    }
+
+    protected function configureEditManager(CrudEditManager $crudEditManager): void
+    {
+
     }
 }

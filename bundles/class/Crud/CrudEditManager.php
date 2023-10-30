@@ -1,5 +1,6 @@
 <?php
 
+use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
@@ -28,13 +29,33 @@ class CrudEditManager extends AbstractCrudEditLogics
     /**
      * @method createUI
      */
-    public function createUI(CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $submitInterface): UssElement
+    public function createUI(
+        CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $submitInterface = null
+    ): UssElement
     {
         $this->submitInterface = $submitInterface;
-        $this->processFormSubmission();
 
         $container = new UssElement(UssElement::NODE_DIV);
         $container->setAttribute('class', 'crud-edit-container');
+
+        if(!$this->isReadOnly()) {
+            $container = $this->processEditorContent($container);
+        } else {
+            $container = $this->processReadContent($container);
+        }
+        
+        $this->insertActions();
+        $this->insertWidgets();
+
+        return $container;
+    }
+
+    /**
+     * @method createdEditorElement
+     */
+    protected function processEditorContent(UssElement $container): UssElement
+    {
+        $this->processFormSubmission();
 
         $this->editForm = new UssForm(
             $this->tablename . '-crud-edit',
@@ -42,6 +63,8 @@ class CrudEditManager extends AbstractCrudEditLogics
             'POST',
             'multipart/form-data'
         );
+
+        $this->editForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
 
         $position = $this->getAlignActionsLeft() ? 'start' : 'end';
 
@@ -77,8 +100,39 @@ class CrudEditManager extends AbstractCrudEditLogics
 
         $container->appendChild($this->editForm);
 
-        $this->insertActions();
-        $this->insertWidgets();
+        return $container;
+    }
+
+    /**
+     * @method processReadContent
+     */
+    public function processReadContent(UssElement $container): UssElement
+    {
+        $this->actionContainer = new UssElement(UssElement::NODE_DIV);
+        $this->actionContainer->setAttribute('class', 'action-container');
+        $this->widgetContainer = new UssElement(UssElement::NODE_DIV);
+        $this->widgetContainer->setAttribute('class', 'widget-container');
+
+        $item = $this->getItem();
+        $data = [];
+
+        $domTable = new DOMTable($this->tablename);
+        $domTable->setMultipleColumns([
+            'key',
+            'value'
+        ]);
+
+        foreach($this->fields as $key => $crudField) {
+            $data[] = [
+                'key' => ucwords(str_replace('_', ' ', $crudField->getLabel())),
+                'value' => $item[$key]
+            ];
+        }
+
+        $domTable->setData($data);
+        $tableElement = $domTable->build();
+
+        $container->appendChild($tableElement);
 
         return $container;
     }

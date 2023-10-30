@@ -5,6 +5,33 @@ use Ucscode\SQuery\SQuery;
 abstract class AbstractUserRepository extends AbstractUserFoundation
 {
     /**
+     * @method getUserMeta
+     */
+    public function getUserMeta(string $key, bool $epoch = false): mixed
+    {
+        return self::$usermeta->get($key, $this->getId(), $epoch);
+    }
+
+    /**
+     * @method setUserMeta
+     */
+    public function setUserMeta(string $key, mixed $value): bool
+    {
+        if($this->getId()) {
+            return self::$usermeta->set($key, $value, $this->getId());
+        };
+        return false;
+    }
+
+    /**
+     * @method removeUserMeta
+     */
+    public function removeUserMeta(string $key): ?bool
+    {
+        return self::$usermeta->remove($key, $this->getId());
+    }
+
+    /**
      * @method getId
      */
     public function getId(): ?int
@@ -43,10 +70,10 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function setUsername(string $username): self
     {
-        if(!preg_match('/^\w+$/i', trim($username))) {
+        if(!preg_match('/^\w[a-z0-9_\-]+$/i', trim($username))) {
             throw new \Exception(
                 sprintf(
-                    "%s::%s: Username can only contain letter, number and underscore",
+                    "%s::%s: Username can only contain letter, number, underscore and (but must not start with) hyphen",
                     get_called_class(),
                     __FUNCTION__
                 )
@@ -321,5 +348,51 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
         if(isset($_SESSION[self::SESSION_KEY])) {
             unset($_SESSION[self::SESSION_KEY]);
         };
+    }
+
+    /**
+     * @method getRoles
+     */
+    public function getRoles(?int $index = null): array|string|null
+    {
+        $roles = $this->getUserMeta('user.roles') ?? [];
+        if(!is_null($index)) {
+            return $roles[$index] ?? null;
+        };
+        return $roles;
+    }
+
+    /**
+     * @method setRole
+     */
+    public function setRole(string $role): bool
+    {
+        $roles = $this->getRoles();
+        if(!in_array($role, $roles)) {
+            $roles[] = $role;
+        }
+        return $this->setUserMeta('user.roles', $roles);
+    }
+
+    /**
+     * @method removeRole
+     */
+    public function removeRole(string $role): bool
+    {
+        $roles = $this->getRoles();
+        $key = array_search($role, $roles, true);
+        if($key !== false) {
+            unset($roles[$key]);
+        }
+        return $this->setUserMeta('user.roles', $roles);
+    }
+
+    /**
+     * @method hasRole
+     */
+    public function hasRole(string $role): bool
+    {
+        $roles = $this->getRoles();
+        return in_array($role, $roles, true);
     }
 }

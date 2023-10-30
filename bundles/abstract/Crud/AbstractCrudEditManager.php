@@ -43,11 +43,29 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     protected ?array $item = null;
     protected bool $alignActionsLeft = false;
     protected ?string $itemEntityError = null;
+    protected bool $readonly = false;
 
-    public function __construct(
-        protected string $tablename
-    ) {
+    public function __construct(string $tablename) 
+    {
+        parent::__construct($tablename);
         $this->submitUrl = $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * @method setReadonly
+     */
+    public function setReadOnly(bool $readonly): CrudEditInterface
+    {
+        $this->readonly = $readonly;
+        return $this;
+    }
+
+    /**
+     * @method isReadonly
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->readonly;
     }
 
     /**

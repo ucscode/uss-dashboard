@@ -5,33 +5,6 @@ use Ucscode\SQuery\SQuery;
 class User extends AbstractUserRepository
 {
     /**
-     * @method getUserMeta
-     */
-    public function getUserMeta(string $key, bool $epoch = false): mixed
-    {
-        return self::$usermeta->get($key, $this->getId(), $epoch);
-    }
-
-    /**
-     * @method setUserMeta
-     */
-    public function setUserMeta(string $key, mixed $value): bool
-    {
-        if($this->getId()) {
-            return self::$usermeta->set($key, $value, $this->getId());
-        };
-        return false;
-    }
-
-    /**
-     * @method removeUserMeta
-     */
-    public function removeUserMeta(string $key): ?bool
-    {
-        return self::$usermeta->remove($key, $this->getId());
-    }
-
-    /**
      * @method getAvatar
      */
     public function getAvatar(): ?string
