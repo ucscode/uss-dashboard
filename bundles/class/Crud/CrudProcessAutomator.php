@@ -8,9 +8,9 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
 {
     private CrudIndexManager $crudIndexManager;
     private CrudEditManager $crudEditManager;
-    private ?DOMTableInterface $crudIndexManagerUIParameter;
-    private CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $crudEditManagerUIParameter;
-    private ?UssElement $createdUI = null;
+    private ?DOMTableInterface $crudIndexManagerUIParameter = null;
+    private CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $crudEditManagerUIParameter = null;
+    private null|CrudEditManager|CrudIndexManager $activeManager = null;
 
     private array $crudActions = [
         CrudActionImmutableInterface::ACTION_CREATE,
@@ -45,7 +45,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     public function processOverviewAction(): void
     {
         if(!in_array($this->currentAction, $this->crudActions, true)) {
-            $this->createdUI = $this->crudIndexManager->createUI();
+            $this->activeManager = $this->crudIndexManager;
         }
     }
 
@@ -55,7 +55,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     public function processCreateAction(): void
     {
         if($this->currentAction === CrudActionImmutableInterface::ACTION_CREATE) {
-            $this->createdUI = $this->crudEditManager->createUI();
+            $this->activeManager = $this->crudEditManager;
         }
     }
 
@@ -68,7 +68,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
             $key = $this->crudEditManager->getPrimaryKey();
             $this->crudEditManager->setReadOnly(true);
             $this->crudEditManager->setItemBy($key, $this->currentEntity);
-            $this->createdUI = $this->crudEditManager->createUI();
+            $this->activeManager = $this->crudEditManager;
         }
     }
 
@@ -80,7 +80,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
         if($this->currentAction === CrudActionImmutableInterface::ACTION_UPDATE) {
             $key = $this->crudEditManager->getPrimaryKey();
             $this->crudEditManager->setItemBy($key, $_GET['entity'] ?? null);
-            $this->createdUI = $this->crudEditManager->createUI();
+            $this->activeManager = $this->crudEditManager;
         }
     }
 
@@ -148,7 +148,18 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
      */
     public function getCreatedUI(): ?UssElement
     {
-        return $this->createdUI;
+        if($this->activeManager instanceof CrudIndexManager) {
+            $createdUI = $this->activeManager->createUI(
+                $this->crudIndexManagerUIParameter
+            );
+        } elseif($this->activeManager instanceof CrudEditManager) {
+            $createdUI = $this->activeManager->createUI(
+                $this->crudEditManagerUIParameter
+            );
+        } else {
+            $createdUI = null;
+        };
+        return $createdUI;
     }
 
     /**
@@ -170,7 +181,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     /**
      * @method setCrudIndexUIParameter
      */
-    public function setCrudIndexUIParameter(DOMTableInterface $modifier): void
+    public function setCrudIndexUIParameter(?DOMTableInterface $modifier): void
     {
         $this->crudIndexManagerUIParameter = $modifier;
     }
@@ -178,7 +189,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     /**
      * @method setCrudEditUIParameter
      */
-    public function setCurdEditUIParameter(CrudEditSubmitInterface|CrudEditSubmitCustomInterface $modifier): void
+    public function setCurdEditUIParameter(null|CrudEditSubmitInterface|CrudEditSubmitCustomInterface $modifier): void
     {
         $this->crudEditManagerUIParameter = $modifier;
     }

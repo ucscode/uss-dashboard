@@ -8,7 +8,7 @@ interface CrudProcessAutomatorInterface
     public function processBulkActions(): void;
 
     public function processOverviewAction(): void;
-    
+
     public function processCreateAction(): void;
 
     public function processReadAction(): void;
@@ -27,7 +27,7 @@ interface CrudProcessAutomatorInterface
 
     public function getCurrentAction(): string;
 
-    public function setCrudIndexUIParameter(DOMTableInterface $modifier): void;
+    public function setCrudIndexUIParameter(?DOMTableInterface $modifier): void;
 
-    public function setCurdEditUIParameter(CrudEditSubmitInterface|CrudEditSubmitCustomInterface $modifier): void;
+    public function setCurdEditUIParameter(null|CrudEditSubmitInterface|CrudEditSubmitCustomInterface $modifier): void;
 }

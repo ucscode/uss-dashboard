@@ -16,12 +16,10 @@ class AdminUserController implements RouteInterface
         $template = $this->archive->getTemplate();
 
         $crudProcessAutomator = new CrudProcessAutomator(User::USER_TABLE);
+        //(new FakeUser())->create(20);
+        $crudProcessAutomator->processAllActions();
         $this->configureIndexManager($crudProcessAutomator->getCrudIndexManager());
         $this->configureEditManager($crudProcessAutomator->getCrudEditManager());
-
-        //(new FakeUser())->create(20);
-
-        $crudProcessAutomator->processAllActions();
         $automatorUI = $crudProcessAutomator->getCreatedUI();
 
         $editable = [
@@ -34,7 +32,7 @@ class AdminUserController implements RouteInterface
 
             $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
 
-            
+
 
         } else {
 
@@ -101,8 +99,7 @@ class AdminUserController implements RouteInterface
         */
 
         $ui = $crudIndexManager->createUI(
-            new class () implements DOMTableInterface 
-            {
+            new class () implements DOMTableInterface {
                 public function forEachItem(array $item): array
                 {
                     $item = $this->modifyRole($item);
@@ -116,7 +113,7 @@ class AdminUserController implements RouteInterface
                     $count = count($user->getRoles());
                     if($count > 1) {
                         $item['role'] = "<span class='text-primary'>" . $count . " Roles</span>";
-                    } else if($count < 1) {
+                    } elseif($count < 1) {
                         $item['role'] = '<span class="text-danger">None</span>';
                     } else {
                         $item['role'] = $user->getRoles(0);
@@ -129,6 +126,16 @@ class AdminUserController implements RouteInterface
 
     protected function configureEditManager(CrudEditManager $crudEditManager): void
     {
-
+        $crudEditManager->removeField('id');
+        $crudEditManager->removeField('password');
+        $item = $crudEditManager->getItem();
+        if(!empty($item['parent'])) {
+            $user = new User($item['parent']);
+            $item['parent'] = $user->getEmail();
+        };
+        if(empty($item['parent'])) {
+            $item['parent'] = '<span class="text-muted">NULL</span>';
+        }
+        $crudEditManager->setItem($item);
     }
 }

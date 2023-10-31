@@ -31,8 +31,7 @@ class CrudEditManager extends AbstractCrudEditLogics
      */
     public function createUI(
         CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $submitInterface = null
-    ): UssElement
-    {
+    ): UssElement {
         $this->submitInterface = $submitInterface;
 
         $container = new UssElement(UssElement::NODE_DIV);
@@ -43,7 +42,7 @@ class CrudEditManager extends AbstractCrudEditLogics
         } else {
             $container = $this->processReadContent($container);
         }
-        
+
         $this->insertActions();
         $this->insertWidgets();
 
@@ -110,6 +109,7 @@ class CrudEditManager extends AbstractCrudEditLogics
     {
         $this->actionContainer = new UssElement(UssElement::NODE_DIV);
         $this->actionContainer->setAttribute('class', 'action-container');
+
         $this->widgetContainer = new UssElement(UssElement::NODE_DIV);
         $this->widgetContainer->setAttribute('class', 'widget-container');
 
