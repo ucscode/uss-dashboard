@@ -10,7 +10,11 @@ interface CrudEditInterface
 
     public function isReadOnly(): bool;
 
-    public function createUI(?CrudEditSubmitCustomInterface $submitInterface): UssElement;
+    public function setModifier(?CrudEditSubmitInterface $modifier): self;
+
+    public function getModifier(): ?CrudEditSubmitInterface;
+
+    public function createUI(): UssElement;
 
     public function setField(string $name, CrudField $field): self;
 

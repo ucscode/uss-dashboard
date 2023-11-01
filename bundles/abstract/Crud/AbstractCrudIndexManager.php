@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\DOMTable\DOMTable;
+use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
@@ -29,6 +30,25 @@ abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods impl
 
     protected SQuery $sQuery;
     protected mysqli_result $mysqliResult;
+
+    protected ?DOMTableInterface $modifier = null;
+
+    /**
+     * @setModifier
+     */
+    public function setModifier(?DOMTableInterface $modifier): CrudIndexInterface
+    {
+        $this->modifier = $modifier;
+        return $this;
+    }
+
+    /**
+     * @method getModifier
+     */
+    public function getModifier(): ?DOMTableInterface
+    {
+        return $this->modifier;
+    }
 
     /**
      * @method getTotalItems
@@ -73,9 +93,9 @@ abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods impl
     }
 
     /**
-     * @method setMultipleTableColumns
+     * @method setTableColumns
      */
-    public function setMultipleTableColumns(array $columns): CrudIndexInterface
+    public function setTableColumns(array $columns): CrudIndexInterface
     {
         $this->tableColumns = $columns;
         return $this;

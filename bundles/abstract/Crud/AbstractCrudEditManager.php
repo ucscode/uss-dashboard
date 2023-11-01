@@ -44,11 +44,29 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     protected bool $alignActionsLeft = false;
     protected ?string $itemEntityError = null;
     protected bool $readonly = false;
+    protected ?CrudEditSubmitInterface $modifier;
 
-    public function __construct(string $tablename) 
+    public function __construct(string $tablename)
     {
         parent::__construct($tablename);
         $this->submitUrl = $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * @method setModifier
+     */
+    public function setModifier(?CrudEditSubmitInterface $modifier): CrudEditInterface
+    {
+        $this->modifier = $modifier;
+        return $this;
+    }
+
+    /**
+     * @method getModifier
+     */
+    public function getModifier(): ?CrudEditSubmitInterface
+    {
+        return $this->modifier;
     }
 
     /**

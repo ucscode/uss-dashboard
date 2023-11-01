@@ -20,10 +20,10 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method createUI
      */
-    public function createUI(?DOMTableInterface $fabricator = null): UssElement
+    public function createUI(): UssElement
     {
         $this->buildWidgetElements();
-        $tableWrapper = $this->buildDOMTable($fabricator);
+        $tableWrapper = $this->buildDOMTable();
         $tableElement = $this->buildTableElements($tableWrapper);
         $this->tableBlock->appendChild($tableElement);
         $this->mainBlock->appendChild($this->tableBlock);
@@ -33,7 +33,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
 
     /**
      * This method should be called before "createUI" to avoid unexpected result output
-     * 
+     *
      * @method manageBulkActionSubmission
      */
     public function manageBulkActionSubmission(CrudBulkActionsInterface $handler): void
@@ -57,12 +57,11 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function configureProperties(): void
     {
-        $tableColumns = Uss::instance()->getTableColumns($this->tablename);
         $tableColumns = array_map(function ($value) {
             return str_replace('_', ' ', $value);
-        }, $tableColumns);
+        }, Uss::instance()->getTableColumns($this->tablename));
 
-        $this->setMultipleTableColumns($tableColumns);
+        $this->setTableColumns($tableColumns);
 
         $basicNodes = [
             'mainBlock' => 'crud-container',
@@ -127,102 +126,9 @@ class CrudIndexManager extends AbstractCrudIndexManager
      */
     protected function setDefaultItemActions(): void
     {
-        /**
-         * READ ACTION
-         */
-        $this->addItemAction(self::ACTION_READ, new class ($this) implements CrudActionInterface {
-            public function __construct(
-                protected CrudIndexManager $crudIndexManager
-            ){}
-
-            public function forEachItem(array $item): CrudAction
-            {
-                $key = $this->crudIndexManager->getPrimaryKey();
-                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-                $query = [
-                    'action' => CrudActionImmutableInterface::ACTION_READ,
-                    'entity' => $item[$key] ?? ''
-                ];
-
-                $href = $path . "?" . http_build_query($query);
-
-                $crudAction = (new CrudAction)
-                    ->setLabel('View')
-                    ->setIcon('bi bi-eye')
-                    ->setElementType(CrudAction::TYPE_ANCHOR)
-                    ->setElementAttribute('href', $href);
-
-                return $crudAction;
-            }
-        });
-
-        /**
-         * UPDATE ACTION
-         */
-        $this->addItemAction(self::ACTION_UPDATE, new class ($this) implements CrudActionInterface {
-            public function __construct(
-                private CrudIndexManager $crudIndexManager
-            ) {
-            }
-
-            public function forEachItem(array $item): CrudAction
-            {
-                $key = $this->crudIndexManager->getPrimaryKey();
-                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-                $query = [
-                    'action' => CrudActionImmutableInterface::ACTION_UPDATE,
-                    'entity' => $item[$key] ?? ''
-                ];
-
-                $href = $path . "?" . http_build_query($query);
-
-                $curdAction = (new CrudAction())
-                    ->setLabel('Edit')
-                    ->setIcon('bi bi-pen')
-                    ->setElementType(CrudAction::TYPE_ANCHOR)
-                    ->setElementAttribute('href', $href);
-
-                return $curdAction;
-            }
-        });
-
-        /**
-         * DELETE ACTION
-         */
-        $this->addItemAction(self::ACTION_DELETE, new class ($this) implements CrudActionInterface {
-            public function __construct(
-                private CrudIndexManager $crudIndexManager
-            ) {
-            }
-
-            public function forEachItem(array $item): CrudAction
-            {
-                $key = $this->crudIndexManager->getPrimaryKey();
-                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-                $query = [
-                    'action' => CrudActionImmutableInterface::ACTION_DELETE,
-                    'entity' => $item[$key] ?? ''
-                ];
-
-                $href = $path . "?" . http_build_query($query);
-
-                $modalMessage = "This action cannot be reversed! <br> Are you sure you want to proceed?";
-
-                $crudAction = (new CrudAction())
-                    ->setLabel('Delete')
-                    ->setIcon('bi bi-trash')
-                    ->setElementType(CrudAction::TYPE_ANCHOR)
-                    ->setElementAttribute('href', $href)
-                    ->setElementAttribute('data-ui-confirm', $modalMessage)
-                    ->setElementAttribute('data-ui-size', 'small');
-
-                if($this->crudIndexManager->isDisplayItemActionsAsButton()) {
-                    $crudAction->setElementAttribute('class', 'btn btn-outline-danger btn-sm text-nowrap');
-                }
-
-                return $crudAction;
-            }
-        });
+        $this->addItemAction(self::ACTION_READ, new CrudItemReadAction($this));
+        $this->addItemAction(self::ACTION_UPDATE, new CrudItemUpdateAction($this));
+        $this->addItemAction(self::ACTION_DELETE, new CrudItemDeleteAction($this));
     }
 
     /**
@@ -240,16 +146,15 @@ class CrudIndexManager extends AbstractCrudIndexManager
     /**
      * @method buildDOMTable
      */
-    protected function buildDOMTable(?DOMTableInterface $fabricator): UssElement
+    protected function buildDOMTable(): UssElement
     {
         $columns = $this->getTableColumns();
 
         if(!$this->hideBulkActions) {
-            // Add checkboxes
-            $checker = $this->checker(null, function ($input) {
+            $checkbox = $this->checker(null, function ($input) {
                 $input->setAttribute('data-ui-checkbox', 'multiple');
             });
-            $columns = ['__checkbox__' => $checker] + $columns;
+            $columns = ['__checkbox__' => $checkbox] + $columns;
         }
 
         if($this->hideItemActions === false) {
@@ -261,7 +166,7 @@ class CrudIndexManager extends AbstractCrudIndexManager
         $this->domTable->setDisplayFooter($this->displayTfoot);
 
         $crudActionParser = new CrudItemIterator(
-            $fabricator,
+            $this->modifier,
             $this,
             Closure::fromCallable([$this, 'checker']),
             $this->domTable

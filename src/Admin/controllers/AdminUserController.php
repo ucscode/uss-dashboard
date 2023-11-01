@@ -85,6 +85,7 @@ class AdminUserController implements RouteInterface
         $crudIndexManager->setDisplayItemActionsAsButton(true);
         $crudIndexManager->setItemsPerPage(15);
         $crudIndexManager->setTableWhiteBackground();
+        //$crudIndexManager->setHideBulkActions(true);
         //$crudIndexManager->setHideWidgets(true);
         //$crudIndexManager->setDisplayTableFooter(true);
         //$crudIndexManager->setHideBulkActions(true);
@@ -98,7 +99,7 @@ class AdminUserController implements RouteInterface
             });
         */
 
-        $ui = $crudIndexManager->createUI(
+        $crudIndexManager->setModifier(
             new class () implements DOMTableInterface {
                 public function forEachItem(array $item): array
                 {

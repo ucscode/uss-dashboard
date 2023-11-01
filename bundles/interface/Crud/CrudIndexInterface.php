@@ -9,7 +9,11 @@ interface CrudIndexInterface
 
     public const CRUD_NAME = 'index';
 
-    public function createUI(?DOMTableInterface $fabricator): UssElement;
+    public function setModifier(?DOMTableInterface $modifier): self;
+
+    public function getModifier(): ?DOMTableInterface;
+
+    public function createUI(): UssElement;
 
     public function getTotalItems(): int;
 
@@ -21,7 +25,7 @@ interface CrudIndexInterface
 
     public function getCurrentPage(): int;
 
-    public function setMultipleTableColumns(array $columns): self;
+    public function setTableColumns(array $columns): self;
 
     public function getTableColumns(): array;
 
