@@ -21,7 +21,6 @@ class CrudField
 
     protected ?string $label = null;
     protected string $type = self::TYPE_INPUT;
-    protected bool $mapped = true;
     protected array $attributes = [];
     protected ?string $columnClass = null;
     protected ?string $class = null;
@@ -67,23 +66,6 @@ class CrudField
     public function getType(): string
     {
         return $this->type;
-    }
-
-    /**
-     * @method setMapped
-     */
-    public function setMapped(bool $mapped): self
-    {
-        $this->mapped = $mapped;
-        return $this;
-    }
-
-    /**
-     * @method isMapped
-     */
-    public function isMapped(): bool
-    {
-        return $this->mapped;
     }
 
     /**

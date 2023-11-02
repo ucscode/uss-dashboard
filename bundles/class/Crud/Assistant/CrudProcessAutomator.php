@@ -66,8 +66,8 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     {
         if($this->currentAction === CrudActionImmutableInterface::ACTION_READ) {
             $key = $this->crudEditManager->getPrimaryKey();
-            $this->crudEditManager->setReadOnly(true);
             $this->crudEditManager->setItemBy($key, $this->currentEntity);
+            $this->crudEditManager->setReadOnly(true);
             $this->activeManager = $this->crudEditManager;
         }
     }
@@ -117,13 +117,19 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
                     $uss = Uss::instance();
 
                     if($action === CrudActionImmutableInterface::ACTION_DELETE) {
+
                         foreach($selections as $value) {
                             $sQuery = (new SQuery())
                                 ->delete($this->crudIndexManager->tablename)
                                 ->where($primaryKey, $value);
 
-                            $result = $uss->mysqli->query($sQuery);
+                            $uss->mysqli->query($sQuery);
                         }
+
+                        $this->crudIndexManager->updateSQuery(function ($sQuery) {
+                            return $sQuery;
+                        });
+
                     }
                 }
             }

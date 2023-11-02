@@ -45,7 +45,6 @@ class AdminUserController implements RouteInterface
                 ->setLabel('worker')
                 ->setType(CrudField::TYPE_BOOLEAN)
                 ->setAttribute('name', 'worked')
-                ->setMapped(false)
             ;
 
             $crudEditManager->setField('user[changer]', $crudField);
@@ -85,10 +84,10 @@ class AdminUserController implements RouteInterface
         $crudIndexManager->setDisplayItemActionsAsButton(true);
         $crudIndexManager->setItemsPerPage(15);
         $crudIndexManager->setTableWhiteBackground();
-        //$crudIndexManager->setHideBulkActions(true);
         //$crudIndexManager->setHideWidgets(true);
         //$crudIndexManager->setDisplayTableFooter(true);
         //$crudIndexManager->setHideBulkActions(true);
+        //$crudIndexManager->setHideItemActions(true);
 
         /*
             $crudIndexManager->manageBulkActionSubmission(new class () implements CrudBulkActionsInterface {

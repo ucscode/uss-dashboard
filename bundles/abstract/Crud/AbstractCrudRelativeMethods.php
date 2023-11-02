@@ -8,11 +8,21 @@ abstract class AbstractCrudRelativeMethods implements CrudRelativeInterface
     protected bool $hideWidgets = false;
     protected array $widgets = [];
     protected ?string $currentAction = null;
+    protected ?string $currentEntity = null;
 
     public function __construct(
         public readonly string $tablename
     ) {
         $this->currentAction = htmlspecialchars($_GET['action'] ?? '');
+        $this->currentEntity = htmlentities($_GET['entity'] ?? '');
+    }
+
+    /**
+     * @method getCurrentEntity
+     */
+    public function getCurrentEntity(): ?string
+    {
+        return $this->currentEntity;
     }
 
     /**

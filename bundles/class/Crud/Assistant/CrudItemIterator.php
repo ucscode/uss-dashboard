@@ -4,7 +4,7 @@ use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
 
-class CrudItemIterator implements DOMTableInterface
+final class CrudItemIterator implements DOMTableInterface
 {
     private bool $isDropdown;
 

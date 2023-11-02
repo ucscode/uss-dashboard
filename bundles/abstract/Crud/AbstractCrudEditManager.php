@@ -36,15 +36,14 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
         ]
     ];
 
-    protected string $primaryKey = 'id';
     protected ?string $submitUrl;
     protected array $fields = [];
     protected array $actions = [];
     protected ?array $item = null;
+    protected bool $readonly = false;
     protected bool $alignActionsLeft = false;
     protected ?string $itemEntityError = null;
-    protected bool $readonly = false;
-    protected ?CrudEditSubmitInterface $modifier;
+    protected ?CrudEditSubmitInterface $submitInterface = null;
 
     public function __construct(string $tablename)
     {
@@ -57,7 +56,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function setModifier(?CrudEditSubmitInterface $modifier): CrudEditInterface
     {
-        $this->modifier = $modifier;
+        $this->submitInterface = $modifier;
         return $this;
     }
 
@@ -66,7 +65,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function getModifier(): ?CrudEditSubmitInterface
     {
-        return $this->modifier;
+        return $this->submitInterface;
     }
 
     /**

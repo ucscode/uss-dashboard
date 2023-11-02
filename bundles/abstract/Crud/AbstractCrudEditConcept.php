@@ -4,37 +4,18 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 
-abstract class AbstractCrudEditLogics extends AbstractCrudEditManager
+abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
 {
     protected UssElement $actionContainer;
     protected UssElement $widgetContainer;
     protected UssForm $editForm;
-    protected User $currentUser;
-    protected string $nonceKey;
-    protected string $baseUrl;
 
     public function __construct(string $tablename)
     {
         parent::__construct($tablename);
-        $this->getCurrentUser();
         $this->createDefaultFields();
-        $this->createDefaultActions();
-        $this->createDefaultWidgets();
-        $this->baseUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    }
-
-    /**
-     * @method getCurrentUser
-     */
-    protected function getCurrentUser(): void
-    {
-        $this->currentUser = new User();
-        $this->currentUser->getFromSession();
-        $this->nonceKey = sprintf(
-            '%s-%s',
-            $this->tablename,
-            $this->currentUser->getId()
-        );
+        new CrudItemActionBuilder($this);
+        $this->createDefaultWidgets(); // void
     }
 
     /**
@@ -51,39 +32,44 @@ abstract class AbstractCrudEditLogics extends AbstractCrudEditManager
 
         if ($result->num_rows) {
             while ($row = $result->fetch_assoc()) {
-                $this->createSingleField($row['COLUMN_NAME'], $row['DATA_TYPE']);
+                $name = $row['COLUMN_NAME'];
+                $type = $row['DATA_TYPE'];
+
+                $crudField = (new CrudField())
+                    ->setLabel(str_replace('_', ' ', $name))
+                    ->setType($this->getFieldType(strtoupper($type)))
+                    ->setLineBreak(true);
+
+                $this->setField($name, $crudField);
             }
         }
     }
 
     /**
-     * @method createSingleField
+     * @method createDefaultWidgets
      */
-    protected function createSingleField(string $name, string $type): void
+    protected function createDefaultWidgets(): void
     {
-        $crudField = (new CrudField())
-            ->setLabel(str_replace('_', ' ', $name))
-            ->setType($this->getDefaultNodeType(strtolower($name), strtoupper($type)))
-            ->setLineBreak(true);
-
-        $this->setField($name, $crudField);
+        // no default widgets to create
     }
 
     /**
      * @method getDefaultFieldType
      */
-    protected function getDefaultNodeType(string $name, string $type): string
+    protected function getFieldType(string $type): string
     {
-        if(in_array($type, [...self::DATASET['integer'], ...self::DATASET['float']])) {
-            $nodeType = CrudField::TYPE_NUMBER;
-        } elseif(in_array($type, self::DATASET['date'])) {
-            $nodeType = CrudField::TYPE_DATE;
-        } elseif(in_array($type, self::DATASET['text'])) {
-            $nodeType = CrudField::TYPE_TEXTAREA;
-        } else {
-            $nodeType = CrudField::TYPE_INPUT;
+        $nodeTypes = [
+            CrudField::TYPE_NUMBER => array(...self::DATASET['integer'], ...self::DATASET['float']),
+            CrudField::TYPE_DATE => self::DATASET['date'],
+            CrudField::TYPE_TEXTAREA => self::DATASET['text'],
+            CrudField::TYPE_INPUT => null
+        ];
+
+        foreach($nodeTypes as $key => $value) {
+            if(is_null($value) || in_array($type, $value, true)) {
+                return $key;
+            }
         }
-        return $nodeType;
     }
 
     /**
@@ -189,78 +175,62 @@ abstract class AbstractCrudEditLogics extends AbstractCrudEditManager
     }
 
     /**
-     * @method createDefaultActions
-     */
-    protected function createDefaultActions(): void
-    {
-        $actionSubmit = (new CrudAction())
-            ->setElementAttribute('class', 'btn btn-primary btn-sm m-2')
-            ->setElementAttribute('name', '__ACTION__')
-            ->setElementAttribute('type', 'submit');
-
-        if(!empty($this->getItem())) {
-            $actionName = self::ACTION_UPDATE;
-            $actionSubmit
-                ->setElementAttribute('value', self::ACTION_UPDATE)
-                ->setLabel('Save Changes')
-                ->setIcon('bi bi-floppy');
-        } else {
-            $actionName = self::ACTION_CREATE;
-            $actionSubmit
-                ->setElementAttribute('value', self::ACTION_CREATE)
-                ->setLabel('Add New')
-                ->setIcon('bi bi-plus-circle');
-        }
-
-        $this->setAction($actionName, $actionSubmit);
-    }
-
-    /**
-     * @method createDefaultWidgets
-     */
-    protected function createDefaultWidgets(): void
-    {
-        // no default widgets to create
-    }
-
-    /**
      * @method insertActions
      */
     protected function insertActions(): void
     {
+        $inserted = 0;
+
         foreach($this->actions as $key => $crudAction) {
-            $nodeName = $crudAction->getElementType() === CrudAction::TYPE_BUTTON ?
-                UssElement::NODE_BUTTON : UssElement::NODE_A;
-            $actionElement = new UssElement($nodeName);
-            $icon = $crudAction->getIcon();
-            if(!empty($icon)) {
-                $icon = sprintf("<i class='%s'></i>", $icon);
+
+            if($this->isWorthyAction($key)) {
+
+                $isButton = $crudAction->getElementType() === CrudAction::TYPE_BUTTON;
+                $nodeName = $isButton ? UssElement::NODE_BUTTON : UssElement::NODE_A;
+                $actionElement = new UssElement($nodeName);
+
+                $icon = $crudAction->getIcon();
+                if(!empty($icon)) {
+                    $icon = sprintf("<i class='%s me-1'></i>", $icon);
+                }
+
+                $actionElement->setContent(sprintf("%s %s", $icon, $crudAction->getLabel()));
+
+                foreach($crudAction->getElementAttributes() as $name => $value) {
+                    $actionElement->setAttribute($name, $value);
+                };
+
+                $this->actionContainer->appendChild($actionElement);
+
+                $inserted++;
             }
-            $actionElement->setContent(sprintf("%s %s", $icon, $crudAction->getLabel()));
-            foreach($crudAction->getElementAttributes() as $name => $value) {
-                $actionElement->setAttribute($name, $value);
-            };
-            $this->actionContainer->appendChild($actionElement);
+
+        }
+
+        if(!$inserted) {
+            $this->actionContainer->getParentElement()
+            ->removeChild($this->actionContainer);
         }
     }
 
     /**
-     * @method addFormNonce
+     * @method isWorthAction
      */
-    protected function addFormNonce(): void
+    public function isWorthyAction(string $action): bool
     {
-        $uss = Uss::instance();
-
-        $nonce = $uss->nonce($this->nonceKey);
-
-        $this->editForm->add(
-            '__NONCE__',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_HIDDEN,
-            [
-                'value' => $nonce
-            ]
-        );
+        $worthy = false;
+        switch($this->currentAction) {
+            case self::ACTION_CREATE:
+                $worthy = in_array($action, [self::ACTION_CREATE, self::ACTION_INDEX]);
+                break;
+            case self::ACTION_UPDATE:
+                $worthy = in_array($action, [self::ACTION_UPDATE, self::ACTION_INDEX]);
+                break;
+            case self::ACTION_READ:
+                $worthy = in_array($action, [self::ACTION_DELETE, self::ACTION_INDEX]);
+                break;
+        }
+        return $worthy;
     }
 
     /**
