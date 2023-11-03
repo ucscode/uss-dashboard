@@ -211,7 +211,7 @@ class Alert
     protected function jsEncode(array $options): string
     {
         $options = json_encode($options);
-        $jsReverse = "JSON.parse(`" . $options . "`)";
+        $jsReverse = "JSON.parse(atob(`" . base64_encode($options) . "`))";
         return $jsReverse;
     }
 

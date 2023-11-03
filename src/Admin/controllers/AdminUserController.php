@@ -44,7 +44,7 @@ class AdminUserController implements RouteInterface
             $crudField = (new CrudField())
                 ->setLabel('worker')
                 ->setType(CrudField::TYPE_BOOLEAN)
-                ->setAttribute('name', 'worked')
+                ->setElementAttribute('name', 'worked')
             ;
 
             $crudEditManager->setField('user[changer]', $crudField);
@@ -127,15 +127,126 @@ class AdminUserController implements RouteInterface
     protected function configureEditManager(CrudEditManager $crudEditManager): void
     {
         $crudEditManager->removeField('id');
-        $crudEditManager->removeField('password');
+
+        $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
+
+        $crudEditManager->getField('username')
+            ->setElementAttribute('pattern', '^[a-z0-9_\\-]+$')
+            ->setRequired(false);
+        
+        $crudEditManager->getField('password')
+            ->setElementAttribute('placeholder', str_repeat('*', 6));
+
+        $this->addExtraEditFields($crudEditManager);
+
         $item = $crudEditManager->getItem();
-        if(!empty($item['parent'])) {
-            $user = new User($item['parent']);
-            $item['parent'] = $user->getEmail();
-        };
-        if(empty($item['parent'])) {
-            $item['parent'] = '<span class="text-muted">NULL</span>';
+
+        switch($crudEditManager->getCurrentAction()) {
+            
+            case CrudActionImmutableInterface::ACTION_READ:
+
+                $crudEditManager->removeField('password');
+
+                if(!empty($item)){
+                    if(!empty($item['parent'])) {
+                        $user = new User($item['parent']);
+                        $item['parent'] = $user->getEmail();
+                    };
+                    if(empty($item['parent'])) {
+                        $item['parent'] = '<span class="text-muted">NULL</span>';
+                    }
+                }
+
+                break;
+
+            case CrudActionImmutableInterface::ACTION_CREATE:
+            case CrudActionImmutableInterface::ACTION_UPDATE:
+
+                $crudEditManager->removeField('last_seen');
+                $crudEditManager->removeField('usercode');
+                $crudEditManager->getField('parent')
+                    ->setRequired(false);
+
+                if($crudEditManager->getCurrentAction() === CrudActionImmutableInterface::ACTION_UPDATE) {
+
+                    $crudEditManager->getField('password')->setRequired(false);
+                    $item['password'] = null;
+
+                } else {
+
+
+
+                }
+
+                break;
+
         }
+
         $crudEditManager->setItem($item);
+
+        $crudEditManager->setModifier(new class($crudEditManager) implements CrudEditSubmitInterface {
+            /** @var array $roles */
+            protected array $roles;
+            
+            /**
+             * @method __construct
+             */
+            public function __construct(
+                protected CrudEditManager $crudEditManager
+            ){}
+
+            /**
+             * @override 
+             */
+            public function beforeEntry(array $data): array
+            {
+                $data['username'] = $data['username'] ?: null;
+                if(empty($data['password']) && $this->crudEditManager->getCurrentAction() === CrudActionImmutableInterface::ACTION_UPDATE) {
+                    unset($data['password']);
+                } else {
+                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                }
+                $data['parent'] = $data['parent'] ?: null;
+                $data['usercode'] = Uss::instance()->keygen(7);
+                $this->roles = $data['role'] ?? [];
+                unset($data['role']);
+                return $data;
+            }
+
+            /**
+             * @override
+             */
+            public function afterEntry(bool $status, array $item): bool
+            {
+                $user = new User($item['id']);
+                $user->setRoles($this->roles);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * @method addExtraEditFields
+     */
+    protected function addExtraEditFields(CrudEditManager $crudEditManager): void
+    {
+        $roles = [
+            RoleImmutable::ROLE_ADMIN,
+            RoleImmutable::ROLE_USER
+        ];
+
+        foreach($roles as $key => $value) {
+
+            $roleField = (new CrudField)
+                ->setLabel('Role ' . $value)
+                ->setType(CrudField::TYPE_CHECKBOX)
+                ->setElementAttribute('name', 'role[]')
+                ->setColumnClass('mb-1')
+                ->setRequired(false)
+                ->setValue($value);
+
+            $crudEditManager->setField("_role_{$key}", $roleField);
+
+        }
     }
 }

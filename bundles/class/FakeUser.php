@@ -28,7 +28,7 @@ class FakeUser
         if($user->persist()) {
             for($x = 0; $x < rand(0, 3); $x++) {
                 $key = array_rand($this->roles);
-                $user->setRole($this->roles[$key]);
+                $user->addRole($this->roles[$key]);
             }
         }
     }

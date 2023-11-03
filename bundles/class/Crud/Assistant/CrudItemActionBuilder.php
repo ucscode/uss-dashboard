@@ -4,7 +4,7 @@ final class CrudItemActionBuilder implements CrudActionImmutableInterface
 {
     public function __construct(
         protected CrudEditManager $crudEditManager
-    ){
+    ) {
         $this->buildCreateAction();
         $this->buildUpdateAction();
         $this->buildDeleteAction();
@@ -91,13 +91,25 @@ final class CrudItemActionBuilder implements CrudActionImmutableInterface
      */
     protected function buildIndexAction(): void
     {
+        $href = $_SERVER['HTTP_REFERER'] ?? null;
+
+        if($href) {
+            $url = parse_url($href);
+            parse_str($url['query'] ?? '', $url['query']);
+            if($url['path'] === $this->href() && !empty($url['query'])) {
+                if(($url['query']['action'] ?? null) === $this->crudEditManager->getCurrentAction()) {
+                    $href = null;
+                };
+            }
+        };
+
         $this->crudEditManager->setAction(
             self::ACTION_INDEX,
             $this->newCrudAction('btn-outline-info')
                 ->setElementType(CrudAction::TYPE_ANCHOR)
                 ->setLabel('Back To Listing')
                 ->setElementAttribute('value', self::ACTION_INDEX)
-                ->setElementAttribute('href', $_SERVER['HTTP_REFERER'] ?? $this->href())
+                ->setElementAttribute('href', $href ?? $this->href())
         );
     }
 

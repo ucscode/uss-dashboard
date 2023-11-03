@@ -120,10 +120,19 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
      */
     protected function getFieldConfig(CrudField $crudField): array
     {
+        $form_label = in_array(
+            $crudField->getType(),
+            [
+                CrudField::TYPE_CHECKBOX,
+                CrudField::TYPE_RADIO,
+            ]
+        ) ? 'form-check-label' : 'form-label';
+
         $config = [
             'label' => $crudField->getLabel(),
             'value' => $crudField->getValue(),
             'required' => $crudField->isRequired(),
+            'label_class' => ($crudField->isRequired() ? '--required ' : null) . $form_label,
             'column' => $crudField->getColumnClass(),
             'class' => $crudField->getClass(),
             'attr' => [],
@@ -149,7 +158,7 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
             ];
         }
 
-        $attributes = $crudField->getAttributes();
+        $attributes = $crudField->getElementAttributes();
 
         foreach($attributes as $key => $attribute) {
             $config['attr'][$key] = $attribute;

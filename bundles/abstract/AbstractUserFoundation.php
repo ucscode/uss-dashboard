@@ -55,7 +55,7 @@ abstract class AbstractUserFoundation implements UserInterface
                 )
             );
         };
-        $user = Uss::instance()->fetchData(self::USER_TABLE, $value, $key);
+        $user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key);
         if($user) {
             $this->user = $user;
         }
@@ -69,7 +69,7 @@ abstract class AbstractUserFoundation implements UserInterface
     {
         if($id) {
             $id = abs($id);
-            return Uss::instance()->fetchData(self::USER_TABLE, $id);
+            return Uss::instance()->fetchItem(self::USER_TABLE, $id);
         }
         return null;
     }

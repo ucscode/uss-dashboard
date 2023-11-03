@@ -21,7 +21,7 @@ class CrudField
 
     protected ?string $label = null;
     protected string $type = self::TYPE_INPUT;
-    protected array $attributes = [];
+    protected array $elementAttributes = [];
     protected ?string $columnClass = null;
     protected ?string $class = null;
     protected bool $required = true;
@@ -71,26 +71,26 @@ class CrudField
     /**
      * @method setAttributes
      */
-    public function setAttribute(string $key, string $value): self
+    public function setElementAttribute(string $key, string $value): self
     {
-        $this->attributes[$key] = $value;
+        $this->elementAttributes[$key] = $value;
         return $this;
     }
 
     /**
      * @method getAttributes
      */
-    public function getAttribute(string $key): ?string
+    public function getElementAttribute(string $key): ?string
     {
-        return $this->attributes[$key] ?? null;
+        return $this->elementAttributes[$key] ?? null;
     }
 
     /**
      * @method getAttributes
      */
-    public function getAttributes(): array
+    public function getElementAttributes(): array
     {
-        return $this->attributes;
+        return $this->elementAttributes;
     }
 
     /**

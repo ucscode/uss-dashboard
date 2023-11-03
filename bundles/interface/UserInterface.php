@@ -37,7 +37,9 @@ interface UserInterface
 
     public function hasRole(string $role): bool;
 
-    public function setRole(string $role): bool;
+    public function addRole(string $role): bool;
+
+    public function setRoles(array $roles): bool;
 
     public function removeRole(string $role): bool;
 }

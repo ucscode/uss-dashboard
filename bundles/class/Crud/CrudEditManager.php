@@ -92,7 +92,7 @@ class CrudEditManager extends AbstractCrudEditConcept
     public function processReadContent(UssElement $container, string $actionClass): UssElement
     {
         $item = $this->getItem();
-        
+
         $this->actionContainer = new UssElement(UssElement::NODE_DIV);
         $this->actionContainer->setAttribute('class', 'action-container ' . $actionClass);
 

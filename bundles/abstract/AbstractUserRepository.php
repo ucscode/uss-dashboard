@@ -363,9 +363,18 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     }
 
     /**
-     * @method setRole
+     * @method setRoles
      */
-    public function setRole(string $role): bool
+    public function setRoles(array $roles): bool
+    {
+        $roles = array_unique(array_values($roles));
+        return $this->setUserMeta('user.roles', $roles);
+    }
+
+    /**
+     * @method addRole
+     */
+    public function addRole(string $role): bool
     {
         $roles = $this->getRoles();
         if(!in_array($role, $roles)) {
