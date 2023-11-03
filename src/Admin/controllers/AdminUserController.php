@@ -9,75 +9,47 @@ class AdminUserController implements RouteInterface
         RoleImmutable::ROLE_USER
     ];
 
+    /**
+     * @method __construct
+     */
     public function __construct(
         protected Archive $archive,
         protected DashboardInterface $dashboard
     ) {
     }
 
+    /**
+     * @override
+     */
     public function onload(array $matches)
     {
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
+        $this->processCrudManagers($template);
+    }
 
+    /**
+     * @method processCrudManagers
+     */
+    protected function processCrudManagers(string $template): void
+    {
+        //(new FakeUser())->create(100);
         $crudProcessAutomator = new CrudProcessAutomator(User::USER_TABLE);
-        //(new FakeUser())->create(20);
         $crudProcessAutomator->processAllActions();
+        
         $this->configureIndexManager($crudProcessAutomator->getCrudIndexManager());
         $this->configureEditManager($crudProcessAutomator->getCrudEditManager());
+
         $automatorUI = $crudProcessAutomator->getCreatedUI();
-
-        $editable = [
-            CrudActionImmutableInterface::ACTION_CREATE,
-            CrudActionImmutableInterface::ACTION_UPDATE,
-            CrudActionImmutableInterface::ACTION_DELETE
-        ];
-
-        if(!in_array(($_GET['action'] ?? null), $editable)) {
-
-            $crudIndexManager = new CrudIndexManager(User::USER_TABLE);
-
-
-
-        } else {
-
-            $crudEditManager = new CrudEditManager(User::USER_TABLE);
-            $crudEditManager->setItemBy('id', $_GET['entity'] ?? null);
-
-            $crudEditManager->removeField('id');
-
-            $crudField = (new CrudField())
-                ->setLabel('worker')
-                ->setType(CrudField::TYPE_BOOLEAN)
-                ->setElementAttribute('name', 'worked')
-            ;
-
-            $crudEditManager->setField('user[changer]', $crudField);
-            $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
-
-            $ui = $crudEditManager->createUI(new class () implements CrudEditSubmitInterface {
-                private array $data;
-                public function beforeEntry(array $data): array
-                {
-                    $this->data = $data;
-                    unset($data['worked']);
-                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-                    $data['usercode'] = Uss::instance()->keygen(7);
-                    return $data;
-                }
-                public function afterEntry(bool $status, array $data): bool
-                {
-                    return true;
-                }
-            });
-
-        }
-
+        
         $this->dashboard->render($template, [
             'crudIndex' => $automatorUI->getHTML(true)
         ]);
     }
 
+    /**
+     * @method configureIndexManager
+     */
     protected function configureIndexManager(CrudIndexManager $crudIndexManager): void
     {
         $crudIndexManager->removeTableColumn('id');
@@ -129,16 +101,19 @@ class AdminUserController implements RouteInterface
         );
     }
 
+    /**
+     * @method configureEditManager
+     */
     protected function configureEditManager(CrudEditManager $crudEditManager): void
     {
         $crudEditManager->removeField('id');
-
+        
         $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
 
         $crudEditManager->getField('username')
             ->setElementAttribute('pattern', '^[a-z0-9_\\-]+$')
             ->setRequired(false);
-        
+
         $crudEditManager->getField('password')
             ->setElementAttribute('placeholder', str_repeat('*', 6));
 
