@@ -4,6 +4,11 @@ use Ucscode\DOMTable\DOMTableInterface;
 
 class AdminUserController implements RouteInterface
 {
+    protected array $userRoles = [
+        RoleImmutable::ROLE_ADMIN,
+        RoleImmutable::ROLE_USER
+    ];
+
     public function __construct(
         protected Archive $archive,
         protected DashboardInterface $dashboard
@@ -230,12 +235,7 @@ class AdminUserController implements RouteInterface
      */
     protected function addExtraEditFields(CrudEditManager $crudEditManager): void
     {
-        $roles = [
-            RoleImmutable::ROLE_ADMIN,
-            RoleImmutable::ROLE_USER
-        ];
-
-        foreach($roles as $key => $value) {
+        foreach($this->userRoles as $key => $value) {
 
             $roleField = (new CrudField)
                 ->setLabel('Role ' . $value)
@@ -246,7 +246,6 @@ class AdminUserController implements RouteInterface
                 ->setValue($value);
 
             $crudEditManager->setField("_role_{$key}", $roleField);
-
         }
     }
 }

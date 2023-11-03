@@ -109,7 +109,7 @@ class CrudEditManager extends AbstractCrudEditConcept
         foreach($this->fields as $key => $crudField) {
             $data[] = [
                 'key' => ucwords(str_replace('_', ' ', $crudField->getLabel())),
-                'value' => $item[$key]
+                'value' => $item[$key] ?? null
             ];
         }
 
