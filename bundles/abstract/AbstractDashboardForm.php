@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
 
 abstract class AbstractDashboardForm extends UssForm implements DashboardFormInterface
 {
@@ -169,23 +170,6 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     }
 
     /**
-     * Set a report message for a form field.
-     *
-     * @param string $name The name of the form field.
-     * @param string $message The report message.
-     * @param string $class The CSS class for styling the report.
-     * @return void
-     */
-    public function setReport(string $name, string $message, string $class = 'text-danger fs-12px'): void
-    {
-        $fieldset = $this->getFieldset($name);
-        if($fieldset) {
-            $fieldset['report']->setContent("* {$message}");
-            $fieldset['report']->addAttributeValue('class', $class);
-        };
-    }
-
-    /**
      * @method setSecurityHash
      */
     private function setSecurityHash(): void
@@ -193,11 +177,11 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
         $name = $this->getAttribute('name');
         $nonce = Uss::instance()->nonce($this->nonceKey);
 
-        $this->add(
+        $this->addField(
             $this->hashKey,
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_HIDDEN,
-            ['value' => "{$name}/{$nonce}"]
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
+                ->setWidgetValue("{$name}/{$nonce}")
+                ->setLabelHidden(false)
         );
     }
 

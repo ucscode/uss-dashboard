@@ -210,6 +210,14 @@ class AdminUserController implements RouteInterface
      */
     protected function addExtraEditFields(CrudEditManager $crudEditManager): void
     {
+        // $fieldContainer = new FieldContainer()
+        //     ->setTitle()
+        //     ->setClass()
+        //     ->isFieldset()
+        //     ->setCaption()
+        //     ->setLegend()
+        //     ->setDisabled();
+
         foreach($this->userRoles as $key => $value) {
 
             $roleField = (new CrudField)
@@ -218,7 +226,9 @@ class AdminUserController implements RouteInterface
                 ->setElementAttribute('name', 'role[]')
                 ->setColumnClass('mb-1')
                 ->setRequired(false)
-                ->setValue($value);
+                ->setValue($value)
+                //->setContainer($fieldContainer)
+                ;
 
             $crudEditManager->setField("_role_{$key}", $roleField);
         }

@@ -399,6 +399,7 @@ fieldset:disabled textarea {
     height: 24px;
     cursor: pointer;
 	margin-right: 8px;
+	margin-top: 0;
 }
 
 @media (min-width: 768px) {

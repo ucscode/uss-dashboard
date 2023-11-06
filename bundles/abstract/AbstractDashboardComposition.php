@@ -1,6 +1,6 @@
 <?php
 
-use Ucscode\Packages\TreeNode;
+use Ucscode\TreeNode\TreeNode;
 
 abstract class AbstractDashboardComposition implements DashboardInterface
 {

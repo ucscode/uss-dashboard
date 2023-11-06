@@ -1,6 +1,6 @@
 <?php
 
-use Ucscode\Packages\TreeNode;
+use Ucscode\TreeNode\TreeNode;
 
 class UserDashboard extends AbstractDashboard
 {

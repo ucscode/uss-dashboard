@@ -1,7 +1,7 @@
 <?php
 
 
-use Ucscode\Packages\Pairs;
+use Ucscode\Pairs\Pairs;
 
 abstract class AbstractUserFoundation implements UserInterface
 {

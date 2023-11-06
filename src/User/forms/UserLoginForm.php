@@ -2,6 +2,7 @@
 
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\UssFormField;
 
 class UserLoginForm extends AbstractDashboardForm
 {
@@ -10,43 +11,31 @@ class UserLoginForm extends AbstractDashboardForm
 
     protected function buildForm()
     {
-        $this->add(
+        $this->addField(
             'user[login]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_TEXT,
-            $this->style + [
-                'attr' => [
-                    'placeholder' => 'Login detail',
-                    'pattern' => '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$',
-                    'required'
-                ]
-            ]
+            (new UssFormField())
+                ->setWidgetAttribute('placeholder', 'login Detail')
+                ->setWidgetAttribute(
+                    'pattern', 
+                    '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$'
+                )
+                ->setLabelHidden(true)
         );
 
-        $this->add(
+        $this->addField(
             'user[password]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_PASSWORD,
-            $this->style + [
-                'attr' => [
-                    'placeholder' => 'Password',
-                    'pattern' => '^.{4,}$',
-                    'required'
-                ]
-            ]
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                ->setWidgetAttribute('placeholder', 'Password')
+                ->setWidgetAttribute('pattern', '^.{4,}$')
+                ->setLabelHidden(true)
         );
 
-        $this->addRow();
+        $this->addCustomElement('mail-element', $this->buildMailBlock());
 
-        $this->appendFieldToRow($this->buildMailBlock());
-
-        $this->add(
+        $this->addField(
             'submit',
-            UssForm::NODE_BUTTON,
-            UssForm::TYPE_SUBMIT,
-            [
-                'class' => 'btn btn-primary w-100'
-            ]
+            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+                ->setWidgetAttribute('class', 'w-100', true)
         );
 
     }
