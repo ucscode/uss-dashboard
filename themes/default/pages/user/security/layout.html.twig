@@ -77,6 +77,9 @@
 {% endblock body_main %}
 
 {% block body_js %}
+
     {{ parent() }}
-	<script src="{{ Uss.abspathToUrl(constant('UserDashboard::ASSETS_DIR') ~ '/js/security.js') }}"></script>
+
+	<script src="{{ DashboardExtension.themeUrl('assets/js/security.js') }}"></script>
+
 {% endblock body_js %}

@@ -104,13 +104,17 @@
     {{ parent() }}
 
     {% set dataMagicJS = constant('DashboardImmutable::ASSETS_DIR') ~ '/js/dataMagic.js' %}
+
     <script src="{{ Uss.abspathToUrl(dataMagicJS) }}"></script>
 
     {% if (user and user.exists()) %}
+
         {% set dashboardJS = DashboardExtension.themeUrl('/assets/js/dashboard.js') %}
         {% set notificationJS = DashboardExtension.themeUrl('/assets/js/notifications.js') %}
+
 	    <script src="{{ dashboardJS }}"></script>
         <script type='module' src='{{ notificationJS }}'></script>
+        
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('v-alert') %}
