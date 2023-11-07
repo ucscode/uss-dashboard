@@ -36,12 +36,12 @@ class AdminUserController implements RouteInterface
         //(new FakeUser())->create(100);
         $crudProcessAutomator = new CrudProcessAutomator(User::USER_TABLE);
         $crudProcessAutomator->processAllActions();
-        
+
         $this->configureIndexManager($crudProcessAutomator->getCrudIndexManager());
         $this->configureEditManager($crudProcessAutomator->getCrudEditManager());
 
         $automatorUI = $crudProcessAutomator->getCreatedUI();
-        
+
         $this->dashboard->render($template, [
             'crudIndex' => $automatorUI->getHTML(true)
         ]);
@@ -107,7 +107,7 @@ class AdminUserController implements RouteInterface
     protected function configureEditManager(CrudEditManager $crudEditManager): void
     {
         $crudEditManager->removeField('id');
-        
+
         $crudEditManager->getField('email')->setType(CrudField::TYPE_EMAIL);
 
         $crudEditManager->getField('username')
@@ -122,12 +122,12 @@ class AdminUserController implements RouteInterface
         $item = $crudEditManager->getItem();
 
         switch($crudEditManager->getCurrentAction()) {
-            
+
             case CrudActionImmutableInterface::ACTION_READ:
 
                 $crudEditManager->removeField('password');
 
-                if(!empty($item)){
+                if(!empty($item)) {
                     if(!empty($item['parent'])) {
                         $user = new User($item['parent']);
                         $item['parent'] = $user->getEmail();
@@ -164,19 +164,20 @@ class AdminUserController implements RouteInterface
 
         $crudEditManager->setItem($item);
 
-        $crudEditManager->setModifier(new class($crudEditManager) implements CrudEditSubmitInterface {
+        $crudEditManager->setModifier(new class ($crudEditManager) implements CrudEditSubmitInterface {
             /** @var array $roles */
             protected array $roles;
-            
+
             /**
              * @method __construct
              */
             public function __construct(
                 protected CrudEditManager $crudEditManager
-            ){}
+            ) {
+            }
 
             /**
-             * @override 
+             * @override
              */
             public function beforeEntry(array $data): array
             {
@@ -220,7 +221,7 @@ class AdminUserController implements RouteInterface
 
         foreach($this->userRoles as $key => $value) {
 
-            $roleField = (new CrudField)
+            $roleField = (new CrudField())
                 ->setLabel('Role ' . $value)
                 ->setType(CrudField::TYPE_CHECKBOX)
                 ->setElementAttribute('name', 'role[]')
@@ -228,7 +229,7 @@ class AdminUserController implements RouteInterface
                 ->setRequired(false)
                 ->setValue($value)
                 //->setContainer($fieldContainer)
-                ;
+            ;
 
             $crudEditManager->setField("_role_{$key}", $roleField);
         }

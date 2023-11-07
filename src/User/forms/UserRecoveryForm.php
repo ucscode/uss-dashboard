@@ -87,7 +87,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
 
         $this->getField($this->reportKey)
             ->setValidationMessage($this->reportError)
-            ;
+        ;
     }
 
     public function persistEntry(array $data): bool
