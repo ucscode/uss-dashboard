@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
 
 class UserRecoveryForm extends AbstractUserRecoveryForm
 {
@@ -15,85 +16,56 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
 
     protected function buildForm()
     {
-        if(!$this->stage) {
+        if($this->stage === self::STAGE_EMAIL) {
 
             // email stage
-            $this->add(
+            $this->addField(
                 'email',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_EMAIL,
-                [
-                    'label' => "Email",
-                    'attr' => [
-                        'placeholder' => 'Enter your account email',
-                        'required'
-                    ]
-                ]
+                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+                    ->setWidgetAttribute('placeholder', 'Enter your account email')
             );
 
         } else {
 
             // password reset stage
-            $this->add(
+            $this->addField(
                 'user[password]',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_PASSWORD,
-                [
-                    'label' => 'New Password',
-                    'attr' => [
-                        'required',
-                        'placeholder' => 'Enter your new password'
-                    ]
-                ]
+                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                    ->setLabelValue('New Password')
+                    ->setWidgetAttribute('placeholder', 'Enter your new password')
             );
 
-            $this->add(
+            $this->addField(
                 'user[confirm_password]',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_PASSWORD,
-                [
-                    'label' => 'Confirm Password',
-                    'attr' => [
-                        'required',
-                        'placeholder' => 'Confirm your new password'
-                    ]
-                ]
+                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                    ->setLabelValue('Confirm Password')
+                    ->setWidgetAttribute('placeholder', 'Confirm your new password')
             );
 
-            $this->add(
+            $this->addField(
                 'user[id]',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_HIDDEN,
-                [
-                    'value' => $this->user->getId()
-                ]
+                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
+                    ->setWidgetValue($this->user->getId())
             );
         }
 
-        $this->add(
+        $this->addField(
             'submit',
-            UssForm::NODE_BUTTON,
-            UssForm::TYPE_SUBMIT,
-            [
-                'attr' => [
-                    'class' => 'btn btn-primary w-100'
-                ]
-            ]
+            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+                ->setWidgetAttribute('class', 'w-100', true)
         );
     }
 
     public function isValid(array $data): bool
     {
-        if(!$this->stage) {
+        if($this->stage === self::STAGE_EMAIL) {
 
-            // email stage
             $this->reportKey = 'email';
             $this->reportError = "The email address is not valid";
             return filter_var($data['email'], FILTER_VALIDATE_EMAIL);
 
         } else {
 
-            // password reset stage
             if(strlen($data['user']['password']) < 6) {
                 $this->reportKey = 'user[password]';
                 $this->reportError = 'Password should be at least 6 characters';
@@ -109,24 +81,25 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
 
     public function handleInvalidRequest(?array $data): void
     {
-        if(!$this->stage) {
+        if($this->stage === self::STAGE_EMAIL) {
             $this->populate($data);
         };
-        $this->setReport($this->reportKey, $this->reportError);
+
+        $this->getField($this->reportKey)
+            ->setValidationMessage($this->reportError)
+            ;
     }
 
     public function persistEntry(array $data): bool
     {
-        if(!$this->stage) {
+        if($this->stage === self::STAGE_EMAIL) {
 
-            // email stage
             $this->user = new User();
             $this->user->allocate('email', $data['email']);
             return $this->user->exists();
 
         } else {
 
-            // password reset stage
             $this->user = new User($data['user']['id'] ?? 0);
             $userExists = $this->user->exists();
 
@@ -141,8 +114,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
 
     public function onEntrySuccess(array $data): void
     {
-        if(!$this->stage) {
-            // email stage
+        if($this->stage === self::STAGE_EMAIL) {
             $this->status = $this->sendRecoveryEmail($this->user);
             if(!$this->status) {
                 (new Alert('Email failed to send'))
@@ -159,8 +131,9 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     public function onEntryFailure(array $data): void
     {
         $this->populate($data);
-        if(!$this->stage) {
-            $this->setReport('email', 'We could find the email in our database');
+        if($this->stage === self::STAGE_EMAIL) {
+            $this->getField('email')
+                ->setValidationMessage('We could find the email in our database');
         }
     }
 

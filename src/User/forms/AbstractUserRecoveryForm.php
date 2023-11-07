@@ -2,7 +2,10 @@
 
 abstract class AbstractUserRecoveryForm extends AbstractDashboardForm
 {
-    public int $stage = 0;
+    protected const STAGE_EMAIL = 0;
+    protected const STAGE_PASSWORD = 1;
+
+    public int $stage = self::STAGE_EMAIL;
     public bool $status = false;
     public $expiryHour = 14;
 
@@ -27,7 +30,7 @@ abstract class AbstractUserRecoveryForm extends AbstractDashboardForm
                             $code = $json['code'] ?? null;
                             $saved_code = $this->user->getUserMeta('user.recovery_code');
                             if($code === $saved_code) {
-                                $this->stage = 1;
+                                $this->stage = self::STAGE_PASSWORD;
                             }
                         }
                     }

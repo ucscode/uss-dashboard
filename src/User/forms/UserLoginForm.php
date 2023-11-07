@@ -16,7 +16,7 @@ class UserLoginForm extends AbstractDashboardForm
             (new UssFormField())
                 ->setWidgetAttribute('placeholder', 'login Detail')
                 ->setWidgetAttribute(
-                    'pattern', 
+                    'pattern',
                     '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$'
                 )
                 ->setLabelHidden(true)

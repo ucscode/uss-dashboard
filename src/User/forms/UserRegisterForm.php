@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
 
 class UserRegisterForm extends AbstractDashboardForm
 {
@@ -8,81 +9,57 @@ class UserRegisterForm extends AbstractDashboardForm
 
     protected function buildForm()
     {
-
         if(0) {
-            $this->add(
+            $this->addField(
                 'user[username]',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_TEXT,
-                $this->style + [
-                    'attr' => [
-                        'placeholder' => 'Username',
-                        'pattern' => '^\s*\w+\s*$'
-                    ]
-                ]
+                (new UssFormField())
+                    ->setWidgetAttribute('placeholder', 'Username')
+                    ->setWidgetAttribute('pattern', '^\s*\w+\s*$')
+                    ->setLabelHidden(true)
             );
         };
 
-        $this->add(
+        $this->addField(
             'user[email]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_EMAIL,
-            $this->style + [
-                'attr' => [
-                    'placeholder' => 'Email'
-                ]
-            ]
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+                ->setWidgetAttribute('placeholder', 'Email')
+                ->setLabelHidden(true)
         );
 
-        $this->add(
+        $this->addField(
             'user[password]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_PASSWORD,
-            $this->style + [
-                'attr' => [
-                    'placeholder' => 'Password',
-                    'pattern' => '^.{4,}$'
-                ]
-            ]
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                ->setWidgetAttribute('placeholder', 'Password')
+                ->setWidgetAttribute('pattern', '^.{4,}$')
+                ->setLabelHidden(true)
         );
 
-        $this->add(
+        $this->addField(
             'user[confirmPassword]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_PASSWORD,
-            $this->style + [
-                'attr' => [
-                    'placeholder' => 'Confirm Password',
-                    'pattern' => '^.{4,}$'
-                ]
-            ]
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                ->setWidgetAttribute('placeholder', 'Confirm Password')
+                ->setWidgetAttribute('pattern', '^.{4,}$')
+                ->setLabelHidden(true)
         );
 
-        $this->addRow('my-2');
+        $this->getFieldStack('default')
+            ->setOuterContainerAttribute('class', 'mb-2', true);
 
-        $this->add(
+        $this->addFieldStack();
+
+        $this->addField(
             'user[agreement]',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_CHECKBOX,
-            array_merge($this->style, [
-                'required' => true,
-                'label' => "I agree to the Terms of service Privacy policy",
-                'label_class' => null,
-                'ignore' => true
-            ])
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
+                ->setLabelValue("I agree to the Terms of service Privacy policy")
+                ->setRowAttribute('class', 'mb-2 user-select-none small', true),
+            ['mapped' => false]
         );
 
-        $this->addRow();
-
-        $this->add(
+        $this->addField(
             'submit',
-            UssForm::NODE_BUTTON,
-            UssForm::TYPE_SUBMIT,
-            $this->style + [
-                'class' => 'w-100 btn btn-primary'
-            ]
+            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+                ->setWidgetAttribute('class', 'w-100', true)
         );
-
     }
 
     public function isValid(array $post): bool
@@ -108,7 +85,7 @@ class UserRegisterForm extends AbstractDashboardForm
         $this->user = new User();
         foreach($data['user'] as $key => $value) {
             call_user_func(
-                [$this->user, "set{$key}"],
+                [$this->user, "set" . ucfirst($key)],
                 $value ?: null
             );
         };
@@ -147,12 +124,14 @@ class UserRegisterForm extends AbstractDashboardForm
     {
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
         if(!$email) {
-            $this->setReport('user[email]', "Invalid email address");
+            $this->getField('user[email]')
+                ->setValidationMessage("Invalid email address");
             return false;
         } else {
-            $exists = Uss::instance()->fetchData(DB_PREFIX . "users", $email, 'email');
+            $exists = Uss::instance()->fetchItem(DB_PREFIX . "users", $email, 'email');
             if($exists) {
-                $this->setReport('user[email]', 'The email address already exists');
+                $this->getField('user[email]')
+                    ->setValidationMessage('The email address already exists');
                 return false;
             };
         };
@@ -162,10 +141,12 @@ class UserRegisterForm extends AbstractDashboardForm
     protected function validatePassword(string $password, string $confirmPassword): bool
     {
         if(strlen($password) < 6) {
-            $this->setReport('user[password]', "Password should be at least 6 characters");
+            $this->getField('user[password]')
+                ->setValidationMessage("Password should be at least 6 characters");
             return false;
         } elseif($password !== $confirmPassword) {
-            $this->setReport('user[confirmPassword]', "Confirm password does not match");
+            $this->getField('user[confirmPassword]')
+                ->setValidationMessage("Confirm password does not match");
             return false;
         };
         return true;
