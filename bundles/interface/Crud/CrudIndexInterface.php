@@ -45,7 +45,7 @@ interface CrudIndexInterface
 
     public function setHideBulkActions(bool $status): self;
 
-    public function manageBulkActionSubmission(CrudBulkActionsInterface $handler): void;
+    public function handleBulkActions(CrudBulkActionsInterface $handler): void;
 
     public function isBulkActionsHidden(): bool;
 

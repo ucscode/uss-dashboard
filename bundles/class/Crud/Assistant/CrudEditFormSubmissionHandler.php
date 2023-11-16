@@ -264,13 +264,13 @@ class CrudEditFormSubmissionHandler implements CrudActionImmutableInterface
 
                     switch($crudField->getType()) {
 
-                        case CrudField::TYPE_NUMBER:
+                        case CrudCell::TYPE_NUMBER:
                             if(!is_numeric($value)) {
                                 $isValid = !$crudField->setError('Invalid numeric value');
                             }
                             break;
 
-                        case CrudField::TYPE_DATE:
+                        case CrudCell::TYPE_DATE:
                             try {
                                 $valid = new DateTime($value);
                             } catch(\Exception $e) {
@@ -278,7 +278,7 @@ class CrudEditFormSubmissionHandler implements CrudActionImmutableInterface
                             }
                             break;
 
-                        case CrudField::TYPE_EMAIL:
+                        case CrudCell::TYPE_EMAIL:
                             if(!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                                 $isValid = !$crudField->setError('Invalid email address');
                             }

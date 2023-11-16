@@ -1,34 +1,35 @@
 <?php
 
 use Ucscode\SQuery\SQuery;
+use Ucscode\UssForm\UssFormField;
 
 abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods implements CrudEditInterface, CrudActionImmutableInterface
 {
     protected const DATASET = [
-        'integer' => [
+        'INTEGER' => [
             'TINYINT',
             'SMALLINT',
             'MEDIUMINT',
             'INT',
             'BIGINT'
         ],
-        'float' => [
+        'FLOAT' => [
             'DECIMAL',
             'FLOAT',
             'DOUBLE',
             'REAL'
         ],
-        'date' => [
+        'DATE' => [
             'DATE',
             'DATETIME',
             'TIMESTAMP',
             'TIME'
         ],
-        'string' => [
+        'CHARACTER' => [
             'CHAR',
             'VARCHAR'
         ],
-        'text' => [
+        'TEXT' => [
             'TINYTEXT',
             'TEXT',
             'MEDIUMTEXT',
@@ -37,12 +38,26 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     ];
 
     protected ?string $submitUrl;
+
+    // $fields: The available input fields of an item
     protected array $fields = [];
+
+    // $actions: Buttons such as "save changes", "delete item"...
     protected array $actions = [];
+
+    // $item: A row of data
     protected ?array $item = null;
+
+    // $readonly: Make item not editable
     protected bool $readonly = false;
+
+    // $alignActionsLeft: The position of actions button
     protected bool $alignActionsLeft = false;
+
+    // $itemEntityError: The error encountered when querying the item to database
     protected ?string $itemEntityError = null;
+
+    // $submitInterface: The modifier instance
     protected ?CrudEditSubmitInterface $submitInterface = null;
 
     public function __construct(string $tablename)
@@ -88,7 +103,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     /**
      * @method setField
      */
-    public function setField(string $name, CrudField $field): CrudEditInterface
+    public function setField(string $name, UssFormField $field): CrudEditInterface
     {
         $this->fields[$name] = $field;
         return $this;
@@ -97,7 +112,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     /**
      * @method getField
      */
-    public function getField(string $name): ?CrudField
+    public function getField(string $name): ?UssFormField
     {
         return $this->fields[$name] ?? null;
     }
@@ -228,9 +243,9 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     }
 
     /**
-     * @method getAlignActionsLeft
+     * @method isAlignActionsLeft
      */
-    public function getAlignActionsLeft(): bool
+    public function isAlignActionsLeft(): bool
     {
         return $this->alignActionsLeft;
     }

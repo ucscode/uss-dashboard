@@ -3,6 +3,8 @@
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
+use Ucscode\UssForm\UssFormFieldStack;
 
 class CrudEditManager extends AbstractCrudEditConcept
 {
@@ -11,10 +13,13 @@ class CrudEditManager extends AbstractCrudEditConcept
      */
     public function createUI(): UssElement
     {
+        /**
+         * The Root Container for Edit Manager Components
+         */
         $container = new UssElement(UssElement::NODE_DIV);
         $container->setAttribute('class', 'crud-edit-container');
 
-        $position = $this->getAlignActionsLeft() ? 'text-start' : 'text-end';
+        $position = $this->isAlignActionsLeft() ? 'text-start' : 'text-end';
         $actionClass = sprintf('border-bottom mb-2 %s', $position);
 
         if(!$this->isReadOnly()) {
@@ -25,63 +30,6 @@ class CrudEditManager extends AbstractCrudEditConcept
 
         $this->insertActions();
         $this->insertWidgets();
-
-        return $container;
-    }
-
-    /**
-     * @method createdEditorElement
-     */
-    protected function processEditorContent(UssElement $container, string $actionClass): UssElement
-    {
-        new CrudEditFormSubmissionHandler($this);
-
-        $this->editForm = new UssForm(
-            $this->tablename . '-crud-edit',
-            $this->getSubmitUrl(),
-            'POST',
-            'multipart/form-data'
-        );
-
-        $this->editForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
-
-        $this->actionContainer = $this->editForm->addRow('action-container');
-        $this->actionContainer
-            ->removeAttributeValue('class', 'row')
-            ->addAttributeValue('class', $actionClass);
-
-        $this->widgetContainer = $this->editForm->addRow('widget-container');
-
-        $this->editForm->addRow();
-
-        foreach($this->fields as $key => $crudField) {
-            if($crudField->getType() !== CrudField::TYPE_EDITOR) {
-                $this->editForm->add(
-                    $key,
-                    $this->getNodeName($crudField),
-                    $this->getFieldContext($crudField),
-                    $this->getFieldConfig($crudField)
-                );
-                if($crudField->hasLineBreak()) {
-                    $this->editForm->addRow();
-                }
-            } else {
-                $this->createCustomField($this->editForm);
-            }
-        }
-
-        $this->populateForm();
-
-        $this->editForm->add(
-            '__NONCE__',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_HIDDEN,
-            [
-                'value' => Uss::instance()->nonce($this->tablename)
-            ]
-        );
-
-        $container->appendChild($this->editForm);
 
         return $container;
     }
@@ -108,7 +56,7 @@ class CrudEditManager extends AbstractCrudEditConcept
 
         foreach($this->fields as $key => $crudField) {
             $data[] = [
-                'key' => ucwords(str_replace('_', ' ', $crudField->getLabel())),
+                'key' => ucwords(str_replace('_', ' ', $crudField->getWidgetValue())),
                 'value' => $item[$key] ?? null
             ];
         }
@@ -125,28 +73,83 @@ class CrudEditManager extends AbstractCrudEditConcept
     }
 
     /**
+     * @method createdEditorElement
+     */
+    protected function processEditorContent(UssElement $container, string $actionClass): UssElement
+    {
+        /**
+         * When user create new item or update an existing item
+         * The "CrudEditFormSubmissionHandler" class will handle the request
+         */
+        new CrudEditFormSubmissionHandler($this);
+
+        /**
+         * Create the edit form
+         * The form is applicable to both edit and create action
+         */
+        $this->editForm = new UssForm(
+            $this->tablename . '-crud-edit',
+            $this->getSubmitUrl(),
+            'POST',
+            'multipart/form-data'
+        );
+
+        /**
+         * Give a unique data-* identity to the form
+         * This could be helpful for style or javascript usage
+         */
+        $this->editForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
+
+        /**
+         * Create the action container and append it to the form
+         */
+        $this->actionContainer = new UssElement(UssElement::NODE_DIV);
+        $this->actionContainer->setAttribute('class', 'action-container ' . $actionClass);
+        $this->editForm->appendChild($this->actionContainer);
+
+        /**
+         * Create the widget container and append it to the form
+         */
+        $this->widgetContainer = (new UssElement(UssElement::NODE_DIV));
+        $this->widgetContainer->setAttribute('class', 'widget-container');
+        $this->editForm->appendChild($this->widgetContainer);
+
+        /**
+         * The create the default fieldstack (fieldset), which holds the UssFormFields
+         */
+        $this->editForm->addFieldStack('default');
+
+        foreach($this->fields as $key => $crudField) {
+            $this->editForm->addField($key, $crudField);
+        }
+
+        $this->populateForm();
+
+        $nonceField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN);
+        $nonceField->setWidgetValue(Uss::instance()->nonce($this->tablename));
+        
+        $this->editForm->addField('__NONCE__', $nonceField);
+
+        $container->appendChild($this->editForm);
+
+        return $container;
+    }
+
+    /**
      * @method populateForm
      */
     protected function populateForm(): void
     {
         $isPost = $_SERVER['REQUEST_METHOD'] === 'POST';
-        $populate = $isPost || $this->getItem();
-        $discardKey = ['__ACTION__', '__NONCE__'];
-        $dataToPopulate = $_POST;
-
-        foreach($discardKey as $key) {
-            if(isset($dataToPopulate[$key])) {
-                unset($dataToPopulate[$key]);
+        if($isPost || $this->getItem()) {
+            $keys = ['__ACTION__', '__NONCE__'];
+            $dataToPopulate = $isPost ? $_POST : $this->getItem();
+            foreach($keys as $key) {
+                if(array_key_exists($key, $dataToPopulate)) {
+                    unset($dataToPopulate[$key]);
+                }
             }
-        }
-
-        if($populate) {
-            if($isPost) {
-                $this->editForm->populate($dataToPopulate);
-            } else {
-                $this->editForm->populate($this->getItem());
-            }
-            $this->editForm->populate(true);
+            $this->editForm->populate($dataToPopulate);
         }
     }
 }

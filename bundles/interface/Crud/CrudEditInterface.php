@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\UssFormField;
 
 interface CrudEditInterface
 {
@@ -16,9 +17,9 @@ interface CrudEditInterface
 
     public function createUI(): UssElement;
 
-    public function setField(string $name, CrudField $field): self;
+    public function setField(string $name, UssFormField $field): self;
 
-    public function getField(string $name): ?CrudField;
+    public function getField(string $name): ?UssFormField;
 
     public function getFields(): array;
 

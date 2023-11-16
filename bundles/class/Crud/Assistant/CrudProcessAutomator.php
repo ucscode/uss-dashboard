@@ -1,15 +1,11 @@
 <?php
 
-use Ucscode\DOMTable\DOMTableInterface;
-use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 
 class CrudProcessAutomator implements CrudProcessAutomatorInterface
 {
     private CrudIndexManager $crudIndexManager;
     private CrudEditManager $crudEditManager;
-    private ?DOMTableInterface $crudIndexManagerUIParameter = null;
-    private CrudEditSubmitInterface|CrudEditSubmitCustomInterface|null $crudEditManagerUIParameter = null;
     private null|CrudEditManager|CrudIndexManager $activeManager = null;
 
     private array $crudActions = [
@@ -22,6 +18,9 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     private ?string $currentAction;
     private ?string $currentEntity;
 
+    /**
+     * Perfect!
+     */
     public function __construct(
         protected string $tablename
     ) {
@@ -40,9 +39,9 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     }
 
     /**
-     * @method processOverviewAction
+     * @method processIndexAction
      */
-    public function processOverviewAction(): void
+    public function processIndexAction(): void
     {
         if(!in_array($this->currentAction, $this->crudActions, true)) {
             $this->activeManager = $this->crudIndexManager;
@@ -104,35 +103,8 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
      */
     public function processBulkActions(): void
     {
-        $this->crudIndexManager->manageBulkActionSubmission(
-            new class ($this->crudIndexManager) implements CrudBulkActionsInterface {
-                public function __construct(
-                    private CrudIndexManager $crudIndexManager
-                ) {
-                }
-
-                public function onSubmit(string $action, array $selections): void
-                {
-                    $primaryKey = $this->crudIndexManager->getPrimaryKey();
-                    $uss = Uss::instance();
-
-                    if($action === CrudActionImmutableInterface::ACTION_DELETE) {
-
-                        foreach($selections as $value) {
-                            $sQuery = (new SQuery())
-                                ->delete($this->crudIndexManager->tablename)
-                                ->where($primaryKey, $value);
-
-                            $uss->mysqli->query($sQuery);
-                        }
-
-                        $this->crudIndexManager->updateSQuery(function ($sQuery) {
-                            return $sQuery;
-                        });
-
-                    }
-                }
-            }
+        $this->crudIndexManager->handleBulkActions(
+            new CrudBulkActionHandler($this->crudIndexManager)
         );
     }
 
@@ -142,7 +114,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     public function processAllActions(): void
     {
         $this->processBulkActions();
-        $this->processOverviewAction();
+        $this->processIndexAction();
         $this->processCreateAction();
         $this->processReadAction();
         $this->processUpdateAction();
@@ -154,18 +126,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
      */
     public function getCreatedUI(): ?UssElement
     {
-        if($this->activeManager instanceof CrudIndexManager) {
-            $createdUI = $this->activeManager->createUI(
-                $this->crudIndexManagerUIParameter
-            );
-        } elseif($this->activeManager instanceof CrudEditManager) {
-            $createdUI = $this->activeManager->createUI(
-                $this->crudEditManagerUIParameter
-            );
-        } else {
-            $createdUI = null;
-        };
-        return $createdUI;
+        return $this->activeManager->createUI();
     }
 
     /**
@@ -182,21 +143,5 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
     public function getCrudEditManager(): CrudEditManager
     {
         return $this->crudEditManager;
-    }
-
-    /**
-     * @method setCrudIndexUIParameter
-     */
-    public function setCrudIndexUIParameter(?DOMTableInterface $modifier): void
-    {
-        $this->crudIndexManagerUIParameter = $modifier;
-    }
-
-    /**
-     * @method setCrudEditUIParameter
-     */
-    public function setCurdEditUIParameter(null|CrudEditSubmitInterface|CrudEditSubmitCustomInterface $modifier): void
-    {
-        $this->crudEditManagerUIParameter = $modifier;
     }
 }

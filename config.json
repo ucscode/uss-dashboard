@@ -21,5 +21,5 @@
         "docs": "https://uss.ucscode.me/docs"
     },
     "license": "MIT",
-    "dependencies": ["uss-validate"]
+    "dependencies": []
 }

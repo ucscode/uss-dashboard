@@ -3,6 +3,7 @@
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
 
 abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
 {
@@ -32,15 +33,11 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
 
         if ($result->num_rows) {
             while ($row = $result->fetch_assoc()) {
-                $name = $row['COLUMN_NAME'];
-                $type = $row['DATA_TYPE'];
-
-                $crudField = (new CrudField())
-                    ->setLabel(str_replace('_', ' ', $name))
-                    ->setType($this->getFieldType(strtoupper($type)))
-                    ->setLineBreak(true);
-
-                $this->setField($name, $crudField);
+                $columnName = $row['COLUMN_NAME'];
+                $cellLabel = str_replace('_', ' ', $columnName);
+                $crudField = $this->createEditField($row['DATA_TYPE']);
+                $crudField->setLabelValue($cellLabel);
+                $this->setField($columnName, $crudField);
             }
         }
     }
@@ -56,123 +53,37 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
     /**
      * @method getDefaultFieldType
      */
-    protected function getFieldType(string $type): string
+    protected function createEditField(string $type): UssFormField
     {
-        $nodeTypes = [
-            CrudField::TYPE_NUMBER => array(...self::DATASET['integer'], ...self::DATASET['float']),
-            CrudField::TYPE_DATE => self::DATASET['date'],
-            CrudField::TYPE_TEXTAREA => self::DATASET['text'],
-            CrudField::TYPE_INPUT => null
-        ];
+        $nodeName = UssForm::NODE_INPUT;
+        $nodeType = UssForm::TYPE_TEXT;
+        $nodeAttr = [];
 
-        foreach($nodeTypes as $key => $value) {
-            if(is_null($value) || in_array($type, $value, true)) {
-                return $key;
+        $isInteger = in_array($type, self::DATASET['INTEGER']);
+        $isFloat = in_array($type, self::DATASET['FLOAT']);
+        $isDate = in_array($type, self::DATASET['DATE']);
+        $isChar = in_array($type, self::DATASET['CHARACTER']);
+        $isText = in_array($type, self::DATASET['TEXT']);
+
+        if($isInteger || $isFloat) {
+            $nodeType = UssForm::TYPE_NUMBER;
+            if($isFloat) {
+                $nodeAttr['step'] = '0.01';
             }
-        }
-    }
-
-    /**
-     * @method getNodename
-     */
-    protected function getNodename(CrudField $crudField): string
-    {
-        switch($crudField->getType()) {
-            case CrudField::TYPE_SELECT:
-                return UssForm::NODE_SELECT;
-            case CrudField::TYPE_TEXTAREA:
-                return UssForm::NODE_TEXTAREA;
-            default:
-                return UssForm::NODE_INPUT;
-        };
-    }
-
-    /**
-     * @method getFieldContext
-     */
-    protected function getFieldContext(CrudField $crudField): array|string|null
-    {
-        $context = null;
-        $nodeType = $crudField->getType();
-
-        switch($nodeType) {
-            case CrudField::TYPE_SELECT:
-                $context = $crudField->getSelectOptions();
-                break;
-            case CrudField::TYPE_BOOLEAN:
-                $context = UssForm::TYPE_SWITCH;
-                break;
-            case CrudField::TYPE_INPUT:
-                $context = UssForm::TYPE_TEXT;
-                break;
-            case CrudField::TYPE_DATE:
-                $context = UssForm::TYPE_DATETIME_LOCAL;
-                break;
-            default:
-                $context = $nodeType;
-        }
-
-        return $context;
-    }
-
-    /**
-     * @method getFieldConfig
-     */
-    protected function getFieldConfig(CrudField $crudField): array
-    {
-        $form_label = in_array(
-            $crudField->getType(),
-            [
-                CrudField::TYPE_CHECKBOX,
-                CrudField::TYPE_RADIO,
-            ]
-        ) ? 'form-check-label' : 'form-label';
-
-        $config = [
-            'label' => $crudField->getLabel(),
-            'value' => $crudField->getValue(),
-            'required' => $crudField->isRequired(),
-            'label_class' => ($crudField->isRequired() ? '--required ' : null) . $form_label,
-            'column' => $crudField->getColumnClass(),
-            'class' => $crudField->getClass(),
-            'attr' => [],
-        ];
-
-        if(empty($config['label'])) {
-            $config['label_class'] = 'd-none';
-        }
-
-        $icon = $crudField->getIcon();
-        if($icon) {
-            $position = $crudField->isIconPositionRight() ? 'append' : 'prepend';
-            $config['group'] = [
-                $position => "<i class='{$icon}'></i>"
-            ];
+        } elseif($isText) {
+            $nodeName = UssForm::NODE_TEXTAREA;
+            $nodeType = null;
+        } elseif($isDate) {
+            $nodeType = UssForm::TYPE_DATETIME_LOCAL;
         };
 
-        $error = $crudField->getError();
-        if($error) {
-            $config['report'] = [
-                'message' => '<i class="bi bi-exclamation-circle me-1"></i>' . $error,
-                'class' => 'text-danger fs-12px'
-            ];
-        }
+        $field = new UssFormField($nodeName, $nodeType);
 
-        $attributes = $crudField->getElementAttributes();
+        foreach($nodeAttr as $key => $value) {
+            $field->setWidgetAttribute($key, $value);
+        };
 
-        foreach($attributes as $key => $attribute) {
-            $config['attr'][$key] = $attribute;
-        }
-
-        if($crudField->isReadonly()) {
-            $config['attr']['readonly'] = 'readonly';
-        }
-
-        if($crudField->isDisabled()) {
-            $config['attr']['disabled'] = 'disabled';
-        }
-
-        return $config;
+        return $field;
     }
 
     /**

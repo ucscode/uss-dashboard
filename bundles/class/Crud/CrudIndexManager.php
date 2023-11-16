@@ -4,6 +4,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssForm\UssForm;
+use Ucscode\UssForm\UssFormField;
 
 class CrudIndexManager extends AbstractCrudIndexConcept
 {
@@ -11,7 +12,7 @@ class CrudIndexManager extends AbstractCrudIndexConcept
      * This method should be called before "createUI" to avoid unexpected output
      * @method manageBulkActionSubmission
      */
-    public function manageBulkActionSubmission(CrudBulkActionsInterface $handler): void
+    public function handleBulkActions(CrudBulkActionsInterface $handler): void
     {
         if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['crud'])) {
             $crud = $_POST['crud'];
@@ -104,13 +105,10 @@ class CrudIndexManager extends AbstractCrudIndexConcept
             $bulkActionFrame = $this->createBulkActionsFrame();
             $this->tableForm->appendChild($bulkActionFrame);
             $this->tableForm->appendChild($tableWrapper);
-            $this->tableForm->add(
+            $this->tableForm->addField(
                 'crud[__NONCE__]',
-                UssForm::NODE_INPUT,
-                UssForm::TYPE_HIDDEN,
-                [
-                    'value' => Uss::instance()->nonce(self::CRUD_NAME)
-                ]
+                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
+                    ->setWidgetValue(self::CRUD_NAME)
             );
             return $this->tableForm;
         } else {

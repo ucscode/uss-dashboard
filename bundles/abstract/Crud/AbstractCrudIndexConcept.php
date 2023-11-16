@@ -4,6 +4,7 @@ use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
+use Ucscode\UssForm\UssFormField;
 
 abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
 {
@@ -118,28 +119,25 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
         $form = new UssForm(
             'search',
             parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-        );
+        ); 
 
-        $form->add(
-            'search',
-            UssForm::NODE_INPUT,
-            UssForm::TYPE_SEARCH,
-            [
-                'value' => $_GET['search'] ?? null,
-                'label_class' => 'd-none',
-                'column' => 'col-12 mb-0',
-                'group' => [
-                    'append' => (new UssElement('button'))
-                        ->setAttribute('class', 'btn btn-sm btn-outline-secondary')
-                        ->setAttribute('type', 'submit')
-                        ->setContent('<i class="bi bi-search me-1"></i> search')
-                ],
-                'class' => 'form-control form-control-sm',
-                'attr' => [
-                    'placeholder' => 'Search'
-                ]
-            ]
-        );
+        $searchField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_SEARCH);
+
+        $searchButton = (new UssElement('button'))
+            ->setAttribute('class', 'btn btn-sm btn-outline-secondary')
+            ->setAttribute('type', 'submit')
+            ->setContent('<i class="bi bi-search me-1"></i> search');
+        
+        $searchField
+            ->setWidgetAttribute('value', $_GET['search'] ?? null)
+            ->setLabelHidden(true)
+            ->appendToWidget($searchButton)
+            ->setWidgetAttribute('class', 'form-control-sm', true)
+            ->setWidgetAttribute('placeholder', 'Search')
+            ->setRequired(false)
+            ;
+
+        $form->addField('search', $searchField, ['column' => 'col-12 mb-0']);
 
         $searchContainer->appendChild($form);
 
