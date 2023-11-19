@@ -72,7 +72,7 @@ class AdminUserController implements RouteInterface
         $crudIndexManager->removeTableColumn('parent');
         $crudIndexManager->setTableColumn('role', 'Role');
         $crudIndexManager->setTableColumn('register_time', 'Registered');
-        //$crudIndexManager->setDisplayItemActionsAsButton(true);
+        $crudIndexManager->setDisplayItemActionsAsButton(true);
         $crudIndexManager->setItemsPerPage(15);
         $crudIndexManager->setTableWhiteBackground();
         //$crudIndexManager->setHideWidgets(true);
@@ -126,8 +126,9 @@ class AdminUserController implements RouteInterface
         $this->user = new User($item ? ($item['id'] ?? -1) : null);
 
         // Change the column size of the default fieldstack
-        $crudEditManager->getEditForm()->getFieldStack('default')
-            ->setOuterContainerAttribute('class', 'col-lg-8', true);
+        $crudEditManager->getEditForm()
+            ->getFieldStack('default')
+                ->setOuterContainerAttribute('class', 'col-lg-8', true);
 
         // Modify Fields
         $crudEditManager->removeField('id');
@@ -195,7 +196,9 @@ class AdminUserController implements RouteInterface
 
                     $crudEditManager
                         ->getField('password')
-                            ->setRequired(false);
+                            ->setRequired(false)
+                            ->setInfoMessage('Leave blank to avoid changing the user password')
+                            ->setInfoAttribute('class', 'my-1', true);
 
                     $item['password'] = null;
 
@@ -230,15 +233,19 @@ class AdminUserController implements RouteInterface
                 public function beforeEntry(array $data): array
                 {
                     $data['username'] = $data['username'] ?: null;
+
                     if(empty($data['password']) && $this->crudEditManager->getCurrentAction() === CrudActionImmutableInterface::ACTION_UPDATE) {
                         unset($data['password']);
                     } else {
                         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
                     }
+
                     $data['parent'] = $data['parent'] ?: null;
                     $data['usercode'] = Uss::instance()->keygen(7);
+
                     $this->roles = $data['roles'] ?? [];
                     unset($data['roles']);
+
                     return $data;
                 }
 
@@ -263,13 +270,12 @@ class AdminUserController implements RouteInterface
      */
     protected function addRoleFields(CrudEditManager $crudEditManager): void
     {
-        $fieldstack = $crudEditManager->getEditForm()->addFieldStack('roles', true);
-        $fieldstack
-            ->removeOuterContainerAttribute('class', 'col-12', true)
-            ->setOuterContainerAttribute('class', 'col-lg-4', true);
+        $fieldstack = $crudEditManager
+            ->getEditForm()
+            ->addFieldStack('roles', true)
+                ->setOuterContainerAttribute('class', 'col-lg-4', true);
 
-        $roleField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX);
-        $roleField
+        $roleField = (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
             ->setValidationHidden(true)
             ->setContainerAttribute('class', 'border p-3 rounded my-2', true)
             ->setInfoMessage("Select all roles for the user")

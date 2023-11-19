@@ -105,7 +105,7 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
         $this->setWidget('search', $searchContainer);
 
         $newContainer = $this->createAddNewWidget();
-        $this->setWidget('add-new', $newContainer);
+        $this->setWidget(CrudActionImmutableInterface::ACTION_CREATE, $newContainer);
     }
 
     /**
