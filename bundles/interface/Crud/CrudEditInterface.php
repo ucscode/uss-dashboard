@@ -1,6 +1,7 @@
 <?php
 
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
 
 interface CrudEditInterface
@@ -50,4 +51,6 @@ interface CrudEditInterface
     public function updateItemEntity(?array $item): bool;
 
     public function lastItemEntityError(): ?string;
+
+    public function getEditForm(): UssForm;
 }

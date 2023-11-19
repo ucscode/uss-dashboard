@@ -1,15 +1,20 @@
 <?php
 
 use Ucscode\DOMTable\DOMTableInterface;
+use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
 
 class AdminUserController implements RouteInterface
 {
     protected array $userRoles = [
+        RoleImmutable::ROLE_SUPERADMIN,
         RoleImmutable::ROLE_ADMIN,
-        RoleImmutable::ROLE_USER
+        RoleImmutable::ROLE_USER,
+        RoleImmutable::ROLE_CUSTOMER,
     ];
+
+    protected ?User $user = null;
 
     /**
      * @method __construct
@@ -27,13 +32,14 @@ class AdminUserController implements RouteInterface
     {
         $this->archive->getMenuItem('users', true)?->setAttr('active', true);
         $template = $this->archive->getTemplate();
-        $this->processCrudManagers($template);
+        $entityUI = $this->processCrudManagers();
+        $this->renderUserInterface($template, $entityUI);
     }
 
     /**
      * @method processCrudManagers
      */
-    protected function processCrudManagers(string $template): void
+    protected function processCrudManagers(): UssElement
     {
         //(new FakeUser())->create(100);
         $crudProcessAutomator = new CrudProcessAutomator(User::USER_TABLE);
@@ -42,10 +48,16 @@ class AdminUserController implements RouteInterface
         $this->configureIndexManager($crudProcessAutomator->getCrudIndexManager());
         $this->configureEditManager($crudProcessAutomator->getCrudEditManager());
 
-        $automatorUI = $crudProcessAutomator->getCreatedUI();
-        
+        return $crudProcessAutomator->getCreatedUI();
+    }
+
+    /**
+     * @method renderUserInterface
+     */
+    protected function renderUserInterface(string $template, UssElement $entityUI): void
+    {
         $this->dashboard->render($template, [
-            'crudIndex' => $automatorUI->getHTML(true)
+            'crudContent' => $entityUI->getHTML(true)
         ]);
     }
 
@@ -108,9 +120,23 @@ class AdminUserController implements RouteInterface
      */
     protected function configureEditManager(CrudEditManager $crudEditManager): void
     {
-        $crudEditManager->removeField('id');
+        $item = $crudEditManager->getItem();
 
-        $emailField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL);
+        // Get associated user
+        $this->user = new User($item ? ($item['id'] ?? -1) : null);
+
+        // Change the column size of the default fieldstack
+        $crudEditManager->getEditForm()->getFieldStack('default')
+            ->setOuterContainerAttribute('class', 'col-lg-8', true);
+
+        // Modify Fields
+        $crudEditManager->removeField('id');
+        
+        $prevEmailField = $crudEditManager->getField('email');
+
+        $emailField = (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+            ->setRowAttribute('class', $prevEmailField->getRowAttribute('class'), true);
+        
         $crudEditManager->setField('email', $emailField);
 
         $crudEditManager
@@ -122,10 +148,20 @@ class AdminUserController implements RouteInterface
             ->getField('password')
                 ->setWidgetAttribute('placeholder', str_repeat('*', 6));
 
-        $this->addExtraFields($crudEditManager);
+        $crudEditManager
+            ->getField('register_time')
+            ->addLineBreak();
 
-        $item = $crudEditManager->getItem();
+        // Set default register time
+        if($crudEditManager->getCurrentAction() === CrudActionImmutableInterface::ACTION_CREATE) {
+            $time = (new DateTime('now'))->format('Y-m-d H:i:s');
+            $crudEditManager->getField('register_time')->setWidgetValue($time);
+        };
 
+        // Add available roles
+        $this->addRoleFields($crudEditManager);
+
+        // Configure Visuals based on current Actions
         switch($crudEditManager->getCurrentAction()) {
 
             case CrudActionImmutableInterface::ACTION_READ:
@@ -134,8 +170,8 @@ class AdminUserController implements RouteInterface
 
                 if(!empty($item)) {
                     if(!empty($item['parent'])) {
-                        $user = new User($item['parent']);
-                        $item['parent'] = $user->getEmail();
+                        $parentUser = new User($item['parent']);
+                        $item['parent'] = $parentUser->getEmail();
                     };
                     if(empty($item['parent'])) {
                         $item['parent'] = '<span class="text-muted">NULL</span>';
@@ -162,18 +198,16 @@ class AdminUserController implements RouteInterface
 
                     $item['password'] = null;
 
-                } else {
-
-
-
                 }
 
                 break;
 
         }
 
+        // Update the items
         $crudEditManager->setItem($item);
 
+        // Handle Submit Events
         $crudEditManager->setModifier(
             //
             new class ($crudEditManager) implements CrudEditSubmitInterface {
@@ -187,8 +221,7 @@ class AdminUserController implements RouteInterface
                  */
                 public function __construct(
                     protected CrudEditManager $crudEditManager
-                ) {
-                }
+                ) {}
 
                 /**
                  * @override
@@ -203,8 +236,8 @@ class AdminUserController implements RouteInterface
                     }
                     $data['parent'] = $data['parent'] ?: null;
                     $data['usercode'] = Uss::instance()->keygen(7);
-                    $this->roles = $data['role'] ?? [];
-                    unset($data['role']);
+                    $this->roles = $data['roles'] ?? [];
+                    unset($data['roles']);
                     return $data;
                 }
 
@@ -213,8 +246,11 @@ class AdminUserController implements RouteInterface
                  */
                 public function afterEntry(bool $status, array $item): bool
                 {
-                    $user = new User($item['id']);
-                    $user->setRoles($this->roles);
+                    // if registration was successful
+                    if($status) {
+                        $user = new User($item['id']);
+                        $user->setRoles($this->roles);
+                    }
                     return true;
                 }
             }
@@ -224,27 +260,39 @@ class AdminUserController implements RouteInterface
     /**
      * @method addExtraEditFields
      */
-    protected function addExtraFields(CrudEditManager $crudEditManager): void
+    protected function addRoleFields(CrudEditManager $crudEditManager): void
     {
-        // $fieldContainer = new FieldContainer()
-        //     ->setTitle()
-        //     ->setClass()
-        //     ->isFieldset()
-        //     ->setCaption()
-        //     ->setLegend()
-        //     ->setDisabled();
+        $fieldstack = $crudEditManager->getEditForm()->addFieldStack('roles', true);
+        $fieldstack
+            ->removeOuterContainerAttribute('class', 'col-12', true)
+            ->setOuterContainerAttribute('class', 'col-lg-4', true);
 
-        foreach($this->userRoles as $key => $value) {
+        $roleField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX);
+        $roleField
+            ->setValidationHidden(true)
+            ->setContainerAttribute('class', 'border p-3 rounded my-2', true)
+            ->setInfoMessage("Select all roles for the user")
+            ->setInfoAttribute('class', 'mb-2 alert alert-info', true)
+            ->setLabelValue($this->userRoles[0])
+            ->setWidgetValue($this->userRoles[0])
+            ->setRequired(false)
+            ->setWidgetChecked($this->user && $this->user->hasRole($this->userRoles[0]));
+        
+        $crudEditManager->setField('roles[]', $roleField);
 
-            $roleField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX);
-            $roleField
-                ->setWidgetValue($value)
-                ->setWidgetAttribute('name', 'role[]')
-                ->setContainerAttribute('class', 'mb-1')
-                ->setRequired(false)
-            ;
-
-            $crudEditManager->setField("_role_{$key}", $roleField);
+        foreach($this->userRoles as $key => $role) {
+            if($key) {
+                $fieldName = strtolower('role_' . $role);
+                $secondaryField = $roleField->createSecondaryField($fieldName, UssForm::TYPE_CHECKBOX);
+                $secondaryField
+                    ->setLabelValue($role)
+                    ->setRequired(false)
+                    ->setWidgetValue($role)
+                    ;
+                if($this->user && $this->user->hasRole($role)) {
+                    $secondaryField->setWidgetChecked(true);
+                }
+            }
         }
     }
 }

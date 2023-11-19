@@ -1,8 +1,6 @@
 <?php
 
-use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
-use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
 
@@ -108,7 +106,9 @@ class CrudIndexManager extends AbstractCrudIndexConcept
             $this->tableForm->addField(
                 'crud[__NONCE__]',
                 (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
-                    ->setWidgetValue(self::CRUD_NAME)
+                    ->setWidgetValue(
+                        Uss::instance()->nonce(self::CRUD_NAME)
+                    )
             );
             return $this->tableForm;
         } else {

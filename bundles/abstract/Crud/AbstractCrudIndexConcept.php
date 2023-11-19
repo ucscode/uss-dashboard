@@ -119,7 +119,7 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
         $form = new UssForm(
             'search',
             parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-        ); 
+        );
 
         $searchField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_SEARCH);
 
@@ -127,15 +127,15 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
             ->setAttribute('class', 'btn btn-sm btn-outline-secondary')
             ->setAttribute('type', 'submit')
             ->setContent('<i class="bi bi-search me-1"></i> search');
-        
+
         $searchField
             ->setWidgetAttribute('value', $_GET['search'] ?? null)
             ->setLabelHidden(true)
-            ->appendToWidget($searchButton)
+            ->setWidgetSuffix($searchButton)
             ->setWidgetAttribute('class', 'form-control-sm', true)
             ->setWidgetAttribute('placeholder', 'Search')
             ->setRequired(false)
-            ;
+        ;
 
         $form->addField('search', $searchField, ['column' => 'col-12 mb-0']);
 

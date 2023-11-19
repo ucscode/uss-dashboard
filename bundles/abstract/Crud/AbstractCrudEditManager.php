@@ -37,11 +37,6 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
         ]
     ];
 
-    protected ?string $submitUrl;
-
-    // $fields: The available input fields of an item
-    protected array $fields = [];
-
     // $actions: Buttons such as "save changes", "delete item"...
     protected array $actions = [];
 
@@ -63,7 +58,6 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     public function __construct(string $tablename)
     {
         parent::__construct($tablename);
-        $this->submitUrl = $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -105,7 +99,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function setField(string $name, UssFormField $field): CrudEditInterface
     {
-        $this->fields[$name] = $field;
+        $this->getEditForm()->addField($name, $field);
         return $this;
     }
 
@@ -114,7 +108,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function getField(string $name): ?UssFormField
     {
-        return $this->fields[$name] ?? null;
+        return $this->getEditForm()->getField($name);
     }
 
     /**
@@ -122,9 +116,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function removeField(string $name): CrudEditInterface
     {
-        if(array_key_exists($name, $this->fields)) {
-            unset($this->fields[$name]);
-        }
+        $this->getEditForm()->removeField($name);
         return $this;
     }
 
@@ -133,7 +125,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function getFields(): array
     {
-        return $this->fields;
+        return $this->getEditForm()->getFields();
     }
 
     /**
@@ -221,7 +213,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function setSubmitUrl(?string $url): CrudEditInterface
     {
-        $this->submitUrl = $url;
+        $this->getEditForm()->setAttribute('action', $url);
         return $this;
     }
 
@@ -230,7 +222,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
      */
     public function getSubmitUrl(): ?string
     {
-        return $this->submitUrl;
+        return $this->getEditForm()->getAttribute('action');
     }
 
     /**

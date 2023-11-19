@@ -4,7 +4,6 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
-use Ucscode\UssForm\UssFormFieldStack;
 
 class CrudEditManager extends AbstractCrudEditConcept
 {
@@ -40,28 +39,30 @@ class CrudEditManager extends AbstractCrudEditConcept
     public function processReadContent(UssElement $container, string $actionClass): UssElement
     {
         $item = $this->getItem();
+        $itemCast = [];
 
         $this->actionContainer = new UssElement(UssElement::NODE_DIV);
         $this->actionContainer->setAttribute('class', 'action-container ' . $actionClass);
 
         $this->widgetContainer = new UssElement(UssElement::NODE_DIV);
         $this->widgetContainer->setAttribute('class', 'row widget-container');
-        $data = [];
-
+        
         $domTable = new DOMTable($this->tablename);
         $domTable->setColumns([
             'key',
             'value'
         ]);
 
-        foreach($this->fields as $key => $crudField) {
-            $data[] = [
-                'key' => ucwords(str_replace('_', ' ', $crudField->getWidgetValue())),
+        $preservedFields = $this->getEditForm()->getFields();
+
+        foreach($preservedFields as $key => $crudField) {
+            $itemCast[] = [
+                'key' => $this->refactorKey($key),
                 'value' => $item[$key] ?? null
             ];
         }
 
-        $domTable->setData($data);
+        $domTable->setData($itemCast);
         $tableElement = $domTable->build();
         $domTable->getTableElement()->addAttributeValue('class', 'table-striped');
 
@@ -84,42 +85,25 @@ class CrudEditManager extends AbstractCrudEditConcept
         new CrudEditFormSubmissionHandler($this);
 
         /**
-         * Create the edit form
-         * The form is applicable to both edit and create action
-         */
-        $this->editForm = new UssForm(
-            $this->tablename . '-crud-edit',
-            $this->getSubmitUrl(),
-            'POST',
-            'multipart/form-data'
-        );
-
-        /**
-         * Give a unique data-* identity to the form
-         * This could be helpful for style or javascript usage
-         */
-        $this->editForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
-
-        /**
-         * Create the action container and append it to the form
+         * Create the action container and append it to the FORM Element
          */
         $this->actionContainer = new UssElement(UssElement::NODE_DIV);
         $this->actionContainer->setAttribute('class', 'action-container ' . $actionClass);
-        $this->editForm->appendChild($this->actionContainer);
+        $this->editForm->prependChild($this->actionContainer);
 
         /**
-         * Create the widget container and append it to the form
+         * Create the widget container and append it to the FORM Element
          */
         $this->widgetContainer = (new UssElement(UssElement::NODE_DIV));
         $this->widgetContainer->setAttribute('class', 'widget-container');
-        $this->editForm->appendChild($this->widgetContainer);
+        $this->editForm->insertAfter(
+            $this->widgetContainer,
+            $this->actionContainer
+        );
 
-        /**
-         * The create the default fieldstack (fieldset), which holds the UssFormFields
-         */
-        $this->editForm->addFieldStack('default');
+        $preservedFields = $this->getEditForm()->getFields();
 
-        foreach($this->fields as $key => $crudField) {
+        foreach($preservedFields as $key => $crudField) {
             $this->editForm->addField($key, $crudField);
         }
 
@@ -127,7 +111,6 @@ class CrudEditManager extends AbstractCrudEditConcept
 
         $nonceField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN);
         $nonceField->setWidgetValue(Uss::instance()->nonce($this->tablename));
-        
         $this->editForm->addField('__NONCE__', $nonceField);
 
         $container->appendChild($this->editForm);
@@ -151,5 +134,16 @@ class CrudEditManager extends AbstractCrudEditConcept
             }
             $this->editForm->populate($dataToPopulate);
         }
+    }
+
+    /**
+     * @method refactorKey
+     */
+    protected function refactorKey(string $key): string
+    {
+        $pattern = ['/_/i', '/[\[\]]/i'];
+        $replacement = [' ', ''];
+        $key = preg_replace($pattern, $replacement, $key);
+        return ucwords($key);
     }
 }

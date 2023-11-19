@@ -14,9 +14,24 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
     public function __construct(string $tablename)
     {
         parent::__construct($tablename);
+
+        $this->editForm = new UssForm(
+            $this->tablename . '-crud-edit',
+            $_SERVER['REQUEST_URI'],
+            'POST',
+            'multipart/form-data'
+        );
+        
+        $this->editForm->setAttribute('data-ui-crud-form', self::CRUD_NAME);
+        
         $this->createDefaultFields();
-        new CrudItemActionBuilder($this);
+        (new CrudItemActionBuilder($this));
         $this->createDefaultWidgets(); // void
+    }
+
+    public function getEditForm(): UssForm
+    {
+        return $this->editForm;
     }
 
     /**
@@ -34,9 +49,10 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
         if ($result->num_rows) {
             while ($row = $result->fetch_assoc()) {
                 $columnName = $row['COLUMN_NAME'];
-                $cellLabel = str_replace('_', ' ', $columnName);
-                $crudField = $this->createEditField($row['DATA_TYPE']);
-                $crudField->setLabelValue($cellLabel);
+                $crudField = $this->createEditField(
+                    strtoupper($row['DATA_TYPE']),
+                    strtolower($columnName)
+                );
                 $this->setField($columnName, $crudField);
             }
         }
@@ -53,34 +69,45 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
     /**
      * @method getDefaultFieldType
      */
-    protected function createEditField(string $type): UssFormField
+    protected function createEditField(string $type, string $columnName): UssFormField
     {
         $nodeName = UssForm::NODE_INPUT;
         $nodeType = UssForm::TYPE_TEXT;
-        $nodeAttr = [];
+        $attributes = [
+            'row' => [],
+            'widget' => []
+        ];
 
         $isInteger = in_array($type, self::DATASET['INTEGER']);
         $isFloat = in_array($type, self::DATASET['FLOAT']);
         $isDate = in_array($type, self::DATASET['DATE']);
-        $isChar = in_array($type, self::DATASET['CHARACTER']);
         $isText = in_array($type, self::DATASET['TEXT']);
-
+        $isChar = in_array($type, self::DATASET['CHARACTER']);
+        
         if($isInteger || $isFloat) {
             $nodeType = UssForm::TYPE_NUMBER;
+            $attributes['row']['class'] = ' col-md-7';
             if($isFloat) {
-                $nodeAttr['step'] = '0.01';
+                $attributes['widget']['step'] = '0.01';
             }
         } elseif($isText) {
             $nodeName = UssForm::NODE_TEXTAREA;
             $nodeType = null;
+            $attributes['row']['class'] = ' col-md-9';
         } elseif($isDate) {
             $nodeType = UssForm::TYPE_DATETIME_LOCAL;
-        };
+            $attributes['row']['class'] = ' col-md-7';
+        } else {
+            $attributes['row']['class'] = ' col-md-9';
+        }
 
         $field = new UssFormField($nodeName, $nodeType);
 
-        foreach($nodeAttr as $key => $value) {
-            $field->setWidgetAttribute($key, $value);
+        foreach($attributes as $el => $nodeAttr) {
+            foreach($nodeAttr as $attr => $value) {
+                $method = 'set' . ucfirst($el) . 'Attribute';
+                $field->{$method}($attr, $value, true);
+            }
         };
 
         return $field;
