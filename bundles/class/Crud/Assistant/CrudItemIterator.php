@@ -86,7 +86,7 @@ final class CrudItemIterator implements DOMTableInterface
 
         if($this->isDropdown) {
 
-            $nodelist['container']->setAttribute('class', 'dropdown');
+            $nodelist['container']->setAttribute('class', 'dropdown position-static');
 
             $anchor = new UssElement(UssElement::NODE_A);
             $anchor->setAttribute('class', 'btn btn-outline-secondary btn-sm');

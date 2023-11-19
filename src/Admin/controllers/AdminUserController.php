@@ -72,7 +72,7 @@ class AdminUserController implements RouteInterface
         $crudIndexManager->removeTableColumn('parent');
         $crudIndexManager->setTableColumn('role', 'Role');
         $crudIndexManager->setTableColumn('register_time', 'Registered');
-        $crudIndexManager->setDisplayItemActionsAsButton(true);
+        //$crudIndexManager->setDisplayItemActionsAsButton(true);
         $crudIndexManager->setItemsPerPage(15);
         $crudIndexManager->setTableWhiteBackground();
         //$crudIndexManager->setHideWidgets(true);
@@ -176,6 +176,7 @@ class AdminUserController implements RouteInterface
                     if(empty($item['parent'])) {
                         $item['parent'] = '<span class="text-muted">NULL</span>';
                     }
+                    $item['roles[]'] = implode(", ", $this->user->getRoles());
                 }
 
                 break;
