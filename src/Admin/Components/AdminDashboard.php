@@ -2,15 +2,9 @@
 
 use Ucscode\TreeNode\TreeNode;
 
-class AdminDashboard extends AbstractDashboard
+class AdminDashboard extends AbstractDashboard implements AdminDashboardInterface
 {
     use SingletonTrait;
-
-    public const DIR = DashboardImmutable::SRC_DIR . '/Admin';
-    public const FORM_DIR = self::DIR . '/forms';
-    public const TEMPLATE_DIR = self::DIR . '/templates';
-    public const CONTROLLER_DIR = self::DIR . '/controllers';
-    public const ASSETS_DIR = self::DIR . '/assets';
 
     public function createProject(DashboardConfig $config): void
     {
