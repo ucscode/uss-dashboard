@@ -19,7 +19,7 @@ class DashboardRenderLogic implements EventInterface
     /**
      * @method eventAction
      */
-    public function eventAction(array $data): void
+    public function eventAction(array|object $data): void
     {
         if(!$this->isLoggedIn && $this->dashboard->isFirewallEnabled()) {
             $this->enableLoginArchive();

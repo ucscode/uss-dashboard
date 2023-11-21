@@ -7,7 +7,6 @@ class AdminDashboard extends AbstractDashboard
     use SingletonTrait;
 
     public const DIR = DashboardImmutable::SRC_DIR . '/Admin';
-
     public const FORM_DIR = self::DIR . '/forms';
     public const TEMPLATE_DIR = self::DIR . '/templates';
     public const CONTROLLER_DIR = self::DIR . '/controllers';
@@ -16,30 +15,7 @@ class AdminDashboard extends AbstractDashboard
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-        $uss = Uss::instance();
-        $this->includeControllers();
         $this->registerArchives();
-    }
-
-    protected function includeControllers()
-    {
-        $source = [
-            self::FORM_DIR => [
-                'AdminLoginForm.php',
-            ],
-            self::CONTROLLER_DIR => [
-                'AdminIndexController.php',
-                'AdminUserController.php',
-            ]
-        ];
-
-        foreach($source as $path => $files) {
-            foreach($files as $file) {
-                $controller = $path . '/' . $file;
-                require_once $controller;
-            }
-        }
-
     }
 
     protected function registerArchives(): void

@@ -16,29 +16,13 @@ class UserDashboard extends AbstractDashboard
 
     /**
      * This is the entry method for any class that extends AbstractDashboard
-     * @method main
      */
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
         $this->profileMenu = new TreeNode('profileMenu');
-        $this->getUserControllers();
         $this->registerArchives();
         $this->beforeRender();
-    }
-
-    /**
-     * @method getUserControllers
-     */
-    protected function getUserControllers(): void
-    {
-        $projectFile = $this->getControllerCollections();
-
-        foreach($projectFile as $dir => $controllerFiles) {
-            foreach($controllerFiles as $filename) {
-                require_once $dir . '/' . $filename;
-            };
-        }
     }
 
     /**
@@ -74,31 +58,6 @@ class UserDashboard extends AbstractDashboard
                 }
             };
         }, -10);
-    }
-
-    /**
-     * @method getControllerCollections
-     */
-    private function getControllerCollections(): array
-    {
-        return [
-            self::FORMS_DIR => [
-                "UserLoginForm.php",
-                "UserRegisterForm.php",
-                'AbstractUserRecoveryForm.php',
-                "UserRecoveryForm.php",
-            ],
-            self::CONTROLLER_DIR => [
-                //'LoginController.php',
-                'UserRegisterController.php',
-                'UserRecoveryController.php',
-                'UserIndexController.php',
-                'UserLogoutController.php',
-                'UserNotificationController.php',
-                'UserProfileController.php',
-                'UserPasswordController.php',
-            ]
-        ];
     }
 
     /**

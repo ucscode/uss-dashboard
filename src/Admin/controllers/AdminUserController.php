@@ -214,7 +214,11 @@ class AdminUserController implements RouteInterface
         // Handle Submit Events
         $crudEditManager->setModifier(
             //
-            new class ($crudEditManager) implements CrudEditSubmitInterface {
+            new class (
+                $crudEditManager,
+                Closure::fromCallable([$this, 'updateRolesField']),
+                $this->userRoles
+            ) implements CrudEditSubmitInterface {
                 /**
                  * @var array $roles
                  */
@@ -224,7 +228,9 @@ class AdminUserController implements RouteInterface
                  * @method __construct
                  */
                 public function __construct(
-                    protected CrudEditManager $crudEditManager
+                    protected CrudEditManager $crudEditManager,
+                    protected \closure $roleFieldClosure,
+                    protected array $userRoles
                 ) {}
 
                 /**
@@ -258,6 +264,12 @@ class AdminUserController implements RouteInterface
                     if($status) {
                         $user = new User($item['id']);
                         $user->setRoles($this->roles);
+                        // Update the fields
+                        ($this->roleFieldClosure)(
+                            $user,
+                            $this->crudEditManager->getField('roles[]'),
+                            $this->userRoles
+                        );
                     }
                     return true;
                 }
@@ -282,8 +294,7 @@ class AdminUserController implements RouteInterface
             ->setInfoAttribute('class', 'mb-2 alert alert-info', true)
             ->setLabelValue($this->userRoles[0])
             ->setWidgetValue($this->userRoles[0])
-            ->setRequired(false)
-            ->setWidgetChecked($this->user && $this->user->hasRole($this->userRoles[0]));
+            ->setRequired(false);
         
         $crudEditManager->setField('roles[]', $roleField);
 
@@ -294,10 +305,24 @@ class AdminUserController implements RouteInterface
                 $secondaryField
                     ->setLabelValue($role)
                     ->setRequired(false)
-                    ->setWidgetValue($role)
-                    ;
-                if($this->user && $this->user->hasRole($role)) {
-                    $secondaryField->setWidgetChecked(true);
+                    ->setWidgetValue($role);
+            }
+        }
+
+        $this->updateRolesField($this->user, $roleField, $this->userRoles);
+    }
+
+    public function updateRolesField(?User $user, ?UssFormField $field, array $roles): void
+    {
+        if($user && $field) {
+            foreach($roles as $key => $role) {
+                $checked = $user->hasRole($role);
+                if(!$key) {
+                    $field->setWidgetChecked($checked);
+                } else {
+                    $fieldName = strtolower('role_' . $role);
+                    $secondaryField = $field->getSecondaryField($fieldName);
+                    $secondaryField->setWidgetChecked($checked);
                 }
             }
         }
