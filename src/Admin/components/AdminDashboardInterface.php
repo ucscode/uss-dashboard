@@ -14,4 +14,7 @@ interface AdminDashboardInterface
     public const PAGE_NOTIFICATIONS = 'notifications';
     public const PAGE_USERS = 'users';
     public const PAGE_SETTINGS = 'settings';
+    public const PAGE_SETTINGS_DEFAULT = 'settings/default';
+    public const PAGE_SETTINGS_EMAIL = 'settings/email';
+    public const PAGE_SETTINGS_USERS = 'settings/users';
 }

@@ -11,6 +11,8 @@ class AdminSettingsController implements RouteInterface
     {
         $this->pageManager->getMenuItem('settings', true)?->setAttr('active', true);
         $template = $this->pageManager->getTemplate();
-        $this->dashboard->render($template);
+        $this->dashboard->render($template, [
+            'settingsCatalog' => $this->dashboard->settingsCatalog
+        ]);
     }
 }

@@ -2,6 +2,31 @@
 
 {% block dashboard_content %}
     <div class="container-fluid">
-        Settings 
+
+        <h3 class='fw-normal'>Settings</h3>
+
+        <hr>
+
+        <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4'>
+            {% for item in settingsCatalog.children %}
+
+                <div class="col mb-3">
+                    <div class="card">
+                        <a class="card-body d-block" href='{{ item.getAttr('href') }}'>
+                            <div class='d-flex'>
+                                <h1 class='left my-0 me-3 p-2 border rounded text-center'>
+                                    <i class="{{ item.getAttr('icon') }}"></i>
+                                </h1>
+                                <div class='right flex-grow-1'>
+                                    <h3 class='fw-light mb-0'>{{ item.getAttr('label') }}</h3>
+                                    <p class='text-muted m-0'><small>Settings</small></p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

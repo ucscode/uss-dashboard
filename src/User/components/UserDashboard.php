@@ -6,7 +6,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
 {
     use SingletonTrait;
 
-    public readonly TreeNode $profileMenu;
+    public readonly TreeNode $profileCatalog;
 
     /**
      * This is the entry method for any class that extends AbstractDashboard
@@ -14,7 +14,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-        $this->profileMenu = new TreeNode('profileMenu');
+        $this->profileCatalog = new TreeNode('profileCatalog');
         $this->inventPages();
         $this->beforeRender();
     }
@@ -96,7 +96,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         yield $this->createPage(self::PAGE_USER_PASSWORD)
             ->setController(UserPasswordController::class)
             ->setTemplate($this->useTheme('/pages/user/profile/password.html.twig'))
-            ->addMenuItem('passwordPill', $passwordPillItem, $this->profileMenu);
+            ->addMenuItem('passwordPill', $passwordPillItem, $this->profileCatalog);
     }
 
     /**
@@ -104,7 +104,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
      */
     protected function createProfilePage(): PageManager
     {
-        $profileMenuItem = [
+        $profileCatalogItem = [
             'label' => 'Profile',
             'href' => $this->urlGenerator('/' . self::PAGE_USER_PROFILE),
             'icon' => 'bi bi-person'
@@ -119,8 +119,8 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         return $this->createPage(self::PAGE_USER_PROFILE)
             ->setController(UserProfileController::class)
             ->setTemplate($this->useTheme('/pages/user/profile/main.html.twig'))
-            ->addMenuItem(self::PAGE_USER_PROFILE, $profileMenuItem, $this->menu)
-            ->addMenuItem('profilePill', $profilePillItem, $this->profileMenu);
+            ->addMenuItem(self::PAGE_USER_PROFILE, $profileCatalogItem, $this->menu)
+            ->addMenuItem('profilePill', $profilePillItem, $this->profileCatalog);
     }
 
     /**
@@ -130,12 +130,12 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     {
         (new Event())->addListener('dashboard:render', function () {
             $pageManager = $this->pageRepository->getPageManager(self::PAGE_USER_PROFILE);
-            foreach($this->profileMenu->children as $child) {
+            foreach($this->profileCatalog->children as $child) {
                 // If any child in the profile submenu is active
                 if($child->getAttr('active') && $pageManager) {
-                    $profileMenu = $pageManager->getMenuItem(self::PAGE_USER_PROFILE, true);
+                    $profileCatalog = $pageManager->getMenuItem(self::PAGE_USER_PROFILE, true);
                     // Also activate the profile menu at the sidebar
-                    $profileMenu?->setAttr('active', true);
+                    $profileCatalog?->setAttr('active', true);
                 }
             };
         }, -10);
