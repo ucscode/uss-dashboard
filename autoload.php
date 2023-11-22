@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Autoloading Concept:
- * ClassNames Must Be Unique
- */
-
 function recursiveIteratorFactory(string $directory)
 {
     return new \RecursiveIteratorIterator(

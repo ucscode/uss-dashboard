@@ -15,26 +15,112 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     {
         parent::createProject($config);
         $this->profileMenu = new TreeNode('profileMenu');
-        $this->registerArchives();
+        $this->inventPages();
         $this->beforeRender();
     }
 
     /**
-     * @method registerArchives
+     * @method inventPages
      */
-    protected function registerArchives(): void
+    protected function inventPages(): void
     {
-        $pageManagerCollection = [
-            $this->getAuthArchives(),
-            $this->getPageArchives()
+        $pageCollection = [...$this->inventAuthPages(), ...$this->inventMainPages()];
+        foreach($pageCollection as $pageManager) {
+            $this->pageRepository
+                ->addPageManager($pageManager->name, $pageManager);
+        };
+    }
+
+    /**
+     * @method inventAuthPages
+     */
+    protected function inventAuthPages(): iterable
+    {
+        yield $this->createPage(PageManager::LOGIN, false)
+            ->setForm(UserLoginForm::class)
+            ->setTemplate($this->useTheme('/pages/user/security/login.html.twig'));
+
+        yield $this->createPage(self::PAGE_REGISTER)
+            ->setController(UserRegisterController::class)
+            ->setForm(UserRegisterForm::class)
+            ->setTemplate($this->useTheme('/pages/user/security/register.html.twig'));
+
+        yield $this->createPage(self::PAGE_RECOVERY)
+            ->setController(UserRecoveryController::class)
+            ->setForm(UserRecoveryForm::class)
+            ->setTemplate($this->useTheme('/pages/user/security/recovery.html.twig'));
+
+        $logoutMenuItem = [
+            'label' => 'logout',
+            'href' => $this->urlGenerator('/' . self::PAGE_LOGOUT),
+            'icon' => 'bi bi-power',
+            'order' => 1024
         ];
 
-        foreach($pageManagerCollection as $pageManagers) {
-            foreach($pageManagers as $pageManager) {
-                $this->pageRepository->addPageManager($pageManager->name, $pageManager);
-            }
-        };
+        yield $this->createPage(self::PAGE_LOGOUT)
+            ->setTemplate(null)
+            ->setController(UserLogoutController::class)
+            ->setCustom('endpoint', $this->urlGenerator('/'))
+            ->addMenuItem(self::PAGE_LOGOUT, $logoutMenuItem, $this->userMenu);
+    }
 
+    /**
+     * @method inventMainPages
+     */
+    protected function inventMainPages(): iterable
+    {
+        $dashboardMenuItem = new TreeNode('dashboard', [
+            'label' => 'dashboard',
+            'href' => $this->urlGenerator('/'),
+            'icon' => 'bi bi-speedometer',
+        ]);
+
+        yield $this->createPage(self::PAGE_INDEX)
+            ->setRoute('/')
+            ->setController(UserIndexController::class)
+            ->setTemplate($this->useTheme('/pages/user/index.html.twig'))
+            ->addMenuItem(self::PAGE_INDEX, $dashboardMenuItem, $this->menu);
+
+        yield $this->createPage(self::PAGE_NOTIFICATIONS)
+            ->setController(UserNotificationController::class)
+            ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
+
+        yield $this->createProfilePage();
+
+        $passwordPillItem = [
+            'label' => 'password',
+            'href' => $this->urlGenerator('/' . self::PAGE_USER_PASSWORD),
+            'icon' => 'bi bi-unlock'
+        ];
+
+        yield $this->createPage(self::PAGE_USER_PASSWORD)
+            ->setController(UserPasswordController::class)
+            ->setTemplate($this->useTheme('/pages/user/profile/password.html.twig'))
+            ->addMenuItem('passwordPill', $passwordPillItem, $this->profileMenu);
+    }
+
+    /**
+     * @method createProfilePage
+     */
+    protected function createProfilePage(): PageManager
+    {
+        $profileMenuItem = [
+            'label' => 'Profile',
+            'href' => $this->urlGenerator('/' . self::PAGE_USER_PROFILE),
+            'icon' => 'bi bi-person'
+        ];
+        
+        $profilePillItem = [
+            'label' => 'Profile',
+            'href' => $this->urlGenerator('/' . self::PAGE_USER_PROFILE),
+            'icon' => 'bi bi-person-circle',
+        ];
+        
+        return $this->createPage(self::PAGE_USER_PROFILE)
+            ->setController(UserProfileController::class)
+            ->setTemplate($this->useTheme('/pages/user/profile/main.html.twig'))
+            ->addMenuItem(self::PAGE_USER_PROFILE, $profileMenuItem, $this->menu)
+            ->addMenuItem('profilePill', $profilePillItem, $this->profileMenu);
     }
 
     /**
@@ -43,94 +129,15 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     protected function beforeRender(): void
     {
         (new Event())->addListener('dashboard:render', function () {
+            $pageManager = $this->pageRepository->getPageManager(self::PAGE_USER_PROFILE);
             foreach($this->profileMenu->children as $child) {
-                if($child->getAttr('active')) {
-                    $profileMenu = $this->pageRepository->getPageManager('profile')?->getMenuItem('profile', true);
-                    if($profileMenu) {
-                        $profileMenu->setAttr('active', true);
-                    }
+                // If any child in the profile submenu is active
+                if($child->getAttr('active') && $pageManager) {
+                    $profileMenu = $pageManager->getMenuItem(self::PAGE_USER_PROFILE, true);
+                    // Also activate the profile menu at the sidebar
+                    $profileMenu?->setAttr('active', true);
                 }
             };
         }, -10);
-    }
-
-    /**
-     * @method getAuthArchives
-     */
-    private function getAuthArchives(): iterable
-    {
-        yield (new PageManager(PageManager::LOGIN))
-            ->setForm(UserLoginForm::class)
-            ->setTemplate($this->useTheme('/pages/user/security/login.html.twig'));
-
-        yield (new PageManager('register'))
-            ->setRoute('/register')
-            ->setController(UserRegisterController::class)
-            ->setForm(UserRegisterForm::class)
-            ->setTemplate($this->useTheme('/pages/user/security/register.html.twig'));
-
-        yield (new PageManager('recovery'))
-            ->setRoute('/recovery')
-            ->setController(UserRecoveryController::class)
-            ->setForm(UserRecoveryForm::class)
-            ->setTemplate($this->useTheme('/pages/user/security/recovery.html.twig'));
-
-        yield (new PageManager('logout'))
-            ->setRoute('/logout')
-            ->setTemplate(null)
-            ->setController(UserLogoutController::class)
-            ->setCustom('endpoint', $this->urlGenerator('/'))
-            ->addMenuItem('logout', new TreeNode('logout', [
-                'label' => 'logout',
-                'href' => $this->urlGenerator('/logout'),
-                'icon' => 'bi bi-power',
-                'order' => 1024
-            ]), $this->userMenu);
-    }
-
-    /**
-     * @method getPageArchives
-     */
-    private function getPageArchives(): iterable
-    {
-        yield (new PageManager('index'))
-            ->setRoute('/')
-            ->setController(UserIndexController::class)
-            ->setTemplate($this->useTheme('/pages/user/index.html.twig'))
-            ->addMenuItem('index', new TreeNode('dashboard', [
-                'label' => 'dashboard',
-                'href' => $this->urlGenerator('/'),
-                'icon' => 'bi bi-speedometer',
-            ]), $this->menu);
-
-        yield (new PageManager('notifications'))
-            ->setRoute('/notifications')
-            ->setController(UserNotificationController::class)
-            ->setTemplate($this->useTheme('/pages/user/notifications.html.twig'));
-
-        yield (new PageManager('profile'))
-            ->setRoute('/profile')
-            ->setController(UserProfileController::class)
-            ->setTemplate($this->useTheme('/pages/user/profile/main.html.twig'))
-            ->addMenuItem('profile', [
-                'label' => 'Profile',
-                'href' => $this->urlGenerator('/profile'),
-                'icon' => 'bi bi-person'
-            ], $this->menu)
-            ->addMenuItem('profilePill', [
-                'label' => 'Profile',
-                'href' => $this->urlGenerator('/profile'),
-                'icon' => 'bi bi-person-circle',
-            ], $this->profileMenu);
-
-        yield (new PageManager('password'))
-            ->setRoute('/password')
-            ->setController(UserPasswordController::class)
-            ->setTemplate($this->useTheme('/pages/user/profile/password.html.twig'))
-            ->addMenuItem('passwordPill', [
-                'label' => 'password',
-                'href' => $this->urlGenerator('/password'),
-                'icon' => 'bi bi-unlock'
-            ], $this->profileMenu);
     }
 }

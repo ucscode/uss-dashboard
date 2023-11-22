@@ -7,4 +7,4 @@ if(!defined('UD_DIR')) {
 };
 
 require_once UD_DIR . '/autoload.php';
-require_once UD_DIR . "/ConfigurePanel.php";
+require_once UD_DIR . "/genesis.php";

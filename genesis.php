@@ -1,7 +1,6 @@
 <?php
 
-new class {
-
+new class () {
     public function __construct() 
     {
         new DatabaseConfigurator();
@@ -25,7 +24,7 @@ new class {
             ->setBase('/dashboard')
             ->setTheme('default')
             ->addPermission(RoleImmutable::ROLE_USER)
-            ->setPermissionDeniedTemplate('403.html.twig');
+            ->setPermissionDeniedTemplate('pages/403.html.twig');
 
         $UserDashboard = UserDashboard::instance();
         $UserDashboard->createProject($config);
@@ -40,7 +39,7 @@ new class {
                 RoleImmutable::ROLE_SUPERADMIN,
                 RoleImmutable::ROLE_ADMIN
             ])
-            ->setPermissionDeniedTemplate('/403.html.twig');
+            ->setPermissionDeniedTemplate('/pages/403.html.twig');
 
         $adminDashboard = AdminDashboard::instance();
         $adminDashboard->createProject($config);
@@ -52,5 +51,4 @@ new class {
             Event::emit('dashboard:render');
         }, -9);
     }
-
 };

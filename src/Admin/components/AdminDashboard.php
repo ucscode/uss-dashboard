@@ -9,75 +9,72 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-        $this->registerPageManagers();
+        $this->inventPages();
     }
 
-    protected function registerPageManagers(): void
+    protected function inventPages(): void
     {
-        $pageManagers = $this->createPageManagers();
-        foreach($pageManagers as $pageManager) {
-            $this->pageRepository->addPageManager($pageManager->name, $pageManager);
+        $pageCollection = $this->getPageCollection();
+        foreach($pageCollection as $pageManager) {
+            $this->pageRepository
+                ->addPageManager($pageManager->name, $pageManager);
         }
     }
 
-    protected function createPageManagers(): iterable
+    protected function getPageCollection(): iterable
     {
-        $dashboard = UserDashboard::instance();
-
-        yield (new PageManager(PageManager::LOGIN))
+        yield $this->createPage(PageManager::LOGIN, false)
             ->setForm(AdminLoginForm::class)
             ->setTemplate($this->useTheme('/pages/admin/security/login.html.twig'));
 
-        yield (new PageManager('index'))
-            ->setController(AdminIndexController::class)
-            ->setRoute('/')
-            ->setTemplate($this->useTheme('/pages/admin/index.html.twig'))
-            ->addMenuItem('index', [
-                'label' => 'Dashboard',
-                'icon' => 'bi bi-microsoft',
-                'href' => $this->urlGenerator()
-            ], $this->menu);
+        $indexMenuItem = [
+            'label' => 'Dashboard',
+            'icon' => 'bi bi-microsoft',
+            'href' => $this->urlGenerator()
+        ];
 
-        yield (new PageManager('logout'))
+        yield $this->createPage(self::PAGE_INDEX)
+            ->setRoute('/')
+            ->setController(AdminIndexController::class)
+            ->setTemplate($this->useTheme('/pages/admin/index.html.twig'))
+            ->addMenuItem(self::PAGE_INDEX, $indexMenuItem, $this->menu);
+
+        $logoutMenuItem = [
+            'icon' => 'bi bi-power',
+            'order' => 1024,
+            'label' => 'logout',
+            'href' => $this->urlGenerator('/' . self::PAGE_LOGIN)
+        ];
+
+        yield $this->createPage(self::PAGE_LOGOUT)
             ->setController(UserLogoutController::class)
-            ->setRoute('/logout')
-            ->addMenuItem('logout', [
-                'icon' => 'bi bi-power',
-                'order' => 1024,
-                'label' => 'logout',
-                'href' => $this->urlGenerator('/logout')
-            ], $this->userMenu)
+            ->addMenuItem(self::PAGE_LOGOUT, $logoutMenuItem, $this->userMenu)
             ->setCustom('endpoint', $this->urlGenerator());
 
-        yield (new PageManager('notifications'))
-            ->setRoute('/notifications')
+        yield $this->createPage(self::PAGE_NOTIFICATIONS)
             ->setController(UserNotificationController::class)
             ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
-
-        yield (new PageManager('users'))
-            ->setRoute('/users')
-            ->setController(AdminUserController::class)
-            ->setTemplate($this->useTheme('/pages/admin/users.html.twig'))
-            ->addMenuItem('users', $this->createUserMenuItem(), $this->menu);
-        
-        yield (new PageManager('settings'))
-            ->setRoute('/settings')
-            ->setController(AdminSettingsController::class)
-            ->setTemplate($this->useTheme('/pages/admin/settings.html.twig'))
-            ->addMenuItem('settings', [
-                'label' => 'settings',
-                'href' => $this->urlGenerator('/settings'),
-                'icon' => 'bi bi-cog'
-            ], $this->menu);
-    }
-
-    protected function createUserMenuItem(): TreeNode
-    {
-        $parentItem = new TreeNode('users', [
+            
+        $userMenuItem = [
             'label' => 'Users',
             'icon' => 'bi bi-people-fill',
-            'href' => $this->urlGenerator('/users'),
-        ]);
-        return $parentItem;
+            'href' => $this->urlGenerator('/' . self::PAGE_USERS),
+        ];
+
+        yield $this->createPage(self::PAGE_USERS)
+            ->setController(AdminUserController::class)
+            ->setTemplate($this->useTheme('/pages/admin/users.html.twig'))
+            ->addMenuItem(self::PAGE_USERS, $userMenuItem, $this->menu);
+        
+        $settingsMenuItem = [
+            'label' => 'settings',
+            'href' => $this->urlGenerator('/' . self::PAGE_SETTINGS),
+            'icon' => 'bi bi-wrench'
+        ];
+
+        yield $this->createPage(self::PAGE_SETTINGS)
+            ->setController(AdminSettingsController::class)
+            ->setTemplate($this->useTheme('/pages/admin/settings.html.twig'))
+            ->addMenuItem(self::PAGE_SETTINGS, $settingsMenuItem, $this->menu);
     }
 }

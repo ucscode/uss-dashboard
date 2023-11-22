@@ -98,10 +98,25 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         );
     }
 
+    /**
+     * @method useTheme
+     */
     public function useTheme(string $template): string
     {
         $theme = $this->config->getTheme();
         $dymanicTemplate = "@Theme/{$theme}/{$template}";
         return Uss::instance()->filterContext($dymanicTemplate);
+    }
+
+    /**
+     * @method createPage
+     */
+    protected function createPage(string $name, bool $autoRoute = true): PageManager
+    {
+        $pageManager = new PageManager($name);
+        if($autoRoute) {
+            $pageManager->setRoute("/{$name}");
+        }
+        return $pageManager;
     }
 }
