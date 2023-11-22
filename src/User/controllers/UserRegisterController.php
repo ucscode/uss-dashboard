@@ -3,7 +3,7 @@
 class UserRegisterController implements RouteInterface
 {
     public function __construct(
-        private Archive $archive,
+        private PageManager $pageManager,
         private DashboardInterface $dashboard
     ) {
 
@@ -11,13 +11,13 @@ class UserRegisterController implements RouteInterface
 
     public function onload($regex)
     {
-        $registerForm = $this->archive->getForm();
-        $formInstance = new $registerForm($this->archive->name);
+        $registerForm = $this->pageManager->getForm();
+        $formInstance = new $registerForm($this->pageManager->name);
         $formInstance->handleSubmission();
 
         $this->dashboard->enableFirewall(false);
 
-        $this->dashboard->render($this->archive->getTemplate(), [
+        $this->dashboard->render($this->pageManager->getTemplate(), [
             'form' => $formInstance
         ]);
     }

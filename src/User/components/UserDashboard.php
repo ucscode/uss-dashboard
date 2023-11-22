@@ -24,14 +24,14 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
      */
     protected function registerArchives(): void
     {
-        $archiveCollection = [
+        $pageManagerCollection = [
             $this->getAuthArchives(),
             $this->getPageArchives()
         ];
 
-        foreach($archiveCollection as $archives) {
-            foreach($archives as $archive) {
-                $this->archiveRepository->addArchive($archive->name, $archive);
+        foreach($pageManagerCollection as $pageManagers) {
+            foreach($pageManagers as $pageManager) {
+                $this->pageRepository->addPageManager($pageManager->name, $pageManager);
             }
         };
 
@@ -45,7 +45,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         (new Event())->addListener('dashboard:render', function () {
             foreach($this->profileMenu->children as $child) {
                 if($child->getAttr('active')) {
-                    $profileMenu = $this->archiveRepository->getArchive('profile')?->getMenuItem('profile', true);
+                    $profileMenu = $this->pageRepository->getPageManager('profile')?->getMenuItem('profile', true);
                     if($profileMenu) {
                         $profileMenu->setAttr('active', true);
                     }
@@ -59,23 +59,23 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
      */
     private function getAuthArchives(): iterable
     {
-        yield (new Archive(Archive::LOGIN))
+        yield (new PageManager(PageManager::LOGIN))
             ->setForm(UserLoginForm::class)
             ->setTemplate($this->useTheme('/pages/user/security/login.html.twig'));
 
-        yield (new Archive('register'))
+        yield (new PageManager('register'))
             ->setRoute('/register')
             ->setController(UserRegisterController::class)
             ->setForm(UserRegisterForm::class)
             ->setTemplate($this->useTheme('/pages/user/security/register.html.twig'));
 
-        yield (new Archive('recovery'))
+        yield (new PageManager('recovery'))
             ->setRoute('/recovery')
             ->setController(UserRecoveryController::class)
             ->setForm(UserRecoveryForm::class)
             ->setTemplate($this->useTheme('/pages/user/security/recovery.html.twig'));
 
-        yield (new Archive('logout'))
+        yield (new PageManager('logout'))
             ->setRoute('/logout')
             ->setTemplate(null)
             ->setController(UserLogoutController::class)
@@ -93,7 +93,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
      */
     private function getPageArchives(): iterable
     {
-        yield (new Archive('index'))
+        yield (new PageManager('index'))
             ->setRoute('/')
             ->setController(UserIndexController::class)
             ->setTemplate($this->useTheme('/pages/user/index.html.twig'))
@@ -103,12 +103,12 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
                 'icon' => 'bi bi-speedometer',
             ]), $this->menu);
 
-        yield (new Archive('notifications'))
+        yield (new PageManager('notifications'))
             ->setRoute('/notifications')
             ->setController(UserNotificationController::class)
             ->setTemplate($this->useTheme('/pages/user/notifications.html.twig'));
 
-        yield (new Archive('profile'))
+        yield (new PageManager('profile'))
             ->setRoute('/profile')
             ->setController(UserProfileController::class)
             ->setTemplate($this->useTheme('/pages/user/profile/main.html.twig'))
@@ -123,7 +123,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
                 'icon' => 'bi bi-person-circle',
             ], $this->profileMenu);
 
-        yield (new Archive('password'))
+        yield (new PageManager('password'))
             ->setRoute('/password')
             ->setController(UserPasswordController::class)
             ->setTemplate($this->useTheme('/pages/user/profile/password.html.twig'))

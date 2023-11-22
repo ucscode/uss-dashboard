@@ -14,13 +14,13 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
     }
 
     /**
-     * @method getArchiveUrl
+     * @method getPageManagerUrl
      */
-    public function getArchiveUrl(string $name): ?string
+    public function getPageManagerUrl(string $name): ?string
     {
-        $archive = $this->archiveRepository->getArchive($name);
-        if($archive) {
-            $urlGenerator = $this->urlGenerator($archive->getRoute() ?? '');
+        $pageManager = $this->pageRepository->getPageManager($name);
+        if($pageManager) {
+            $urlGenerator = $this->urlGenerator($pageManager->getRoute() ?? '');
             return $urlGenerator->getResult();
         }
         return null;

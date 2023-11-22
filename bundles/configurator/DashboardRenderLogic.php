@@ -22,20 +22,20 @@ class DashboardRenderLogic implements EventInterface
     public function eventAction(array|object $data): void
     {
         if(!$this->isLoggedIn && $this->dashboard->isFirewallEnabled()) {
-            $this->enableLoginArchive();
+            $this->enableLoginPageManager();
         };
         $this->evalUserPermission();
         $this->createUserInterface();
     }
 
     /**
-     * @method enableLoginArchive
+     * @method enableLoginPageManager
      */
-    protected function enableLoginArchive(): void
+    protected function enableLoginPageManager(): void
     {
-        $loginArchive = $this->dashboard->archiveRepository->getArchive(Archive::LOGIN);
-        $loginFormClass = $loginArchive->getForm();
-        $formInstance = new $loginFormClass(Archive::LOGIN);
+        $loginPageManager = $this->dashboard->pageRepository->getPageManager(PageManager::LOGIN);
+        $loginFormClass = $loginPageManager->getForm();
+        $formInstance = new $loginFormClass(PageManager::LOGIN);
         $formInstance->handleSubmission();
         /**
          * Check again if the login was successful
@@ -43,7 +43,7 @@ class DashboardRenderLogic implements EventInterface
          */
         $this->isLoggedIn = (bool)$this->user->getFromSession();
         if(!$this->isLoggedIn) {
-            $this->template = $loginArchive->getTemplate();
+            $this->template = $loginPageManager->getTemplate();
             $this->options['form'] = $formInstance;
         };
     }

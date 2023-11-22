@@ -3,22 +3,22 @@
 class UserRecoveryController implements RouteInterface
 {
     public function __construct(
-        private Archive $archive,
+        private PageManager $pageManager,
         private DashboardInterface $dashboard
     ) {
     }
 
     public function onload($pageInfo)
     {
-        $formName = $this->archive->name;
-        $formClass = $this->archive->getForm();
+        $formName = $this->pageManager->name;
+        $formClass = $this->pageManager->getForm();
 
         $formInstance = new $formClass($formName);
         $formInstance->handleSubmission();
 
         $this->dashboard->enableFirewall(false);
 
-        $this->dashboard->render($this->archive->getTemplate(), [
+        $this->dashboard->render($this->pageManager->getTemplate(), [
             'form' => $formInstance
         ]);
     }

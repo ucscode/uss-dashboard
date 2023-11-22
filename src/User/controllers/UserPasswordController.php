@@ -3,7 +3,7 @@
 class UserPasswordController implements RouteInterface
 {
     public function __construct(
-        protected Archive $archive,
+        protected PageManager $pageManager,
         protected DashboardInterface $dashboard
     ) {
 
@@ -12,8 +12,8 @@ class UserPasswordController implements RouteInterface
     public function onload(array $matches)
     {
         $this->managePassword();
-        $this->archive->getMenuItem('passwordPill', true)?->setAttr('active', true);
-        $this->dashboard->render($this->archive->getTemplate());
+        $this->pageManager->getMenuItem('passwordPill', true)?->setAttr('active', true);
+        $this->dashboard->render($this->pageManager->getTemplate());
     }
 
     public function managePassword(): void

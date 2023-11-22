@@ -7,7 +7,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     public readonly DashboardConfig $config;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    public readonly ArchiveRepository $archiveRepository;
+    public readonly PageRepository $pageRepository;
     protected bool $firewallEnabled = true;
     protected array $attributes = [];
 
@@ -19,33 +19,33 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     public function createProject(DashboardConfig $config): void
     {
         $this->config = $config;
-        $this->archiveRepository = new ArchiveRepository($this::class);
+        $this->pageRepository = new PageRepository($this::class);
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
-        (new Event())->addListener('modules:loaded', fn () => $this->buildArchives(), -10);
+        (new Event())->addListener('modules:loaded', fn () => $this->buildPages(), -10);
     }
 
     /**
-     * @method buildArchives
+     * @method buildPages
      */
-    private function buildArchives(): void
+    private function buildPages(): void
     {
-        $archives = $this->archiveRepository->getAllArchives();
-        $this->extractMenuItems($archives);
+        $pageManagers = $this->pageRepository->getPageManagers();
+        $this->extractMenuItems($pageManagers);
         $this->configureMenuRecursively($this->menu, 'Main Menu');
         $this->configureMenuRecursively($this->userMenu, 'User Menu');
-        foreach($archives as $archive) {
-            $this->enableArchive($archive);
+        foreach($pageManagers as $pageManager) {
+            $this->enablePageManager($pageManager);
         }
     }
 
     /**
      * @method extractMenuItems
      */
-    private function extractMenuItems(array $archives): void
+    private function extractMenuItems(array $pageManagers): void
     {
-        foreach($archives as $archive) {
-            foreach($archive->getMenuItem() as $name => $menuItem) {
+        foreach($pageManagers as $pageManager) {
+            foreach($pageManager->getMenuItem() as $name => $menuItem) {
                 $item = $menuItem['item'];
                 $menuItem['parent']->add($name, $item);
             };
@@ -109,16 +109,16 @@ abstract class AbstractDashboardComposition implements DashboardInterface
     }
 
     /**
-     * @method enableArchive
+     * @method enablePageManager
      */
-    private function enableArchive(Archive $archive): void
+    private function enablePageManager(PageManager $pageManager): void
     {
-        $archiveRoute = $archive->getRoute();
-        if(!empty($archiveRoute) && $archive->name !== Archive::LOGIN) {
-            $route = Uss::instance()->filterContext($this->config->getBase() . "/" . $archiveRoute);
-            $controller = $archive->getController();
-            $method = $archive->getRequestMethods();
-            new Route($route, new $controller($archive, $this), $method);
+        $pageManagerRoute = $pageManager->getRoute();
+        if(!empty($pageManagerRoute) && $pageManager->name !== PageManager::LOGIN) {
+            $route = Uss::instance()->filterContext($this->config->getBase() . "/" . $pageManagerRoute);
+            $controller = $pageManager->getController();
+            $method = $pageManager->getRequestMethods();
+            new Route($route, new $controller($pageManager, $this), $method);
         }
     }
 }

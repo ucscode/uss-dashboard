@@ -20,7 +20,7 @@ class AdminUserController implements RouteInterface
      * @method __construct
      */
     public function __construct(
-        protected Archive $archive,
+        protected PageManager $pageManager,
         protected DashboardInterface $dashboard
     ) {
     }
@@ -30,8 +30,8 @@ class AdminUserController implements RouteInterface
      */
     public function onload(array $matches)
     {
-        $this->archive->getMenuItem('users', true)?->setAttr('active', true);
-        $template = $this->archive->getTemplate();
+        $this->pageManager->getMenuItem('users', true)?->setAttr('active', true);
+        $template = $this->pageManager->getTemplate();
         $entityUI = $this->processCrudManagers();
         $this->renderUserInterface($template, $entityUI);
     }

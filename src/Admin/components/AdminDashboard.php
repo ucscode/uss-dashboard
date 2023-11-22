@@ -9,26 +9,26 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-        $this->registerArchives();
+        $this->registerPageManagers();
     }
 
-    protected function registerArchives(): void
+    protected function registerPageManagers(): void
     {
-        $archives = $this->createArchives();
-        foreach($archives as $archive) {
-            $this->archiveRepository->addArchive($archive->name, $archive);
+        $pageManagers = $this->createPageManagers();
+        foreach($pageManagers as $pageManager) {
+            $this->pageRepository->addPageManager($pageManager->name, $pageManager);
         }
     }
 
-    protected function createArchives(): iterable
+    protected function createPageManagers(): iterable
     {
         $dashboard = UserDashboard::instance();
 
-        yield (new Archive(Archive::LOGIN))
+        yield (new PageManager(PageManager::LOGIN))
             ->setForm(AdminLoginForm::class)
             ->setTemplate($this->useTheme('/pages/admin/security/login.html.twig'));
 
-        yield (new Archive('index'))
+        yield (new PageManager('index'))
             ->setController(AdminIndexController::class)
             ->setRoute('/')
             ->setTemplate($this->useTheme('/pages/admin/index.html.twig'))
@@ -38,7 +38,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
                 'href' => $this->urlGenerator()
             ], $this->menu);
 
-        yield (new Archive('logout'))
+        yield (new PageManager('logout'))
             ->setController(UserLogoutController::class)
             ->setRoute('/logout')
             ->addMenuItem('logout', [
@@ -49,16 +49,26 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
             ], $this->userMenu)
             ->setCustom('endpoint', $this->urlGenerator());
 
-        yield (new Archive('notifications'))
+        yield (new PageManager('notifications'))
             ->setRoute('/notifications')
             ->setController(UserNotificationController::class)
             ->setTemplate($this->useTheme('/pages/notifications.html.twig'));
 
-        yield (new Archive('users'))
+        yield (new PageManager('users'))
             ->setRoute('/users')
             ->setController(AdminUserController::class)
             ->setTemplate($this->useTheme('/pages/admin/users.html.twig'))
             ->addMenuItem('users', $this->createUserMenuItem(), $this->menu);
+        
+        yield (new PageManager('settings'))
+            ->setRoute('/settings')
+            ->setController(AdminSettingsController::class)
+            ->setTemplate($this->useTheme('/pages/admin/settings.html.twig'))
+            ->addMenuItem('settings', [
+                'label' => 'settings',
+                'href' => $this->urlGenerator('/settings'),
+                'icon' => 'bi bi-cog'
+            ], $this->menu);
     }
 
     protected function createUserMenuItem(): TreeNode

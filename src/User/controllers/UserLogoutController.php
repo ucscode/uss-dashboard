@@ -3,7 +3,7 @@
 class UserLogoutController implements RouteInterface
 {
     public function __construct(
-        private Archive $archive,
+        private PageManager $pageManager,
         private DashboardInterface $dashboard
     ) {
     }
@@ -14,7 +14,7 @@ class UserLogoutController implements RouteInterface
             unset($_SESSION[UserInterface::SESSION_KEY]);
         };
 
-        $endpoint = $this->archive->getCustom('endpoint') ?? null;
+        $endpoint = $this->pageManager->getCustom('endpoint') ?? null;
 
         if(!($endpoint instanceof UrlGenerator) && !is_string($endpoint)) {
             $endpoint = $this->dashboard->urlGenerator();

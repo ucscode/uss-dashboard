@@ -3,7 +3,7 @@
 class UserProfileController implements RouteInterface
 {
     public function __construct(
-        protected Archive $archive,
+        protected PageManager $pageManager,
         protected DashboardInterface $dashboard
     ) {
 
@@ -12,8 +12,8 @@ class UserProfileController implements RouteInterface
     public function onload(array $matches)
     {
         $this->onSubmit();
-        $this->archive->getMenuItem('profilePill', true)?->setAttr('active', true);
-        $this->dashboard->render($this->archive->getTemplate());
+        $this->pageManager->getMenuItem('profilePill', true)?->setAttr('active', true);
+        $this->dashboard->render($this->pageManager->getTemplate());
     }
 
     public function onSubmit(): void

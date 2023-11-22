@@ -71,11 +71,11 @@ final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension imp
     }
 
     /**
-     * @method getArchiveUrl
+     * @method getPageManagerUrl
      */
-    public function getArchiveUrl(string $pagename): ?string
+    public function getPageManagerUrl(string $pagename): ?string
     {
-        return $this->dashboard->getArchiveUrl($pagename);
+        return $this->dashboard->getPageManagerUrl($pagename);
     }
 
     /**

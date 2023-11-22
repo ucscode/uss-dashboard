@@ -5,7 +5,7 @@ class UserNotificationController implements RouteInterface
     private $parseDown;
 
     public function __construct(
-        private Archive $page,
+        private PageManager $page,
         private DashboardInterface $dashboard
     ) {
         $this->parseDown = new \Parsedown();
@@ -26,7 +26,7 @@ class UserNotificationController implements RouteInterface
             $itemsPerPage = 20;
 
             $currentPage = $this->getCurrentPage($totalItems, $itemsPerPage);
-            $urlPattern = $this->dashboard->getArchiveUrl('notification') . '?page=(:num)';
+            $urlPattern = $this->dashboard->getPageManagerUrl('notification') . '?page=(:num)';
 
             $startFrom = ($currentPage - 1) * $itemsPerPage;
 
@@ -61,7 +61,7 @@ class UserNotificationController implements RouteInterface
 
         if(!$user) {
             if(empty($nonce)) {
-                $indexArchiveUrl = $this->dashboard->getArchiveUrl('index');
+                $indexArchiveUrl = $this->dashboard->getPageManagerUrl('index');
                 header("location: " . $indexArchiveUrl);
                 exit;
             }

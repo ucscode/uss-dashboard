@@ -2,7 +2,7 @@
 
 use Ucscode\TreeNode\TreeNode;
 
-class Archive
+class PageManager
 {
     public const LOGIN = 'login';
 
@@ -171,7 +171,7 @@ class Archive
         $route = $this->route;
 
         if (!is_null($route)) {
-            $route = $uss->filterContext();
+            $route = $uss->filterContext($route);
             $requestArray = $uss->splitUri();
 
             if (!empty($requestArray)) {

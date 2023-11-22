@@ -1,6 +1,6 @@
 <?php
 
-class ArchiveRepository
+class PageRepository
 {
     private string $group;
     private static array $archives = [];
@@ -13,19 +13,19 @@ class ArchiveRepository
         $this->group = $group;
     }
 
-    public function addArchive(string $name, Archive $archive): self
+    public function addPageManager(string $name, PageManager $archive): self
     {
         self::$archives[$this->group][$name] = $archive;
         return $this;
     }
 
-    public function getArchive(string $name): ?Archive
+    public function getPageManager(string $name): ?PageManager
     {
         $archive = self::$archives[$this->group][$name] ?? null;
         return $archive;
     }
 
-    public function removeArchive(string $name): self
+    public function removePageManager(string $name): self
     {
         if(array_key_exists($name, self::$archives[$this->group])) {
             unset(self::$archives[$this->group][$name]);
@@ -33,7 +33,7 @@ class ArchiveRepository
         return $this;
     }
 
-    public function getAllArchives(): array
+    public function getPageManagers(): array
     {
         return self::$archives[$this->group];
     }
