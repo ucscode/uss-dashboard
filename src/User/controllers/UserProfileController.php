@@ -13,7 +13,8 @@ class UserProfileController implements RouteInterface
     {
         $this->onSubmit();
         $this->pageManager->getMenuItem('profilePill', true)?->setAttr('active', true);
-        $this->dashboard->render($this->pageManager->getTemplate());
+        $template = $this->pageManager->getTemplate();
+        $this->dashboard->render($template);
     }
 
     public function onSubmit(): void

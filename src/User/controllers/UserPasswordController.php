@@ -22,7 +22,7 @@ class UserPasswordController implements RouteInterface
         if($user->getFromSession() && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user'])) {
             $uss = Uss::instance();
             $passwordInfo = $uss->sanitize($_POST['user'], Uss::SANITIZE_SQL);
-            $valid = $user->passwordVerify($passwordInfo['old_password']);
+            $valid = $user->isValidPassword($passwordInfo['old_password']);
 
             if(!$valid) {
                 $alert = 'Old Password is not valid';

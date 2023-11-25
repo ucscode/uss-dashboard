@@ -1,0 +1,54 @@
+{% extends _theme ~ '/pages/admin/settings/index.html.twig' %}
+
+{% block settings_title %}
+    <i class="bi bi-gear me-1"></i> Default Settings
+{% endblock %}
+
+{% block settings_content %}
+
+    <div class="row">
+        <div class="col-md-7 col-lg-6 col-xl-5">
+
+            <div class="card">
+                <div class="card-body">
+
+                    <h6 class="fw-normal">Company Logo</h6>
+
+                    <p class="">
+                        <span class="text-secondary fs-12px">
+                            Max Dimension: 750x750, Max file size: 100KB
+                        </span>
+                    </p>
+
+                    <div class="bg-light p-3 text-center rounded border">
+                        <div class='row'>
+
+                            <div class="col-md-6 mb-3 mb-md-auto ">
+                                <figure class="image-central border rounded shadow-sm m-auto" style="--image-central-width: 120px">
+                                    <img src="{{ Uss.getOption('company:icon') }}">
+                                </figure>
+                            </div>
+
+                            <div class='col-md-6'>
+                                <p class='fw-light text-secondary'>The company logo</p>
+
+                                <button class='btn btn-outline-primary btn-sm w-100 my-1'>
+                                    <i class="bi bi-card-image"></i>
+                                    <span class="ms-1">Change Image</span>
+                                </button>
+
+                                <button class='btn btn-outline-danger btn-sm w-100 my-1'>
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    <span class="ms-1">Restore</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div> <!-- /card -->
+
+        </div>
+    </div>
+{% endblock %}

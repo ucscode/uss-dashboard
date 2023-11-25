@@ -1,6 +1,6 @@
 <?php
 
-final class DashboardTwigExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
+final class DashboardExtension extends \Twig\Extension\AbstractExtension implements \Twig\Extension\GlobalsInterface
 {
     private Uss $uss;
     public readonly string $themeName;
