@@ -7,8 +7,8 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
 {
     abstract protected function buildForm();
 
+    public readonly string $hashKey;
     private string $nonceKey;
-    private string $hashKey = 'a7f8b2c4e1d3g6i9';
 
     protected array $style = [
         'label_class' => 'd-none',
@@ -23,6 +23,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
         string $enctype = ''
     ) {
         parent::__construct($name, $action, $method, $enctype);
+        $this->hashKey = 'A7F8B2C4E';
         $this->nonceKey = "{$name}:{$method}";
         $this->onCreate();
         $this->buildForm();
@@ -172,7 +173,7 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     /**
      * @method setSecurityHash
      */
-    private function setSecurityHash(): void
+    protected function setSecurityHash(): void
     {
         $name = $this->getAttribute('name');
         $nonce = Uss::instance()->nonce($this->nonceKey);

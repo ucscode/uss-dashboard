@@ -1,0 +1,49 @@
+
+<div class="col-md-5 col-lg-6 col-xl-5 mb-3">
+    <div class="card">
+        <div class="card-body">
+
+            <h6 class="fw-normal">Company Logo</h6>
+            
+            <p class="">
+                <span class="text-secondary fs-12px">
+                    Max Dimension: 750x750, Max file size: 100KB
+                </span>
+            </p>
+
+            {{ iconField.validationElement.HTML|raw }}
+
+            {% set companyLogo = Uss.getOption('company:icon') %}
+
+            <div class="bg-light p-3 text-center rounded border">
+                <div class='row'>
+
+                    <div class="col-lg-6 mb-3 mb-md-auto ">
+                        <figure class="image-central border rounded shadow-sm m-auto bg-secondary" style="--image-central-width: 120px">
+                            <img src="{{ companyLogo }}" id="company-icon-img" data-image="{{ companyLogo }}">
+                        </figure>
+                    </div>
+
+                    <div class='col-lg-6'>
+                        <p class='fw-light text-secondary'>The company logo</p>
+
+                        {{ iconField.fieldAsHTML|raw }}
+
+                        <button class='btn btn-outline-primary btn-sm w-100 my-1' type="button" 
+                            data-ui-transfer-click-event-to="#company-icon-widget">
+                            <i class="bi bi-card-image"></i>
+                            <span class="ms-1">Change Image</span>
+                        </button>
+
+                        <button class='btn btn-outline-danger btn-sm w-100 my-1' type="button">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span class="ms-1">Restore</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div> <!-- /card -->
+</div>

@@ -97,7 +97,8 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         yield $this->createPage(self::PAGE_SETTINGS_DEFAULT)
             ->setController(AdminSettingsDefaultController::class)
             ->setTemplate($this->useTheme('/pages/admin/settings/default.html.twig'))
-            ->addMenuItem(self::PAGE_SETTINGS_DEFAULT, $defaultItem, $this->settingsBatch);
+            ->addMenuItem(self::PAGE_SETTINGS_DEFAULT, $defaultItem, $this->settingsBatch)
+            ->setForm(AdminSettingsDefaultForm::class);
 
         $emailItem = [
             'label' => 'Email',
@@ -107,9 +108,10 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         ];
 
         yield $this->createPage(self::PAGE_SETTINGS_EMAIL)
-            ->setController(AdminSettingsDefaultController::class)
-            ->setTemplate($this->useTheme('/pages/admin/settings/default.html.twig'))
-            ->addMenuItem(self::PAGE_SETTINGS_EMAIL, $emailItem, $this->settingsBatch);
+            ->setController(AdminSettingsEmailController::class)
+            ->setTemplate($this->useTheme('/pages/admin/settings/email.html.twig'))
+            ->addMenuItem(self::PAGE_SETTINGS_EMAIL, $emailItem, $this->settingsBatch)
+            ->setForm(AdminSettingsEmailForm::class);
 
         $userItem = [
             'label' => 'Users',
@@ -119,9 +121,10 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         ];
 
         yield $this->createPage(self::PAGE_SETTINGS_USERS)
-            ->setController(AdminSettingsDefaultController::class)
-            ->setTemplate($this->useTheme('/pages/admin/settings/default.html.twig'))
-            ->addMenuItem(self::PAGE_SETTINGS_USERS, $userItem, $this->settingsBatch);
+            ->setController(AdminSettingsUserController::class)
+            ->setTemplate($this->useTheme('/pages/admin/settings/user.html.twig'))
+            ->addMenuItem(self::PAGE_SETTINGS_USERS, $userItem, $this->settingsBatch)
+            ->setForm(AdminSettingsUserForm::class);
     }
 
     protected function beforeRender(): void

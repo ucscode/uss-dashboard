@@ -7,6 +7,7 @@ class AdminLoginForm extends UserLoginForm
         parent::buildForm();
 
         $mailBlock = $this->find('#reactive-mailer', 0);
+        
         if($mailBlock) {
             $mailBlock->parentElement->removeChild($mailBlock);
         };
