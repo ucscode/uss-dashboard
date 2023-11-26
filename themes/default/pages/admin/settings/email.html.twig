@@ -3,3 +3,7 @@
 {% block settings_title %}
     <i class="bi bi-envelope me-1"></i> Email Settings
 {% endblock %}
+
+{% block settings_content %}
+    {{ form.getHTML(true)|raw }}
+{% endblock %}
