@@ -37,17 +37,17 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     protected function inventAuthPages(): iterable
     {
         yield $this->createPage(PageManager::LOGIN, false)
-            ->setForm(UserLoginForm::class)
+            ->setForm(new UserLoginForm(PageManager::LOGIN))
             ->setTemplate($this->useTheme('/pages/user/security/login.html.twig'));
 
         yield $this->createPage(self::PAGE_REGISTER)
             ->setController(UserRegisterController::class)
-            ->setForm(UserRegisterForm::class)
+            ->setForm(new UserRegisterForm(self::PAGE_REGISTER))
             ->setTemplate($this->useTheme('/pages/user/security/register.html.twig'));
 
         yield $this->createPage(self::PAGE_RECOVERY)
             ->setController(UserRecoveryController::class)
-            ->setForm(UserRecoveryForm::class)
+            ->setForm(new UserRecoveryForm(self::PAGE_RECOVERY))
             ->setTemplate($this->useTheme('/pages/user/security/recovery.html.twig'));
 
         $logoutNavigation = [

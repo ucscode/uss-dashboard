@@ -10,7 +10,7 @@ class PageManager
     private ?string $route = null;
     private ?string $template = null;
     private ?string $controller = null;
-    private ?string $form = null;
+    private ?DashboardFormInterface $form = null;
     private array $requestMethods = ['GET', 'POST'];
     private array $menuItems = [];
     private array $custom = [];
@@ -75,9 +75,8 @@ class PageManager
     /**
      * @method setForm
      */
-    public function setForm(?string $form): self
+    public function setForm(?DashboardFormInterface $form): self
     {
-        $this->validateForm($form, __METHOD__);
         $this->form = $form;
         return $this;
     }
@@ -85,7 +84,7 @@ class PageManager
     /**
      * @method getForm
      */
-    public function getForm(): ?string
+    public function getForm(): ?DashboardFormInterface
     {
         return $this->form;
     }
@@ -241,21 +240,6 @@ class PageManager
                 )
             );
         };
-    }
-
-    private function validateForm(string $form, string $caller): void
-    {
-        $interface = DashboardFormInterface::class;
-        if(!in_array($interface, class_implements($form))) {
-            throw new \Exception(
-                sprintf(
-                    'The class "%s" provided to %s() must implement "%s".',
-                    $form,
-                    $caller,
-                    $interface
-                )
-            );
-        }
     }
 
     private function validateMenuItem(array|TreeNode $menu, TreeNode $parentMenu, string $caller): void

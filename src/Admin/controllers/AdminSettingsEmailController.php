@@ -10,7 +10,6 @@ class AdminSettingsEmailController implements RouteInterface
     public function onload(array $matches)
     {
         $form = $this->pageManager->getForm();
-        $form = new $form($this->pageManager->name);
 
         $this->dashboard->render($this->pageManager->getTemplate(), [
             'form' => $form

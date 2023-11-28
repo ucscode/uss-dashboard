@@ -11,8 +11,7 @@ class UserRegisterController implements RouteInterface
 
     public function onload($regex)
     {
-        $registerForm = $this->pageManager->getForm();
-        $formInstance = new $registerForm($this->pageManager->name);
+        $formInstance = $this->pageManager->getForm();
         $formInstance->handleSubmission();
 
         $this->dashboard->enableFirewall(false);

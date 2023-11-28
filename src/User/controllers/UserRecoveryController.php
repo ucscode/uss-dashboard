@@ -10,10 +10,7 @@ class UserRecoveryController implements RouteInterface
 
     public function onload($pageInfo)
     {
-        $formName = $this->pageManager->name;
-        $formClass = $this->pageManager->getForm();
-
-        $formInstance = new $formClass($formName);
+        $formInstance = $this->pageManager->getForm();
         $formInstance->handleSubmission();
 
         $this->dashboard->enableFirewall(false);

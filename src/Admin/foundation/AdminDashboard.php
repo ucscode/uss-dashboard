@@ -28,7 +28,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     protected function getPageCollection(): iterable
     {
         yield $this->createPage(PageManager::LOGIN, false)
-            ->setForm(AdminLoginForm::class)
+            ->setForm(new AdminLoginForm(PageManager::LOGIN))
             ->setTemplate($this->useTheme('/pages/admin/security/login.html.twig'));
 
         $indexMenuItem = [
@@ -98,7 +98,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
             ->setController(AdminSettingsDefaultController::class)
             ->setTemplate($this->useTheme('/pages/admin/settings/default.html.twig'))
             ->addMenuItem(self::PAGE_SETTINGS_DEFAULT, $defaultItem, $this->settingsBatch)
-            ->setForm(AdminSettingsDefaultForm::class);
+            ->setForm(new AdminSettingsDefaultForm(self::PAGE_SETTINGS_DEFAULT));
 
         $emailItem = [
             'label' => 'Email',
@@ -111,7 +111,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
             ->setController(AdminSettingsEmailController::class)
             ->setTemplate($this->useTheme('/pages/admin/settings/email.html.twig'))
             ->addMenuItem(self::PAGE_SETTINGS_EMAIL, $emailItem, $this->settingsBatch)
-            ->setForm(AdminSettingsEmailForm::class);
+            ->setForm(new AdminSettingsEmailForm(self::PAGE_SETTINGS_EMAIL));
 
         $userItem = [
             'label' => 'Users',
@@ -124,7 +124,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
             ->setController(AdminSettingsUserController::class)
             ->setTemplate($this->useTheme('/pages/admin/settings/user.html.twig'))
             ->addMenuItem(self::PAGE_SETTINGS_USERS, $userItem, $this->settingsBatch)
-            ->setForm(AdminSettingsUserForm::class);
+            ->setForm(new AdminSettingsUserForm(self::PAGE_SETTINGS_USERS));
     }
 
     protected function beforeRender(): void

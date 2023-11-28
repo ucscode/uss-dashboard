@@ -5,5 +5,25 @@
 {% endblock %}
 
 {% block settings_content %}
-    {{ form.getHTML(true)|raw }}
+
+    {{ form.open|raw }}
+
+        {% block form_submitter %}
+            <div class='text-end mb-3'>
+                <button class="btn btn-primary btn-sm" type="submit"> 
+                    <i class='bi bi-check2-circle me-1'></i> Save Changes
+                </button>
+            </div>
+        {% endblock %}
+
+        <div class="row">
+            {% block form_content %}
+            <div class="col-md-8 col-lg-7">
+                {{ form.stackContainer.getHTML(true)|raw }}
+            </div>
+            {% endblock %}
+        </div>
+
+    {{ form.close()|raw }}
+
 {% endblock %}

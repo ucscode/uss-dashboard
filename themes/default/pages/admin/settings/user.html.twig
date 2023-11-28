@@ -6,4 +6,46 @@
 
 {% block settings_content %}
 
+    {{ form.open|raw }}
+
+        {% block form_submitter %}
+            <div class="text-end mb-3">
+                <button class="btn btn-primary btn-sm" type="submit">
+                    <i class="bi bi-check2-circle"></i>
+                    Save Changes
+                </button>
+            </div>
+        {% endblock %}
+
+        <div class="row">
+
+            {% block user_options %}
+                <div class="col-md-6 mb-3">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            {{ form.getFieldstack("default").fieldstackAsHTML|raw }}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ form.getFieldstack("section-2").fieldstackAsHTML|raw }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-shield-lock me-1"></i> Default Registation roles
+                        </div>
+                        <div class="card-body">
+                            {{ form.getFieldstack("section-3").fieldstackAsHTML|raw }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+
+    {{ form.close|raw }}
+
 {% endblock %}
