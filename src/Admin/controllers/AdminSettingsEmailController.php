@@ -9,6 +9,9 @@ class AdminSettingsEmailController implements RouteInterface
 
     public function onload(array $matches)
     {
+        $this->pageManager->getMenuItem(AdminDashboardInterface::PAGE_SETTINGS_EMAIL, true)
+            ?->setAttr('active', true);
+            
         $form = $this->pageManager->getForm();
 
         $this->dashboard->render($this->pageManager->getTemplate(), [

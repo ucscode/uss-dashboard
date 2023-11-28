@@ -12,7 +12,7 @@ class UserPasswordController implements RouteInterface
     public function onload(array $matches)
     {
         $this->managePassword();
-        $this->pageManager->getMenuItem('passwordPill', true)?->setAttr('active', true);
+        $this->pageManager->getMenuItem('profile-batch-password', true)?->setAttr('active', true);
         $this->dashboard->render($this->pageManager->getTemplate());
     }
 

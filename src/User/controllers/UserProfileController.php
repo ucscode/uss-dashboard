@@ -12,7 +12,7 @@ class UserProfileController implements RouteInterface
     public function onload(array $matches)
     {
         $this->onSubmit();
-        $this->pageManager->getMenuItem('profilePill', true)?->setAttr('active', true);
+        $this->pageManager->getMenuItem('profile-batch-profile', true)?->setAttr('active', true);
         $template = $this->pageManager->getTemplate();
         $this->dashboard->render($template);
     }
