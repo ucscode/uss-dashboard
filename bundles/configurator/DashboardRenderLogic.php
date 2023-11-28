@@ -22,29 +22,24 @@ class DashboardRenderLogic implements EventInterface
     public function eventAction(array|object $data): void
     {
         if(!$this->isLoggedIn && $this->dashboard->isFirewallEnabled()) {
-            $this->enableLoginPageManager();
+            $this->displayLoginPage();
         };
         $this->evalUserPermission();
         $this->createUserInterface();
     }
 
     /**
-     * @method enableLoginPageManager
+     * @method displayLoginPage
      */
-    protected function enableLoginPageManager(): void
+    protected function displayLoginPage(): void
     {
         $loginPageManager = $this->dashboard->pageRepository->getPageManager(PageManager::LOGIN);
-        $loginFormClass = $loginPageManager->getForm();
-        $formInstance = new $loginFormClass(PageManager::LOGIN);
-        $formInstance->handleSubmission();
-        /**
-         * Check again if the login was successful
-         * Otherwise, redirect user to login page
-         */
+        $loginForm = $loginPageManager->getForm();
+        $loginForm->handleSubmission();
         $this->isLoggedIn = (bool)$this->user->getFromSession();
         if(!$this->isLoggedIn) {
             $this->template = $loginPageManager->getTemplate();
-            $this->options['form'] = $formInstance;
+            $this->options['form'] = $loginForm;
         };
     }
 
@@ -57,7 +52,6 @@ class DashboardRenderLogic implements EventInterface
             $permissions = $this->dashboard->config->getPermissions();
             $roles = $this->user->getUserMeta('user.roles');
             $matchingRoles = array_intersect($permissions, $roles);
-
             if(empty($matchingRoles)) {
                 $template = $this->dashboard->config->getPermissionDeniedTemplate();
                 $this->template = $this->dashboard->useTheme($template);

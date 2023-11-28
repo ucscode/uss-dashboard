@@ -4,6 +4,39 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 class DashboardFactory
 {
+    private static array $projects = [];
+
+    public static function registerProject(DashboardInterface $dashboard): void
+    {
+        if(!in_array($dashboard, self::$projects, true)) {
+            self::$projects[] = $dashboard;
+        }
+    }
+
+    /**
+     * @method getProjects
+     */
+    public function getProjects(): array
+    {
+        return self::$projects;
+    }
+
+    /**
+     * @method getPermissions
+     */
+    public function getPermissions(): array
+    {
+        $permissions = [];
+        foreach($this->getProjects() as $dashboard) {
+            $permissions = array_merge($permissions, $dashboard->config->getPermissions());
+        }
+        sort($permissions);
+        return array_unique($permissions);
+    }
+
+    /**
+     * @createPHPMailer
+     */
     public function createPHPMailer(bool $exception = false): PHPMailer
     {
         $uss = Uss::instance();

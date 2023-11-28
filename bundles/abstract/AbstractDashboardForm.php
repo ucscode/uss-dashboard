@@ -6,8 +6,8 @@ use Ucscode\UssForm\UssFormField;
 abstract class AbstractDashboardForm extends UssForm implements DashboardFormInterface
 {
     abstract protected function buildForm();
-
     public readonly string $hashKey;
+    protected bool $buildFormImmediately = true;
     private string $nonceKey;
 
     protected array $style = [
@@ -25,15 +25,15 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
         parent::__construct($name, $action, $method, $enctype);
         $this->hashKey = 'A7F8B2C4E';
         $this->nonceKey = "{$name}:{$method}";
-        $this->onCreate();
-        $this->buildForm();
+        $this->init();
+        $this->buildFormImmediately ? $this->buildForm() : null;
     }
 
     /**
-     * @method onCreate
+     * @method init
      * Child classes should provide their own implementation of this method.
      */
-    protected function onCreate(): void
+    protected function init(): void
     {
         // @Requires Override
     }
@@ -177,12 +177,11 @@ abstract class AbstractDashboardForm extends UssForm implements DashboardFormInt
     {
         $name = $this->getAttribute('name');
         $nonce = Uss::instance()->nonce($this->nonceKey);
-
+        
         $this->addField(
             $this->hashKey,
             (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
                 ->setWidgetValue("{$name}/{$nonce}")
-                ->setLabelHidden(false)
         );
     }
 

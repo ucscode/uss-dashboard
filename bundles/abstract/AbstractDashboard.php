@@ -3,12 +3,12 @@
 abstract class AbstractDashboard extends AbstractDashboardComposition
 {
     /**
-     * @method isActiveBase
+     * @method isActive
      */
-    public function isActiveBase(): bool
+    public function isActive(): bool
     {
         $uss = Uss::instance();
-        $regex = '#^' . $this->config->getBase() . '(?!\w)#is';
+        $regex = '/^' . $this->config->getBase() . '(?!\w)/is';
         $request = $uss->filterContext($uss->splitUri());
         return preg_match($regex, $request);
     }

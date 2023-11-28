@@ -19,9 +19,16 @@ class FileUploader
     }
 
     /**
+     * Example of MimeType includes:
+     * 
+     * - image/png
+     * - application/zip
+     * - text/plain
+     * - video/mp4 ...
+     * 
      * @method addMimeType
      */
-    public function addMimeType(string|array $mimeType): void
+    public function addMimeType(string|array $mimeType): self
     {
         if(is_string($mimeType)) {
             $mimeType = [$mimeType];
@@ -30,20 +37,24 @@ class FileUploader
         $this->mimeTypes = array_map(function ($value) {
             return trim(strtolower($value));
         }, array_unique([...$this->mimeTypes, ...$mimeType]));
+        return $this;
     }
 
     /**
+     * The max filesize is set in byte. Hence;
+     * 1024 bytes = 1KB
      * @method setMaxFileSize
      */
-    public function setMaxFileSize(int $maxFileSize): void
+    public function setMaxFileSize(int $maxFileSize): self
     {
         $this->maxFileSize = abs($maxFileSize);
+        return $this;
     }
 
     /**
      * @method setUploadDirectory
      */
-    public function setUploadDirectory(string $uploadDirectory): void
+    public function setUploadDirectory(string $uploadDirectory): self
     {
         $abspath = Uss::instance()->isAbsolutePath($uploadDirectory);
         if(!$abspath) {
@@ -55,6 +66,7 @@ class FileUploader
             );
         }
         $this->uploadDirectory = $uploadDirectory;
+        return $this;
     }
 
     /**
@@ -62,37 +74,23 @@ class FileUploader
      * to avoid overwriting existing files
      * @method setFilenamePrefix
      */
-    public function setFilenamePrefix(string $filenamePrefix): void
+    public function setFilenamePrefix(string $filenamePrefix): self
     {
         $this->filenamePrefix = $filenamePrefix;
+        return $this;
     }
 
     /**
      * @method setFilename
      */
-    public function setFilename(string $filename, ?string $fileExtension = null): void
+    public function setFilename(string $filename, ?string $fileExtension = null): self
     {
         $this->filename = $filename;
         if($fileExtension) {
             preg_match('/\b[a-z]+\b/', $fileExtension, $matches);
             $this->fileExtension = $matches[0];
         }
-    }
-
-    /**
-     * @method getFilepath
-     */
-    public function getUploadedFilepath(): ?string
-    {
-        return $this->uploaded ? $this->filepath : null;
-    }
-
-    /**
-     * @method getError
-     */
-    public function getError(): ?string
-    {
-        return $this->error;
+        return $this;
     }
 
     /**
@@ -109,6 +107,22 @@ class FileUploader
         }
         $this->generateFilepath();
         return $this->moveUploadedPath();
+    }
+
+    /**
+     * @method getFilepath
+     */
+    public function getUploadedFilepath(): ?string
+    {
+        return $this->uploaded ? $this->filepath : null;
+    }
+
+    /**
+     * @method getError
+     */
+    public function getError(bool $msg = false): string|int|null
+    {
+        return $msg ? $this->error : $this->file['error'];
     }
 
     /**
@@ -165,6 +179,37 @@ class FileUploader
     }
 
     /**
+     * @method createDirectoryIfNotExists
+     */
+    protected function createDirectoryIfNotExists(): void
+    {
+        if (!file_exists($this->uploadDirectory)) {
+            if(!mkdir($this->uploadDirectory, 0777, true)) {
+                $lastError = error_get_last();
+                throw new \Exception(
+                    sprintf(
+                        "%s: %s",
+                        __CLASS__,
+                        $lastError['message'] ?? 'Unknown Error'
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * @method moveUploadedPath
+     */
+    protected function moveUploadedPath(): bool
+    {
+        $this->uploaded = move_uploaded_file($this->file['tmp_name'], $this->filepath);
+        if(!$this->uploaded) {
+            $this->error = "Failed to move uploaded file";
+        };
+        return $this->uploaded;
+    }
+
+    /**
      * @method generateFilepath
      */
     protected function generateFilepath(): void
@@ -190,36 +235,5 @@ class FileUploader
 
         $this->basename = $this->filenamePrefix . $this->filename . "." . $this->fileExtension;
         $this->filepath = $this->uploadDirectory . '/' . $this->basename;
-    }
-
-    /**
-     * @method createDirectoryIfNotExists
-     */
-    public function createDirectoryIfNotExists(): void
-    {
-        if (!file_exists($this->uploadDirectory)) {
-            if(!mkdir($this->uploadDirectory, 0777, true)) {
-                $lastError = error_get_last();
-                throw new \Exception(
-                    sprintf(
-                        "%s: %s",
-                        __CLASS__,
-                        $lastError['message'] ?? 'Unknown Error'
-                    )
-                );
-            }
-        }
-    }
-
-    /**
-     * @method moveUploadedPath
-     */
-    public function moveUploadedPath(): bool
-    {
-        $this->uploaded = move_uploaded_file($this->file['tmp_name'], $this->filepath);
-        if(!$this->uploaded) {
-            $this->error = "Failed to move uploaded file";
-        };
-        return $this->uploaded;
     }
 }

@@ -13,8 +13,7 @@ final class DashboardConfig
      */
     public function setBase(string $base): self
     {
-        $uss = Uss::instance();
-        $this->base = $uss->filterContext($base);
+        $this->base = Uss::instance()->filterContext($base);
         return $this;
     }
 

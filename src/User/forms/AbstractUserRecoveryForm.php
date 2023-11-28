@@ -53,7 +53,7 @@ abstract class AbstractUserRecoveryForm extends AbstractDashboardForm
             $url = $recoveryInput['url'] . "?verify=" . base64_encode(json_encode($recoveryInput['data']));
 
             $emailBody = $uss->render($template, [
-                'company_icon' => $uss->options->get('company:icon'),
+                'company_icon' => $uss->options->get('company:logo'),
                 'company_name' => $uss->options->get('company:name'),
                 'company_headline' => $uss->options->get('company:headline'),
                 'company_about' => $uss->options->get('company:description'),

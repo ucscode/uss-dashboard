@@ -23,7 +23,7 @@ class AdminPageFactory extends AbstractPageFactory
             'icon' => 'bi bi-power',
             'order' => 1024,
             'label' => 'logout',
-            'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_LOGIN)
+            'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_LOGOUT)
         ];
 
         return $this->createPage(AdminDashboardInterface::PAGE_LOGOUT)
@@ -123,7 +123,10 @@ class AdminPageFactory extends AbstractPageFactory
         ];
 
         $defaultForm = new AdminSettingsDefaultForm(
-            AdminDashboardInterface::PAGE_SETTINGS_DEFAULT
+            AdminDashboardInterface::PAGE_SETTINGS_DEFAULT,
+            null,
+            'POST',
+            'multipart/form-data'
         );
 
         return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS_DEFAULT)

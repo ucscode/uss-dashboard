@@ -9,16 +9,14 @@ class AdminSettingsDefaultController implements RouteInterface
     
     public function onload(array $matches)
     {
-        $template = $this->pageManager->getTemplate();
-
-        $this
-            ->pageManager
+        $this->pageManager
             ->getMenuItem(AdminDashboardInterface::PAGE_SETTINGS_DEFAULT, true)
             ?->setAttr('active', true);
 
         $form = $this->pageManager->getForm();
+        $form->handleSubmission();
 
-        $this->dashboard->render($template, [
+        $this->dashboard->render($this->pageManager->getTemplate(), [
             'form' => $form
         ]);
     }

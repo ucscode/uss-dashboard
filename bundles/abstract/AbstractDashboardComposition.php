@@ -22,6 +22,7 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $this->pageRepository = new PageRepository($this::class);
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
+        DashboardFactory::registerProject($this);
         (new Event())->addListener('modules:loaded', fn () => $this->buildPages(), -10);
     }
 

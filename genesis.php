@@ -24,10 +24,9 @@ new class () {
             ->setBase('/dashboard')
             ->setTheme('default')
             ->addPermission(RoleImmutable::ROLE_USER)
-            ->setPermissionDeniedTemplate('pages/403.html.twig');
+            ->setPermissionDeniedTemplate('/pages/403.html.twig');
 
-        $UserDashboard = UserDashboard::instance();
-        $UserDashboard->createProject($config);
+        UserDashboard::instance()->createProject($config);
     }
     
     public function configureAdminDashboard(): void
@@ -37,12 +36,11 @@ new class () {
             ->setTheme('default')
             ->setPermissions([
                 RoleImmutable::ROLE_SUPERADMIN,
-                RoleImmutable::ROLE_ADMIN
+                RoleImmutable::ROLE_ADMIN,
             ])
             ->setPermissionDeniedTemplate('/pages/403.html.twig');
 
-        $adminDashboard = AdminDashboard::instance();
-        $adminDashboard->createProject($config);
+        AdminDashboard::instance()->createProject($config);
     }
     
     protected function configureDashboardOutput(): void

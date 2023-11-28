@@ -9,7 +9,7 @@ class UserRecoveryForm extends AbstractUserRecoveryForm
     protected ?string $reportError = null;
     protected bool $passwordUpdated;
 
-    protected function onCreate(): void
+    protected function init(): void
     {
         $this->defineStage();
     }

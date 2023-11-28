@@ -4,11 +4,11 @@
 
             <div class='p-1 p-sm-3'>
 
-                {{ form.getField('company[name]').fieldAsHTML|raw }}
-
-                {{ form.getField('company[headline]').fieldAsHTML|raw }}
-                
-                {{ form.getField('company[description]').fieldAsHTML|raw }}
+                {% for key, field in form.getFieldStack('default').fields %}
+                    {% if key not in ["company[icon]", form.hashKey] %}
+                        {{ field.fieldAsHTML|raw }}
+                    {% endif %}
+                {% endfor %}
 
             </div>
 

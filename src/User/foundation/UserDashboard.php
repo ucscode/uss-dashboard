@@ -11,7 +11,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-
+        
         $this->profileBatch = new TreeNode('profileBatch');
 
         $factory = new UserPageFactory($this);

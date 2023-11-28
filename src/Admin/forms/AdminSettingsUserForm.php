@@ -73,28 +73,12 @@ class AdminSettingsUserForm extends AbstractDashboardForm
          */
         $this->addFieldStack("section-3");
 
+        /**
+         * This field is fully configured in `AdminSettingsUserController` class
+         */
         $this->addField(
             'user[default-roles][]',
-            $this->defaultRolesField()
+            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
         );
-    }
-
-    protected function defaultRolesField(): UssFormField
-    {
-        $field = (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
-            ->setLabelValue("ADMIN")
-            ->setRequired(false);
-        
-        $fieldA = $field
-            ->createSecondaryField('fieldA', UssForm::TYPE_CHECKBOX)
-            ->setLabelValue("USER")
-            ->setRequired(false);
-        
-        $fieldB = $field
-            ->createSecondaryField('fieldB', UssForm::TYPE_CHECKBOX)
-            ->setLabelValue("MODERATOR")
-            ->setRequired(false);
-        
-        return $field;
     }
 }
