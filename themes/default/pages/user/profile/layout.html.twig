@@ -2,7 +2,7 @@
 
 {% block dashboard_content %}
 
-    <div class="container-xl px-4 mt-4 profile-base">
+    <div class="container-xl profile-base">
         
         {% set profileBatch = DashboardExtension.getDashboardProperty('profileBatch') %}
         
@@ -15,7 +15,7 @@
                     {% set icon = TreeNode.getAttr('icon') %}
 
                     <a 
-                        class="nav-link me-2 {{ TreeNode.getAttr('active') ? 'active' : '' }}" 
+                        class="nav-link me-1 {{ TreeNode.getAttr('active') ? 'active' : '' }}" 
                         href="{{ TreeNode.getAttr('href') }}" 
                         target="{{ TreeNode.getAttr('target') }}"
                     >
