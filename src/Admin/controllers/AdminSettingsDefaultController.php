@@ -14,7 +14,6 @@ class AdminSettingsDefaultController implements RouteInterface
             ?->setAttr('active', true);
 
         $form = $this->pageManager->getForm();
-        $form->handleSubmission();
 
         $this->dashboard->render($this->pageManager->getTemplate(), [
             'form' => $form

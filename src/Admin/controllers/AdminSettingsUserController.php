@@ -37,19 +37,23 @@ class AdminSettingsUserController implements RouteInterface
 
                 public function eventAction(array|object $data): void
                 {
+                    $defaultRoles = Uss::instance()->options->get("user:default-roles");
+                    
                     foreach((new DashboardFactory())->getPermissions() as $index => $permission) {
                         if(!$index) {
                             $this->roleField
                                 ->setLabelValue($permission)
                                 ->setWidgetValue($permission)
-                                ->setRequired(false);
+                                ->setRequired(false)
+                                ->setWidgetChecked(in_array($permission, $defaultRoles));
                             continue;
                         };
                         $this->roleField
                             ->createSecondaryField($permission, UssForm::TYPE_CHECKBOX)
                             ->setLabelValue($permission)
                             ->setWidgetValue($permission)
-                            ->setRequired(false);
+                            ->setRequired(false)
+                            ->setWidgetChecked(in_array($permission, $defaultRoles));
                     }
                 }
             }, 

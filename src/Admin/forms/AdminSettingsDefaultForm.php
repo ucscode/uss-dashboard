@@ -7,9 +7,9 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
 {
     protected array $message = [];
 
-    protected function init(): void
+    protected function init(): void 
     {
-        $this->buildFormImmediately = false;
+        $this->handleSubmission();
     }
 
     /**
@@ -52,12 +52,6 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
         $this->setSecurityHash();
     }
 
-    public function handleSubmission(): void
-    {
-        parent::handleSubmission();
-        $this->buildForm();
-    }
-
     /**
      * @method persistEntry
      */
@@ -66,7 +60,12 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
         $status = [];
         foreach($data['company'] as $name => $value) {
             $key = "company:{$name}";
-            $status[] = Uss::instance()->options->set($key, $value);
+            $updated = Uss::instance()->options->set($key, $value);
+            // if($updated) {
+            //     $this->getField("company[$name]")
+            //         ->setWidgetValue($value);
+            // };
+            $status[] = $updated;
         }
         return !in_array(false, $status, true);
     }
@@ -77,7 +76,7 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
     public function onEntrySuccess(array $data): void
     {
         $uss = Uss::instance();
-
+        
         $this->message[] = "<i class='bi bi-check-circle text-success me-1'></i> Settings was successfully updated";
 
         $fileUploader = $this->getFileUploader();

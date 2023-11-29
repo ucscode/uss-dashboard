@@ -5,6 +5,11 @@ use Ucscode\UssForm\UssFormField;
 
 class AdminSettingsUserForm extends AbstractDashboardForm
 {
+    protected function init(): void
+    {
+        $this->handleSubmission();
+    }
+
     public function buildForm(): void
     {
         $uss = Uss::instance();
@@ -16,6 +21,7 @@ class AdminSettingsUserForm extends AbstractDashboardForm
                 ->setInfoMessage("Disallow registration until this option is turned off")
                 ->setWidgetChecked(!empty($uss->options->get("user:disable-signup")))
                 ->setRequired(false)
+                ->setWidgetValue(1)
         );
 
         $this->addField(
@@ -25,6 +31,7 @@ class AdminSettingsUserForm extends AbstractDashboardForm
                 ->setInfoMessage("Hide or display the username input in the registration form")
                 ->setWidgetChecked(!empty($uss->options->get("user:collect-username")))
                 ->setRequired(false)
+                ->setWidgetValue(1)
         );
 
         $this->addField(
@@ -34,6 +41,7 @@ class AdminSettingsUserForm extends AbstractDashboardForm
                 ->setInfoMessage("Enforce user to confirm their email before they can login")
                 ->setWidgetChecked(!empty($uss->options->get("user:confirm-email")))
                 ->setRequired(false)
+                ->setWidgetValue(1)
         );
 
         $this->addField(
@@ -43,6 +51,7 @@ class AdminSettingsUserForm extends AbstractDashboardForm
                 ->setInfoMessage("Prevent user from changing their email after login")
                 ->setWidgetChecked(!empty($uss->options->get("user:lock-email")))
                 ->setRequired(false)
+                ->setWidgetValue(1)
         );
 
         $this->addField(
@@ -52,7 +61,14 @@ class AdminSettingsUserForm extends AbstractDashboardForm
                 ->setInfoMessage("Enforce user to confirm their new email address")
                 ->setWidgetChecked(!empty($uss->options->get("user:reconfirm-email")))
                 ->setRequired(false)
+                ->setWidgetValue(1)
         );
+
+        foreach($this->getFieldStack("default")->getFields() as $field) {
+            $field->inverse(true)
+                ->createSecondaryField("alt")
+                ->setWidgetValue(0);
+        }
 
         /**
          * Fieldstack
@@ -80,5 +96,32 @@ class AdminSettingsUserForm extends AbstractDashboardForm
             'user[default-roles][]',
             (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
         );
+
+        $this->setSecurityHash();
+    }
+
+    public function persistEntry(array $data): bool
+    {
+        $result = [];
+        foreach($data['user'] as $key => $value) {
+            $basis = "user:{$key}";
+            if(is_numeric($value)) {
+                $value = (float)$value;
+            }
+            $result[] = Uss::instance()->options->set($basis, $value);
+        }
+        return !in_array(false, $result, true);
+    }
+
+    public function onEntrySuccess(array $data): void
+    {
+        (new Alert("User settings successfully updated"))
+            ->display();
+    }
+
+    public function onEntryFailure(array $data): void
+    {
+        (new Alert("User settings could not updated"))
+            ->display();
     }
 }

@@ -5,6 +5,11 @@ use Ucscode\UssForm\UssFormField;
 
 class AdminSettingsEmailForm extends AbstractDashboardForm
 {
+    protected function init(): void
+    {
+        $this->handleSubmission();
+    }
+
     public function buildForm(): void
     {
         $uss = Uss::instance();
@@ -28,10 +33,12 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
         $value = $uss->options->get("smtp:state");
 
         $smtpField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_RADIO);
+
         $smtpField
             ->setLabelValue("Use Default Settings")
             ->setWidgetChecked($value === 'default' || empty($value))
-            ->setWidgetValue('default');
+            ->setWidgetValue('default')
+            ->setContainerAttribute("id", "smtp-state");
 
         $smtpField
             ->createSecondaryField("field1", UssForm::TYPE_RADIO)
@@ -40,10 +47,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
             ->setWidgetValue('custom')
             ->setWidgetChecked($value === 'custom');
 
-        $this->addField(
-            'smtp[state]',
-            $smtpField
-        );
+        $this->addField('smtp[state]', $smtpField);
 
         /**
          * SMTP Fieldstack
@@ -103,5 +107,44 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
                 ])
                 ->setWidgetValue($uss->options->get("smtp:security"))
         );
+
+        $this->setSecurityHash();
+    }
+
+    /**
+     * @method persistEntry
+     */
+    public function persistEntry(array $data): bool
+    {
+        $status = [];
+        foreach($data as $name => $array) {
+            if(in_array($name, ['company', 'smtp'])) {
+                foreach($array as $key => $value) {
+                    $key = "{$name}:{$key}";
+                    $status[] = Uss::instance()->options->set($key, $value);
+                }
+            }
+        }
+        return !in_array(false, $status, true);
+    }
+
+    /**
+     * @method onEntrySuccess
+     */
+    public function onEntrySuccess(array $data): void
+    {
+        (new Alert("Email Settings successfully updated"))
+            ->type("notification")
+            ->display();
+    }
+
+    /**
+     * @method onEntryFailure
+     */
+    public function onEntryFailure(array $data): void
+    {
+        (new Alert("Email Settings could not be updated"))
+            ->type("notification")
+            ->display("error");
     }
 }
