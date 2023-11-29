@@ -64,12 +64,35 @@ class DashboardRenderLogic implements EventInterface
      */
     protected function createUserInterface(): void
     {
+        $this->remodelMenu($this->dashboard->menu->children);
         $dashboardExtension = new DashboardExtension($this->dashboard);
         $this->uss->addTwigExtension($dashboardExtension);
         $this->setJSVariables();
         $this->options['_theme'] = '@Theme/' . $this->dashboard->config->getTheme();
         $this->options['user'] = $this->user;
         $this->uss->render($this->template, $this->options);
+    }
+
+    /**
+     * @method refactorMenuItems
+     */
+    protected function remodelMenu(array $children): void
+    {
+        foreach($children as $item) {
+            if($item->getAttr('pinned')) {
+                $item->setAttr('active', $item->parentNode->getAttr('active'));
+            }
+            if($item->getAttr('active') ?? false) {
+                $parentNode = $item->parentNode;
+                while($parentNode && $parentNode->level) {
+                    $parentNode->setAttr('expanded', true);
+                    $parentNode = $parentNode->parentNode;
+                }
+            }
+            if(!empty($item->children)) {
+                $this->remodelMenu($item->children);
+            }
+        }
     }
 
     /**

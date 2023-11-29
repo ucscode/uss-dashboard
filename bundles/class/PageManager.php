@@ -130,35 +130,29 @@ class PageManager
     public function addMenuItem(string $name, array|TreeNode $menu, TreeNode $parentMenu): self
     {
         $this->validateMenuItem($menu, $parentMenu, __METHOD__);
-
-        if (is_array($menu)) {
-            $menu = new TreeNode($name, $menu);
-        }
-
+        $menu = is_array($menu) ? new TreeNode($name, $menu) : $menu;
         $this->menuItems[$name] = [
             'item' => $menu,
             'parent' => $parentMenu,
         ];
-
         return $this;
     }
 
     /**
      * @method getMenuItem
      */
-    public function getMenuItem(?string $name = null, bool $returnItem = false): array|TreeNode|null
+    public function getMenuItem(string $name, bool $onlyItem = false): array|TreeNode|null
     {
-        if (is_null($name)) {
-            return $this->menuItems;
-        }
-
         $items = $this->menuItems[$name] ?? null;
+        return ($items && $onlyItem) ? $items['item'] : $items;
+    }
 
-        if ($items && $returnItem) {
-            return $items['item'];
-        }
-
-        return $items;
+    /**
+     * @method getMenuItems
+     */
+    public function getMenuItems(): array 
+    {
+        return $this->menuItems;
     }
 
     /**

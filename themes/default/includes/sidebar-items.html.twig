@@ -1,14 +1,11 @@
-{% macro createMenuItem(menu) %}
+{% macro createMenuItem(children) %}
 
-    {% for item in menu.children %}
+    {% for item in children %}
 
         {% set itemId = "menu-" ~ item.nodeId %}
-
         {% set expandable = (item.children|length) and (item.level < 4) %}
-
         {% set isActive = item.getAttr('active') %}
-
-        {% set isExpanded = isActive or item.getAttr('isExpanded') %}
+        {% set isExpanded = isActive or item.getAttr('expanded') %}
         
         {% set itemClass = [
             item.level is same as(1) ? "nav-item" : "nav-sub-item",
@@ -32,7 +29,7 @@
                         <i class="{{ item.getAttr('icon') ?? 'bi bi-question-circle' }}"></i>
                     </span>
                 {% endif %}
-                <span class='text'>{{ item.getAttr('label') }}</span>
+                <span class='text'>{{ item.getAttr('label')|raw }}</span>
             </a>
 
             {% if expandable %}
@@ -42,7 +39,7 @@
                         data-bs-parent="#nav-group"
                     {% endif %}
                 >
-                    {{ _self.createMenuItem(item) }}
+                    {{ _self.createMenuItem(item.children) }}
                 </ul>
 
             {% endif %}
@@ -55,4 +52,4 @@
 
 {% set menu = DashboardExtension.getDashboardProperty('menu') %}
 
-{{ _self.createMenuItem(menu) }}
+{{ _self.createMenuItem(menu.children) }}

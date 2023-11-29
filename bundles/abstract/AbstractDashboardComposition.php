@@ -23,85 +23,85 @@ abstract class AbstractDashboardComposition implements DashboardInterface
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
         DashboardFactory::registerProject($this);
-        (new Event())->addListener('modules:loaded', fn () => $this->buildPages(), -10);
+        (new Event())->addListener('modules:loaded', fn () => $this->pageRepositoryControl(), -10);
     }
 
     /**
-     * @method buildPages
+     * @method pageRepositoryControl
      */
-    private function buildPages(): void
+    private function pageRepositoryControl(): void
     {
         $pageManagers = $this->pageRepository->getPageManagers();
-        $this->extractMenuItems($pageManagers);
-        $this->configureMenuRecursively($this->menu, 'Main Menu');
-        $this->configureMenuRecursively($this->userMenu, 'User Menu');
+
+        foreach($pageManagers as $pageManager) {
+            foreach($pageManager->getMenuItems() as $name => $menuItem) {
+                $menuItem['parent']->add($name, $menuItem['item']);
+            };
+        }
+
+        $this->iterateMenu($this->menu, 1, 'Main Menu');
+        $this->iterateMenu($this->userMenu, 2, 'User Menu');
+
         foreach($pageManagers as $pageManager) {
             $this->enablePageManager($pageManager);
         }
     }
 
     /**
-     * @method extractMenuItems
+     * @method iterateMenu
      */
-    private function extractMenuItems(array $pageManagers): void
-    {
-        foreach($pageManagers as $pageManager) {
-            foreach($pageManager->getMenuItem() as $name => $menuItem) {
-                $item = $menuItem['item'];
-                $menuItem['parent']->add($name, $item);
-            };
-        }
-    }
-
-    /**
-     * @method configureMenuRecursively
-     */
-    private function configureMenuRecursively(TreeNode $menu, string $title): void
+    private function iterateMenu(TreeNode $menu, int $category, string $title): void
     {
         if(empty($menu->getAttr('label')) && !empty($menu->level)) {
-            throw new \Exception(
-                sprintf(
-                    "%s: (Item: %s) must have a label attribute",
-                    $title,
-                    $menu->name
-                )
+            $exceptionMessage = sprintf(
+                "%s: (Item: %s) must have a label attribute",
+                $title,
+                $menu->name
             );
+            throw new \Exception($exceptionMessage);
         };
 
-        $menu->sortChildren(function ($a, $b) {
-            $left = (int)($a->getAttr('order') ?? 0);
-            $right = (int)($b->getAttr('order') ?? 0);
-            return $left <=> $right;
-        });
-
-        $defaultAttr = [
-            'target' => '_self',
-            'href' => 'javascript:void(0)'
-        ];
-
-        $this->setDefaultMenuAttributes($menu, $defaultAttr);
-
         if(!empty($menu->children)) {
-            $this->setDefaultMenuAttributes($menu, $defaultAttr);
+            
+            if($category === 1 && $menu->level && !is_null($menu->getAttr('href'))) {
+
+                $label = $menu->getAttr('label') . '<i class="bi bi-pin-angle ms-1 menu-pin"></i>';
+                
+                $menu->add($menu->name, [
+                    'label' => $label,
+                    'href' => $menu->getAttr('href'),
+                    'target' => $menu->getAttr('target') ?? '_self',
+                    'order' => -1024,
+                    'pinned' => true,
+                    'active' => $menu->getAttr('active'),
+                ]);
+            }
+
+            $menu->sortChildren(function ($a, $b) {
+                $left = (int)($a->getAttr('order') ?? 0);
+                $right = (int)($b->getAttr('order') ?? 0);
+                return $left <=> $right;
+            });
+
             foreach($menu->children as $childMenu) {
-                $this->configureMenuRecursively($childMenu, $title);
+                $this->iterateMenu($childMenu, $category, $title);
             }
         }
 
-        if($menu->getAttr('active')) {
-            $parentNode = $menu->parentNode;
-            while($parentNode && $parentNode->level) {
-                $parentNode->setAttr('isExpanded', true);
-                $parentNode = $parentNode->parentNode;
-            }
-        }
+        $this->defaultMenuAttributes($menu);
     }
 
     /**
-     * @method setDefaultMenuAttributes
+     * @method defaultMenuAttributes
      */
-    private function setDefaultMenuAttributes(TreeNode $menu, array $attributes): void
+    private function defaultMenuAttributes(TreeNode $menu): void
     {
+        $attributes = [
+            'target' => '_self',
+            'href' => 'javascript:void(0)',
+            'pinned' => false,
+        ];
+
         foreach($attributes as $key => $value) {
             if(empty($menu->getAttr($key))) {
                 $menu->setAttr($key, $value);
