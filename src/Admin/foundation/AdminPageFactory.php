@@ -148,7 +148,7 @@ class AdminPageFactory extends AbstractPageFactory
         $emailItem = [
             'label' => 'Email',
             'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS_EMAIL),
-            'icon' => 'bi bi-envelope',
+            'icon' => 'bi bi-envelope-at',
             'order' => 2,
         ];
 
@@ -175,7 +175,7 @@ class AdminPageFactory extends AbstractPageFactory
         $userItem = [
             'label' => 'Users',
             'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS_USERS),
-            'icon' => 'bi bi-person',
+            'icon' => 'bi bi-people',
             'order' => 3,
         ];
 

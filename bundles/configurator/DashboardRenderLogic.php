@@ -64,12 +64,13 @@ class DashboardRenderLogic implements EventInterface
      */
     protected function createUserInterface(): void
     {
-        $this->remodelMenu($this->dashboard->menu->children);
-        $dashboardExtension = new DashboardExtension($this->dashboard);
-        $this->uss->addTwigExtension($dashboardExtension);
-        $this->setJSVariables();
         $this->options['_theme'] = '@Theme/' . $this->dashboard->config->getTheme();
         $this->options['user'] = $this->user;
+
+        $this->remodelMenu($this->dashboard->menu->children);
+        $this->setJSVariables();
+
+        $this->uss->twigEnvironment->addExtension(new DashboardExtension($this->dashboard));
         $this->uss->render($this->template, $this->options);
     }
 

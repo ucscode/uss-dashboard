@@ -30,7 +30,7 @@ final class DashboardConfig
      */
     public function setTheme(string $theme): self
     {
-        $this->theme = $theme;
+        $this->theme = Uss::instance()->filterContext($theme);
         return $this;
     }
 
@@ -47,7 +47,7 @@ final class DashboardConfig
      */
     public function setParentTheme(string $parentTheme): self
     {
-        $this->parentTheme = $parentTheme;
+        $this->parentTheme = Uss::instance()->filterContext($parentTheme);
         return $this;
     }
 

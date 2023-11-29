@@ -14,8 +14,8 @@ new class () {
     protected function configureFilesystem(): void
     {
         $uss = Uss::instance();
-        $uss->addTwigFilesystem(DashboardImmutable::MAIL_TEMPLATE_DIR, 'Mail');
-        $uss->addTwigFilesystem(DashboardImmutable::THEME_DIR, 'Theme');
+        $uss->filesystemLoader->addPath(DashboardImmutable::MAIL_TEMPLATE_DIR, 'Mail');
+        $uss->filesystemLoader->addPath(DashboardImmutable::THEME_DIR, 'Theme');
     }
 
     protected function configureUserDashboard(): void

@@ -74,7 +74,7 @@ class User extends AbstractUserRepository
                 ->limit(abs($start), abs($limit));
 
             $result = $uss->mysqli->query($SQL->getQuery());
-            $data = $uss->mysqli_result_to_array($result);
+            $data = $uss->mysqliResultToArray($result);
         };
 
         return $data;
