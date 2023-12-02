@@ -29,8 +29,8 @@ class AdminPageFactory extends AbstractPageFactory
         return $this->createPage(AdminDashboardInterface::PAGE_LOGOUT)
             ->setController(UserLogoutController::class)
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_LOGOUT, 
-                $logoutMenuItem, 
+                AdminDashboardInterface::PAGE_LOGOUT,
+                $logoutMenuItem,
                 $this->dashboard->userMenu
             )
             ->setCustom('endpoint', $this->dashboard->urlGenerator());
@@ -52,8 +52,8 @@ class AdminPageFactory extends AbstractPageFactory
             ->setController(AdminIndexController::class)
             ->setTemplate($this->dashboard->useTheme('/pages/admin/index.html.twig'))
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_INDEX, 
-                $indexMenuItem, 
+                AdminDashboardInterface::PAGE_INDEX,
+                $indexMenuItem,
                 $this->dashboard->menu
             );
     }
@@ -83,8 +83,8 @@ class AdminPageFactory extends AbstractPageFactory
             ->setController(AdminUserController::class)
             ->setTemplate($this->dashboard->useTheme('/pages/admin/users.html.twig'))
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_USERS, 
-                $userMenuItem, 
+                AdminDashboardInterface::PAGE_USERS,
+                $userMenuItem,
                 $this->dashboard->menu
             );
     }
@@ -104,8 +104,8 @@ class AdminPageFactory extends AbstractPageFactory
             ->setController(AdminSettingsController::class)
             ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/index.html.twig'))
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_SETTINGS, 
-                $settingsMenuItem, 
+                AdminDashboardInterface::PAGE_SETTINGS,
+                $settingsMenuItem,
                 $this->dashboard->menu
             );
     }
@@ -133,8 +133,8 @@ class AdminPageFactory extends AbstractPageFactory
             ->setController(AdminSettingsDefaultController::class)
             ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/default.html.twig'))
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_SETTINGS_DEFAULT, 
-                $defaultItem, 
+                AdminDashboardInterface::PAGE_SETTINGS_DEFAULT,
+                $defaultItem,
                 $this->dashboard->settingsBatch
             )
             ->setForm($defaultForm);
@@ -161,7 +161,7 @@ class AdminPageFactory extends AbstractPageFactory
             ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/email.html.twig'))
             ->addMenuItem(
                 AdminDashboardInterface::PAGE_SETTINGS_EMAIL,
-                $emailItem, 
+                $emailItem,
                 $this->dashboard->settingsBatch
             )
             ->setForm($emailForm);
@@ -187,10 +187,34 @@ class AdminPageFactory extends AbstractPageFactory
             ->setController(AdminSettingsUserController::class)
             ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/user.html.twig'))
             ->addMenuItem(
-                AdminDashboardInterface::PAGE_SETTINGS_USERS, 
-                $userItem, 
+                AdminDashboardInterface::PAGE_SETTINGS_USERS,
+                $userItem,
                 $this->dashboard->settingsBatch
             )
             ->setForm($userForm);
+    }
+
+    /**
+     * @method createInfoPage
+     */
+    public function createInfoPage(): PageManager
+    {
+        $infoItem = [
+            "label" => "info",
+            "href" => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_INFO)
+        ];
+
+        $parentItem = $this->dashboard->pageRepository->getPageManager(
+            AdminDashboardInterface::PAGE_SETTINGS
+        )->getMenuItem(AdminDashboardInterface::PAGE_SETTINGS, true);
+
+        return $this->createPage(AdminDashboardInterface::PAGE_INFO)
+            ->setController(AdminInfoController::class)
+            ->setTemplate($this->dashboard->useTheme('/pages/admin/info.html.twig'))
+            ->addMenuItem(
+                AdminDashboardInterface::PAGE_INFO,
+                $infoItem,
+                $parentItem
+            );
     }
 }

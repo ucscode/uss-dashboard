@@ -11,7 +11,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     public function createProject(DashboardConfig $config): void
     {
         parent::createProject($config);
-        
+
         $this->settingsBatch = new TreeNode('settingsNode');
 
         $factory = new AdminPageFactory($this);
@@ -25,6 +25,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         $factory->createSettingsDefaultPage();
         $factory->createSettingsEmailPage();
         $factory->createSettingsUserPage();
+        $factory->createInfoPage();
 
         (new Event())->addListener('dashboard:render', new SettingsBatchRegulator($this), -10);
     }

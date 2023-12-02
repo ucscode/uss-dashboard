@@ -7,12 +7,7 @@ use Ucscode\UssForm\UssFormField;
 
 class AdminUserController implements RouteInterface
 {
-    protected array $userRoles = [
-        RoleImmutable::ROLE_SUPERADMIN,
-        RoleImmutable::ROLE_ADMIN,
-        RoleImmutable::ROLE_USER,
-        RoleImmutable::ROLE_CUSTOMER,
-    ];
+    protected array $userRoles;
 
     protected ?User $user = null;
 
@@ -23,6 +18,7 @@ class AdminUserController implements RouteInterface
         protected PageManager $pageManager,
         protected DashboardInterface $dashboard
     ) {
+        $this->userRoles = (new DashboardFactory())->getPermissions();
     }
 
     /**

@@ -1,0 +1,11 @@
+{% extends _theme ~ '/base.html.twig' %}
+
+{% block dashboard_content %}
+    <div class='container-fluid'>
+        <div class="card">
+            <div class="card-body">
+                {{ table|raw }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
