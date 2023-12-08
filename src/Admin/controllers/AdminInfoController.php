@@ -101,6 +101,7 @@ class AdminInfoController implements RouteInterface
 
         $table->setItemsPerPage(100);
         $table->getTheadElement()->setAttribute('class', 'd-none');
+        $table->getTableElement()->addAttributeValue("class", "table-striped");
         return $table;
     }
 }

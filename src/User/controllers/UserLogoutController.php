@@ -13,7 +13,7 @@ class UserLogoutController implements RouteInterface
         if(isset($_SESSION[UserInterface::SESSION_KEY])) {
             unset($_SESSION[UserInterface::SESSION_KEY]);
         };
-
+        
         $endpoint = $this->pageManager->getCustom('endpoint') ?? null;
 
         if(!($endpoint instanceof UrlGenerator) && !is_string($endpoint)) {

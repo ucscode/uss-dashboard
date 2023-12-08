@@ -1,13 +1,11 @@
 <?php
 
-class Alert
+class Alert implements AlertInterface
 {
     protected const ALERT_TYPES = [
         'modal' => 'bootbox',
         'notification' => 'izitoast'
     ];
-
-    public const SESSID = 'v-alert';
 
     protected array $options = [];
     protected string $type = 'modal';

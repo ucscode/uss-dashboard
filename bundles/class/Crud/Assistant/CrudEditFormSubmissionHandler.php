@@ -262,9 +262,9 @@ final class CrudEditFormSubmissionHandler implements CrudActionImmutableInterfac
             if($isValid) {
                 $field = $this->crudEditManager->getField($key);
                 if($field) {
-                    if($field->isRequired() && empty($value)) {
+                    if($field->isRequired() && trim($value) === '') {
                         $isValid = false;
-                    } elseif(!empty($value)) {
+                    } elseif(!empty($value) && $field->nodeName === UssForm::NODE_INPUT) {
                         $isValid = $this->validityPriority($field->getWidgetAttribute('type'), $value, $field);
                     }
                 }

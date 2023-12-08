@@ -46,7 +46,7 @@ class CrudEditManager extends AbstractCrudEditConcept
 
         $this->widgetContainer = new UssElement(UssElement::NODE_DIV);
         $this->widgetContainer->setAttribute('class', 'row widget-container');
-        
+
         $domTable = new DOMTable($this->tablename);
         $domTable->setColumns([
             'key',
@@ -124,9 +124,10 @@ class CrudEditManager extends AbstractCrudEditConcept
     protected function populateForm(): void
     {
         $isPost = $_SERVER['REQUEST_METHOD'] === 'POST';
-        if($isPost || $this->getItem()) {
+        $item = $this->getItem();
+        if($isPost || $item) {
             $keys = ['__ACTION__', '__NONCE__'];
-            $dataToPopulate = $isPost ? $_POST : $this->getItem();
+            $dataToPopulate = $isPost ? $_POST : $item;
             foreach($keys as $key) {
                 if(array_key_exists($key, $dataToPopulate)) {
                     unset($dataToPopulate[$key]);

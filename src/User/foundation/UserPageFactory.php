@@ -54,7 +54,7 @@ final class UserPageFactory extends AbstractPageFactory
             'order' => 1024
         ];
 
-        return $this->createPage(UserDashboardInterface::PAGE_LOGOUT, false)
+        return $this->createPage(UserDashboardInterface::PAGE_LOGOUT)
             ->setController(UserLogoutController::class)
             ->addMenuItem(
                 UserDashboardInterface::PAGE_LOGOUT, 

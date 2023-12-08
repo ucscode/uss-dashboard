@@ -44,7 +44,8 @@ class AdminPageFactory extends AbstractPageFactory
         $indexMenuItem = [
             'label' => 'Dashboard',
             'icon' => 'bi bi-microsoft',
-            'href' => $this->dashboard->urlGenerator()
+            'href' => $this->dashboard->urlGenerator(),
+            'order' => 0,
         ];
 
         return $this->createPage(AdminDashboardInterface::PAGE_INDEX)
@@ -77,6 +78,7 @@ class AdminPageFactory extends AbstractPageFactory
             'label' => 'Users',
             'icon' => 'bi bi-people-fill',
             'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_USERS),
+            'order' => 1,
         ];
 
         return $this->createPage(AdminDashboardInterface::PAGE_USERS)
@@ -97,7 +99,8 @@ class AdminPageFactory extends AbstractPageFactory
         $settingsMenuItem = [
             'label' => 'settings',
             'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS),
-            'icon' => 'bi bi-wrench'
+            'icon' => 'bi bi-wrench',
+            'order' => 2,
         ];
 
         return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS)
@@ -200,7 +203,7 @@ class AdminPageFactory extends AbstractPageFactory
     public function createInfoPage(): PageManager
     {
         $infoItem = [
-            "label" => "info",
+            "label" => "information",
             "href" => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_INFO)
         ];
 
