@@ -107,4 +107,14 @@ abstract class AbstractDashboard extends AbstractDashboardComposition
         $dymanicTemplate = "@Theme/{$theme}/{$template}";
         return Uss::instance()->filterContext($dymanicTemplate);
     }
+
+    /**
+     * @method getCurrentUser
+     */
+    public function getCurrentUser(): ?User
+    {
+        $user = new User();
+        $user->getFromSession();
+        return $user->exists() ? $user : null;
+    }
 }

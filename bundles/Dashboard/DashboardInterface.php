@@ -13,4 +13,5 @@ interface DashboardInterface
     public function getPageManagerUrl(string $name): ?string;
     public function isFirewallEnabled(): bool;
     public function useTheme(string $theme): string;
+    public function getCurrentUser(): ?User;
 }

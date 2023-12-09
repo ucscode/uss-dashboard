@@ -1,6 +1,6 @@
 <?php
 
-interface AdminDashboardInterface
+interface AdminDashboardInterface extends DashboardInterface
 {
     public const DIR = DashboardImmutable::SRC_DIR . '/Admin';
     public const ASSETS_DIR = self::DIR . '/assets';
