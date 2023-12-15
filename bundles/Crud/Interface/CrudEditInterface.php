@@ -1,5 +1,6 @@
 <?php
 
+use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
@@ -15,6 +16,10 @@ interface CrudEditInterface
     public function setModifier(?CrudEditSubmitInterface $modifier): self;
 
     public function getModifier(): ?CrudEditSubmitInterface;
+
+    public function setReadonlyModifier(?DOMTableInterface $modifier): self;
+
+    public function getReadonlyModifier(): ?DOMTableInterface;
 
     public function createUI(): UssElement;
 

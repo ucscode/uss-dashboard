@@ -9,6 +9,7 @@ new class {
         this.confirmHref();
         this.enableTableCheckboxes();
         this.manageBulkActions();
+        this.glightbox();
     }
 
     transferClick() {
@@ -158,6 +159,14 @@ new class {
                     }
                 });
             }
+        });
+    }
+
+    glightbox() {
+        const selector = "a[data-glightbox]";
+        const el = $(selector).get(0);
+        const glightbox = GLightbox({
+            selector
         });
     }
 

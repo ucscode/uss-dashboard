@@ -126,7 +126,7 @@ class CrudProcessAutomator implements CrudProcessAutomatorInterface
      */
     public function getCreatedUI(): ?UssElement
     {
-        return $this->activeManager->createUI();
+        return $this->activeManager?->createUI();
     }
 
     /**

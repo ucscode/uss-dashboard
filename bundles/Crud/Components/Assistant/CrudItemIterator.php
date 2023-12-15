@@ -145,7 +145,7 @@ final class CrudItemIterator implements DOMTableInterface
         $class = $crudAction->getElementAttribute('class');
 
         if($this->isDropdown) {
-            $crudAction->setElementAttribute('class', 'dropdown-item ' . $class);
+            $crudAction->setElementAttribute('class', 'dropdown-item small' . $class);
             $li = new UssElement(UssElement::NODE_LI);
             $li->appendChild($element);
             $container->appendChild($li);

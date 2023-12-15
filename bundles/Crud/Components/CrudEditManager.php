@@ -62,7 +62,7 @@ class CrudEditManager extends AbstractCrudEditConcept
             ];
         }
 
-        $domTable->setData($itemCast);
+        $domTable->setData($itemCast, $this->domtableInterface);
         $tableElement = $domTable->build();
         $domTable->getTableElement()->addAttributeValue('class', 'table-striped');
 

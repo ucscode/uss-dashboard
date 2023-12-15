@@ -1,5 +1,6 @@
 <?php
 
+use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssForm\UssFormField;
 
@@ -55,6 +56,9 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     // $submitInterface: The modifier instance
     protected ?CrudEditSubmitInterface $submitInterface = null;
 
+    // $domtableInterface: Readonly Modifier
+    protected ?DOMTableInterface $domtableInterface = null;
+
     public function __construct(string $tablename)
     {
         parent::__construct($tablename);
@@ -75,6 +79,23 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     public function getModifier(): ?CrudEditSubmitInterface
     {
         return $this->submitInterface;
+    }
+
+    /**
+     * @method setReadonlyModifier
+     */
+    public function setReadonlyModifier(?DOMTableInterface $modifier): CrudEditInterface
+    {
+        $this->domtableInterface = $modifier;
+        return $this;
+    }
+
+    /**
+     * @method getReadonlyModifier
+     */
+    public function getReadonlyModifier(): ?DOMTableInterface
+    {
+        return $this->domtableInterface;
     }
 
     /**
@@ -299,7 +320,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
         $this->itemEntityError = null;
         $item = is_null($item) ? $this->getItem() : $item;
         if($item) {
-            $sQuery = (new SQuery())->insert($this->tablename, $item);
+            $sQuery = (new SQuery())->insert($this->tablename, $item)->getQuery();
             try {
                 $mysqli = Uss::instance()->mysqli;
                 $status = $mysqli->query($sQuery);
