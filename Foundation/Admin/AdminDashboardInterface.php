@@ -11,6 +11,7 @@ interface AdminDashboardInterface extends DashboardInterface
     public const FORM_DIR = self::DIR . '/Form';
     public const CONTROLLER_DIR = self::DIR . '/Controller';
     public const COMPACT_DIR = self::DIR . '/Compact';
+    public const TEMPLATE_DIR =  self::DIR . '/Template';
 
     public const PAGE_LOGIN = 'login';
     public const PAGE_INDEX = 'index';
