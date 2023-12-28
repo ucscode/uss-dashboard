@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Bundle\Kernel;
 
 use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Event\Event;
@@ -90,7 +91,31 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     public function getCurrentUser(): ?User
     {
         $user = new User();
-        $user->getFromSession();
-        return $user->exists() ? $user : null;
+        $user->acquireFromSession();
+        return $user->isAvailable() ? $user : null;
+    }
+
+    /**
+     * @method themeFile
+     */
+    public function getTheme(string $path, Enumerator $enum = Enumerator::THEME): string
+    {
+        $uss = Uss::instance();
+        $path = $uss->filterContext($path);
+
+        switch($enum) {
+            case Enumerator::FILE_SYSTEM:
+                $prefix = DashboardImmutable::THEMES_DIR;
+                break;
+            case Enumerator::URL:
+                $prefix = $uss->abspathToUrl(DashboardImmutable::THEMES_DIR);
+                break;
+            default:
+                $prefix = '@Theme';
+        }
+
+        $theme = $prefix . "/" . $this->appControl->getThemeFolder(); 
+        $theme .= !empty($path) ? "/{$path}" : null;
+        return $theme;
     }
 }

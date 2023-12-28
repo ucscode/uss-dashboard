@@ -1,5 +1,7 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Alert;
+
 interface AlertInterface 
 {
     public const SESSID = 'v-alert';

@@ -35,13 +35,13 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      */
     protected function synchronizeMenu(TreeNode $menu, ?callable $func = null): void
     {
-        $menu->synchronizeChildren($menu->getChildren(), function(TreeNode $item) use ($menu, $func): mixed {
-            
+        $menu->synchronizeChildren($menu->getChildren(), function (TreeNode $item) use ($menu, $func): mixed {
+
             if(empty($item->getAttribute('label'))) {
                 throw new RuntimeException(
                     sprintf(
-                        "Error in %s (%s): The item '%s' is missing a required 'label' attribute.", 
-                        $menu->getName(), 
+                        "Error in %s (%s): The item '%s' is missing a required 'label' attribute.",
+                        $menu->getName(),
                         $item->getName(),
                         $item->getIdentity()
                     )
@@ -55,7 +55,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
                 $sortB = $b->getAttribute('order') ?? 0;
                 return (int)$sortA <=> (int)$sortB;
             });
-            
+
             $attributes = [
                 'target' => '_self',
                 'href' => 'javascript:void(0)',
@@ -79,7 +79,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     private function createGUI(): void
     {
         foreach($this->getDocuments() as $document) {
-            foreach(array_filter($document->getMenuItems(true)) as $name => $parentItem) { 
+            foreach(array_filter($document->getMenuItems(true)) as $name => $parentItem) {
                 if(!$parentItem->getChild($name)) { // get relative child item
                     $parentItem->addChild($name, $document->getMenuItem($name));
                 }
@@ -104,7 +104,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      * @method defaultMenuAttributes
      */
     private function inlineMenu(TreeNode $item): void
-    {        
+    {
         $anchor = $item->getAttribute('href');
         $children = $item->getChildren();
 

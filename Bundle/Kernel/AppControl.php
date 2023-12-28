@@ -7,7 +7,7 @@ use Uss\Component\Kernel\Uss;
 final class AppControl
 {
     protected string $base;
-    protected string $theme;
+    protected string $themeFolder;
     protected array $permissions = [];
     protected string $permissionDeniedTemplate = '403.html.twig';
 
@@ -31,18 +31,18 @@ final class AppControl
     /**
      * @method setTheme
      */
-    public function setTheme(string $theme): self
+    public function setThemeFolder(string $theme): self
     {
-        $this->theme = Uss::instance()->filterContext($theme);
+        $this->themeFolder = Uss::instance()->filterContext($theme);
         return $this;
     }
 
     /**
      * @method getTheme
      */
-    public function getTheme(): string
+    public function getThemeFolder(): string
     {
-        return $this->theme;
+        return $this->themeFolder;
     }
 
     /**

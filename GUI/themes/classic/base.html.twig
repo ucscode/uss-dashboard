@@ -2,8 +2,8 @@
 
 {% block head_css %}
     {{ parent() }}
-    {% set cssPath = DashboardExtension.themeUrl('/assets/css/default.css') %}
-    <link rel="stylesheet" href="{{ cssPath }}">
+    {% set stylesheet = __dashboard.theme('/assets/css/default.css', __dashboard.ENUM.URL) %}
+    <link rel="stylesheet" href="{{ stylesheet }}">
 {% endblock head_css %}
 
 {% block body_main %}
@@ -102,18 +102,11 @@
     
     {{ parent() }}
 
-    {% set dataMagicJS = constant('DashboardImmutable::ASSETS_DIR') ~ '/js/dataMagic.js' %}
+    <script src="{{ Uss.abspathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/dataMagic.js') }}"></script>
 
-    <script src="{{ Uss.abspathToUrl(dataMagicJS) }}"></script>
-
-    {% if (user and user.exists()) %}
-
-        {% set dashboardJS = DashboardExtension.themeUrl('/assets/js/dashboard.js') %}
-        {% set notificationJS = DashboardExtension.themeUrl('/assets/js/notifications.js') %}
-
-	    <script src="{{ dashboardJS }}"></script>
-        <script type='module' src='{{ notificationJS }}'></script>
-        
+    {% if (user and user.isAvailable()) %}
+	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', __dashboard.ENUM.HTTP) }}"></script>
+        <script src='{{ __dashboard.theme('/assets/js/notifications.js', __dashboard.ENUM.HTTP) }}' type='module' ></script>
     {% endif %}
 
     {% set alerts = Uss.renderBlocks('v-alert') %}

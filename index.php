@@ -40,7 +40,7 @@ new class () {
     {
         $appControl = (new AppControl())
             ->setBase('/dashboard')
-            ->setTheme('classic')
+            ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
 
         UserDashboard::instance()->createApp($appControl);
@@ -51,7 +51,7 @@ new class () {
         return;
         $appControl = (new AppControl())
             ->setBase("/admin")
-            ->setTheme('classic')
+            ->setThemeFolder('classic')
             ->setPermissions([
                 RoleImmutable::ROLE_SUPERADMIN,
                 RoleImmutable::ROLE_ADMIN,

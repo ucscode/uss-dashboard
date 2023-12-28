@@ -1,5 +1,7 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Alert;
+
 class Alert implements AlertInterface
 {
     protected const ALERT_TYPES = [
@@ -108,7 +110,7 @@ class Alert implements AlertInterface
      * This method is called only once by
      * UdTwigExtension Class Instance
      */
-    public static function flushAll()
+    public static function exportContent()
     {
         if(!self::$liberated) {
             $alerts = $_SESSION[self::SESSID] ?? [];
