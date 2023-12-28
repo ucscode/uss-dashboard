@@ -80,12 +80,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     {
         (new Event())->addListener(
             'dashboard:render',
-            new DashboardRenderLogic(
-                $this,
-                Uss::instance(),
-                $template,
-                $options
-            )
+            new DashboardRenderLogic($this, $template, $options)
         );
     }
 

@@ -8,18 +8,18 @@ use Uss\Component\Kernel\Uss;
 
 class DashboardRenderLogic implements EventInterface
 {
+    protected Uss $uss;
     protected User $user;
     protected bool $isLoggedIn;
     
     public function __construct(
         protected DashboardInterface $dashboard,
-        protected Uss $uss,
         protected string $template,
         protected array $options
     ) {
-        $this->user = new User();
-        $this->user->getFromSession();
-        $this->isLoggedIn = $this->user->exists();
+        $this->uss = Uss::instance();
+        $this->user = (new User())->acquireFromSession();
+        $this->isLoggedIn = $this->user->isAvailable();
     }
 
     /**

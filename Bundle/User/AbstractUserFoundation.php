@@ -9,13 +9,18 @@ use Uss\Component\Kernel\Uss;
 abstract class AbstractUserFoundation implements UserInterface
 {
     protected array $user;
-    protected ?string $error = null;
-    protected static ?Pairs $usermeta = null;
+    public readonly Meta $meta;
+    public readonly Notification $notification;
+    public readonly Roles $roles;
+    private static ?Pairs $usermeta = null;
 
     public function __construct(?int $id = null)
     {
         $this->syncOnce();
-        $this->user = $this->getUser($id) ?? [];
+        $this->meta = new Meta($this, self::$usermeta);
+        $this->notification = new Notification($this);
+        $this->roles = new Roles($this);
+        $this->user = $this->acquireUser($id) ?? [];
     }
 
     /**
@@ -25,57 +30,16 @@ abstract class AbstractUserFoundation implements UserInterface
     {
         return [
             'user' => $this->user,
-            'errors' => $this->error
+            'meta' => $this->meta->getAll()
         ];
     }
-
+    
     /**
-     * @method getMetaInstance
+     * @method acquireUser
      */
-    public static function getMetaInstance(): ?Pairs
+    protected function acquireUser(?int $id): ?array
     {
-        return self::$usermeta;
-    }
-
-    /**
-     * @method getError
-     */
-    public function getError(): ?string
-    {
-        return $this->error;
-    }
-
-    /**
-     * @method allocate
-     */
-    public function allocate(string $key, string $value): self
-    {
-        if($this->exists()) {
-            throw new \Exception(
-                sprintf(
-                    "%s::%s: Allocation is only possible if user does not already exist",
-                    get_called_class(),
-                    __FUNCTION__
-                )
-            );
-        };
-        $user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key);
-        if($user) {
-            $this->user = $user;
-        }
-        return $this;
-    }
-
-    /**
-     * @method getUser
-     */
-    protected function getUser(?int $id): ?array
-    {
-        if($id) {
-            $id = abs($id);
-            return Uss::instance()->fetchItem(self::USER_TABLE, $id);
-        }
-        return null;
+        return $id ? Uss::instance()->fetchItem(self::USER_TABLE, abs($id)) : null;
     }
 
     /**

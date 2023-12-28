@@ -2,38 +2,16 @@
 
 namespace Module\Dashboard\Bundle\User;
 
+use DateTime;
+use Exception;
+use InvalidArgumentException;
+use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserRepository extends AbstractUserFoundation
 {
-    /**
-     * @method getUserMeta
-     */
-    public function getUserMeta(string $key, bool $epoch = false): mixed
-    {
-        return self::$usermeta->get($key, $this->getId(), $epoch);
-    }
-
-    /**
-     * @method setUserMeta
-     */
-    public function setUserMeta(string $key, mixed $value): bool
-    {
-        if($this->getId()) {
-            return self::$usermeta->set($key, $value, $this->getId());
-        };
-        return false;
-    }
-
-    /**
-     * @method removeUserMeta
-     */
-    public function removeUserMeta(string $key): ?bool
-    {
-        return self::$usermeta->remove($key, $this->getId());
-    }
-
     /**
      * @method getId
      */
@@ -48,13 +26,9 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function setEmail(string $email): self
     {
         if(!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
-            throw new \Exception(
-                sprintf(
-                    "%s::%s: Invalid email argument",
-                    get_called_class(),
-                    __FUNCTION__
-                )
-            );
+            throw new InvalidArgumentException(
+                "The provided email address is invalid."
+            );            
         };
         $this->user['email'] = strtolower(trim($email));
         return $this;
@@ -74,12 +48,8 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function setUsername(string $username): self
     {
         if(!preg_match('/^\w[a-z0-9_\-]+$/i', trim($username))) {
-            throw new \Exception(
-                sprintf(
-                    "%s::%s: Username can only contain letter, number, underscore and (but must not start with) hyphen",
-                    get_called_class(),
-                    __FUNCTION__
-                )
+            throw new InvalidArgumentException(
+                "Username can only contain letter, number, underscore and (but must not start with) hyphen"
             );
         }
         $this->user['username'] = strtolower(trim($username));
@@ -127,7 +97,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setRegisterTime
      */
-    public function setRegisterTime(\DateTime $dateTime): self
+    public function setRegisterTime(DateTime $dateTime): self
     {
         $registerTime = $dateTime->format('Y-m-d H:i:s');
         $this->user['register_time'] = $registerTime;
@@ -137,11 +107,11 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getRegisterTime
      */
-    public function getRegisterTime(): ?\DateTime
+    public function getRegisterTime(): ?DateTime
     {
         $registerTime = $this->user['register_time'] ?? null;
         if($registerTime) {
-            $registerTime = new \DateTime($registerTime);
+            $registerTime = new DateTime($registerTime);
         }
         return $registerTime;
     }
@@ -152,10 +122,8 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function setUsercode(string $usercode): self
     {
         if(!preg_match('/^[a-z0-9]+$/i', $usercode)) {
-            throw new \Exception(
-                sprintf(
-                    "%s::%s: Usercode cannot contain special character"
-                )
+            throw new InvalidArgumentException(
+                "Usercode cannot contain special character"
             );
         }
         $this->user['usercode'] = $usercode;
@@ -173,7 +141,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setLastSeen
      */
-    public function setLastSeen(\DateTime $dateTime): ?self
+    public function setLastSeen(DateTime $dateTime): ?self
     {
         $lastSeen = $dateTime->format('Y-m-d H:i:s');
         $this->user['last_seen'] = $lastSeen;
@@ -183,11 +151,11 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getLastSeen
      */
-    public function getLastSeen(): ?\DateTime
+    public function getLastSeen(): ?DateTime
     {
         $lastSeen = $this->user['last_seen'] ?? null;
         if($lastSeen) {
-            $lastSeen = new \DateTime($lastSeen);
+            $lastSeen = new DateTime($lastSeen);
         };
         return $lastSeen;
     }
@@ -226,24 +194,26 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     {
         $children = [];
 
-        $SQL = (new SQuery())
+        $squery = (new SQuery())
             ->select('*')
             ->from(self::USER_TABLE)
-            ->where('parent', $this->getId() ?? -1);
+            ->where(
+                (new Condition())
+                    ->add('parent', $this->getId() ?? -1)
+            );
 
         if(is_callable($filter)) {
-            $SQL = call_user_func($filter, $SQL);
-            if(!($SQL instanceof SQuery)) {
-                throw new \Exception(
-                    sprintf(
-                        "%s::%s: argument must return an instance of SQuery",
-                        get_called_class(),
-                        __FUNCTION__
+            $squery = call_user_func($filter, $squery);
+            if(!($squery instanceof SQuery)) {
+                throw new Exception(
+                    sprintf("%s Argument must return an instance of SQuery",
+                        __METHOD__
                     )
                 );
             }
         }
 
+        $SQL = $squery->build();
         $result = Uss::instance()->mysqli->query($SQL);
 
         if($result->num_rows) {
@@ -254,157 +224,14 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
 
         return $children;
     }
-
+    
     /**
-     * @method delete
+     * @method getAvatar
      */
-    public function delete(): ?bool
+    public function getAvatar(): ?string
     {
-        if($this->getId()) {
-            $SQL = (new SQuery())->delete()
-                ->from(self::USER_TABLE)
-                ->where('id', $this->getId());
-            return Uss::instance()->mysqli->query($SQL);
-        };
-        return null;
-    }
-
-    /**
-     * @method persist
-     */
-    public function persist(): bool
-    {
-        $uss = Uss::instance();
-        if(!$this->exists()) {
-            $SQL = (new SQuery())
-                ->insert(self::USER_TABLE, $this->user);
-            $insert = $uss->mysqli->query($SQL);
-            if($insert) {
-                $userid = $uss->mysqli->insert_id;
-                $this->user = $this->getUser($userid);
-            };
-        } else {
-            $SQL = (new SQuery())
-                ->update(self::USER_TABLE, $this->user)
-                ->where('id', $this->getId());
-            $insert = $uss->mysqli->query($SQL);
-        }
-        return $insert;
-    }
-
-    /**
-     * @method exists
-     */
-    public function exists(): bool
-    {
-        return !!$this->getId();
-    }
-
-    /**
-     * @method saveToSession
-     */
-    public function saveToSession()
-    {
-        if($this->exists()) {
-            $userSecret = $this->getPassword(). $this->getUsercode();
-            $var = $this->getId(). ":" . hash('sha256', $userSecret);
-            $_SESSION[self::SESSION_KEY] = $var;
-        }
-    }
-
-    /**
-     * @method getFromSession
-     */
-    public function getFromSession(): ?User
-    {
-        if(!$this->exists()) {
-            $session_value = $_SESSION[self::SESSION_KEY] ?? null;
-
-            if(!empty($session_value) && is_string($session_value)) {
-                $detail = explode(":", $session_value);
-
-                if(count($detail) === 2 && is_numeric($detail[0])) {
-                    $user = $this->getUser($detail[0]);
-
-                    if($user) {
-                        $userSecret = $user['password'] . $user['usercode'];
-                        $hash = hash('sha256', $userSecret);
-
-                        if($hash === $detail[1]) {
-                            $this->user = $user;
-                            return $this;
-                        }
-                    };
-
-                };
-
-            }
-        };
-        return null;
-    }
-
-    /**
-     * @method destroySession
-     */
-    public function destroySession(): void
-    {
-        if(isset($_SESSION[self::SESSION_KEY])) {
-            unset($_SESSION[self::SESSION_KEY]);
-        };
-    }
-
-    /**
-     * @method getRoles
-     */
-    public function getRoles(?int $index = null): array|string|null
-    {
-        $roles = $this->getUserMeta('user.roles') ?? [];
-        if(!is_null($index)) {
-            return $roles[$index] ?? null;
-        };
-        return $roles;
-    }
-
-    /**
-     * @method setRoles
-     */
-    public function setRoles(array $roles): bool
-    {
-        $roles = array_unique(array_values($roles));
-        return $this->setUserMeta('user.roles', $roles);
-    }
-
-    /**
-     * @method addRole
-     */
-    public function addRole(string $role): bool
-    {
-        $roles = $this->getRoles();
-        if(!in_array($role, $roles)) {
-            $roles[] = $role;
-        }
-        return $this->setUserMeta('user.roles', $roles);
-    }
-
-    /**
-     * @method removeRole
-     */
-    public function removeRole(string $role): bool
-    {
-        $roles = $this->getRoles();
-        $key = array_search($role, $roles, true);
-        if($key !== false) {
-            unset($roles[$key]);
-        }
-        return $this->setUserMeta('user.roles', $roles);
-    }
-
-    /**
-     * @method hasRole
-     */
-    public function hasRole(string $role): bool
-    {
-        $roles = $this->getRoles();
-        return in_array($role, $roles, true);
+        $default = Uss::instance()->abspathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
+        $avatar = $this->meta->get('user.avatar');
+        return $avatar ?? $default;
     }
 }

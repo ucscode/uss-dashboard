@@ -1,191 +1,130 @@
-<?php
+<?php 
 
 namespace Module\Dashboard\Bundle\User;
 
-use Ucscode\SQuery\SQuery;
-use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Uss\Component\Kernel\Uss;
+use Ucscode\SQuery\SQuery;
+use Ucscode\SQuery\Condition;
 
 class User extends AbstractUserRepository
 {
     /**
-     * @method getAvatar
+     * This signifies that user exists and has been populated into the current instance
      */
-    public function getAvatar(): ?string
+    public function isAvailable(): bool
     {
-        $default = Uss::instance()->abspathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
-        $avatar = $this->getUserMeta('user.avatar');
-        return $avatar ?? $default;
+        return !!$this->getId();
     }
 
     /**
-     * @method addNotification
+     * @method saveToSession
      */
-    public function addNotification(array $data): int|bool
+    public function saveToSession(): void
     {
-        if($this->exists()) {
-            $uss = Uss::instance();
-            $data = $this->filterNotificationData($data);
+        if($this->isAvailable()) {
+            $secret = $this->getPassword() . $this->getUsercode();
+            $sessionValue = $this->getId(). ":" . hash('sha256', $secret);
+            $_SESSION[self::SESSION_KEY] = $sessionValue;
+        }
+    }
 
-            if(empty($data['message'])) {
-                throw new \Exception(
-                    sprintf(
-                        "%s(): `message` offset is required (with value of type: string)",
-                        __METHOD__
-                    )
+    /**
+     * @method getFromSession
+     */
+    public function acquireFromSession(): self
+    {
+        $sessionValue = $_SESSION[self::SESSION_KEY] ?? null;
+        if(!$this->isAvailable() && !empty($sessionValue) && is_string($sessionValue)) {
+            $detail = explode(":", $sessionValue);
+            if(count($detail) === 2 && is_numeric($detail[0])) {
+                $user = $this->acquireUser($detail[0]);
+                if($user && hash('sha256', $user['password'] . $user['usercode']) === $detail[1]) {
+                    $this->user = $user;
+                };
+            };
+        }
+        return $this;
+    }
+
+    /**
+     * @method destroySession
+     */
+    public function destroySession(): void
+    {
+        if(isset($_SESSION[self::SESSION_KEY])) {
+            unset($_SESSION[self::SESSION_KEY]);
+        };
+    }    
+    
+    /**
+    * @method persist
+    */
+    public function persist(): bool
+    {
+        $uss = Uss::instance();
+
+        if(!$this->isAvailable()) {
+
+            $squery = (new SQuery())->insert(self::USER_TABLE, $this->user);
+            $SQL = $squery->build();
+            $upsert = $uss->mysqli->query($SQL);
+
+            if($upsert) {
+                $userId = $uss->mysqli->insert_id;
+                $this->user = $this->acquireUser($userId);
+            };
+
+        } else {
+
+            $squery = (new SQuery())
+                ->update(self::USER_TABLE, $this->user)
+                ->where(
+                    (new Condition())
+                        ->add('id', $this->getId())
                 );
-            };
+            
+            $SQL = $squery->build();
+            $upsert = $uss->mysqli->query($SQL);
 
-            $data['userid'] = $this->getId();
-            $data = $uss->sanitize($data, Uss::SANITIZE_SCRIPT_TAGS | Uss::SANITIZE_SQL);
-
-            $SQL = (new SQuery())->insert(self::NOTIFICATION_TABLE, $data);
-            $insert = $uss->mysqli->query($SQL);
-
-            if($insert) {
-                return $uss->mysqli->insert_id;
-            };
         }
-        return false;
-    }
+        
+        return $upsert;
+    }    
 
     /**
-     * @method getNotification
+     * @method allocate
      */
-    public function getNotifications(
-        ?array $filter = null,
-        int $start = 0,
-        int $limit = 20,
-        string $order = 'DESC'
-    ): ?array {
-        $data = [];
-
-        if($this->exists()) {
-            $uss = Uss::instance();
-
-            if(empty($filter)) {
-                $filter = [];
-            };
-
-            $filter['userid'] = $this->getId();
-            $filter = $uss->sanitize($filter, Uss::SANITIZE_SCRIPT_TAGS | Uss::SANITIZE_SQL);
-
-            $SQL = (new SQuery())
-                ->select()
-                ->from(self::NOTIFICATION_TABLE)
-                ->where($filter)
-                ->orderBy("id " . $uss->sanitize($order))
-                ->limit(abs($start), abs($limit));
-
-            $result = $uss->mysqli->query($SQL->getQuery());
-            $data = $uss->mysqliResultToArray($result);
-        };
-
-        return $data;
-    }
-
-    /**
-     * @method updateNotification
-     */
-    public function updateNotification(array $data, int|array $filter): bool
+    public function allocate(string $key, string $value): self
     {
-        if($this->exists()) {
-            $uss = Uss::instance();
-
-            $data = $this->filterNotificationData($data);
-            $data = $uss->sanitize($data, Uss::SANITIZE_SQL);
-
-            if(is_int($filter)) {
-                $filter = ['id' => $filter];
-            };
-
-            $filter['userid'] = $this->getId();
-            $filter = $uss->sanitize($filter, Uss::SANITIZE_SQL);
-
-            $SQL = (new SQuery())
-                ->update(self::NOTIFICATION_TABLE, $data)
-                ->where($filter);
-
-            $update = $uss->mysqli->query($SQL);
-            return $update;
+        if($this->isAvailable()) {
+            throw new \Exception(
+                "Allocation is only possible if user does not already exist"
+            );
         };
-        return false;
-    }
-
-    /**
-     * @method removeNotification
-     */
-    public function removeNotification(int|array $filter): bool
-    {
-        if($this->exists()) {
-            $uss = Uss::instance();
-
-            if(!is_array($filter)) {
-                $filter = ['id' => $filter];
-            }
-
-            $filter = $uss->sanitize($filter, Uss::SANITIZE_SQL);
-            $filter['userid'] = $this->getId();
-
-            $SQL = (new SQuery())
-                ->delete(self::NOTIFICATION_TABLE)
-                ->where($filter);
-
-            $result = $uss->mysqli->query($SQL);
-            return $result;
-        };
-        return false;
-    }
-
-    /**
-     * @method countNotification
-     */
-    public function countNotifications(array $filter = []): int
-    {
-        if($this->exists()) {
-            $uss = Uss::instance();
-
-            $filter['userid'] = $this->getId();
-            $filter = $uss->sanitize($filter, Uss::SANITIZE_SQL);
-
-            $SQL = (new SQuery())
-                ->select('COUNT(id) AS total')
-                ->from(self::NOTIFICATION_TABLE)
-                ->where($filter)
-                ->groupBy('userid');
-
-            $result = $uss->mysqli->query($SQL)->fetch_assoc();
-
-            return (int)($result ? $result['total'] : 0);
+        
+        if($user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key)) {
+            $this->user = $user;
         }
-        return 0;
+
+        return $this;
     }
 
     /**
-     * Get all meta information or pattern associated to the current user
-     *
-     * @return array: An empty array if no meta information or user does not exist
+     * @method delete
      */
-    public function getUserMetaByRegex(?string $regex = null): array
+    public function delete(): ?bool
     {
         if($this->getId()) {
-            return self::$usermeta->all($this->getId(), $regex);
+            $squery = (new SQuery())
+                ->delete()
+                ->from(self::USER_TABLE)
+                ->where(
+                    (new Condition())
+                        ->add('id', $this->getId())
+                );
+            $SQL = $squery->build();
+            return Uss::instance()->mysqli->query($SQL);
         };
-        return [];
+        return null;
     }
-
-    /**
-     * @method filterNotificationData
-     */
-    private function filterNotificationData(array $originalArray): array
-    {
-        $keysToExtract = Uss::instance()->getTableColumns(self::NOTIFICATION_TABLE);
-        unset($keysToExtract['userid']);
-        $filteredArray = array_intersect_key($originalArray, array_flip($keysToExtract));
-        $result = array_filter($filteredArray, function ($value) {
-            return is_scalar($value) || is_null($value);
-        });
-        return $result;
-    }
-
 }
