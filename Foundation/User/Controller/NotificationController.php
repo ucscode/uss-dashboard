@@ -1,15 +1,13 @@
 <?php
 
-class UserNotificationController implements RouteInterface
+namespace Module\Dashboard\Foundation\User\Controller;
+
+use Module\Dashboard\Bundle\User\User;
+use Uss\Component\Route\RouteInterface;
+
+class NotificationController implements RouteInterface
 {
     private $parseDown;
-
-    public function __construct(
-        private PageManager $page,
-        private DashboardInterface $dashboard
-    ) {
-        $this->parseDown = new \Parsedown();
-    }
 
     public function onload($pageInfo)
     {

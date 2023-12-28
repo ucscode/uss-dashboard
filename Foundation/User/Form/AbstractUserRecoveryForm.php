@@ -1,5 +1,10 @@
 <?php
 
+namespace Module\Dashboard\Foundation\User\Form;
+
+use Module\Dashboard\Bundle\Kernel\AbstractDashboardForm;
+use Module\Dashboard\Bundle\User\User;
+
 abstract class AbstractUserRecoveryForm extends AbstractDashboardForm
 {
     protected const STAGE_EMAIL = 0;

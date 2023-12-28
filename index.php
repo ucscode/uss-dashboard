@@ -32,7 +32,7 @@ new class () {
     {
         $appControl = (new AppControl())
             ->setBase('/dashboard')
-            ->setTheme('default')
+            ->setTheme('classic')
             ->addPermission(RoleImmutable::ROLE_USER)
             ->setPermissionDeniedTemplate('/pages/403.html.twig');
 

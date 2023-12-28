@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\Bundle\User;
+namespace Module\Dashboard\Bundle\User;
 
 use Ucscode\SQuery\SQuery;
 use Uss\Component\Kernel\Uss;

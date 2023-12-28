@@ -1,7 +1,12 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Kernel;
+
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
+use Uss\Component\Kernel\Uss;
+use Uss\Component\Kernel\UssImmutable;
+use Uss\Component\Manager\BlockManager;
 
 abstract class AbstractDashboardForm extends UssForm implements DashboardFormInterface
 {

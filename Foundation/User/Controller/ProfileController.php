@@ -1,14 +1,9 @@
 <?php
 
-class UserProfileController implements RouteInterface
+namespace Module\Dashboard\Foundation\User\Controller;
+
+class ProfileController implements RouteInterface
 {
-    public function __construct(
-        protected PageManager $pageManager,
-        protected DashboardInterface $dashboard
-    ) {
-
-    }
-
     public function onload(array $matches)
     {
         $this->onSubmit();

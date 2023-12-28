@@ -1,9 +1,9 @@
 <?php
 
-namespace Module\Dashboard\Foundation\Bundle\User;
+namespace Module\Dashboard\Bundle\User;
 
 use Ucscode\SQuery\SQuery;
-use Module\Dashboard\Foundation\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Uss\Component\Kernel\Uss;
 
 class User extends AbstractUserRepository

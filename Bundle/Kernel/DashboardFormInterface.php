@@ -1,5 +1,7 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Kernel;
+
 interface DashboardFormInterface
 {
     // Handle Form Submission

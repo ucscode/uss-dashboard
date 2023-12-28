@@ -2,30 +2,47 @@
 
 namespace Module\Dashboard\Bundle\Kernel;
 
+use Module\Dashboard\Bundle\Common\Document;
+use Uss\Component\Manager\UrlGenerator;
+use Uss\Component\Event\Event;
+use Module\Dashboard\Bundle\User\User;
+
 abstract class AbstractDashboard extends AbstractDashboardCentral
 {
     /**
-     * @method isActive
+     * Add a new document to the dashboard application
      */
-    public function isActive(): bool
+    public function addDocument(string $name, Document $document): DashboardInterface
     {
-        $uss = Uss::instance();
-        $regex = '/^' . $this->config->getBase() . '(?!\w)/is';
-        $request = $uss->filterContext($uss->splitUri());
-        return preg_match($regex, $request);
+        $this->documents[$name] = $document;
+        return $this;
     }
 
     /**
-     * @method getPageManagerUrl
+     * Get a document within the dashboard application
      */
-    public function getPageManagerUrl(string $name): ?string
+    public function getDocument(string $name): ?Document
     {
-        $pageManager = $this->pageRepository->getPageManager($name);
-        if($pageManager) {
-            $urlGenerator = $this->urlGenerator($pageManager->getRoute() ?? '');
-            return $urlGenerator->getResult();
+        return $this->documents[$name] ?? null;
+    }
+
+    /**
+     * Remove a document from the dashboard application
+     */
+    public function removeDocument(string $name): DashboardInterface
+    {
+        if(!empty($this->documents[$name])) {
+            unset($this->documents[$name]);
         }
-        return null;
+        return $this;
+    }
+
+    /**
+     * Retrieve a list of all added documents
+     */
+    public function getDocuments(): array
+    {
+        return $this->documents;
     }
 
     /**
@@ -33,45 +50,16 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
      */
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        $urlGenerator = new UrlGenerator($path, $query, $this->config->getBase());
-        return $urlGenerator;
-    }
-
-    /**
-     * @method setAttribute
-     */
-    public function setAttribute(?string $property = null, mixed $value = null): void
-    {
-        $this->attributes[$property] = $value;
-    }
-
-    /**
-     * @method getAttribute
-     */
-    public function getAttribute(?string $property = null): mixed
-    {
-        if(is_null($property)) {
-            return $this->attributes;
-        };
-        return $this->attributes[$property] ?? null;
-    }
-
-    /**
-     * @method removeAttribute
-     */
-    public function removeAttribute(string $property): void
-    {
-        if(array_key_exists($property, $this->attributes)) {
-            unset($this->attributes[$property]);
-        };
+        return new UrlGenerator($path, $query, $this->appControl->getBase());
     }
 
     /**
      * @method enableFirewall
      */
-    public function enableFirewall(bool $enable = true): void
+    public function enableFirewall(bool $enable = true): self
     {
         $this->firewallEnabled = $enable;
+        return $this;
     }
 
     /**
@@ -98,16 +86,6 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
                 $options
             )
         );
-    }
-
-    /**
-     * @method useTheme
-     */
-    public function useTheme(string $template): string
-    {
-        $theme = $this->config->getTheme();
-        $dymanicTemplate = "@Theme/{$theme}/{$template}";
-        return Uss::instance()->filterContext($dymanicTemplate);
     }
 
     /**

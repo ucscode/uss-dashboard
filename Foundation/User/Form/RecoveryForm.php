@@ -1,9 +1,11 @@
 <?php
 
+namespace Module\Dashboard\Foundation\User\Form;
+
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
 
-class UserRecoveryForm extends AbstractUserRecoveryForm
+class RecoveryForm extends AbstractUserRecoveryForm
 {
     protected ?string $reportKey = null;
     protected ?string $reportError = null;

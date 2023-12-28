@@ -17,7 +17,7 @@ final class AppControl
      */
     public function setBase(string $base): self
     {
-        $this->base = Uss::instance()->filterContext($base);
+        $this->base = Uss::instance()->filterContext($base, false);
         return $this;
     }
 

@@ -1,9 +1,13 @@
 <?php
 
+namespace Module\Dashboard\Foundation\User\Form;
+
+use Module\Dashboard\Bundle\Kernel\AbstractDashboardForm;
+use Module\Dashboard\Bundle\User\User;
 use Ucscode\UssForm\UssForm;
 use Ucscode\UssForm\UssFormField;
 
-class UserRegisterForm extends AbstractDashboardForm
+class RegisterForm extends AbstractDashboardForm
 {
     protected User $user;
 

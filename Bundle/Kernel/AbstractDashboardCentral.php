@@ -10,9 +10,8 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     public readonly AppControl $appControl;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
-    public readonly PageRepository $pageRepository;
     protected bool $firewallEnabled = true;
-    protected array $attributes = [];
+    protected array $documents = [];
 
     /**
      * Set Initial values such as base(route), theme, user permission etc
@@ -25,14 +24,13 @@ abstract class AbstractDashboardCentral implements DashboardInterface
         AppFactory::registerApp($this);
         $this->menu = new TreeNode('MenuContainer');
         $this->userMenu = new TreeNode('UserMenuContainer');
-        $this->pageRepository = new PageRepository($this::class);
-        (new Event())->addListener('modules:loaded', fn () => $this->pageRepositoryControl(), -10);
+        (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -10);
     }
 
     /**
-     * @method pageRepositoryControl
+     * Process the GUI/Theme for the created dashboard Application
      */
-    private function pageRepositoryControl(): void
+    private function createGUI(): void
     {
         $pageManagers = $this->pageRepository->getPageManagers();
 

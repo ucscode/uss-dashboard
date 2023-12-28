@@ -1,14 +1,11 @@
 <?php
 
-class UserPasswordController implements RouteInterface
+namespace Module\Dashboard\Foundation\User\Controller;
+
+use Uss\Component\Route\RouteInterface;
+
+class PasswordController implements RouteInterface
 {
-    public function __construct(
-        protected PageManager $pageManager,
-        protected DashboardInterface $dashboard
-    ) {
-
-    }
-
     public function onload(array $matches)
     {
         $this->managePassword();
