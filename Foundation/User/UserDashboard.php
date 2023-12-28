@@ -39,7 +39,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
 
         //$this->addDocument('settings', new Document());
         //$this->addDocument('profile', new Document());
-        
+
         // $factory->createUserProfilePage();
         // $factory->createUserPasswordPage();
 

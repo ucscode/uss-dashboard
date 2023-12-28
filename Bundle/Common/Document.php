@@ -33,7 +33,7 @@ class Document
      */
     public function setRoute(?string $route, ?string $base = null): self
     {
-        $this->route = Uss::instance()->filterContext($base . $route, false);
+        $this->route = Uss::instance()->filterContext($base . $route);
         return $this;
     }
 
@@ -128,40 +128,28 @@ class Document
     /**
      * @method addMenuItem
      */
-    public function addMenuItem(string $name, array|TreeNode $menu, TreeNode $parentMenu): self
+    public function addMenuItem(string $name, array|TreeNode $menu, ?TreeNode $parentMenu = null): self
     {
-        if ($parentMenu === $menu) {
-            throw new \Exception(
-                sprintf(
-                    '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
-                    __METHOD__,
-                    TreeNode::class
-                )
-            );
-        }
+        $this->validateMenuItem($menu, $parentMenu);
         $menu = is_array($menu) ? new TreeNode($name, $menu) : $menu;
-        $this->menuItems[$name] = [
-            'item' => $menu,
-            'parent' => $parentMenu,
-        ];
+        $this->menuItems[$name] = [$menu, $parentMenu];
         return $this;
     }
 
     /**
      * @method getMenuItem
      */
-    public function getMenuItem(string $name, bool $onlyItem = false): array|TreeNode|null
+    public function getMenuItem(string $name, bool $parent = false): ?TreeNode
     {
-        $items = $this->menuItems[$name] ?? null;
-        return ($items && $onlyItem) ? $items['item'] : $items;
+        return ($this->menuItems[$name] ?? [])[(int)$parent] ?? null;
     }
 
     /**
      * @method getMenuItems
      */
-    public function getMenuItems(): array
+    public function getMenuItems(bool $parent = false): array
     {
-        return $this->menuItems;
+        return array_map(fn($item) => $item[(int)$parent], $this->menuItems);
     }
 
     public function __debugInfo(): array
@@ -194,5 +182,18 @@ class Document
                 sprintf("Invalid Request Method '%s' provided in argument 2 of %s('method', ...) ", $method, $caller)
             );
         };
+    }
+
+    private function validateMenuItem(array|TreeNode $menu, ?TreeNode $parentMenu): void
+    {
+        if ($parentMenu === $menu) {
+            throw new \Exception(
+                sprintf(
+                    '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
+                    __METHOD__,
+                    TreeNode::class
+                )
+            );
+        }
     }
 }

@@ -68,7 +68,7 @@ final class DocumentFactory
             'href' => $document->getUrl(),
             'icon' => 'bi bi-power',
             'order' => 1024,
-        ], $this->dashboard->menu);
+        ], $this->dashboard->userMenu);
         
         return $document;
     }
@@ -76,8 +76,8 @@ final class DocumentFactory
     public function createIndexDocument(): Document
     {
         $document = (new Document())
-            ->setName("dashboard")
-            ->setRoute('/')
+            ->setName("index")
+            ->setRoute('/', $this->base)
             ->setController(new IndexController())
             ->setTemplate("/index.html.twig", $this->namespace)
             ;

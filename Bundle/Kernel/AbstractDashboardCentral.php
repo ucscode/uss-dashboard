@@ -2,8 +2,11 @@
 
 namespace Module\Dashboard\Bundle\Kernel;
 
+use RuntimeException;
 use Ucscode\TreeNode\TreeNode;
+use Ucscode\UssElement\UssElement;
 use Uss\Component\Event\Event;
+use Uss\Component\Route\Route;
 
 abstract class AbstractDashboardCentral implements DashboardInterface
 {
@@ -22,9 +25,52 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     {
         $this->appControl = $appControl;
         AppFactory::registerApp($this);
-        $this->menu = new TreeNode('MenuContainer');
-        $this->userMenu = new TreeNode('UserMenuContainer');
+        $this->menu = new TreeNode('Main Menu');
+        $this->userMenu = new TreeNode('User Menu');
         (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -10);
+    }
+
+    /**
+     * @method iterateMenu
+     */
+    protected function synchronizeMenu(TreeNode $menu, ?callable $func = null): void
+    {
+        $menu->synchronizeChildren($menu->getChildren(), function(TreeNode $item) use ($menu, $func): mixed {
+            
+            if(empty($item->getAttribute('label'))) {
+                throw new RuntimeException(
+                    sprintf(
+                        "Error in %s (%s): The item '%s' is missing a required 'label' attribute.", 
+                        $menu->getName(), 
+                        $item->getName(),
+                        $item->getIdentity()
+                    )
+                );
+            };
+
+            $result = $func ? $func($item) : $this->inlineMenu($item);
+
+            $item->sortChildren(function (TreeNode $a, TreeNode $b) {
+                $sortA = $a->getAttribute('order') ?? 0;
+                $sortB = $b->getAttribute('order') ?? 0;
+                return (int)$sortA <=> (int)$sortB;
+            });
+            
+            $attributes = [
+                'target' => '_self',
+                'href' => 'javascript:void(0)',
+                'pinned' => false,
+            ];
+
+            foreach($attributes as $key => $value) {
+                if(empty($item->getAttribute($key))) {
+                    $item->setAttribute($key, $value);
+                };
+            }
+
+            return $result;
+
+        });
     }
 
     /**
@@ -32,95 +78,50 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      */
     private function createGUI(): void
     {
-        $pageManagers = $this->pageRepository->getPageManagers();
-
-        foreach($pageManagers as $pageManager) {
-            foreach($pageManager->getMenuItems() as $name => $menuItem) {
-                $menuItem['parent']->add($name, $menuItem['item']);
+        foreach($this->getDocuments() as $document) {
+            foreach(array_filter($document->getMenuItems(true)) as $name => $parentItem) { 
+                if(!$parentItem->getChild($name)) { // get relative child item
+                    $parentItem->addChild($name, $document->getMenuItem($name));
+                }
             };
         }
 
-        $this->iterateMenu($this->menu, 1, 'Main Menu');
-        $this->iterateMenu($this->userMenu, 2, 'User Menu');
+        $this->synchronizeMenu($this->menu);
+        $this->synchronizeMenu($this->userMenu);
 
-        foreach($pageManagers as $pageManager) {
-            $this->enablePageManager($pageManager);
-        }
-    }
-
-    /**
-     * @method iterateMenu
-     */
-    private function iterateMenu(TreeNode $menu, int $category, string $title): void
-    {
-        if(empty($menu->getAttr('label')) && !empty($menu->level)) {
-            $exceptionMessage = sprintf(
-                "%s: (Item: %s) must have a label attribute",
-                $title,
-                $menu->name
-            );
-            throw new \Exception($exceptionMessage);
-        };
-
-        if(!empty($menu->children)) {
-            
-            if($category === 1 && $menu->level && !is_null($menu->getAttr('href'))) {
-
-                $label = $menu->getAttr('label') . '<i class="bi bi-pin-angle ms-1 menu-pin"></i>';
-                
-                $menu->add($menu->name, [
-                    'label' => $label,
-                    'href' => $menu->getAttr('href'),
-                    'target' => $menu->getAttr('target') ?? '_self',
-                    'order' => -1024,
-                    'pinned' => true,
-                    'active' => $menu->getAttr('active'),
-                ]);
-            }
-
-            $menu->sortChildren(function ($a, $b) {
-                $left = (int)($a->getAttr('order') ?? 0);
-                $right = (int)($b->getAttr('order') ?? 0);
-                return $left <=> $right;
-            });
-
-            foreach($menu->children as $childMenu) {
-                $this->iterateMenu($childMenu, $category, $title);
+        foreach($this->getDocuments() as $document) {
+            if($document->getRoute() !== null) {
+                new Route(
+                    $document->getRoute(),
+                    $document->getController(),
+                    $document->getRequestMethods()
+                );
             }
         }
-
-        $this->defaultMenuAttributes($menu);
     }
 
     /**
      * @method defaultMenuAttributes
      */
-    private function defaultMenuAttributes(TreeNode $menu): void
-    {
-        $attributes = [
-            'target' => '_self',
-            'href' => 'javascript:void(0)',
-            'pinned' => false,
-        ];
+    private function inlineMenu(TreeNode $item): void
+    {        
+        $anchor = $item->getAttribute('href');
+        $children = $item->getChildren();
 
-        foreach($attributes as $key => $value) {
-            if(empty($menu->getAttr($key))) {
-                $menu->setAttr($key, $value);
-            };
-        }
-    }
+        if(!empty($children) && !is_null($anchor)) {
 
-    /**
-     * @method enablePageManager
-     */
-    private function enablePageManager(PageManager $pageManager): void
-    {
-        $pageManagerRoute = $pageManager->getRoute();
-        if(!empty($pageManagerRoute) && $pageManager->name !== PageManager::LOGIN) {
-            $route = Uss::instance()->filterContext($this->config->getBase() . "/" . $pageManagerRoute);
-            $controller = $pageManager->getController();
-            $method = $pageManager->getRequestMethods();
-            new Route($route, new $controller($pageManager, $this), $method);
+            $icon = (new UssElement(UssElement::NODE_I))
+                ->setAttribute('class', 'bi bi-pin-angle ms-1 menu-pin');
+            $label = $item->getAttribute('label') . $icon->getHTML();
+
+            $item->addChild($item->name, [
+                'label' => $label,
+                'href' => $anchor,
+                'order' => -1024,
+                'pinned' => true,
+                'active' => $item->getAttribute('active'),
+                'target' => $item->getAttribute('target') ?? '_self',
+            ]);
         }
     }
 }

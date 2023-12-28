@@ -3,9 +3,10 @@
 namespace Module\Dashboard\Bundle\Kernel;
 
 use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Event\Event;
-use Module\Dashboard\Bundle\User\User;
+use Uss\Component\Kernel\Uss;
 
 abstract class AbstractDashboard extends AbstractDashboardCentral
 {

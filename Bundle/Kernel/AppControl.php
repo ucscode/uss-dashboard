@@ -8,7 +8,6 @@ final class AppControl
 {
     protected string $base;
     protected string $theme;
-    protected string $parentTheme = 'default';
     protected array $permissions = [];
     protected string $permissionDeniedTemplate = '403.html.twig';
 
@@ -17,7 +16,7 @@ final class AppControl
      */
     public function setBase(string $base): self
     {
-        $this->base = Uss::instance()->filterContext($base, false);
+        $this->base = Uss::instance()->filterContext($base);
         return $this;
     }
 
@@ -44,23 +43,6 @@ final class AppControl
     public function getTheme(): string
     {
         return $this->theme;
-    }
-
-    /**
-     * @method setParentTheme
-     */
-    public function setParentTheme(string $parentTheme): self
-    {
-        $this->parentTheme = Uss::instance()->filterContext($parentTheme);
-        return $this;
-    }
-
-    /**
-     * @method getParentTheme
-     */
-    public function getParentTheme(): string
-    {
-        return $this->parentTheme;
     }
 
     /**

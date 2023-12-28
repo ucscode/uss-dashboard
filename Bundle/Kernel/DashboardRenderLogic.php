@@ -1,10 +1,16 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Kernel;
+
+use Module\Dashboard\Bundle\User\User;
+use Uss\Component\Event\EventInterface;
+use Uss\Component\Kernel\Uss;
+
 class DashboardRenderLogic implements EventInterface
 {
     protected User $user;
     protected bool $isLoggedIn;
-
+    
     public function __construct(
         protected DashboardInterface $dashboard,
         protected Uss $uss,

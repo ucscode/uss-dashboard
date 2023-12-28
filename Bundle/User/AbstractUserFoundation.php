@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\User;
 
+use Ucscode\Pairs\ForeignConstraint;
 use Ucscode\Pairs\Pairs;
 use Uss\Component\Kernel\Uss;
 
@@ -13,7 +14,7 @@ abstract class AbstractUserFoundation implements UserInterface
 
     public function __construct(?int $id = null)
     {
-        $this->init();
+        $this->syncOnce();
         $this->user = $this->getUser($id) ?? [];
     }
 
@@ -80,13 +81,13 @@ abstract class AbstractUserFoundation implements UserInterface
     /**
      * @method init
      */
-    protected function init(): void
+    protected function syncOnce(): void
     {
         if(!self::$usermeta) {
             self::$usermeta = new Pairs(Uss::instance()->mysqli, self::META_TABLE);
-            self::$usermeta->linkToParentTable([
-                'parentTable' => self::USER_TABLE,
-            ]);
+            $constraint = (new ForeignConstraint(self::USER_TABLE))
+                ->describePrimaryKeyUnsigned(true);
+            self::$usermeta->setForeignConstraint($constraint);
         }
     }
 }
