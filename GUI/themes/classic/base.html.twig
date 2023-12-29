@@ -1,20 +1,38 @@
 {% extends '@Uss/base.html.twig' %}
 
-{% block head_css %}
+{# 
+    In this block, additional CSS styles are included in the head section.
+    The parent() function is called to ensure any styles defined in the parent template are preserved.
+#}
+
+{% block head_resource %}
     {{ parent() }}
+    
     {% set stylesheet = __dashboard.theme('/assets/css/default.css', __dashboard.ENUM.URL) %}
     <link rel="stylesheet" href="{{ stylesheet }}">
-{% endblock head_css %}
+
+{% endblock head_resource %}
+
+{# 
+    This block of code contains the theme contents
+    Child theme may extend any of the block below for more customized content
+#}
 
 {% block body_main %}
     
+    {#
+        Sidebar Block:
+        Includes the navigation sidebar with logo, menu items, and an overlay for mobile view.
+    #}
     {% block dashboard_sidebar %}
 
         <aside class="sidebar-nav-wrapper">
 
+            {# Sidebar Logo: Displays the logo in the navigation sidebar #}
+
             {% block sidebar_logo %}
                 <div class="navbar-logo">
-                    <a href="{{ DashboardExtension.urlGenerator('/') }}">
+                    <a href="{{ __dashboard.urlGenerator('/') }}">
                         <img src="{{ Uss.getOption('company:logo') ?? Uss.globals.icon }}" alt="logo" />
                     </a>
                 </div>
@@ -102,7 +120,7 @@
     
     {{ parent() }}
 
-    <script src="{{ Uss.abspathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/dataMagic.js') }}"></script>
+    <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/dataMagic.js') }}"></script>
 
     {% if (user and user.isAvailable()) %}
 	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', __dashboard.ENUM.HTTP) }}"></script>

@@ -42,7 +42,7 @@ class AdminInfoController implements RouteInterface
             'Domain Name' => $_SERVER['SERVER_NAME'],
             'HTTPS' => $_SERVER['SERVER_PORT'] === 80 ? 'Disabled' : 'Enabled',
             'Remote Address' => $_SERVER['REMOTE_ADDR'],
-            'Website URL' => $uss->abspathToUrl(ROOT_DIR),
+            'Website URL' => $uss->pathToUrl(ROOT_DIR),
             'Admin Email' => $uss->options->get('company:email'),
             'Current Time' => $time->format("Y-m-d h:i:s A"),
             'TimeZone' => $timezone->getName(),

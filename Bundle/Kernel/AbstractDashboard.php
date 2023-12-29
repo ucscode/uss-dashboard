@@ -108,7 +108,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
                 $prefix = DashboardImmutable::THEMES_DIR;
                 break;
             case Enumerator::URL:
-                $prefix = $uss->abspathToUrl(DashboardImmutable::THEMES_DIR);
+                $prefix = $uss->pathToUrl(DashboardImmutable::THEMES_DIR);
                 break;
             default:
                 $prefix = '@Theme';

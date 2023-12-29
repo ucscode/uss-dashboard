@@ -14,9 +14,13 @@ use Uss\Component\Kernel\Uss;
 define('USS_DASHBOARD_DIR', __DIR__);
 
 new class () {
+    protected Uss $uss;
+
     public function __construct()
     {
-        new DatabaseGenerator();
+        $this->uss = Uss::instance();
+        
+        new DatabaseGenerator($this->uss);
 
         $this->configureFilesystem();
         $this->createUserApplication();
@@ -31,9 +35,8 @@ new class () {
 
     protected function configureFilesystem(): void
     {
-        $uss = Uss::instance();
-        $uss->filesystemLoader->addPath(DashboardImmutable::MAILS_DIR, 'Mail');
-        $uss->filesystemLoader->addPath(DashboardImmutable::THEMES_DIR, 'Theme');
+        $this->uss->filesystemLoader->addPath(DashboardImmutable::MAILS_DIR, 'Mail');
+        $this->uss->filesystemLoader->addPath(DashboardImmutable::THEMES_DIR, 'Theme');
     }
 
     protected function createUserApplication(): void

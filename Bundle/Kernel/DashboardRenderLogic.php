@@ -77,10 +77,10 @@ class DashboardRenderLogic implements EventInterface
     {
         //$this->remodelMenu($this->dashboard->menu->children);
         $this->uss->twigEnvironment->addExtension(new DashboardExtension($this->dashboard));
-        
+
         $this->options['user'] = $this->user;
-        
-        $this->uss->jsStorage['dashboard'] = [
+
+        $this->uss->jsCollection['dashboard'] = [
             'url' => $this->dashboard->urlGenerator()->getResult(),
             'nonce' => $this->uss->nonce('__dashboard'),
             'loggedIn' => $this->isLoggedIn

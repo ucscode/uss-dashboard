@@ -230,7 +230,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getAvatar(): ?string
     {
-        $default = Uss::instance()->abspathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
+        $default = Uss::instance()->pathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
         $avatar = $this->meta->get('user.avatar');
         return $avatar ?? $default;
     }

@@ -57,7 +57,7 @@ class ProfileController implements RouteInterface
             $uploader->setFilenamePrefix($user->getId());
             if($uploader->uploadFile()) {
                 $filepath = $uploader->getUploadedFilepath();
-                $fileUrl = Uss::instance()->abspathToUrl($filepath);
+                $fileUrl = Uss::instance()->pathToUrl($filepath);
                 $metaInfo['user.avatar'] = $fileUrl;
             } else {
                 return 'Avatar update failed: ' . $uploader->getError();

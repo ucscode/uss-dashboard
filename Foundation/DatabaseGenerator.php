@@ -7,10 +7,11 @@ use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
+use Exception;
 
 final class DatabaseGenerator
 {
-    public function __construct()
+    public function __construct(protected Uss $uss)
     {
         $this->checkDatabaseEnabled();
         $this->configureDatabase();
@@ -19,38 +20,34 @@ final class DatabaseGenerator
 
     private function checkDatabaseEnabled(): void
     {
-        $uss = Uss::instance();
         if(!Database::ENABLED) {
             $message = [
-                "subject" => "Database Connection Disabled",
-                "message" => sprintf("<span class='%s'>PROBLEM</span> : define('DB_ENABLED', <span class='%s'>false</span>)", 'text-danger', 'text-primary'),
+                "subject" => "(Dashboard) Database Connection Disabled",
+                "message" => "Please enable the database connection to activate GUI",
                 "message_class" => "mb-5",
-                "image" => $uss->abspathToUrl(DashboardImmutable::ASSETS_DIR . '/images/database-error-icon.webp'),
-                "image_style" => "width: 150px"
+                "image_style" => "width: 150px",
+                "image" => $this->uss->pathToUrl(DashboardImmutable::ASSETS_DIR . '/images/database-error-icon.webp'),
             ];
-            $uss->render('@Uss/error.html.twig', $message);
-            exit();
+            $this->uss->render('@Uss/error.html.twig', $message); // exits internally
         };
     }
 
 
     private function configureDatabase(): void
     {
-        $uss = Uss::instance();
         $databaseTables = $this->getTableStatements();
 
         foreach($databaseTables as $SQL) {
             try {
-                $SQL = $uss->replaceVar($SQL, ['prefix' => Database::PREFIX]);
-                $result = $uss->mysqli->query($SQL);
-
+                $SQL = str_replace('%{prefix}', Database::PREFIX, $SQL);
+                $result = $this->uss->mysqli->query($SQL);
                 if(!$result) {
-                    throw new \Exception($uss->mysqli->error);
+                    throw new Exception($this->uss->mysqli->error);
                 }
-            } catch(\Exception $e) {
-                $uss->render('@Uss/error.html.twig', [
-                    "subject" => "Ud: Database Setup Error",
-                    "message" => UssImmutable::DEBUG ? $e->getMessage() : 'MYSQL Error Number: ' . $uss->mysqli->errno
+            } catch(Exception $e) {
+                $this->uss->render('@Uss/error.html.twig', [
+                    "subject" => "(Dashboard) Database Setup Error",
+                    "message" => UssImmutable::DEBUG ? $e->getMessage() : 'MYSQL Error Number: ' . $this->uss->mysqli->errno
                 ]);
                 exit();
             };
@@ -90,13 +87,10 @@ final class DatabaseGenerator
 
     private function setDatabaseOptions(): void
     {
-        $uss = Uss::instance();
-
         $configuration = [
-            'company:logo' => $uss->localStorage['icon'],
-            'company:name' => $uss->localStorage['title'],
-            'company:headline' => $uss->localStorage['headline'],
-            'company:description' => $uss->localStorage['description'],
+            'company:logo' => $this->uss->twigContext['page_icon'],
+            'company:name' => $this->uss->twigContext['page_title'],
+            'company:description' => $this->uss->twigContext['page_description'],
             'company:email' => 'admin@example.com',
             'company:email-alt' => null,
             'user:disable-signup' => 0,
@@ -111,8 +105,8 @@ final class DatabaseGenerator
         ];
 
         foreach($configuration as $key => $value) {
-            if(is_null($uss->options->get($key, null, true))) {
-                $uss->options->set($key, $value);
+            if(is_null($this->uss->options->get($key, null, true))) {
+                $this->uss->options->set($key, $value);
             };
         };
     }

@@ -88,7 +88,7 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
                 </p> <small>" . $fileUploader->getError(true) . "</small>";
             }
         } else {
-            $uploadUrl = $uss->abspathToUrl($fileUploader->getUploadedFilepath());
+            $uploadUrl = $uss->pathToUrl($fileUploader->getUploadedFilepath());
             $uss->options->set("company:logo", $uploadUrl);
         }
 
