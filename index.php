@@ -4,7 +4,7 @@ namespace Module\Dashboard;
 
 use Module\Dashboard\Foundation\DatabaseGenerator;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
-use Module\Dashboard\Bundle\Kernel\AppControl;
+use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Foundation\Admin\AdminDashboard;
 use Module\Dashboard\Foundation\User\UserDashboard;

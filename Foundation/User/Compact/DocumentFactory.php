@@ -3,7 +3,7 @@
 namespace Module\Dashboard\Foundation\User\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Bundle\Kernel\DashboardInterface;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\User\Controller\IndexController;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
