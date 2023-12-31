@@ -2,20 +2,20 @@
 
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
 {
     protected UssElement $actionContainer;
     protected UssElement $widgetContainer;
-    protected UssForm $editForm;
+    protected Form $editForm;
 
     public function __construct(string $tablename)
     {
         parent::__construct($tablename);
 
-        $this->editForm = new UssForm(
+        $this->editForm = new Form(
             $this->tablename . '-crud-edit',
             $_SERVER['REQUEST_URI'],
             'POST',
@@ -29,7 +29,7 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
         $this->createDefaultWidgets(); // void
     }
 
-    public function getEditForm(): UssForm
+    public function getEditForm(): Form
     {
         return $this->editForm;
     }
@@ -69,10 +69,10 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
     /**
      * @method getDefaultFieldType
      */
-    protected function createEditField(string $type, string $columnName): UssFormField
+    protected function createEditField(string $type, string $columnName): FormField
     {
-        $nodeName = UssForm::NODE_INPUT;
-        $nodeType = UssForm::TYPE_TEXT;
+        $nodeName = Form::NODE_INPUT;
+        $nodeType = Form::TYPE_TEXT;
         $attributes = [
             'row' => [],
             'widget' => []
@@ -85,23 +85,23 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
         $isChar = in_array($type, self::DATASET['CHARACTER']);
         
         if($isInteger || $isFloat) {
-            $nodeType = UssForm::TYPE_NUMBER;
+            $nodeType = Form::TYPE_NUMBER;
             $attributes['row']['class'] = ' col-md-7';
             if($isFloat) {
                 $attributes['widget']['step'] = '0.01';
             }
         } elseif($isText) {
-            $nodeName = UssForm::NODE_TEXTAREA;
+            $nodeName = Form::NODE_TEXTAREA;
             $nodeType = null;
             $attributes['row']['class'] = ' col-md-9';
         } elseif($isDate) {
-            $nodeType = UssForm::TYPE_DATETIME_LOCAL;
+            $nodeType = Form::TYPE_DATETIME_LOCAL;
             $attributes['row']['class'] = ' col-md-7';
         } else {
             $attributes['row']['class'] = ' col-md-9';
         }
 
-        $field = new UssFormField($nodeName, $nodeType);
+        $field = new FormField($nodeName, $nodeType);
 
         foreach($attributes as $el => $nodeAttr) {
             foreach($nodeAttr as $attr => $value) {
@@ -116,7 +116,7 @@ abstract class AbstractCrudEditConcept extends AbstractCrudEditManager
     /**
      * @method createCustomField
      */
-    protected function createCustomField(UssForm $form): void
+    protected function createCustomField(Form $form): void
     {
 
     }

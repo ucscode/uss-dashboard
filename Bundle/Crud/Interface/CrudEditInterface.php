@@ -2,8 +2,8 @@
 
 use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 interface CrudEditInterface
 {
@@ -23,9 +23,9 @@ interface CrudEditInterface
 
     public function createUI(): UssElement;
 
-    public function setField(string $name, UssFormField $field): self;
+    public function setField(string $name, FormField $field): self;
 
-    public function getField(string $name): ?UssFormField;
+    public function getField(string $name): ?FormField;
 
     public function getFields(): array;
 
@@ -57,5 +57,5 @@ interface CrudEditInterface
 
     public function lastItemEntityError(): ?string;
 
-    public function getEditForm(): UssForm;
+    public function getEditForm(): Form;
 }

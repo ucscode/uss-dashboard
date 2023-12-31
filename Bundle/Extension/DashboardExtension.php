@@ -2,14 +2,13 @@
 
 namespace Module\Dashboard\Bundle\Extension;
 
-use Module\Dashboard\Bundle\Kernel\AbstractDashboard;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Uss\Component\Kernel\Uss;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Enumerator;
 use ReflectionClass;
-use SebastianBergmann\ObjectEnumerator\Enumerator as ObjectEnumeratorEnumerator;
 use Uss\Component\Manager\UrlGenerator;
 
 final class DashboardExtension extends AbstractExtension implements GlobalsInterface

@@ -1,7 +1,7 @@
 <?php
 
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class AdminSettingsEmailForm extends AbstractDashboardForm
 {
@@ -16,14 +16,14 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'company[email]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
                 ->setInfoMessage("This is the official email address that will be used to send email to members")
                 ->setWidgetValue($uss->options->get("company:email"))
         );
 
         $this->addField(
             'company[email-alt]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
                 ->setInfoMessage("This is what the client will see as incoming email (if specified)")
                 ->setLabelValue("No-Reply Email")
                 ->setWidgetValue($uss->options->get("company:email-alt"))
@@ -32,7 +32,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $value = $uss->options->get("smtp:state");
 
-        $smtpField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_RADIO);
+        $smtpField = new FormField(Form::NODE_INPUT, Form::TYPE_RADIO);
 
         $smtpField
             ->setLabelValue("Use Default Settings")
@@ -41,7 +41,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
             ->setContainerAttribute("id", "smtp-state");
 
         $smtpField
-            ->createSecondaryField("field1", UssForm::TYPE_RADIO)
+            ->createSecondaryField("field1", Form::TYPE_RADIO)
             ->setLabelValue("Use SMTP Settings")
             ->setWidgetAttribute("name", "smtp[state]")
             ->setWidgetValue('custom')
@@ -62,7 +62,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'smtp[server]',
-            (new UssFormField())
+            (new FormField())
                 ->setLabelValue("SMTP Server")
                 ->setInfoMessage("Mail server responsible for sending outgoing emails")
                 ->setWidgetAttribute("placeholder", "smtp.example.com")
@@ -71,7 +71,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'smtp[username]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
                 ->setLabelValue("SMTP Username")
                 ->setInfoMessage("The unique identifier for accessing the SMTP server")
                 ->setWidgetAttribute("placeholder", "user@example.com")
@@ -80,7 +80,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'smtp[password]',
-            (new UssFormField())
+            (new FormField())
                 ->setLabelValue("SMTP Password")
                 ->setInfoMessage("The confidential code to verify the user identity")
                 ->setWidgetAttribute("placeholder", "****")
@@ -89,7 +89,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'smtp[port]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_NUMBER))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_NUMBER))
                 ->setLabelValue("SMTP Port")
                 ->setInfoMessage("The specific communication endpoint on the server")
                 ->setWidgetAttribute("placeholder", "587")
@@ -98,7 +98,7 @@ class AdminSettingsEmailForm extends AbstractDashboardForm
 
         $this->addField(
             'smtp[security]',
-            (new UssFormField(UssForm::NODE_SELECT))
+            (new FormField(Form::NODE_SELECT))
                 ->setLabelValue("SMTP Security")
                 ->setInfoMessage("The encryption protocol for secure communication")
                 ->setWidgetOptions([

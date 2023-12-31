@@ -1,7 +1,7 @@
 <?php
 
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class AdminSettingsDefaultForm extends AbstractDashboardForm
 {
@@ -21,7 +21,7 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
 
         $this->addField(
             'company_icon',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_FILE))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_FILE))
                 ->setWidgetAttribute('accept', 'jpg,png,webp,gif,jpeg')
                 ->setRowAttribute('class', "d-none")
                 ->setLabelHidden(true)
@@ -32,19 +32,19 @@ class AdminSettingsDefaultForm extends AbstractDashboardForm
 
         $this->addField(
             'company[name]',
-            (new UssFormField())
+            (new FormField())
                 ->setWidgetValue($uss->options->get('company:name'))
         );
 
         $this->addField(
             'company[headline]',
-            (new UssFormField())
+            (new FormField())
                 ->setWidgetValue($uss->options->get('company:headline'))
         );
 
         $this->addField(
             'company[description]',
-            (new UssFormField(UssForm::NODE_TEXTAREA))
+            (new FormField(Form::NODE_TEXTAREA))
                 ->setWidgetValue($uss->options->get('company:description'))
                 ->setWidgetAttribute('rows', 5)
         );

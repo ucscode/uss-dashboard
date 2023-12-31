@@ -1,10 +1,13 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\Kernel\DashboardRenderLogic;
+use Module\Dashboard\Bundle\Kernel\Enumerator;
 use Module\Dashboard\Bundle\User\User;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;

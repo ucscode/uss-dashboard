@@ -2,7 +2,7 @@
 
 use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\FormField;
 
 abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods implements CrudEditInterface, CrudActionImmutableInterface
 {
@@ -118,7 +118,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     /**
      * @method setField
      */
-    public function setField(string $name, UssFormField $field): CrudEditInterface
+    public function setField(string $name, FormField $field): CrudEditInterface
     {
         $this->getEditForm()->addField($name, $field);
         return $this;
@@ -127,7 +127,7 @@ abstract class AbstractCrudEditManager extends AbstractCrudRelativeMethods imple
     /**
      * @method getField
      */
-    public function getField(string $name): ?UssFormField
+    public function getField(string $name): ?FormField
     {
         return $this->getEditForm()->getField($name);
     }

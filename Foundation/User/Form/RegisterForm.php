@@ -4,8 +4,8 @@ namespace Module\Dashboard\Foundation\User\Form;
 
 use Module\Dashboard\Bundle\Kernel\AbstractDashboardForm;
 use Module\Dashboard\Bundle\User\User;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class RegisterForm extends AbstractDashboardForm
 {
@@ -16,7 +16,7 @@ class RegisterForm extends AbstractDashboardForm
         if(0) {
             $this->addField(
                 'user[username]',
-                (new UssFormField())
+                (new FormField())
                     ->setWidgetAttribute('placeholder', 'Username')
                     ->setWidgetAttribute('pattern', '^\s*\w+\s*$')
                     ->setLabelHidden(true)
@@ -25,14 +25,14 @@ class RegisterForm extends AbstractDashboardForm
 
         $this->addField(
             'user[email]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
                 ->setWidgetAttribute('placeholder', 'Email')
                 ->setLabelHidden(true)
         );
 
         $this->addField(
             'user[password]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_PASSWORD))
                 ->setWidgetAttribute('placeholder', 'Password')
                 ->setWidgetAttribute('pattern', '^.{4,}$')
                 ->setLabelHidden(true)
@@ -40,7 +40,7 @@ class RegisterForm extends AbstractDashboardForm
 
         $this->addField(
             'user[confirmPassword]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_PASSWORD))
                 ->setWidgetAttribute('placeholder', 'Confirm Password')
                 ->setWidgetAttribute('pattern', '^.{4,}$')
                 ->setLabelHidden(true)
@@ -53,7 +53,7 @@ class RegisterForm extends AbstractDashboardForm
 
         $this->addField(
             'user[agreement]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_CHECKBOX))
                 ->setLabelValue("I agree to the Terms of service Privacy policy")
                 ->setRowAttribute('class', 'mb-2 user-select-none small', true),
             ['mapped' => false]
@@ -61,7 +61,7 @@ class RegisterForm extends AbstractDashboardForm
 
         $this->addField(
             'submit',
-            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+            (new FormField(Form::NODE_BUTTON, Form::TYPE_SUBMIT))
                 ->setWidgetAttribute('class', 'w-100', true)
         );
     }

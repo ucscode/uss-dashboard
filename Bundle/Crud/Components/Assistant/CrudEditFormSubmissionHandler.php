@@ -1,8 +1,8 @@
 <?php
 
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 final class CrudEditFormSubmissionHandler implements CrudActionImmutableInterface
 {
@@ -264,7 +264,7 @@ final class CrudEditFormSubmissionHandler implements CrudActionImmutableInterfac
                 if($field) {
                     if($field->isRequired() && trim($value) === '') {
                         $isValid = false;
-                    } elseif(!empty($value) && $field->nodeName === UssForm::NODE_INPUT) {
+                    } elseif(!empty($value) && $field->nodeName === Form::NODE_INPUT) {
                         $isValid = $this->validityPriority($field->getWidgetAttribute('type'), $value, $field);
                     }
                 }
@@ -285,16 +285,16 @@ final class CrudEditFormSubmissionHandler implements CrudActionImmutableInterfac
     /**
      * @method validityPriority
      */
-    protected function validityPriority(string $type, string $value, UssFormField $field): bool
+    protected function validityPriority(string $type, string $value, FormField $field): bool
     {
         switch($type) {
-            case UssForm::TYPE_NUMBER:
+            case Form::TYPE_NUMBER:
                 if(!is_numeric($value)) {
                     return !$field->setValidationMessage('Invalid numeric value');
                 }
                 break;
 
-            case UssForm::TYPE_DATE:
+            case Form::TYPE_DATE:
                 try {
                     new DateTime($value);
                 } catch(\Exception $e) {
@@ -302,7 +302,7 @@ final class CrudEditFormSubmissionHandler implements CrudActionImmutableInterfac
                 }
                 break;
 
-            case UssForm::TYPE_EMAIL:
+            case Form::TYPE_EMAIL:
                 if(!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     return !$field->setValidationMessage('Invalid email address');
                 }

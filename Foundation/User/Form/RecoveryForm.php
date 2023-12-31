@@ -2,8 +2,8 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class RecoveryForm extends AbstractUserRecoveryForm
 {
@@ -23,7 +23,7 @@ class RecoveryForm extends AbstractUserRecoveryForm
             // email stage
             $this->addField(
                 'email',
-                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+                (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
                     ->setWidgetAttribute('placeholder', 'Enter your account email')
             );
 
@@ -32,28 +32,28 @@ class RecoveryForm extends AbstractUserRecoveryForm
             // password reset stage
             $this->addField(
                 'user[password]',
-                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                (new FormField(Form::NODE_INPUT, Form::TYPE_PASSWORD))
                     ->setLabelValue('New Password')
                     ->setWidgetAttribute('placeholder', 'Enter your new password')
             );
 
             $this->addField(
                 'user[confirm_password]',
-                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+                (new FormField(Form::NODE_INPUT, Form::TYPE_PASSWORD))
                     ->setLabelValue('Confirm Password')
                     ->setWidgetAttribute('placeholder', 'Confirm your new password')
             );
 
             $this->addField(
                 'user[id]',
-                (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN))
+                (new FormField(Form::NODE_INPUT, Form::TYPE_HIDDEN))
                     ->setWidgetValue($this->user->getId())
             );
         }
 
         $this->addField(
             'submit',
-            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+            (new FormField(Form::NODE_BUTTON, Form::TYPE_SUBMIT))
                 ->setWidgetAttribute('class', 'w-100', true)
         );
     }

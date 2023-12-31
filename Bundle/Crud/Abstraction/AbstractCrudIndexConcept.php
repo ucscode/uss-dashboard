@@ -1,10 +1,10 @@
 <?php
 
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
+use Ucscode\Form\Form;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\FormField;
 
 abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
 {
@@ -40,7 +40,7 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
             $this->{$key}->setAttribute('class', $classname);
         };
 
-        $this->tableForm = new UssForm(
+        $this->tableForm = new Form(
             $this->tablename . '-crud-form',
             $_SERVER['REQUEST_URI'],
             'POST'
@@ -116,12 +116,12 @@ abstract class AbstractCrudIndexConcept extends AbstractCrudIndexManager
         $searchContainer = new UssElement(UssElement::NODE_DIV);
         $searchContainer->setAttribute('class', 'col-lg-6 mb-1');
 
-        $form = new UssForm(
+        $form = new Form(
             'search',
             parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
         );
 
-        $searchField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_SEARCH);
+        $searchField = new FormField(Form::NODE_INPUT, Form::TYPE_SEARCH);
 
         $searchButton = (new UssElement('button'))
             ->setAttribute('class', 'btn btn-sm btn-outline-secondary')

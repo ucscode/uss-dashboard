@@ -2,8 +2,8 @@
 
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class CrudEditManager extends AbstractCrudEditConcept
 {
@@ -109,7 +109,7 @@ class CrudEditManager extends AbstractCrudEditConcept
 
         $this->populateForm();
 
-        $nonceField = new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_HIDDEN);
+        $nonceField = new FormField(Form::NODE_INPUT, Form::TYPE_HIDDEN);
         $nonceField->setWidgetValue(Uss::instance()->nonce($this->tablename));
         $this->editForm->addField('__NONCE__', $nonceField);
 

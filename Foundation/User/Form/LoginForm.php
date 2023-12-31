@@ -2,9 +2,9 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Ucscode\UssForm\UssForm;
+use Ucscode\Form\Form;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\FormField;
 use Module\Dashboard\Bundle\Kernel\AbstractDashboardForm;
 use Module\Dashboard\Bundle\User\User;
 
@@ -13,11 +13,16 @@ class LoginForm extends AbstractDashboardForm
     private string $error;
     protected User $user;
 
+    public function __construct( $formContext)
+    {
+        parent::__construct($formContext);
+    }
+
     protected function buildForm()
     {
         $this->addField(
             'user[login]',
-            (new UssFormField())
+            (new FormField())
                 ->setWidgetAttribute('placeholder', 'login Detail')
                 ->setWidgetAttribute(
                     'pattern',
@@ -28,7 +33,7 @@ class LoginForm extends AbstractDashboardForm
 
         $this->addField(
             'user[password]',
-            (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_PASSWORD))
+            (new FormField(Form::NODE_INPUT, Form::TYPE_PASSWORD))
                 ->setWidgetAttribute('placeholder', 'Password')
                 ->setWidgetAttribute('pattern', '^.{4,}$')
                 ->setLabelHidden(true)
@@ -38,7 +43,7 @@ class LoginForm extends AbstractDashboardForm
 
         $this->addField(
             'submit',
-            (new UssFormField(UssForm::NODE_BUTTON, UssForm::TYPE_SUBMIT))
+            (new FormField(Form::NODE_BUTTON, Form::TYPE_SUBMIT))
                 ->setWidgetAttribute('class', 'w-100', true)
         );
 
@@ -92,19 +97,19 @@ class LoginForm extends AbstractDashboardForm
 
     protected function buildMailBlock()
     {
-        $div1 = (new UssElement(UssForm::NODE_DIV))
+        $div1 = (new UssElement(Form::NODE_DIV))
             ->setAttribute('class', 'd-flex justify-content-between my-3 col-12')
             ->setAttribute('id', 'reactive-mailer');
-        $div2 = (new UssElement(UssForm::NODE_DIV))
+        $div2 = (new UssElement(Form::NODE_DIV))
             ->setAttribute('class', 'resend-email ms-auto');
-        $a = (new UssElement(UssForm::NODE_A))
+        $a = (new UssElement(Form::NODE_A))
             ->setAttribute('href', 'javascript:void(0)')
             ->setAttribute('title', 'Resend Confirmation Email')
             ->setAttribute('data-vcode');
 
-        $small = (new UssElement(UssForm::NODE_SMALL))
+        $small = (new UssElement(Form::NODE_SMALL))
             ->setContent('Reconfirm Email');
-        $i = (new UssElement(UssForm::NODE_I))
+        $i = (new UssElement(Form::NODE_I))
             ->setAttribute('class', 'bi bi-envelope-at');
 
         $div1->appendChild($div2);

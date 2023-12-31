@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Service;
 
 use Uss\Component\Kernel\Uss;
 

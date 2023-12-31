@@ -1,7 +1,11 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\Kernel\Service\AppControl;
+use Module\Dashboard\Bundle\Kernel\Service\AppFactory;
+use Module\Dashboard\Foundation\DocumentController;
 use RuntimeException;
 use Ucscode\TreeNode\TreeNode;
 use Ucscode\UssElement\UssElement;
@@ -93,7 +97,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
             if($document->getRoute() !== null) {
                 new Route(
                     $document->getRoute(),
-                    $document->getController(),
+                    new DocumentController($this, $document),
                     $document->getRequestMethods()
                 );
             }

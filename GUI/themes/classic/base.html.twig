@@ -1,39 +1,30 @@
 {% extends '@Uss/base.html.twig' %}
 
-{# 
-    In this block, additional CSS styles are included in the head section.
-    The parent() function is called to ensure any styles defined in the parent template are preserved.
-#}
+{% set stylesheet = __dashboard.theme('/assets/css/default.css', __dashboard.ENUM.URL) %}
 
 {% block head_resource %}
+
     {{ parent() }}
     
-    {% set stylesheet = __dashboard.theme('/assets/css/default.css', __dashboard.ENUM.URL) %}
     <link rel="stylesheet" href="{{ stylesheet }}">
 
-{% endblock head_resource %}
+{% endblock %}
 
-{# 
-    This block of code contains the theme contents
-    Child theme may extend any of the block below for more customized content
-#}
+
+{# Body Block For Uss Dashboard #}
 
 {% block body_main %}
     
-    {#
-        Sidebar Block:
-        Includes the navigation sidebar with logo, menu items, and an overlay for mobile view.
-    #}
+    {# Sidebar Block: Includes navigation with logo and menu items #}
+    
     {% block dashboard_sidebar %}
 
         <aside class="sidebar-nav-wrapper">
 
-            {# Sidebar Logo: Displays the logo in the navigation sidebar #}
-
             {% block sidebar_logo %}
                 <div class="navbar-logo">
                     <a href="{{ __dashboard.urlGenerator('/') }}">
-                        <img src="{{ Uss.getOption('company:logo') ?? Uss.globals.icon }}" alt="logo" />
+                        <img src="{{ Uss.getOption('company:logo') ?? page_icon }}" alt="logo" />
                     </a>
                 </div>
             {% endblock %}
@@ -41,7 +32,7 @@
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
                     {% block dashboard_menu_items %}
-                        {% include _theme ~ '/includes/sidebar-items.html.twig' %}
+                        {% include __dashboard.theme('/includes/sidebar-items.html.twig') %}
                     {% endblock %}
                 </ul>
             </nav>
@@ -54,85 +45,83 @@
             </a>
         </div>
 
-    {% endblock %}
+    {% endblock dashboard_sidebar %}
 
+    {# Main Block For Dashboard Content #}
+    
     {% block dashboard_main %}
 
         <main class="main-wrapper">
         
-        {% block dashboard_header %}
+            {# Header section for dashboard #}
 
-            <header class="header">
-            
-                <div class="container-fluid">
-                    <div class="row align-items-center">
-                    
-                        <div class="col-md-6 col-6">
-                            <div class="header-left d-flex align-items-center">
+            {% block dashboard_header %}
 
-                                <div class="menu-toggle-btn mr-20 d-xl-none">
-                                    <button id="menu-toggle" class="btn btn-hover">
-                                        <i class="bi bi-list"></i>
-                                    </button>
-                                </div>
-
-                                {% block dashboard_header_left_reserved %}{% endblock %}
-
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 col-6">
-                            <div class="header-right">
-
-                                {% block dashboard_header_notification %}
-                                    {% include _theme ~ '/includes/notifications-top.html.twig' %}
-                                {% endblock %}
-                                
-                                {% block dashboard_header_profile %}
-                                    {% include _theme ~ '/includes/profile-menu.html.twig' %}
-                                {% endblock %}
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
+                <header class="header">
                 
-            </header>
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                        
+                            <div class="col-md-6 col-6">
+                                <div class="header-left d-flex align-items-center">
 
-        {% endblock %} {# Header #}
-        
-        {% block dashboard_wrapper %}
-            <div class='content-wrapper'>
-                {% block dashboard_content %}{% endblock %}
-            </div>
-        {% endblock %} 
+                                    <div class="menu-toggle-btn mr-20 d-xl-none">
+                                        <button id="menu-toggle" class="btn btn-hover">
+                                            <i class="bi bi-list"></i>
+                                        </button>
+                                    </div>
 
-        {% block dashboard_footer %}{% endblock %} {# Footer #}
+                                    {% block dashboard_header_void %}{% endblock %}
+
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-6">
+                                <div class="header-right">
+
+                                    {% block dashboard_header_notification %}
+                                        {% include __dashboard.theme('/includes/notifications-top.html.twig') %}
+                                    {% endblock %}
+                                    
+                                    {% block dashboard_header_profile %}
+                                        {% include __dashboard.theme('/includes/profile-menu.html.twig') %}
+                                    {% endblock %}
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </header>
+
+            {% endblock dashboard_header %} 
+            
+            {% block dashboard_wrapper %}
+                <div class='content-wrapper'>
+                    {% block dashboard_content %}{% endblock %}
+                </div>
+            {% endblock %} 
+
+            {% block dashboard_footer %}{% endblock %} {# Footer #}
 
         </main>
 
-    {% endblock %} 
+    {% endblock dashboard_main %} 
 
-{% endblock %} {# Body #}
+{% endblock body_main %} 
 
-{% block body_js %}
+{# Javascript block for Uss Dashboard #}
+
+{% block body_javascript %}
     
     {{ parent() }}
 
-    <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/dataMagic.js') }}"></script>
+    <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
 
     {% if (user and user.isAvailable()) %}
-	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', __dashboard.ENUM.HTTP) }}"></script>
-        <script src='{{ __dashboard.theme('/assets/js/notifications.js', __dashboard.ENUM.HTTP) }}' type='module' ></script>
-    {% endif %}
-
-    {% set alerts = Uss.renderBlocks('v-alert') %}
-    
-    {% if alerts is not null %}
-        <script>$(function() { 
-            {{ alerts|raw }} 
-        });</script>
+	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', __dashboard.ENUM.URL) }}"></script>
+        <script src='{{ __dashboard.theme('/assets/js/notifications.js', __dashboard.ENUM.URL) }}' type='module' ></script>
     {% endif %}
 
 {% endblock %}

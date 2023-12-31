@@ -12,10 +12,11 @@ class Document
     protected ?string $name = null;
     protected ?string $route = null;
     protected ?string $template = null;
-    protected ?RouteInterface $controller = null;
+    protected array $context = [];
     protected array $menuItems = [];
     protected array $custom = [];
     protected array $requestMethods = ['GET', 'POST'];
+    protected ?RouteInterface $controller = null;
 
     public function setName(string $name): self
     {
@@ -71,6 +72,17 @@ class Document
     public function getTemplate(): ?string
     {
         return $this->template;
+    }
+
+    public function setContext(array $context): self
+    {
+        $this->context = $context;
+        return $this;
+    }
+
+    public function getContext(): array
+    {
+        return $this->context;
     }
 
     /**
@@ -155,12 +167,14 @@ class Document
     public function __debugInfo(): array
     {
         return [
+            'custom:__debugInfo' => true,
             'name' => $this->name,
             'route' => $this->route,
             'template' => $this->template,
-            'controller' => $this->controller ? '(Instance): ' . $this->controller::class : null,
-            'menuItems' => '(' . count($this->menuItems) . ' Instance): ' . TreeNode::class,
+            'controller' => $this->controller ? '(Instance of): ' . $this->controller::class : null,
+            'menuItems' => '(' . count($this->menuItems) . ' Instance of): ' . TreeNode::class,
             'requestMethods' => '(Array) => [' . implode(", ", $this->requestMethods) . ']',
+            'context' => $this->context,
             'custom' => $this->custom,
         ];
     }

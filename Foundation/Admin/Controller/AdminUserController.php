@@ -2,8 +2,8 @@
 
 use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
-use Ucscode\UssForm\UssFormField;
+use Ucscode\Form\Form;
+use Ucscode\Form\FormField;
 
 class AdminUserController implements RouteInterface
 {
@@ -131,7 +131,7 @@ class AdminUserController implements RouteInterface
         
         $prevEmailField = $crudEditManager->getField('email');
 
-        $emailField = (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_EMAIL))
+        $emailField = (new FormField(Form::NODE_INPUT, Form::TYPE_EMAIL))
             ->setRowAttribute('class', $prevEmailField->getRowAttribute('class'), true);
         
         $crudEditManager->setField('email', $emailField);
@@ -283,7 +283,7 @@ class AdminUserController implements RouteInterface
             ->addFieldStack('roles', true)
                 ->setOuterContainerAttribute('class', 'col-lg-4', true);
 
-        $roleField = (new UssFormField(UssForm::NODE_INPUT, UssForm::TYPE_CHECKBOX))
+        $roleField = (new FormField(Form::NODE_INPUT, Form::TYPE_CHECKBOX))
             ->setValidationHidden(true)
             ->setContainerAttribute('class', 'border p-3 rounded my-2', true)
             ->setInfoMessage("Select all roles for the user")
@@ -297,7 +297,7 @@ class AdminUserController implements RouteInterface
         foreach($this->userRoles as $key => $role) {
             if($key) {
                 $fieldName = strtolower('role_' . $role);
-                $secondaryField = $roleField->createSecondaryField($fieldName, UssForm::TYPE_CHECKBOX);
+                $secondaryField = $roleField->createSecondaryField($fieldName, Form::TYPE_CHECKBOX);
                 $secondaryField
                     ->setLabelValue($role)
                     ->setRequired(false)
@@ -308,7 +308,7 @@ class AdminUserController implements RouteInterface
         $this->updateRolesField($this->user, $roleField, $this->userRoles);
     }
 
-    public function updateRolesField(?User $user, ?UssFormField $field, array $roles): void
+    public function updateRolesField(?User $user, ?FormField $field, array $roles): void
     {
         if($user && $field) {
             foreach($roles as $key => $role) {

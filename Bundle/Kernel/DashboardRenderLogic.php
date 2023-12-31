@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Kernel;
 
 use Module\Dashboard\Bundle\Alert\Alert;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
 use Uss\Component\Kernel\Uss;
@@ -43,7 +44,7 @@ class DashboardRenderLogic implements EventInterface
     {
         $loginDocument = $this->dashboard->getDocument('login');
         $loginForm = $loginDocument->getCustom('login:form');
-        //$loginForm->handleSubmission();
+        $loginForm->handleSubmission();
         // try again
         $this->user->acquireFromSession();
         $this->isLoggedIn = $this->user->isAvailable();

@@ -1,7 +1,7 @@
 <?php
 
-use Ucscode\UssForm\UssFormField;
-use Ucscode\UssForm\UssForm;
+use Ucscode\Form\FormField;
+use Ucscode\Form\Form;
 
 class AdminSettingsUserController implements RouteInterface
 {
@@ -25,7 +25,7 @@ class AdminSettingsUserController implements RouteInterface
         ]);
     }
 
-    protected function updateRoleField(UssFormField $roleField): void
+    protected function updateRoleField(FormField $roleField): void
     {
         (new Event())->addListener(
 
@@ -33,7 +33,7 @@ class AdminSettingsUserController implements RouteInterface
 
             new class ($roleField) implements EventInterface 
             {
-                public function __construct(protected UssFormField $roleField) {}
+                public function __construct(protected FormField $roleField) {}
 
                 public function eventAction(array|object $data): void
                 {
@@ -49,7 +49,7 @@ class AdminSettingsUserController implements RouteInterface
                             continue;
                         };
                         $this->roleField
-                            ->createSecondaryField($permission, UssForm::TYPE_CHECKBOX)
+                            ->createSecondaryField($permission, Form::TYPE_CHECKBOX)
                             ->setLabelValue($permission)
                             ->setWidgetValue($permission)
                             ->setRequired(false)

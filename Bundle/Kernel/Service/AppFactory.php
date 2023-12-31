@@ -1,8 +1,10 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Service;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Uss\Component\Kernel\Uss;
 
 class AppFactory
 {
@@ -31,7 +33,7 @@ class AppFactory
     public function getPermissions(): array
     {
         $permissions = [];
-        foreach($this->getProjects() as $dashboard) {
+        foreach($this->getApps() as $dashboard) {
             $permissions = array_merge($permissions, $dashboard->config->getPermissions());
         }
         sort($permissions);

@@ -4,7 +4,7 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\DOMTableInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\UssForm;
+use Ucscode\Form\Form;
 
 abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods implements CrudIndexInterface, CrudActionImmutableInterface
 {
@@ -26,7 +26,7 @@ abstract class AbstractCrudIndexManager extends AbstractCrudRelativeMethods impl
     protected UssElement $widgetBlock;
     protected UssElement $paginatorBlock;
     protected UssElement $tableBlock;
-    protected UssForm $tableForm;
+    protected Form $tableForm;
 
     protected SQuery $sQuery;
     protected mysqli_result $mysqliResult;

@@ -12,7 +12,7 @@ class NotificationController implements RouteInterface
     public function onload($pageInfo)
     {
         $user = new User();
-        $user->getFromSession();
+        $user->acquireFromSession();
         $_SERVER['REQUEST_METHOD'] === 'GET' ? $this->getRequest($user) : $this->postRequest($user);
     }
 
