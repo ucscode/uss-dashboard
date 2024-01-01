@@ -19,16 +19,13 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     public function createApp(AppControl $appControl): void
     {
         parent::createApp($appControl);
-        Uss::instance()
-            ->filesystemLoader
-            ->addPath(UserDashboardInterface::TEMPLATE_DIR, 'User');
         $this->profileBatch = new TreeNode('profileBatch');
         $this->createFacade();
     }
 
     protected function createFacade(): void
     {
-        $factory = new DocumentFactory($this, '@User');
+        $factory = new DocumentFactory($this, '@Foundation/User/Template');
 
         $this->addDocument('login', $factory->createLoginDocument());
         $this->addDocument('register', $factory->createRegisterDocument());

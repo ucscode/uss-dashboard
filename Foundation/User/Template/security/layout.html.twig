@@ -2,84 +2,80 @@
 
 {% block body_main %}
     
-    <div class="{% block main_class %}row g-0 min-vh-100{% endblock %}">
+    <div class="{{ containerClass ?? "row g-0 min-vh-100" }}">
 
-        {% block main_left %}
+        {% block columnLeft %}
 
-            <div class="{% block main_left_class %}col-lg-6{% endblock %}">
+            <div class="{{ columnLeftClass ?? "col-lg-6" }}">
                 
-                {% block main_left_content %}
-
+                {% block contentLeft %}
+                
                     <div class="auth-cover-wrapper">
                         <div class="auth-cover px-sm-5">
-
                             <div class="title text-center">
 
-                                {% block main_left_content_image %}
-
-                                    {% set icon = Uss.getOption('company:logo') %}
-
-                                    {% if icon is not empty %}
+                                {% block contentLeftIcon %}
+                                    {% set companyIcon = Uss.getOption('company:logo') ?? page_icon %}
+                                    {% if companyIcon is not empty %}
                                         <div class='mb-2'>
-                                            <img src='{{ icon }}' class='img-fluid user-select-none'>
+                                            <img src='{{ companyIcon }}' class='img-fluid user-select-none'>
                                         </div>
                                     {% endif %}
-
                                 {% endblock %}
 
-                                {% block main_left_content_title %}
+                                {% block contentLeftTitle %}
                                     <h1 class="text-white mb-2">
-                                        {{ Uss.getOption('company:name') }}
+                                        {{ Uss.getOption('company:name') ?? page_title }}
                                     </h1>
                                 {% endblock %}
 
-                                {% block main_left_content_description %}
+                                {% block contentLeftDescription %}
                                     <p class="text-light">
-                                        {{ Uss.getOption('company:description') }}
+                                        {{ Uss.getOption('company:description') ?? page_description }}
                                     </p>
                                 {% endblock %}
 
                             </div>
-
                         </div>
                     </div>
                     
-                {% endblock %}
+                {% endblock %} {# contentLeft #}
                 
             </div>
 
-        {% endblock main_left %}
+        {% endblock %} {# columnLeft #}
 
-        {% block main_right %}
+        {% block columnRight %}
 
-            <div class="{% block main_right_class %}col-lg-6{% endblock %}">
+            <div class="{{ columnRightClass ?? "col-lg-6" }}">
                         
-                {% block main_right_content %}
+                {% block contentRight %}
 
-                    <div class="{% block main_right_content_class %}row g-0 align-items-center justify-content-center bg-light p-5 h-100{% endblock %}">
-                        
-                        <div class="{% block main_right_content_column %}col-sm-10 col-md-9 m-auto{% endblock %}">
+                    <div class="{{ 
+                        contentRightClass ?? 
+                        "row g-0 align-items-center justify-content-center bg-light p-5 h-100" 
+                    }}">
+                        <div class="{{ contentMainContainerClass ?? "col-sm-10 col-md-9 m-auto" }}">
 
-                            {% block main_right_form_element %}{% endblock %}
+                            {% block contentMain %}{% endblock %}
 
                         </div>
-                        
                     </div>
 
-                {% endblock %}
+                {% endblock %} {# contentRight #}
 
             </div>
 
-        {% endblock main_right %}
+        {% endblock %} {# columnRight #}
 
     </div>
 
 {% endblock %}
 
 {% block body_javascript %}
-
     {{ parent() }}
+    
+    {% set securityUrl = __dashboard.scope('@Foundation/User/assets/js/security.js', __dashboard.ENUM.URL) %}
 
-	<script src="{{ __dashboard.theme('/assets/js/security.js', __dashboard.ENUM.URL) }}"></script>
-
+	<script src="{{ securityUrl }}"></script>
 {% endblock %}

@@ -19,7 +19,7 @@ new class () {
     public function __construct()
     {
         $this->uss = Uss::instance();
-        
+
         new DatabaseGenerator($this->uss);
 
         $this->configureFilesystem();
@@ -35,8 +35,17 @@ new class () {
 
     protected function configureFilesystem(): void
     {
-        $this->uss->filesystemLoader->addPath(DashboardImmutable::MAILS_DIR, 'Mail');
-        $this->uss->filesystemLoader->addPath(DashboardImmutable::THEMES_DIR, 'Theme');
+        $this->uss
+            ->filesystemLoader
+            ->addPath(DashboardImmutable::FOUNDATION_DIR, 'Foundation');
+
+        $this->uss
+            ->filesystemLoader
+            ->addPath(DashboardImmutable::MAILS_DIR, 'Mail');
+
+        $this->uss
+            ->filesystemLoader
+            ->addPath(DashboardImmutable::THEMES_DIR, 'Theme');
     }
 
     protected function createUserApplication(): void
