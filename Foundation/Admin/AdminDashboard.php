@@ -2,8 +2,8 @@
 
 namespace Module\Dashboard\Foundation\Admin;
 
-use Module\Dashboard\Bundle\Kernel\AppControl;
-use Module\Dashboard\Bundle\Kernel\AbstractDashboard;
+use Module\Dashboard\Bundle\Kernel\Service\AppControl;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Uss\Component\Trait\SingletonTrait;
 use Ucscode\TreeNode\TreeNode;
 

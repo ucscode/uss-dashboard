@@ -29,7 +29,7 @@ final class DocumentFactory
         return (new Document())
             ->setName('login')
             ->setTemplate('/security/login.html.twig', $this->namespace)
-            ->setCustom('login:form', new LoginForm('login'))
+            ->setCustom('login:form', new LoginForm())
             ;
     }
 
@@ -39,7 +39,7 @@ final class DocumentFactory
             ->setName('register')
             ->setRoute('/register', $this->base)
             ->setTemplate('/security/register.html.twig', $this->namespace)
-            ->setCustom('register:form', new RegisterForm('register'))
+            ->setCustom('register:form', new RegisterForm())
             ->setController(new RegisterController())
             ;
     }
@@ -51,7 +51,7 @@ final class DocumentFactory
             ->setRoute('/reset-password', $this->base)
             ->setTemplate("/security/recovery.html.twig", $this->namespace)
             ->setController(new RecoveryController())
-            ->setCustom('recovery:form', new RecoveryForm('recovery'))
+            ->setCustom('recovery:form', new RecoveryForm())
             ;
     }
 

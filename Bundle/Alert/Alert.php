@@ -110,7 +110,7 @@ class Alert implements AlertInterface
      * This method is called only once by
      * UdTwigExtension Class Instance
      */
-    public static function exportContent()
+    public static function exportContents()
     {
         if(!self::$liberated) {
             $alerts = $_SESSION[self::SESSID] ?? [];

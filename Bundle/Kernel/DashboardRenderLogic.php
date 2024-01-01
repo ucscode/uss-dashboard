@@ -30,9 +30,10 @@ class DashboardRenderLogic implements EventInterface
      */
     public function eventAction(array|object $data): void
     {
-        if(!$this->isLoggedIn && $this->dashboard->isFirewallEnabled()) {
-            $this->displayLoginPage();
-        };
+        !$this->isLoggedIn && 
+        $this->dashboard->isFirewallEnabled() ? 
+            $this->displayLoginPage() : null;
+            
         $this->evalUserPermission();
         $this->createUserInterface();
     }
@@ -43,11 +44,16 @@ class DashboardRenderLogic implements EventInterface
     protected function displayLoginPage(): void
     {
         $loginDocument = $this->dashboard->getDocument('login');
+
         $loginForm = $loginDocument->getCustom('login:form');
         $loginForm->handleSubmission();
-        // try again
-        $this->user->acquireFromSession();
-        $this->isLoggedIn = $this->user->isAvailable();
+        $loginForm->buildForm();
+
+        $this->isLoggedIn = 
+            $this->user
+                ->acquireFromSession()
+                ->isAvailable();
+
         if(!$this->isLoggedIn) {
             $this->template = $loginDocument->getTemplate();
             $this->options['form'] = $loginForm;
@@ -59,10 +65,12 @@ class DashboardRenderLogic implements EventInterface
      */
     protected function evalUserPermission(): void
     {
-        if($this->isLoggedIn) {
+        if($this->isLoggedIn) 
+        {
             $permissions = $this->dashboard->appControl->getPermissions();
             $roles = $this->user->meta->get('user.roles');
             $matchingRoles = array_intersect($permissions, $roles);
+
             if(empty($matchingRoles)) {
                 $this->template =
                     $this->dashboard->appControl->getPermissionDeniedTemplate() ?:
@@ -78,7 +86,6 @@ class DashboardRenderLogic implements EventInterface
     {
         //$this->remodelMenu($this->dashboard->menu->children);
         $this->uss->twigEnvironment->addExtension(new DashboardExtension($this->dashboard));
-
         $this->options['user'] = $this->user;
 
         $this->uss->jsCollection['dashboard'] = [
@@ -87,7 +94,7 @@ class DashboardRenderLogic implements EventInterface
             'loggedIn' => $this->isLoggedIn
         ];
 
-        Alert::exportContent();
+        Alert::exportContents();
 
         $this->uss->render($this->template, $this->options);
     }

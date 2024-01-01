@@ -3,16 +3,20 @@
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
+use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Form\Attribute;
 use Ucscode\UssForm\Form\Form;
 
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
 {
-    abstract protected function buildForm();
+    abstract protected function buildForm(): void;
+
+    protected Collection $collection;
 
     public function __construct(Attribute $attribute = new Attribute()) 
     {
         parent::__construct($attribute);
+        $this->collection = $this->getCollection(self::DEFAULT_COLLECTION);
     }
 
     /**

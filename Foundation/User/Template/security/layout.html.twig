@@ -80,6 +80,6 @@
 
     {{ parent() }}
 
-	<script src="{{ DashboardExtension.themeUrl('assets/js/security.js') }}"></script>
+	<script src="{{ __dashboard.theme('/assets/js/security.js', __dashboard.ENUM.URL) }}"></script>
 
 {% endblock body_js %}
