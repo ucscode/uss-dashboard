@@ -7,6 +7,21 @@ use Ucscode\UssForm\Field\Field;
 
 abstract class AbstractUserAccountForm extends AbstractDashboardForm
 {
+    protected ?string $termsOfServiceUrl = null;
+    protected ?string $privacyPolicyUrl = null;
+
+    public function setTermsOfServiceUrl(?string $termsOfServiceUrl): self
+    {
+        $this->termsOfServiceUrl = $termsOfServiceUrl;
+        return $this;
+    }
+
+    public function setPrivacyPolicyUrl(?string $privacyPolicyUrl): self
+    {
+        $this->privacyPolicyUrl = $privacyPolicyUrl;
+        return $this;
+    }
+
     protected function createHiddenField(string $name, ?string $value = null): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_HIDDEN);
@@ -27,9 +42,8 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setAttribute('pattern', '^\s*\w+\s*$')
             ;
 
-        $context->label
-            ->setValue($label)
-            ;
+        $context->label->setValue($label);
+        $context->prefix->setValue("<i class='bi bi-person'></i>");
 
         $this->collection->addField("user[username]", $field);
 
@@ -40,7 +54,14 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_PASSWORD);
 
-        $name = !$confirmPassword ? "user[password]" : "user[confirmPassword]";
+        if(!$confirmPassword) {
+            $name = "user[password]";
+            $icon = 'lock';
+        } else {
+            $name = "user[confirmPassword]";
+            $icon = 'shield-lock';
+        };
+
         $label = !empty($label) ? $label : (!$confirmPassword ? 'Password' : 'Confirm Password');
         
         $context->widget
@@ -48,10 +69,9 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setAttribute('pattern', '^.{4,}$')
             ;
         
-        $context->label
-            ->setValue($label)
-            ;
-        
+        $context->label->setValue($label);
+        $context->prefix->setValue(sprintf("<i class='bi bi-%s'></i>", $icon));
+
         $this->collection->addField($name, $field);
 
         return $field;
@@ -65,9 +85,8 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setAttribute("placeholder", $label)
             ;
 
-        $context->label
-            ->setValue($label)
-            ;
+        $context->label->setValue($label);
+        $context->prefix->setValue("<i class='bi bi-at'></i>");
 
         $this->collection->addField("user[email]", $field);
 
@@ -93,17 +112,23 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
 
         if(empty($label)) {
-            $label = "I agree to the Terms of service Privacy policy";
+            $label = sprintf(
+                "I agree to the <a href='%s' target='%s'>terms of service</a> &amp; <a href='%s' target='%s'>privacy policy</a>",
+                $this->termsOfServiceUrl ?: 'javascript:void(0)',
+                $this->termsOfServiceUrl ? '_blank' : '_self',
+                $this->privacyPolicyUrl ?: 'javascript:void(0)',
+                $this->privacyPolicyUrl ? '_blank' : '_self'
+            );
         }
 
         $context->label
             ->setValue($label)
-            ;
+            ->addClass('user-select-none small')
+        ;
 
         $context->widget
             ->setChecked($checked)
-            ->addClass('user-select-none small')
-            ->setFixed(true)
+            ->setAttribute('data-anonymous')
             ;
 
         $this->collection->addField("user[agree]", $field);

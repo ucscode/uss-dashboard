@@ -74,12 +74,12 @@
 
     </div>
 
-{% endblock body_main %}
+{% endblock %}
 
-{% block body_js %}
+{% block body_javascript %}
 
     {{ parent() }}
 
 	<script src="{{ __dashboard.theme('/assets/js/security.js', __dashboard.ENUM.URL) }}"></script>
 
-{% endblock body_js %}
+{% endblock %}
