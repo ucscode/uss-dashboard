@@ -75,7 +75,7 @@
 {% block body_javascript %}
     {{ parent() }}
     
-    {% set securityUrl = __dashboard.scope('@Foundation/User/assets/js/security.js', __dashboard.ENUM.URL) %}
+    {% set securityUrl = Uss.templateSchema('@Foundation/User/assets/js/security.js', Uss.ENUM.URL) %}
 
 	<script src="{{ securityUrl }}"></script>
 {% endblock %}

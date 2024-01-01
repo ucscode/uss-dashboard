@@ -5,7 +5,7 @@ namespace Module\Dashboard\Bundle\Kernel\Interface;
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
-use Module\Dashboard\Bundle\Kernel\Enumerator;
+use Uss\Component\Kernel\Enumerator;
 use Uss\Component\Manager\UrlGenerator;
 
 interface DashboardInterface

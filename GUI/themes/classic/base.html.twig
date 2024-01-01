@@ -1,6 +1,6 @@
 {% extends '@Uss/base.html.twig' %}
 
-{% set stylesheet = __dashboard.theme('/assets/css/default.css', __dashboard.ENUM.URL) %}
+{% set stylesheet = __dashboard.theme('/assets/css/default.css', Uss.ENUM.URL) %}
 
 {% block head_resource %}
 
@@ -120,8 +120,8 @@
     <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
 
     {% if (user and user.isAvailable()) %}
-	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', __dashboard.ENUM.URL) }}"></script>
-        <script src='{{ __dashboard.theme('/assets/js/notifications.js', __dashboard.ENUM.URL) }}' type='module' ></script>
+	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', Uss.ENUM.URL) }}"></script>
+        <script src='{{ __dashboard.theme('/assets/js/notifications.js', Uss.ENUM.URL) }}' type='module' ></script>
     {% endif %}
 
 {% endblock %}
