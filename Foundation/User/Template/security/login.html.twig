@@ -1,23 +1,31 @@
-{% extends '@Foundation/User/Template/security/layout.html.twig' %}
+{% extends '@Foundation/User/Template/security/scheme/layout.html.twig' %}
 
-{% block main_right_form_element %}
+{% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
 
-    {{ form.export|raw }} 
+{% block contentMain %}
 
-	{% block after_form %}
-		<div class="mt-2">
-			<p class="text-sm text-center">
-				Forgot Password? 
-				<a href="{{ DashboardExtension.getPageManagerUrl('recovery') }}" class="hover-underline text-nowrap">Reset Password</a>
-			</p>
-		</div>
+    {{ form.export|raw }}
 
-		<div class="mt-2">
-			<p class="text-sm text-center">
-				Don’t have an account yet? 
-				<a href="{{ DashboardExtension.getPageManagerUrl('register') }}" class='text-nowrap'>Create an account</a>
-			</p>
-		</div>
-	{% endblock %}
+{% endblock %}
+
+{% block contentMainAfter %}
+
+	<hr/>
+	
+	{{ macros.callToAction(
+		{
+			question: 'Forgot Password?',
+			text: 'Reset Password',
+			url: __dashboard.getDocument('recovery').url,
+		}
+	) }}
+
+	{{ macros.callToAction(
+		{
+			question: "Don't have an account?",
+			text: 'Create an account',
+			url: __dashboard.getDocument('register').url,
+		}
+	) }}
 
 {% endblock %}

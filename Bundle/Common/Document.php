@@ -134,7 +134,7 @@ class Document
      */
     public function getCustom(string $key): mixed
     {
-        return $this->custom[$key];
+        return $this->custom[$key] ?? null;
     }
 
     /**

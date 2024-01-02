@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Extension;
 
+use Module\Dashboard\Bundle\Common\Document;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
@@ -28,7 +29,7 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
     /**
      * Get a path from the current theme and return value as file system or URL
      */
-    public function theme(string $path, Enumerator $enum = Enumerator::THEME): string
+    public function getTheme(string $path, Enumerator $enum = Enumerator::THEME): string
     {
         return $this->dashboard->getTheme($path, $enum);
     }
@@ -38,11 +39,17 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
      */
     public function urlGenerator(string $path = '', array $param = [], ?string $base = null): string
     {
-        if(!is_null($base)) {
-            $urlGenerator = new UrlGenerator($path, $param, $base);
-        } else {
-            $urlGenerator = $this->dashboard->urlGenerator($path, $param);
-        }
+        $urlGenerator = !is_null($base) ?
+            new UrlGenerator($path, $param, $base) :
+            $this->dashboard->urlGenerator($path, $param);
         return $urlGenerator->getResult();
+    }
+
+    /**
+     * @method getDocument
+     */
+    public function getDocument(string $name): ?Document
+    {
+        return $this->dashboard->getDocument($name);
     }
 }

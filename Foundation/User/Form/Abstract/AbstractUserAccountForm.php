@@ -7,18 +7,27 @@ use Ucscode\UssForm\Field\Field;
 
 abstract class AbstractUserAccountForm extends AbstractDashboardForm
 {
-    protected ?string $termsOfServiceUrl = null;
-    protected ?string $privacyPolicyUrl = null;
+    private array $properties = [
+        'tosLink' => null,
+        'privacyLink' => null,
+    ];
 
-    public function setTermsOfServiceUrl(?string $termsOfServiceUrl): self
+    final public function setProperty(string $name, mixed $property): self
     {
-        $this->termsOfServiceUrl = $termsOfServiceUrl;
+        $this->properties[$name] = $property;
         return $this;
     }
 
-    public function setPrivacyPolicyUrl(?string $privacyPolicyUrl): self
+    final public function getProperty(string $name): mixed
     {
-        $this->privacyPolicyUrl = $privacyPolicyUrl;
+        return $this->properties[$name] ?? null;
+    }
+
+    final public function removeProperty($name): self
+    {
+        if(array_key_exists($name, $this->properties, true)) {
+            unset($this->properties[$name]);
+        }
         return $this;
     }
 
@@ -111,13 +120,22 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
 
-        if(empty($label)) {
+        if(empty($label)) 
+        {
+            $tosLink = $this->getProperty('tosLink');
+            $privacyLink = $this->getProperty('privacyLink');
+            $void = 'javascript:void(0)';
+            
             $label = sprintf(
-                "I agree to the <a href='%s' target='%s'>terms of service</a> &amp; <a href='%s' target='%s'>privacy policy</a>",
-                $this->termsOfServiceUrl ?: 'javascript:void(0)',
-                $this->termsOfServiceUrl ? '_blank' : '_self',
-                $this->privacyPolicyUrl ?: 'javascript:void(0)',
-                $this->privacyPolicyUrl ? '_blank' : '_self'
+                "<span>
+                    I agree to the 
+                    <a href='%s' target='%s'>terms of service</a> &amp; 
+                    <a href='%s' target='%s'>privacy policy</a>
+                </spa>",
+                $tosLink ?: $void, 
+                $tosLink ? '_blank' : '_self',
+                $privacyLink ?: $void, 
+                $privacyLink ? '_blank' : '_self'
             );
         }
 
@@ -140,9 +158,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         foreach($this->collection->getFields() as $field) {
             $context = $field->getElementContext();
-            if(!$context->widget->isCheckable()) {
-                $context->label->setDOMHidden(true);
-            }
+            !$context->widget->isCheckable() ?
+                (
+                    !$context->label->isFixed() ?
+                        $context->label->setDOMHidden(true) : null
+                ): null;
         }
     }
 

@@ -1,28 +1,23 @@
-{% extends _theme ~ '/pages/user/security/layout.html.twig' %}
+{% extends '@Foundation/User/Template/security/scheme/layout.html.twig' %}
 
-{% block main_right_form_element %}
+{% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
+
+{% block contentMain %}
     
-    {% if user.exists() == false %}
+    {{ form.export|raw }} 
 
-        {{ form.getHTML(1)|raw }} 
+{% endblock %}
 
-        {% block after_form %}
-            <div class='mt-4'>
-                <p class="text-sm text-medium text-dark text-center">
-                    Already have an account? 
-                    <a href="{{ DashboardExtension.getPageManagerUrl('index') }}" class='text-nowrap'>
-                        Sign In
-                    </a>
-                </p>
-            </div>
-        {% endblock %}
+{% block contentMainAfter %}
 
-    {% else %}
+    <br/>
 
-        {%set action = 'create a new account' %}
-        
-        {% include _theme ~ '/pages/user/security/await.html.twig' %}
-
-    {% endif %}
+    {{ macros.callToAction(
+        {
+            question: 'Already have an account?',
+            text: 'Sign In',
+            url: __dashboard.getDocument('index').url
+        }
+    ) }}
 
 {% endblock %}

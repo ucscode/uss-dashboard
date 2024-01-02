@@ -16,8 +16,7 @@ class LoginForm extends AbstractUserAccountForm
         $this->createPasswordField();
         $agreementField = $this->createAgreementCheckboxField();
         $this->createSubmitButton();
-
-        $this->createMailerBlock($agreementField);
+        $this->createMailerBlockBefore($agreementField);
         $this->hideLabels();
     }
     
@@ -43,7 +42,7 @@ class LoginForm extends AbstractUserAccountForm
     /**
      * @Build
      */
-    protected function createMailerBlock(Field $submitField): void
+    protected function createMailerBlockBefore(Field $submitField): void
     {
         $this->mailerBlock = new UssElement(UssElement::NODE_DIV);
 

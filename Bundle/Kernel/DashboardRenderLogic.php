@@ -2,8 +2,10 @@
 
 namespace Module\Dashboard\Bundle\Kernel;
 
+use Exception;
 use Module\Dashboard\Bundle\Alert\Alert;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
@@ -34,7 +36,7 @@ class DashboardRenderLogic implements EventInterface
         $this->dashboard->isFirewallEnabled() ? 
             $this->displayLoginPage() : null;
             
-        $this->evalUserPermission();
+        $this->examineUserPermission();
         $this->createUserInterface();
     }
 
@@ -44,26 +46,40 @@ class DashboardRenderLogic implements EventInterface
     protected function displayLoginPage(): void
     {
         $loginDocument = $this->dashboard->getDocument('login');
+        
+        if($loginDocument) 
+        {
+            $loginForm = $loginDocument->getCustom('app.form');
 
-        $loginForm = $loginDocument->getCustom('login:form');
-        $loginForm->handleSubmission();
-        $loginForm->buildForm();
+            if($loginForm instanceof AbstractDashboardForm) 
+            {
+                $loginForm->handleSubmission(); //
+                $loginForm->build(); //
+                
+                $this->isLoggedIn = 
+                    $this->user
+                        ->acquireFromSession()
+                        ->isAvailable();
 
-        $this->isLoggedIn = 
-            $this->user
-                ->acquireFromSession()
-                ->isAvailable();
+                if(!$this->isLoggedIn) {
+                    $this->template = $loginDocument->getTemplate();
+                    $this->options['form'] = $loginForm;
+                };
 
-        if(!$this->isLoggedIn) {
-            $this->template = $loginDocument->getTemplate();
-            $this->options['form'] = $loginForm;
-        };
+                return;
+            }
+
+            throw new Exception("Dashboard application login form must be an instance of " . AbstractDashboardForm::class);
+
+        }
+
+        throw new Exception("Unable to get 'login' document instance for " . $this->dashboard::class);
     }
 
     /**
      * @method evaluateRestrictions
      */
-    protected function evalUserPermission(): void
+    protected function examineUserPermission(): void
     {
         if($this->isLoggedIn) 
         {

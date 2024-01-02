@@ -4,6 +4,10 @@ namespace Module\Dashboard\Bundle\Kernel\Interface;
 
 interface DashboardFormInterface
 {
+    public function addBuilderAction(string $name, DashboardFormBuilderInterface $exporter): self;
+
+    public function removeBuilderAction(string $name): self;
+
     // Handle Form Submission
     public function handleSubmission(): void;
 
@@ -29,6 +33,7 @@ interface DashboardFormInterface
     public function onEntryFailure(array $data): void;
 
     public function resolveInvalidRequest(?array $data): void;
+
     public function resolveUntrustedRequest(): void;
 
 }

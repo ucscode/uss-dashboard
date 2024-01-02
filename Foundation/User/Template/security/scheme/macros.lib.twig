@@ -1,0 +1,10 @@
+{% macro callToAction(object) %}
+    <div class="my-1">
+        <p class="text-sm text-center">
+            <span>{{ object.question ?? 'Ask a question' }}</span>
+            <a href="{{ object.url ?? "javascript:void" }}" class="hover-underline text-nowrap">
+                {{ object.text ?? 'Write a text' }}
+            </a>
+        </p>
+    </div>
+{% endmacro %}
