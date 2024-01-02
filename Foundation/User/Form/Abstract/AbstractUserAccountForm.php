@@ -146,7 +146,10 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
 
     protected function createEmailField($label = 'Email'): Field
     {
-        [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_EMAIL);
+        [$field, $context] = $this->getFieldVariation(
+            Field::NODE_INPUT, 
+            !$this->faker ? Field::TYPE_EMAIL : Field::TYPE_TEXT
+        );
 
         $name = "user[email]";
 

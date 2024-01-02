@@ -26,8 +26,8 @@ class RegisterController implements RouteInterface
             );
         }
 
-        $form->handleSubmission();
         $form->build();
+        $form->handleSubmission();
         
         $dashboard->render($document->getTemplate(), ['form' => $form]);
     }

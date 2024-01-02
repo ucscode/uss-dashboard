@@ -53,8 +53,8 @@ class DashboardRenderLogic implements EventInterface
 
             if($loginForm instanceof DashboardFormInterface) 
             {
-                $loginForm->handleSubmission(); //
                 $loginForm->build(); //
+                $loginForm->handleSubmission(); //
                 
                 $this->isLoggedIn = 
                     $this->user

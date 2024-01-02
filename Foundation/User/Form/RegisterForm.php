@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
+use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 
 class RegisterForm extends AbstractUserAccountForm
@@ -19,9 +20,10 @@ class RegisterForm extends AbstractUserAccountForm
         $this->hideLabels();
     }
 
-    public function validateResource(array $resource): ?array
+    public function validateResource(array $resource): array|bool|null
     {
-        if($resource = $this->validateNonce($resource)) {
+        $resource = $this->validateNonce($resource);
+        if($resource) {
             $user = $resource['user'];
             return (
                 $this->validateUsername($user['username'] ?? null) &&
@@ -43,16 +45,29 @@ class RegisterForm extends AbstractUserAccountForm
 
     protected function validateUsername(?string $username): bool
     {
-        return false;
+        if($username !== null) {
+            // Username validation logic here
+        }
+        return true;
     }
 
     protected function validateEmail(?string $email): bool
     {
-        return false;
+        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if(!$email) {
+            $emailContext = $this->collection->getField('user[email]')?->getElementContext();
+            if($emailContext) {
+                $emailContext->validation
+                    ->setValue('* Invalid registration email', true);
+            }
+            return false;
+        }
+        return true;
     }
 
     protected function validatePassword(?string $password, ?string $confirmPassword): bool
     {
+        var_dump((new Password($password))->calculateStrength());
         return false;
     }
 }
