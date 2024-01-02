@@ -25,6 +25,11 @@ class Password
         return $this;
     }
 
+    public function getMinLength(): int
+    {
+        return $this->minLength;
+    }
+
     public function hasMinLength(): bool
     {
         return !!$this->strength['minLength'];

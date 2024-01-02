@@ -2,7 +2,10 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
+use Module\Dashboard\Bundle\Alert\Alert;
+use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Uss\Component\Kernel\Uss;
 
 class RegisterForm extends AbstractUserAccountForm
 {
@@ -24,22 +27,38 @@ class RegisterForm extends AbstractUserAccountForm
         $resource = $this->validateNonce($resource);
         if($resource) {
             $user = $resource['user'];
-            return (
+            $valid = (
                 $this->validateUsername($user['username'] ?? null) &&
                 $this->validateEmail($user['email'] ?? null) &&
                 $this->validatePassword(
                     $user['password'] ?? null,
                     $user['confirmPassword'] ?? null
                 )
-            ) ? $user : false;
+            ); 
+            if($valid && array_key_exists('confirmPassword', $user)) {
+                unset($user['confirmPassword']);
+            }
+            return $valid ? $user : false;
         };
         return null;
     }
 
-    public function persistResource(array $resource): bool
+    public function persistResource(array $resource): mixed
     {
-        echo 2;
-        return false;
+        $user = new User();
+
+        $user->setUsername($resource['username'] ?? null);
+        $user->setEmail($resource['email']);
+        $user->setPassword($resource['password']);
+        $user->setUsercode(Uss::instance()->keygen());
+        $user->setParent($resource['parent'] ?? null);
+        
+        return $user;
+    }
+
+    protected function resolveSubmission(mixed $response): void
+    {
+        $alert = new Alert();
     }
 
     protected function validateUsername(?string $username): bool
@@ -55,10 +74,7 @@ class RegisterForm extends AbstractUserAccountForm
         $email = filter_var($email, FILTER_VALIDATE_EMAIL);
         if(!$email) {
             $emailContext = $this->collection->getField('user[email]')?->getElementContext();
-            if($emailContext) {
-                $emailContext->validation
-                    ->setValue('* Invalid registration email', true);
-            }
+            $emailContext ? $emailContext->validation->setValue('* Invalid registration email') : null;
             return false;
         }
         return true;
@@ -67,8 +83,28 @@ class RegisterForm extends AbstractUserAccountForm
     protected function validatePassword(?string $password, ?string $confirmPassword): bool
     {
         $passwordResolver = $this->getPasswordResolver($password);
-        //var_dump($passwordResolver);
-        return false;
+
+        $information = sprintf(
+            "<div class='mb-1'>Your password should contain: %s</div>",
+            Uss::instance()->implodeReadable($passwordResolver['requirements'])
+        );
+
+        if($passwordResolver['strength'] < 5) {
+            $passwordContext = $this->collection->getField("user[password]")?->getElementContext();
+            if($passwordContext) {
+                $passwordContext->info->setValue($information);
+                $passwordContext->validation->setValue($passwordResolver['errorMessage']);
+            }
+            return false;
+        };
+        
+        if($confirmPassword !== null && $password !== $confirmPassword) {
+            $passwordContext = $this->collection->getField("user[confirmPassword]")->getElementContext();
+            $passwordContext ? $passwordContext->validation->setValue("Password does not match") : null;
+            return false;
+        }
+
+        return true;
     }
 
 

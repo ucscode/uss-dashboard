@@ -30,5 +30,5 @@ interface DashboardFormInterface
      * - array: A group of values to be returned instead of just last inserted id
      * - bool: Technically false if not inserted
      */
-    public function persistResource(array $resource): int|array|bool;
+    public function persistResource(array $resource): mixed;
 }

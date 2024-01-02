@@ -46,14 +46,16 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setUsername
      */
-    public function setUsername(string $username): self
+    public function setUsername(?string $username): self
     {
-        if(!preg_match('/^\w[a-z0-9_\-]+$/i', trim($username))) {
-            throw new InvalidArgumentException(
-                "Username can only contain letter, number, underscore and (but must not start with) hyphen"
-            );
+        if($username !== null) {
+            if(!preg_match('/^\w[a-z0-9_\-]+$/i', trim($username))) {
+                throw new InvalidArgumentException(
+                    "Username can only contain letter, number, underscore and (but must not start with) hyphen"
+                );
+            }
         }
-        $this->user['username'] = strtolower(trim($username));
+        $this->user['username'] = $username !== null ? strtolower(trim($username)) : $username;
         return $this;
     }
 

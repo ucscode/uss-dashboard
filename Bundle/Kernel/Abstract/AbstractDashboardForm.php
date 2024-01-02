@@ -13,6 +13,7 @@ use Ucscode\UssForm\Form\Form;
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
 {
     abstract protected function buildForm(): void;
+    abstract protected function resolveSubmission(mixed $response): void;
 
     public readonly Collection $collection;
     private array $submitInterfaces = [];
@@ -40,81 +41,6 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         };
     }
 
-    protected function getPasswordResolver(?string $password): array
-    {
-        $password = new Password($password);
-        $strength = $password->calculateStrength();
-        
-        $requirements = [];
-        $resolved = [];
-
-        $factors = [
-            'minLength' => '8 characters',
-            'lowerCase' => 'one lowercase letter',
-            'upperCase' => 'one uppercase letter',
-            'number' => 'one number',
-            'specialChar' => 'one special character'
-        ];
-
-        $errorTypes = [
-            [
-                "required", 
-                "text-danger"
-            ],
-            [
-                "too weak", 
-                "text-danger"
-            ],
-            [
-                "weak", 
-                "text-danger"
-            ],
-            [
-                "fair", 
-                "text-info"
-            ],
-            [
-                "strong", 
-                "text-success"
-            ],
-            [
-                "very strong", 
-                "text-success"
-            ],
-        ];
-
-        $passwordResolver = [
-            'strength' => $strength
-        ];
-
-        foreach($factors as $key => $value) 
-        {
-            $approved = match($key) {
-                'minLength' => $password->hasMinLength(),
-                'lowerCase' => $password->hasLowerCase(),
-                'upperCase' => $password->hasUpperCase(),
-                'number' => $password->hasNumber(),
-                default => $password->hasSpecialChar(),
-            };
-
-            $approved ? 
-                $resolved[$key] = $value :
-                $requirements[$key] = $value;
-        }
-
-        $passwordResolver['requirments'] = $requirements;
-        $passwordResolver['resolved'] = $resolved;
-        $passwordResolver['errorType'] = $errorTypes[$strength][0];
-        $passwordResolver['errorMessage'] = sprintf("* Password is %s", $passwordResolver['errorType']);
-        $passwordResolver['appearance'] = $errorTypes[$strength][1];
-        $passwordResolver['instance'] = $password;
-
-        return $passwordResolver;
-    }
-
-    /**
-     * Override
-     */
     final public function handleSubmission(): void
     {
         if($this->isSubmitted()) 
@@ -137,18 +63,17 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                     $this->submitInterfaces,
                     fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource)
                 );
-
-                $resource = is_array($validatedResource) ? $validatedResource : $filteredResource;
-                $result = $this->persistResource($resource);
-
-                $response = 
-                    is_bool($result) ? 
-                        ($result === true ? $resource : $result) : $result;
+                
+                $response = $this->persistResource(
+                    is_array($validatedResource) ? $validatedResource : $filteredResource
+                );
 
                 array_walk(
                     $this->submitInterfaces,
-                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($resource)
+                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($response)
                 );
+
+                $this->resolveSubmission($response);
             }
         };
     }
@@ -202,5 +127,77 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             $this->builderInterfaces, 
             fn (DashboardFormBuilderInterface $exporter) => $exporter->onBuild($this)
         );
+    }
+
+    protected function getPasswordResolver(?string $password): array
+    {
+        $password = new Password($password);
+        $strength = $password->calculateStrength();
+        
+        $requirements = [];
+        $resolved = [];
+
+        $factors = [
+            'minLength' => $password->getMinLength() . ' characters',
+            'lowerCase' => 'lowercase letter',
+            'upperCase' => 'uppercase letter',
+            'number' => 'number',
+            'specialChar' => 'special character'
+        ];
+
+        $errorLevel = [
+            [
+                "required", 
+                "text-danger"
+            ],
+            [
+                "too weak", 
+                "text-danger"
+            ],
+            [
+                "weak", 
+                "text-danger"
+            ],
+            [
+                "fair", 
+                "text-info"
+            ],
+            [
+                "strong", 
+                "text-success"
+            ],
+            [
+                "very strong", 
+                "text-success"
+            ],
+        ];
+
+        $passwordResolver = [
+            'strength' => $strength
+        ];
+
+        foreach($factors as $key => $value) 
+        {
+            $approved = match($key) {
+                'minLength' => $password->hasMinLength(),
+                'lowerCase' => $password->hasLowerCase(),
+                'upperCase' => $password->hasUpperCase(),
+                'number' => $password->hasNumber(),
+                default => $password->hasSpecialChar(),
+            };
+
+            $approved ? 
+                $resolved[$key] = $value :
+                $requirements[$key] = $value;
+        }
+
+        $passwordResolver['requirements'] = $requirements;
+        $passwordResolver['resolved'] = $resolved;
+        $passwordResolver['errorLevel'] = $errorLevel[$strength][0];
+        $passwordResolver['errorMessage'] = sprintf("Password is %s", $passwordResolver['errorLevel']);
+        $passwordResolver['appearance'] = $errorLevel[$strength][1];
+        $passwordResolver['instance'] = $password;
+
+        return $passwordResolver;
     }
 }

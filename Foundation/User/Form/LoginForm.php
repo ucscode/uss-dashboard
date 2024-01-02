@@ -28,6 +28,11 @@ class LoginForm extends AbstractUserAccountForm
     {
         return false;
     }
+
+    protected function resolveSubmission(mixed $response): void
+    {
+        
+    }
     
     /**
      * @Build
