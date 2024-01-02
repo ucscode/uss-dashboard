@@ -22,6 +22,13 @@ interface DashboardFormInterface
     // Apply logic to check if filtered contents are valid
     public function validateResource(array $resource): array|bool|null;
 
-    // Apply logic for saving the provided data into database
-    public function persistResource(array $resource): bool;
+    /**
+     * Apply logic for saving the provided data into database
+     * 
+     * Return Values:
+     * - int: The last inserted id
+     * - array: A group of values to be returned instead of just last inserted id
+     * - bool: Technically false if not inserted
+     */
+    public function persistResource(array $resource): int|array|bool;
 }

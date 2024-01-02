@@ -21,11 +21,37 @@ class RegisterForm extends AbstractUserAccountForm
 
     public function validateResource(array $resource): ?array
     {
-        var_dump($resource);
+        if($resource = $this->validateNonce($resource)) {
+            $user = $resource['user'];
+            return (
+                $this->validateUsername($user['username'] ?? null) &&
+                $this->validateEmail($user['email'] ?? null) &&
+                $this->validatePassword(
+                    $user['password'] ?? null,
+                    $user['confirmPassword'] ?? null
+                )
+            ) ? $user : false;
+        };
         return null;
     }
 
     public function persistResource(array $resource): bool
+    {
+        echo 2;
+        return false;
+    }
+
+    protected function validateUsername(?string $username): bool
+    {
+        return false;
+    }
+
+    protected function validateEmail(?string $email): bool
+    {
+        return false;
+    }
+
+    protected function validatePassword(?string $password, ?string $confirmPassword): bool
     {
         return false;
     }

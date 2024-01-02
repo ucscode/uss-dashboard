@@ -71,6 +71,21 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         $this->createHiddenField($name, $value);
     }
 
+    protected function validateNonce(string|array $resource, $name = 'nonce', $unsetNonce = true): array|bool
+    {
+        $nonce = is_array($resource) ? ($resource[$name] ?? null) : $resource;
+        if(is_string($nonce)) {
+            $valid = Uss::instance()->nonce($_SESSION[Uss::SESSION_KEY], $nonce);
+            if($valid) {
+                if($unsetNonce && is_array($resource)) {
+                    unset($resource[$name]);
+                }
+                return is_array($resource) ? $resource : true;
+            }
+        }
+        return false;
+    }
+
     protected function createUsernameField(string $label = 'username'): Field
     {
         [$field, $context] = $this->getFieldVariation();
