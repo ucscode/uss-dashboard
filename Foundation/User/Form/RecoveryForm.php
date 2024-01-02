@@ -10,4 +10,14 @@ class RecoveryForm extends AbstractUserAccountForm
     {
         $this->createEmailField();
     }
+
+    public function validateResource(array $resource): array|bool|null
+    {
+        return false;
+    }
+
+    public function persistResource(array $resource): bool
+    {
+        return false;
+    }
 }

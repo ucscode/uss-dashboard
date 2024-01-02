@@ -18,4 +18,15 @@ class RegisterForm extends AbstractUserAccountForm
         $this->createSubmitButton();
         $this->hideLabels();
     }
+
+    public function validateResource(array $resource): ?array
+    {
+        var_dump($resource);
+        return null;
+    }
+
+    public function persistResource(array $resource): bool
+    {
+        return false;
+    }
 }

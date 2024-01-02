@@ -18,6 +18,16 @@ class LoginForm extends AbstractUserAccountForm
         $this->createMailerBlockBefore($submitField);
         $this->hideLabels();
     }
+
+    public function validateResource(array $resource): ?array
+    {
+        return null;
+    }
+
+    public function persistResource(array $resource): bool
+    {
+        return false;
+    }
     
     /**
      * @Build

@@ -51,68 +51,36 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     }
 
     /**
+     * @Override
+     */
+    public function filterResource(): array
+    {
+        return match($_SERVER['REQUEST_METHOD']) {
+            'POST' => $_POST,
+            'GET' => $_GET,
+            default => call_user_func(function(): ?string {
+                $responseInput = file_get_contents("php://input");
+                $jsonValue = json_decode($responseInput, true);
+                return json_last_error() === JSON_ERROR_NONE ? $jsonValue : $responseInput;
+            }),
+        };
+    }
+
+    /**
      * Override
      */
     public function handleSubmission(): void
     {
         if($this->isSubmitted()) {
-            $data = $this->filterData();
-            !$this->isValid($data) ?
-                $this->resolveInvalidRequest($data) :
-                (
-                    $this->persistEntry($data) ? 
-                    $this->onEntrySuccess($data) : 
-                    $this->onEntryFailure($data)
-                );
+            $filteredResource = $this->filterResource();
+            $validatedResource = $this->validateResource($filteredResource);
+            $justified = is_array($validatedResource) || $validatedResource === true; 
+            $justified ? 
+                $this->persistResource(
+                    is_array($validatedResource) ? 
+                        $validatedResource : 
+                        $filteredResource
+                ) : null;
         };
-    }
-
-    /**
-     * @Override
-     */
-    public function filterData(): array
-    {
-        $data = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
-        return $data;
-    }
-
-    /**
-     * @Override
-     */
-    public function isValid(array $data): bool
-    {
-        return !empty($data);
-    }
-
-    /**
-     * @Override
-     */
-    public function persistEntry(array $data): bool
-    {
-        return false;
-    }
-
-    /**
-     * @Override
-     */
-    public function onEntryFailure(array $data): void
-    {
-        
-    }
-
-    /**
-     * @Override
-     */
-    public function onEntrySuccess(array $data): void
-    {
-        
-    }
-    
-    /**
-     * @Override
-     */
-    public function resolveInvalidRequest(?array $data): void
-    {
-        
     }
 }

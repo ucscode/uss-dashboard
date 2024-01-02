@@ -17,19 +17,11 @@ interface DashboardFormInterface
     public function isSubmitted(): bool;
 
     // Apply logic to collect on relevant data from _POST or _GET request.
-    public function filterData(): array;
+    public function filterResource(): array;
 
     // Apply logic to check if filtered contents are valid
-    public function isValid(array $data): bool;
+    public function validateResource(array $resource): array|bool|null;
 
     // Apply logic for saving the provided data into database
-    public function persistEntry(array $data): bool;
-
-    // This should be called when entity persistion is successful
-    public function onEntrySuccess(array $data): void;
-
-    // This should be called when entity persistion is unsuccessful
-    public function onEntryFailure(array $data): void;
-
-    public function resolveInvalidRequest(?array $data): void;
+    public function persistResource(array $resource): bool;
 }
