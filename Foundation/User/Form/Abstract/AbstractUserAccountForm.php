@@ -4,13 +4,31 @@ namespace Module\Dashboard\Foundation\User\Form\Abstract;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Ucscode\UssForm\Field\Field;
+use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserAccountForm extends AbstractDashboardForm
 {
+    private ?\Faker\Generator $faker = null;
+    private array $fixtures;
+
     private array $properties = [
         'tosLink' => null,
         'privacyLink' => null,
     ];
+
+    public function isSubmitted(): bool
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nonce'] ?? false);
+    }
+
+    /**
+     * For Testing Purpose Only
+     */
+    final protected function populateWithFakeUserInfo(array $fixtures = []): void
+    {
+        $this->fixtures = $fixtures;
+        !$this->faker ? $this->faker = \Faker\Factory::create() : null;
+    }
 
     final public function setProperty(string $name, mixed $property): self
     {
@@ -35,26 +53,45 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_HIDDEN);
 
-        $context->widget->setValue($value);
+        $context->widget->setValue(
+            $this->setFixture(
+                $name,
+                $value
+            )
+        );
 
         $this->collection->addField($name, $field);
 
         return $field;
     }
 
+    protected function createNonceField(string $name = 'nonce'): void
+    {
+        $value = Uss::instance()->nonce($_SESSION[Uss::SESSION_KEY]);
+        $this->createHiddenField($name, $value);
+    }
+
     protected function createUsernameField(string $label = 'username'): Field
     {
         [$field, $context] = $this->getFieldVariation();
 
+        $name = "user[username]";
+
         $context->widget
             ->setAttribute('placeholder', $label)
             ->setAttribute('pattern', '^\s*\w+\s*$')
+            ->setValue(
+                $this->setFixture(
+                    $name, 
+                    $this->faker->username()
+                )
+            )
             ;
 
         $context->label->setValue($label);
         $context->prefix->setValue("<i class='bi bi-person'></i>");
 
-        $this->collection->addField("user[username]", $field);
+        $this->collection->addField($name, $field);
 
         return $field;
     }
@@ -76,6 +113,12 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         $context->widget
             ->setAttribute('placeholder', $label)
             ->setAttribute('pattern', '^.{4,}$')
+            ->setValue(
+                $this->setFixture(
+                    $name, 
+                    '12345'
+                )
+            )
             ;
         
         $context->label->setValue($label);
@@ -90,14 +133,22 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_EMAIL);
 
+        $name = "user[email]";
+
         $context->widget
             ->setAttribute("placeholder", $label)
+            ->setValue(
+                $this->setFixture(
+                    $name, 
+                    $this->faker->email()
+                )
+            )
             ;
 
         $context->label->setValue($label);
         $context->prefix->setValue("<i class='bi bi-at'></i>");
 
-        $this->collection->addField("user[email]", $field);
+        $this->collection->addField($name, $field);
 
         return $field;
     }
@@ -109,6 +160,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         $context->widget
             ->setButtonContent($label)
             ->addClass("w-100")
+            ->setAttribute('data-anonymous')
         ;
 
         $this->collection->addField("submit", $field);
@@ -119,6 +171,8 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected function createAgreementCheckboxField(?string $label = null, bool $checked = false): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
+
+        $name = "user[agree]";
 
         if(empty($label)) 
         {
@@ -145,15 +199,70 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         ;
 
         $context->widget
-            ->setChecked($checked)
+            ->setChecked(
+                $this->setFixture(
+                    $name,
+                    $checked ? $checked : !!$this->faker,
+                    true
+                )
+            )
             ->setAttribute('data-anonymous')
             ;
 
-        $this->collection->addField("user[agree]", $field);
+        $this->collection->addField($name, $field);
 
         return $field;
     }
     
+    protected function createCustomField(array $info): Field
+    {
+        [$field, $context] = $this->getFieldVariation(
+            $info['nodeName'] ?? Field::NODE_INPUT, 
+            $info['nodeType'] ?? Field::TYPE_TEXT
+        );
+
+        $name = $info['name'] ?? "user[]";
+
+        $context->widget
+            ->setOptions($info['options'] ?? [])
+            ->setAttribute('placeholder', $info['label'] ?? null)
+            ->setButtonContent(
+                $info['content'] ?? 
+                (
+                    (!empty($info['value']) ? $info['value'] : null) ??
+                    ucfirst(
+                        $context->widget->nodeType ?? 
+                        Field::TYPE_BUTTON
+                    )
+                )
+            )
+            ->setValue(
+                $this->setFixture(
+                    $name,
+                    $info['value'] ?? null,
+                    $context->widget->isCheckable()
+                )
+            )
+        ;
+        
+        $context->frame
+            ->addClass($info['class'] ?? null);
+
+        $context->label
+            ->setValue($info['label'] ?? null);
+
+        $context->prefix
+            ->setValue($info['prefix'] ?? null);
+
+        $context->suffix
+            ->setValue($info['suffix'] ?? null);
+
+        $collection = $this->getCollection($info['collection'] ?? self::DEFAULT_COLLECTION);
+        $collection?->addField($name, $field);
+
+        return $field;
+    }
+
     protected function hideLabels(): void
     {
         foreach($this->collection->getFields() as $field) {
@@ -170,5 +279,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         $field = new Field($nodeName, $nodeType);
         return [$field, $field->getElementContext()];
+    }
+
+    private function setFixture(string $name, ?string $value, bool $checkable = false): ?string
+    {
+        $value = $this->fixtures[$name] ?? $value;
+        return $this->faker ? ($checkable ? !!$value : $value) : null;
     }
 }

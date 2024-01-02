@@ -5,7 +5,7 @@ namespace Module\Dashboard\Bundle\Kernel;
 use Exception;
 use Module\Dashboard\Bundle\Alert\Alert;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
@@ -51,7 +51,7 @@ class DashboardRenderLogic implements EventInterface
         {
             $loginForm = $loginDocument->getCustom('app.form');
 
-            if($loginForm instanceof AbstractDashboardForm) 
+            if($loginForm instanceof DashboardFormInterface) 
             {
                 $loginForm->handleSubmission(); //
                 $loginForm->build(); //
@@ -69,7 +69,7 @@ class DashboardRenderLogic implements EventInterface
                 return;
             }
 
-            throw new Exception("Dashboard application login form must be an instance of " . AbstractDashboardForm::class);
+            throw new Exception("Dashboard application login form must be an instance of " . DashboardFormInterface::class);
 
         }
 

@@ -56,35 +56,15 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     public function handleSubmission(): void
     {
         if($this->isSubmitted()) {
-            !$this->isTrusted() ?
-                $this->resolveUntrustedRequest() : call_user_func(function() {
-                    $data = $this->filterData();
-                    !$this->isValid($data) ?
-                        $this->resolveInvalidRequest($data) :
-                        (
-                            $this->persistEntry($data) ? 
-                            $this->onEntrySuccess($data) : 
-                            $this->onEntryFailure($data)
-                        );
-                });
-
+            $data = $this->filterData();
+            !$this->isValid($data) ?
+                $this->resolveInvalidRequest($data) :
+                (
+                    $this->persistEntry($data) ? 
+                    $this->onEntrySuccess($data) : 
+                    $this->onEntryFailure($data)
+                );
         };
-    }
-
-    /**
-     * @Override
-     */
-    public function isSubmitted(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @Override
-     */
-    public function isTrusted(): bool
-    {
-        return false;
     }
 
     /**
@@ -127,15 +107,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         
     }
-
-    /**
-     * @Override
-     */
-    public function resolveUntrustedRequest(): void
-    {
-        
-    }
-
+    
     /**
      * @Override
      */

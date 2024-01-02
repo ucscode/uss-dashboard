@@ -14,9 +14,8 @@ class LoginForm extends AbstractUserAccountForm
     {
         $this->createAccessField();
         $this->createPasswordField();
-        $agreementField = $this->createAgreementCheckboxField();
-        $this->createSubmitButton();
-        $this->createMailerBlockBefore($agreementField);
+        $submitField = $this->createSubmitButton();
+        $this->createMailerBlockBefore($submitField);
         $this->hideLabels();
     }
     

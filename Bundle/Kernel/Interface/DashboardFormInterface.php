@@ -4,6 +4,8 @@ namespace Module\Dashboard\Bundle\Kernel\Interface;
 
 interface DashboardFormInterface
 {
+    public function build(): void;
+    
     public function addBuilderAction(string $name, DashboardFormBuilderInterface $exporter): self;
 
     public function removeBuilderAction(string $name): self;
@@ -13,9 +15,6 @@ interface DashboardFormInterface
 
     // Apply logic to check if the form has been submitted.
     public function isSubmitted(): bool;
-
-    // Apply logic to check if form submission is from a trusted source.
-    public function isTrusted(): bool;
 
     // Apply logic to collect on relevant data from _POST or _GET request.
     public function filterData(): array;
@@ -33,7 +32,4 @@ interface DashboardFormInterface
     public function onEntryFailure(array $data): void;
 
     public function resolveInvalidRequest(?array $data): void;
-
-    public function resolveUntrustedRequest(): void;
-
 }

@@ -8,11 +8,14 @@ class RegisterForm extends AbstractUserAccountForm
 {
     public function buildForm(): void
     {
-        $this->createUsernameField();
+        $this->populateWithFakeUserInfo();
+        //$this->createUsernameField();
         $this->createEmailField();
         $this->createPasswordField();
         $this->createPasswordField(true);
         $this->createAgreementCheckboxField();
+        $this->createNonceField();
         $this->createSubmitButton();
+        $this->hideLabels();
     }
 }
