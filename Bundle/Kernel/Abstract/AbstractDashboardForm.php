@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
+use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormBuilderInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
@@ -37,6 +38,78 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                 return json_last_error() === JSON_ERROR_NONE ? $jsonValue : $responseInput;
             }),
         };
+    }
+
+    protected function getPasswordResolver(?string $password): array
+    {
+        $password = new Password($password);
+        $strength = $password->calculateStrength();
+        
+        $requirements = [];
+        $resolved = [];
+
+        $factors = [
+            'minLength' => '8 characters',
+            'lowerCase' => 'one lowercase letter',
+            'upperCase' => 'one uppercase letter',
+            'number' => 'one number',
+            'specialChar' => 'one special character'
+        ];
+
+        $errorTypes = [
+            [
+                "required", 
+                "text-danger"
+            ],
+            [
+                "too weak", 
+                "text-danger"
+            ],
+            [
+                "weak", 
+                "text-danger"
+            ],
+            [
+                "fair", 
+                "text-info"
+            ],
+            [
+                "strong", 
+                "text-success"
+            ],
+            [
+                "very strong", 
+                "text-success"
+            ],
+        ];
+
+        $passwordResolver = [
+            'strength' => $strength
+        ];
+
+        foreach($factors as $key => $value) 
+        {
+            $approved = match($key) {
+                'minLength' => $password->hasMinLength(),
+                'lowerCase' => $password->hasLowerCase(),
+                'upperCase' => $password->hasUpperCase(),
+                'number' => $password->hasNumber(),
+                default => $password->hasSpecialChar(),
+            };
+
+            $approved ? 
+                $resolved[$key] = $value :
+                $requirements[$key] = $value;
+        }
+
+        $passwordResolver['requirments'] = $requirements;
+        $passwordResolver['resolved'] = $resolved;
+        $passwordResolver['errorType'] = $errorTypes[$strength][0];
+        $passwordResolver['errorMessage'] = sprintf("* Password is %s", $passwordResolver['errorType']);
+        $passwordResolver['appearance'] = $errorTypes[$strength][1];
+        $passwordResolver['instance'] = $password;
+
+        return $passwordResolver;
     }
 
     /**

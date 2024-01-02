@@ -25,29 +25,52 @@ class Password
         return $this;
     }
 
+    public function hasMinLength(): bool
+    {
+        return !!$this->strength['minLength'];
+    }
+
     public function hasUpperCase(): bool
     {
-        return $this->strength['upperCase'];
+        return !!$this->strength['upperCase'];
     }
 
     public function hasLowerCase(): bool
     {
-        return $this->strength['lowerCase'];
+        return !!$this->strength['lowerCase'];
     }
 
     public function hasNumber(): bool
     {
-        return $this->strength['number'];
+        return !!$this->strength['number'];
     }
 
     public function hasSpecialChar(): bool
     {
-        return $this->strength['specialChar'];
+        return !!$this->strength['specialChar'];
     }
 
     public function calculateStrength(): int
     {
         return array_sum($this->strength);
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->password !== null ? 
+            password_hash($this->password, PASSWORD_DEFAULT) : null;
+    }
+
+    public function verifyHash(?string $hash): bool
+    {
+        return 
+            $this->password !== null && $hash !== null ?
+            password_verify($this->password, $hash) : false;
+    }
+
+    public function getInput(): ?string
+    {
+        return $this->password;
     }
 
     protected function inspectPassword(): void

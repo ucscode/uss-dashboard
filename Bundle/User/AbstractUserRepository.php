@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\User;
 use DateTime;
 use Exception;
 use InvalidArgumentException;
+use Module\Dashboard\Bundle\Common\Password;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
@@ -67,11 +68,10 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setPassword
      */
-    public function setPassword(string $password, bool $passwordHash = false): self
+    public function setPassword(string|Password $context, bool $hash = false): self
     {
-        if($passwordHash) {
-            $password = password_hash($password, PASSWORD_DEFAULT);
-        }
+        $context = is_string($context) ? new Password($context) : $context;
+        $password = $hash ? $context->getHash() : $context->getInput();
         $this->user['password'] = $password;
         return $this;
     }
@@ -89,9 +89,10 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      *
      * @method isValidPassword
      */
-    public function isValidPassword(string $password): bool
+    public function isValidPassword(string|Password $context): bool
     {
-        return password_verify($password, $this->getPassword() ?? '');
+        $context = is_string($context) ? new Password($context) : $context;
+        return $context->verifyHash($this->getPassword());
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 
 class RegisterForm extends AbstractUserAccountForm
@@ -67,7 +66,10 @@ class RegisterForm extends AbstractUserAccountForm
 
     protected function validatePassword(?string $password, ?string $confirmPassword): bool
     {
-        var_dump((new Password($password))->calculateStrength());
+        $passwordResolver = $this->getPasswordResolver($password);
+        //var_dump($passwordResolver);
         return false;
     }
+
+
 }
