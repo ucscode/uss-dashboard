@@ -1,0 +1,9 @@
+Template instructions
+
+1. Customize your downloaded template with graphics, text, images and more using your favorite editor.
+2. Make sure all the images that came with the template are replaced with your own.
+3. Post your images on your Internet server. Make sure to use absolute paths in your HTML to point to those images so that they show up in your adjusted template.
+
+Having trouble delivering your HTML emails? Confused about how to code an HTML template? 
+Just download one our templates and customize it using our free, award-winning email designer. 
+Try our tested, easy to use Benchmark Email templates! Sign up for a free plan here: https://ui.benchmarkemail.com/Register

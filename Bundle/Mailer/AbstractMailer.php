@@ -11,8 +11,8 @@ abstract class AbstractMailer
 {
     protected bool $isLocalhost;
     protected bool $mailHogEnabled = false;
-    protected ?string $template = null;
-    protected array $options = [];
+    protected ?string $template = '@Mail/classic/base.html.twig';
+    protected array $context = [];
     protected PHPMailer $PHPMailer;
     
     public function __construct()
