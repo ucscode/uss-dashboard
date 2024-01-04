@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Flash\Modal\Button;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Kernel\Uss;
 
 class RegisterForm extends AbstractUserAccountForm
@@ -59,30 +60,44 @@ class RegisterForm extends AbstractUserAccountForm
         return $user;
     }
 
-    protected function resolveSubmission(mixed $response): void
+    protected function resolveSubmission(mixed $user): void
     {
-        var_dump($response);
-        return;
+        $message = [
+            'title' => 'Registration Failed!',
+            'message' => 'Sorry! We encountered an issue during the registration process.',
+        ];
+        
+        if($user->isAvailable()) 
+        {
+            $summary = 'You can now log in with your credentials.';
+
+            $message = [
+                'title' => "Registration Successful!",
+                'message' => "Your account has been created successfully."
+            ];
+
+            if($processEmail = 1) 
+            {
+                $summary = ($emailSend ?? 1) ?
+                    'Please check your email to confirm the link we sent' :
+                    'However, we could not sent an email to you';
+            }
+
+            $message['message'] .= '<br>' . $summary;
+        }
+
         $modal = new Modal();
-        $modal->setMessage("
-            <div>
-                # This is an md file.
-                We're not here to laugh - says \"Jonny\":
-                - Use `window.alert()` function to shout out loud
-            </div>
-        ");
-        $modal->setTitle("Your coding");
-
-        $button = new Button();
-
-        $button->setLabel("Confirm");
-        $button->setClassName("btn btn-success");
-        $button->setCallback('window.sample');
-
-        $modal->addButton("my-button", $button);
-        $modal->setCustomCallback("onEscape", "window.alert");
+        $modal->setMessage($message['message']);
+        $modal->setTitle($message['title']);
 
         Flash::instance()->addModal("new", $modal);
+
+        if($user->isAvailable()) {
+            $indexDocument = UserDashboard::instance()->getDocument("index");
+            $nextLocation = $indexDocument->getUrl();
+            header("location: {$nextLocation}");
+            exit;
+        }
         
     }
 
