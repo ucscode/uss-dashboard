@@ -113,7 +113,10 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
 
     protected function createPasswordField(bool $confirmPassword = false, ?string $label = null): Field
     {
-        [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_PASSWORD);
+        [$field, $context] = $this->getFieldVariation(
+            Field::NODE_INPUT, 
+            !$this->faker ? Field::TYPE_PASSWORD : Field::TYPE_TEXT
+        );
 
         if(!$confirmPassword) {
             $name = "user[password]";

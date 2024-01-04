@@ -2,7 +2,9 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Module\Dashboard\Bundle\Alert\Alert;
+use Module\Dashboard\Bundle\Flash\Flash;
+use Module\Dashboard\Bundle\Flash\Modal\Button;
+use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Uss\Component\Kernel\Uss;
@@ -11,7 +13,10 @@ class RegisterForm extends AbstractUserAccountForm
 {
     public function buildForm(): void
     {
-        $this->populateWithFakeUserInfo();
+        $this->populateWithFakeUserInfo([
+            'user[password]' => '&z25#W12_',
+            'user[confirmPassword]' => '&z25#W12_'
+        ]);
         //$this->createUsernameField();
         $this->createEmailField();
         $this->createPasswordField();
@@ -34,7 +39,7 @@ class RegisterForm extends AbstractUserAccountForm
                     $user['password'] ?? null,
                     $user['confirmPassword'] ?? null
                 )
-            ); 
+            );
             if($valid && array_key_exists('confirmPassword', $user)) {
                 unset($user['confirmPassword']);
             }
@@ -46,19 +51,39 @@ class RegisterForm extends AbstractUserAccountForm
     public function persistResource(array $resource): mixed
     {
         $user = new User();
-
         $user->setUsername($resource['username'] ?? null);
         $user->setEmail($resource['email']);
         $user->setPassword($resource['password']);
         $user->setUsercode(Uss::instance()->keygen());
         $user->setParent($resource['parent'] ?? null);
-        
         return $user;
     }
 
     protected function resolveSubmission(mixed $response): void
     {
-        $alert = new Alert();
+        var_dump($response);
+        return;
+        $modal = new Modal();
+        $modal->setMessage("
+            <div>
+                # This is an md file.
+                We're not here to laugh - says \"Jonny\":
+                - Use `window.alert()` function to shout out loud
+            </div>
+        ");
+        $modal->setTitle("Your coding");
+
+        $button = new Button();
+
+        $button->setLabel("Confirm");
+        $button->setClassName("btn btn-success");
+        $button->setCallback('window.sample');
+
+        $modal->addButton("my-button", $button);
+        $modal->setCustomCallback("onEscape", "window.alert");
+
+        Flash::instance()->addModal("new", $modal);
+        
     }
 
     protected function validateUsername(?string $username): bool
@@ -97,7 +122,7 @@ class RegisterForm extends AbstractUserAccountForm
             }
             return false;
         };
-        
+
         if($confirmPassword !== null && $password !== $confirmPassword) {
             $passwordContext = $this->collection->getField("user[confirmPassword]")->getElementContext();
             $passwordContext ? $passwordContext->validation->setValue("Password does not match") : null;

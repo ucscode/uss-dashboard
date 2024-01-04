@@ -1,7 +1,11 @@
 <?php
 
-namespace Module\Dashboard\Bundle\User;
+namespace Module\Dashboard\Bundle\User\Abstract;
 
+use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\Service\Meta;
+use Module\Dashboard\Bundle\User\Service\Notification;
+use Module\Dashboard\Bundle\User\Service\Roles;
 use Ucscode\Pairs\ForeignConstraint;
 use Ucscode\Pairs\Pairs;
 use Uss\Component\Kernel\Uss;

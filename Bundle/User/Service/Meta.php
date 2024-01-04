@@ -1,7 +1,8 @@
 <?php
 
-namespace Module\Dashboard\Bundle\User;
+namespace Module\Dashboard\Bundle\User\Service;
 
+use Module\Dashboard\Bundle\User\User;
 use Ucscode\Pairs\Pairs;
 
 class Meta

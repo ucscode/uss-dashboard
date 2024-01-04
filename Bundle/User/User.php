@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\User;
 
+use Module\Dashboard\Bundle\User\Abstract\AbstractUserRepository;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
 use Ucscode\SQuery\Condition;

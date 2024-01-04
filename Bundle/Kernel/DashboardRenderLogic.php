@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Kernel;
 use Exception;
 use Module\Dashboard\Bundle\Alert\Alert;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
+use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
@@ -110,7 +111,7 @@ class DashboardRenderLogic implements EventInterface
             'loggedIn' => $this->isLoggedIn
         ];
 
-        Alert::exportContents();
+        Flash::instance()->dump();
 
         $this->uss->render($this->template, $this->options);
     }

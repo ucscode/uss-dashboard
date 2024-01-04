@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\User;
+namespace Module\Dashboard\Bundle\User\Abstract;
 
 use DateTime;
 use Exception;
@@ -9,6 +9,7 @@ use Module\Dashboard\Bundle\Common\Password;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserRepository extends AbstractUserFoundation
