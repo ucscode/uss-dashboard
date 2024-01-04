@@ -3,8 +3,8 @@
 namespace Module\Dashboard\Foundation\User\Form;
 
 use Module\Dashboard\Bundle\Flash\Flash;
-use Module\Dashboard\Bundle\Flash\Modal\Button;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
+use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Module\Dashboard\Foundation\User\UserDashboard;
@@ -18,6 +18,7 @@ class RegisterForm extends AbstractUserAccountForm
             'user[password]' => '&z25#W12_',
             'user[confirmPassword]' => '&z25#W12_'
         ]);
+
         //$this->createUsernameField();
         $this->createEmailField();
         $this->createPasswordField();
@@ -66,9 +67,8 @@ class RegisterForm extends AbstractUserAccountForm
             'title' => 'Registration Failed!',
             'message' => 'Sorry! We encountered an issue during the registration process.',
         ];
-        
-        if($user->isAvailable()) 
-        {
+
+        if(!$user->isAvailable()) {
             $summary = 'You can now log in with your credentials.';
 
             $message = [
@@ -76,8 +76,10 @@ class RegisterForm extends AbstractUserAccountForm
                 'message' => "Your account has been created successfully."
             ];
 
-            if($processEmail = 1) 
-            {
+            if($processEmail = 1) {
+                $mailer = new Mailer();
+                $mailer->addAddress($user->getEmail());
+                $mailer->setSubject("");
                 $summary = ($emailSend ?? 1) ?
                     'Please check your email to confirm the link we sent' :
                     'However, we could not sent an email to you';
@@ -98,7 +100,7 @@ class RegisterForm extends AbstractUserAccountForm
             header("location: {$nextLocation}");
             exit;
         }
-        
+
     }
 
     protected function validateUsername(?string $username): bool

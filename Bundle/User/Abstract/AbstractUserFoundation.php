@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Bundle\User\Abstract;
 
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\Service\Mailer;
 use Module\Dashboard\Bundle\User\Service\Meta;
 use Module\Dashboard\Bundle\User\Service\Notification;
 use Module\Dashboard\Bundle\User\Service\Roles;
@@ -14,16 +15,18 @@ abstract class AbstractUserFoundation implements UserInterface
 {
     protected array $user;
     public readonly Meta $meta;
-    public readonly Notification $notification;
     public readonly Roles $roles;
+    public readonly Mailer $mailer;
+    public readonly Notification $notification;
     private static ?Pairs $usermeta = null;
 
     public function __construct(?int $id = null)
     {
         $this->syncOnce();
         $this->meta = new Meta($this, self::$usermeta);
-        $this->notification = new Notification($this);
         $this->roles = new Roles($this);
+        $this->mailer = new Mailer($this);
+        $this->notification = new Notification($this);
         $this->user = $this->acquireUser($id) ?? [];
     }
 
@@ -37,7 +40,7 @@ abstract class AbstractUserFoundation implements UserInterface
             'meta' => $this->meta->getAll()
         ];
     }
-    
+
     /**
      * @method acquireUser
      */
