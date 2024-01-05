@@ -3,13 +3,14 @@
 namespace Module\Dashboard\Bundle\Mailer;
 
 use Exception;
+use Module\Dashboard\Bundle\Kernel\DashboardEnvironment;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Ucscode\Pairs\Pairs;
+use Uss\Component\Kernel\Abstract\AbstractUss;
 use Uss\Component\Kernel\Uss;
 
-abstract class AbstractMailer
+abstract class AbstractMailer extends AbstractUss
 {
     protected bool $isLocalhost;
     protected ?string $template = '@Mail/classic/base.html.twig';
@@ -19,20 +20,26 @@ abstract class AbstractMailer
 
     public function __construct()
     {
+        parent::__construct();
+        
+        new DashboardEnvironment($this);
+
         $this->PHPMailer = new PHPMailer(true);
         $this->PHPMailer->isHTML(true);
+
         $this->checkEnvironment();
         $this->configurePHPMailer();
         $this->configureSMTP();
     }
 
+    /**
+     * @ THE PROBLEM HERE MUST BE RESOLVED
+     */
     public function getTemplateOutput(): string
     {
-        return Uss::instance()->render(
-            $this->template,
-            $this->context,
-            true
-        );
+        $this->extension->configureRenderContext();
+        $this->context += Uss::instance()->twigContext;
+        return $this->twigEnvironment->render($this->template, $this->context);
     }
 
     public function sendMail(): bool
@@ -44,7 +51,7 @@ abstract class AbstractMailer
         if(empty(trim($this->PHPMailer->Body) && !empty($this->template))) {
             $this->PHPMailer->Body = $this->getTemplateOutput();
         }
-        
+
         if(empty($this->PHPMailer->Body)) {
             throw new Exception("No `template` or `body` has been defined for sending email");
         }
@@ -54,7 +61,7 @@ abstract class AbstractMailer
         }
 
         try {
-            
+
             return $this->PHPMailer->send();
 
         } catch(Exception $PHPMailerException) {

@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Kernel;
 
 use Exception;
-use Module\Dashboard\Bundle\Alert\Alert;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
@@ -12,7 +11,7 @@ use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
 use Uss\Component\Kernel\Uss;
 
-class DashboardRenderLogic implements EventInterface
+final class DashboardRenderLogic implements EventInterface
 {
     protected Uss $uss;
     protected User $user;
@@ -33,10 +32,10 @@ class DashboardRenderLogic implements EventInterface
      */
     public function eventAction(array|object $data): void
     {
-        !$this->isLoggedIn && 
-        $this->dashboard->isFirewallEnabled() ? 
+        !$this->isLoggedIn &&
+        $this->dashboard->isFirewallEnabled() ?
             $this->displayLoginPage() : null;
-            
+
         $this->examineUserPermission();
         $this->createUserInterface();
     }
@@ -47,17 +46,15 @@ class DashboardRenderLogic implements EventInterface
     protected function displayLoginPage(): void
     {
         $loginDocument = $this->dashboard->getDocument('login');
-        
-        if($loginDocument) 
-        {
+
+        if($loginDocument) {
             $loginForm = $loginDocument->getCustom('app.form');
 
-            if($loginForm instanceof DashboardFormInterface) 
-            {
+            if($loginForm instanceof DashboardFormInterface) {
                 $loginForm->build(); //
                 $loginForm->handleSubmission(); //
-                
-                $this->isLoggedIn = 
+
+                $this->isLoggedIn =
                     $this->user
                         ->acquireFromSession()
                         ->isAvailable();
@@ -82,8 +79,7 @@ class DashboardRenderLogic implements EventInterface
      */
     protected function examineUserPermission(): void
     {
-        if($this->isLoggedIn) 
-        {
+        if($this->isLoggedIn) {
             $permissions = $this->dashboard->appControl->getPermissions();
             $roles = $this->user->meta->get('user.roles');
             $matchingRoles = array_intersect($permissions, $roles);

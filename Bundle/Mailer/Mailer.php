@@ -4,7 +4,6 @@ namespace Module\Dashboard\Bundle\Mailer;
 
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use Uss\Component\Kernel\Uss;
 
 class Mailer extends AbstractMailer implements MailerInterface
 {

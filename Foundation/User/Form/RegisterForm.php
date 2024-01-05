@@ -80,7 +80,7 @@ class RegisterForm extends AbstractUserAccountForm
 
                 $mailer = new Mailer();
                 $mailer->useMailHogTesting();
-                
+
                 $mailer->addAddress($user->getEmail());
                 $mailer->setSubject("Email Confirmation");
                 $mailer->setTemplate('@Foundation/User/Template/security/mails/register.email.twig');
@@ -89,10 +89,14 @@ class RegisterForm extends AbstractUserAccountForm
                     'client_name' => $user->getUsername(),
                     'confirmation_link' => 'https://ucscode.com',
                 ]);
-                
+
+                echo $mailer->getTemplateOutput();
+
                 $summary = ($mailer->sendMail()) ?
                     'Please check your email to confirm the link we sent' :
                     'However, we could not sent an email to you';
+
+                exit;
             }
 
             $message['message'] .= '<br>' . $summary;
