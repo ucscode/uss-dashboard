@@ -311,12 +311,10 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
       {% if compliment is empty %}
 
         {% set compliment %}
-
           <h3 class="v-color v-text-align v-font-size" style="margin: 0px 0px 5px; color: #6f7070; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 18px; font-weight: 400;">
             <strong>{{ agent_name|default('Your Name') }}</strong>
           </h3>
           <p style="line-height: 140%;">{{ agent_role|default('CEO') }} @ {{ page_title }}</p>
-
         {% endset %}
 
       {% endif %}
@@ -394,23 +392,25 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
 
         {% if (not socialItem is defined) or (not socialItem is iterable) %}
 
+          {% set socialLink = socialLink ?? [] %}
+
           {% 
             set socialItem = {
               Facebook: {
-                url: 'https://www.facebook.com/ucscode',
-                image: template_url ~ '/images/image-2.png'
+                url: socialLink.facebook ?? '#',
+                image: template_url ~ '/images/facebook.png'
               },
               Linkedin: {
-                url: 'https://www.linkedin.com/in/ucscode',
-                image: template_url ~ '/images/image-5.png'
+                url: socialLink.linkedin ?? '#',
+                image: template_url ~ '/images/linkedin.png'
               },
               Instagram: {
-                url: 'https://www.instagram.com/ucscode',
-                image: template_url ~ '/images/image-3.png'
+                url: socialLink.instagram ?? '#',
+                image: template_url ~ '/images/instagram.png'
               },
               X: {
-                url: 'https://www.facebook.com/ucscode',
-                image: template_url ~ '/images/image-4.png',
+                url: socialLink.twitter ?? '#',
+                image: template_url ~ '/images/twitter.png',
               }
             }
           %}
@@ -456,8 +456,8 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
         {% block footer_links %}
         
           <p style="font-size: 14px; line-height: 170%;">
-            <a href="{{ unsubscribe_link|default("#") }}">UNSUBSCRIBE</a> &nbsp; | &nbsp; 
-            <a href="{{ privacy_link|default("#") }}">PRIVACY POLICY</a>
+            <a href="{{ unsubscribe_link ?? "#" }}">UNSUBSCRIBE</a> &nbsp; | &nbsp; 
+            <a href="{{ privacy_link ?? "#" }}">PRIVACY POLICY</a>
           </p>
 
         {% endblock %}
