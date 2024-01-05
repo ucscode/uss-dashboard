@@ -33,18 +33,21 @@ class ModalGUI extends AbstractGUI
                     'label' => $this->stringify($button->getLabel()),
                     'className' => $this->stringify($button->getClassName()),
                 ];
-
-                $callback = $this->validateJSCallback($button->getCallback());
+                
+                $callback = $this->generateJSCallback(
+                    $button->getCallback(),
+                    $button->getCallbackValue()
+                );
 
                 if(!empty($callback)) {
-                    $bootboxObject['buttons'][$name]['callback'] = 'event => ' . $callback . '(event)';
+                    $bootboxObject['buttons'][$name]['callback'] = $callback;
                 }
             });
 
             $callbacks = $modal->getCustomCallbacks();
-
-            $bootboxObject += array_map(function($value) {
-                return 'event => ' . $this->validateJSCallback($value) . '(event)';
+            
+            $bootboxObject += array_map(function($context) {
+                return $this->generateJSCallback($context['callback'], $context['value']);
             }, $callbacks);
 
             return $bootboxObject;

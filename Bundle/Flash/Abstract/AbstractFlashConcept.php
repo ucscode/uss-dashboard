@@ -37,15 +37,19 @@ abstract class AbstractFlashConcept implements FlashConceptInterface
         return $this->title;
     }
 
-    public function setCustomCallback(string $name, ?string $value): self
+    public function setCustomCallback(string $name, ?string $callback, ?string $value = null): self
     {
-        $this->callbacks[$name] = $value;
+        $this->callbacks[$name] = [
+            'callback' => $callback,
+            'value' => $value
+        ];
         return $this;
     }
 
-    public function getCustomCallback(string $name): ?string
+    public function getCustomCallback(string $name, bool $getValue = false): ?string
     {
-        return $this->callbacks[$name] ?? null;
+        $vessel = $this->callbacks[$name] ?? null;
+        return $vessel ? ($getValue ? $vessel['value'] : $vessel['callback']) : null;
     }
 
     public function removeCustomCallback(string $name): self

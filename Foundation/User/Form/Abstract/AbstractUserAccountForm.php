@@ -11,11 +11,6 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     private ?\Faker\Generator $faker = null;
     private array $fixtures;
 
-    private array $properties = [
-        'tosLink' => null,
-        'privacyLink' => null,
-    ];
-
     public function isSubmitted(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nonce'] ?? false);
@@ -28,25 +23,6 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         $this->fixtures = $fixtures;
         !$this->faker ? $this->faker = \Faker\Factory::create() : null;
-    }
-
-    final public function setProperty(string $name, mixed $property): self
-    {
-        $this->properties[$name] = $property;
-        return $this;
-    }
-
-    final public function getProperty(string $name): mixed
-    {
-        return $this->properties[$name] ?? null;
-    }
-
-    final public function removeProperty($name): self
-    {
-        if(array_key_exists($name, $this->properties, true)) {
-            unset($this->properties[$name]);
-        }
-        return $this;
     }
 
     protected function createHiddenField(string $name, ?string $value = null): Field

@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\DashboardRenderLogic;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
@@ -14,6 +15,11 @@ use Uss\Component\Kernel\Enumerator;
 
 abstract class AbstractDashboard extends AbstractDashboardCentral
 {
+    public function __construct(AppControl $appControl)
+    {
+        parent::__construct($appControl);
+    }
+
     /**
      * Add a new document to the dashboard application
      */
@@ -117,7 +123,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
                 $prefix = '@Theme';
         }
 
-        $theme = $prefix . "/" . $this->appControl->getThemeFolder(); 
+        $theme = $prefix . "/" . $this->appControl->getThemeFolder();
         $theme .= !empty($path) ? "/{$path}" : null;
         return $theme;
     }

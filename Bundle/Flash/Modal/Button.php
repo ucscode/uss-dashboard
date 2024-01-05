@@ -9,6 +9,7 @@ class Button
     protected ?string $label = 'OK';
     protected ?string $className = 'btn btn-primary';
     protected ?string $callback = null;
+    protected ?string $callbackValue = null;
 
     public function setLabel(?string $label): self
     {
@@ -41,5 +42,16 @@ class Button
     public function getCallback(): ?string
     {
         return $this->callback;
+    }
+
+    public function setCallbackValue(?string $value): self
+    {
+        $this->callbackValue = $value;
+        return $this;
+    }
+
+    public function getCallbackValue(): ?string
+    {
+        return $this->callbackValue;
     }
 }

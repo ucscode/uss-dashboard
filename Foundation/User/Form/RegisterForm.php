@@ -19,7 +19,7 @@ class RegisterForm extends AbstractUserAccountForm
             'user[confirmPassword]' => '&z25#W12_'
         ]);
 
-        //$this->createUsernameField();
+        !!Uss::instance()->options->get('user:collect-username') ? $this->createUsernameField() : null;
         $this->createEmailField();
         $this->createPasswordField();
         $this->createPasswordField(true);
@@ -63,47 +63,90 @@ class RegisterForm extends AbstractUserAccountForm
 
     protected function resolveSubmission(mixed $user): void
     {
+        $uss = Uss::instance(); // Pairs
+        $dashboard = UserDashboard::instance();
+
+        $summary = $this->getProperty('registration-error:summary');
+
         $message = [
-            'title' => 'Registration Failed!',
-            'message' => 'Sorry! We encountered an issue during the registration process.',
+            'title' => 'Registration Failed',
+            'message' => 
+                $this->getProperty('registration-error:message') ?? 
+                'Sorry! We encountered an issue during the registration process.',
         ];
 
         if(!$user->isAvailable()) {
-            $summary = 'You can now log in with your credentials.';
+
+            $successRedirect = 
+                $this->getProperty('registration-success:redirect') ?? 
+                $dashboard->getDocument('index')->getUrl();
+
+            $summary = 
+                $this->getProperty('registration-success:summary') ?? 
+                sprintf('You can now <a href="%s">login</a> with your credentials.', $successRedirect);
 
             $message = [
-                'title' => "Registration Successful!",
-                'message' => "Your account has been created successfully."
+                'title' => "Registration Successful",
+                'message' => 
+                    $this->getProperty('registration-success:message') ?? 
+                    "Your account has been created successfully."
             ];
 
-            if($processEmail = 1) {
+            if($uss->options->get('user:confirm-email')) {
+
+                $registrationEmailSubject =
+                    $this->getProperty('registration-email:subject') ??
+                    'Email Confirmation';
+
+                $registrationEmailTemplate =
+                    $this->getProperty('registration-email:template') ??
+                    '@Foundation/User/Template/security/mails/register.email.twig';
+
+                $registrationEmailTemplateContext =
+                    $this->getProperty('registration-email:template.context') ??
+                    [
+                        'privacy_policy_url' => $this->getProperty('privacyPolicyUrl') ?: '#',
+                        'client_name' => $user->getUsername(),
+                        'confirmation_link' => $this->getConfirmationLink(
+                            $user,
+                            $dashboard->getDocument('index')->getUrl()
+                        ),
+                    ];
 
                 $mailer = new Mailer();
                 $mailer->useMailHogTesting();
 
                 $mailer->addAddress($user->getEmail());
-                $mailer->setSubject("Email Confirmation");
-                $mailer->setTemplate('@Foundation/User/Template/security/mails/register.email.twig');
-                $mailer->setContext([
-                    'privacy_policy_url' => $this->getProperty('privacyPolicyUrl') ?: '#',
-                    'client_name' => $user->getUsername(),
-                    'confirmation_link' => 'https://ucscode.com',
-                ]);
-                
-                $summary = ($mailer->sendMail()) ?
-                    'Please check your email to confirm the link we sent' :
-                    'However, we could not sent an email to you';
+                $mailer->setSubject($registrationEmailSubject);
+                $mailer->setTemplate($registrationEmailTemplate);
+                $mailer->setContext($registrationEmailTemplateContext);
 
+                $summary = 
+                    $this->getProperty('registration-email-error:summary') ??
+                    'We could not sent a confirmation email to you <br> 
+                    Please contact the support team to resolve your account';
+                
+                if($mailer->sendMail()) {
+                    $summary = 
+                        $this->getProperty('registration-email-success:summary') ??
+                        'Please check your email to confirm the link we sent';
+                }
             }
 
-            $message['message'] .= '<br>' . $summary;
+            if(!empty($summary)) {
+                $message['message'] .= '<div class="alert alert-secondary mt-2 small mb-0">' . $summary . '</div>';
+            }
         }
 
         $modal = new Modal();
         $modal->setMessage($message['message']);
         $modal->setTitle($message['title']);
 
-        Flash::instance()->addModal("new", $modal);
+        if(isset($successRedirect)) {
+            $modal->setCustomCallback('onEscape', 'security.redirect', $successRedirect);
+        }
+
+        Flash::instance()->addModal("registeration", $modal);
 
         if($user->isAvailable()) {
             $indexDocument = UserDashboard::instance()->getDocument("index");
@@ -118,6 +161,15 @@ class RegisterForm extends AbstractUserAccountForm
     {
         if($username !== null) {
             // Username validation logic here
+            if(!preg_match("/^\w{3,}$/i", trim($username))) {
+                $usernameInfo = "Username should be at least 3 characters containing only letter, numbers and underscore";
+                $usernameContext = $this->collection->getField('user[username]')?->getElementContext();
+                if($usernameContext) {
+                    $usernameContext->validation->setValue('* Invalid Username');
+                    $usernameContext->info->setValue($usernameInfo);
+                }
+                return false;
+            }
         }
         return true;
     }
@@ -152,7 +204,7 @@ class RegisterForm extends AbstractUserAccountForm
         };
 
         if($confirmPassword !== null && $password !== $confirmPassword) {
-            $passwordContext = $this->collection->getField("user[confirmPassword]")->getElementContext();
+            $passwordContext = $this->collection->getField("user[confirmPassword]")?->getElementContext();
             $passwordContext ? $passwordContext->validation->setValue("Password does not match") : null;
             return false;
         }
@@ -160,5 +212,19 @@ class RegisterForm extends AbstractUserAccountForm
         return true;
     }
 
+    protected function getConfirmationLink(User $user, string $destination): string
+    {
+        $confirmationCode = Uss::instance()->keygen(20);
+        //$user->meta->set('confirmation-code', $confirmationCode);
+        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
+        return $this->addUrlParameter($destination, 'verify-email', $emailCode);
+    }
 
+    protected function addUrlParameter(string $url, string $name, string $value): string
+    {
+        $parsed_url = parse_url($url);
+        $hasQuery = isset($parsed_url['query']);
+        $url .= $hasQuery ? (($parsed_url['query'] === '') ? '' : '&') : '?';
+        return $url . "$name=$value";
+    }
 }

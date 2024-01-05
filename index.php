@@ -13,15 +13,14 @@ use Uss\Component\Kernel\Uss;
 
 define('USS_DASHBOARD_DIR', __DIR__);
 
-new class ()  
-{
+new class () {
     public function __construct()
     {
         $uss = Uss::instance();
 
         new DatabaseGenerator($uss);
         new DashboardEnvironment($uss);
-        
+
         $this->createUserApplication();
         $this->createAdminApplication();
 
@@ -38,8 +37,7 @@ new class ()
             ->setBase('/dashboard')
             ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
-
-        UserDashboard::instance()->createApp($appControl);
+        UserDashboard::instance($appControl); // One-time Instantiation
     }
 
     public function createAdminApplication(): void
@@ -52,7 +50,6 @@ new class ()
                 RoleImmutable::ROLE_SUPERADMIN,
                 RoleImmutable::ROLE_ADMIN,
             ]);
-
-        AdminDashboard::instance()->createApp($appControl);
+        AdminDashboard::instance($appControl); // One-time Instantiation
     }
 };

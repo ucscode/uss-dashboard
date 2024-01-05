@@ -49,4 +49,14 @@ abstract class AbstractGUI
 
         return $result;
     }
+
+    final protected function generateJSCallback(string $callback, ?string $value): ?string
+    {
+        $callback = $this->validateJSCallback($callback);
+        if($callback) {
+            $value = !empty($value) ? " " . $this->stringify($value) : null;
+            return 'event => ' . $callback . "(event,{$value})";
+        };
+        return null;
+    }
 }

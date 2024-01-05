@@ -20,12 +20,17 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     protected bool $firewallEnabled = true;
     protected array $documents = [];
 
+    public function __construct(AppControl $appControl)
+    {
+        $this->createApp($appControl);
+    }
+
     /**
      * Set Initial values such as base(route), theme, user permission etc
      * Note: child class should override this method but still call it
      * parent::createProject($config);
      */
-    public function createApp(AppControl $appControl): void
+    protected function createApp(AppControl $appControl): void
     {
         $this->appControl = $appControl;
         AppFactory::registerApp($this);

@@ -16,10 +16,11 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     abstract protected function resolveSubmission(mixed $response): void;
 
     public readonly Collection $collection;
+    private array $properties = [];
     private array $submitInterfaces = [];
     private array $builderInterfaces = [];
 
-    public function __construct(Attribute $attribute = new Attribute()) 
+    public function __construct(Attribute $attribute = new Attribute())
     {
         parent::__construct($attribute);
         $this->collection = $this->getCollection(self::DEFAULT_COLLECTION);
@@ -33,7 +34,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         return match($_SERVER['REQUEST_METHOD']) {
             'POST' => $_POST,
             'GET' => $_GET,
-            default => call_user_func(function(): ?string {
+            default => call_user_func(function (): ?string {
                 $responseInput = file_get_contents("php://input");
                 $jsonValue = json_decode($responseInput, true);
                 return json_last_error() === JSON_ERROR_NONE ? $jsonValue : $responseInput;
@@ -41,36 +42,53 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         };
     }
 
+    final public function setProperty(string $name, mixed $property): self
+    {
+        $this->properties[$name] = $property;
+        return $this;
+    }
+
+    final public function getProperty(string $name): mixed
+    {
+        return $this->properties[$name] ?? null;
+    }
+
+    final public function removeProperty($name): self
+    {
+        if(array_key_exists($name, $this->properties, true)) {
+            unset($this->properties[$name]);
+        }
+        return $this;
+    }
+
     final public function handleSubmission(): void
     {
-        if($this->isSubmitted()) 
-        {
+        if($this->isSubmitted()) {
             $filteredResource = $this->filterResource();
 
             array_walk(
                 $this->submitInterfaces,
-                fn (DashboardFormSubmitInterface $submitter) => $submitter->onSubmit($filteredResource)
+                fn (DashboardFormSubmitInterface $submitter) => $submitter->onSubmit($filteredResource, $this)
             );
 
             $validatedResource = $this->validateResource($filteredResource);
-            $justified = is_array($validatedResource) || $validatedResource === true; 
-            
+            $justified = is_array($validatedResource) || $validatedResource === true;
 
-            if($justified) 
-            {
+
+            if($justified) {
 
                 array_walk(
                     $this->submitInterfaces,
-                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource)
+                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource, $this)
                 );
-                
+
                 $response = $this->persistResource(
                     is_array($validatedResource) ? $validatedResource : $filteredResource
                 );
 
                 array_walk(
                     $this->submitInterfaces,
-                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($response)
+                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($response, $this)
                 );
 
                 $this->resolveSubmission($response);
@@ -124,7 +142,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         $this->buildForm();
         array_walk(
-            $this->builderInterfaces, 
+            $this->builderInterfaces,
             fn (DashboardFormBuilderInterface $exporter) => $exporter->onBuild($this)
         );
     }
@@ -133,7 +151,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         $password = new Password($password);
         $strength = $password->calculateStrength();
-        
+
         $requirements = [];
         $resolved = [];
 
@@ -147,27 +165,27 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
 
         $errorLevel = [
             [
-                "required", 
+                "required",
                 "text-danger"
             ],
             [
-                "too weak", 
+                "too weak",
                 "text-danger"
             ],
             [
-                "weak", 
+                "weak",
                 "text-danger"
             ],
             [
-                "fair", 
+                "fair",
                 "text-info"
             ],
             [
-                "strong", 
+                "strong",
                 "text-success"
             ],
             [
-                "very strong", 
+                "very strong",
                 "text-success"
             ],
         ];
@@ -176,8 +194,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             'strength' => $strength
         ];
 
-        foreach($factors as $key => $value) 
-        {
+        foreach($factors as $key => $value) {
             $approved = match($key) {
                 'minLength' => $password->hasMinLength(),
                 'lowerCase' => $password->hasLowerCase(),
@@ -186,7 +203,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                 default => $password->hasSpecialChar(),
             };
 
-            $approved ? 
+            $approved ?
                 $resolved[$key] = $value :
                 $requirements[$key] = $value;
         }

@@ -7,7 +7,7 @@ use Module\Dashboard\Bundle\Flash\Modal\Button;
 interface ModalInterface
 {
     public const DEFAULT_BUTTON = 'cancel';
-
+    
     public function addButton(string $name, Button $button): self;
     public function getButton(string $name): ?Button;
     public function removeButton(string $name): self;

@@ -41,7 +41,7 @@ class Flash extends AbstractFlash
             'content' => $content
         ];
 
-        $this->flash->save();
+        //$this->flash->save();
 
         return $this;
     }
@@ -58,6 +58,7 @@ class Flash extends AbstractFlash
         if(!empty($escapeCallback) && $defaultButton) {
             if($defaultButton->getCallback() === null) {
                 $defaultButton->setCallback($escapeCallback);
+                $defaultButton->setCallbackValue($modal->getCustomCallback('onEscape', true));
             };
         }
     }

@@ -8,8 +8,8 @@ interface FlashConceptInterface
     public function getMessage(): ?string;
     public function setTitle(?string $heading): self;
     public function getTitle(): ?string;
-    public function setCustomCallback(string $name, ?string $value): self;
-    public function getCustomCallback(string $name): ?string;
+    public function setCustomCallback(string $name, ?string $callback, ?string $value): self;
+    public function getCustomCallback(string $name, bool $getValue = false): ?string;
     public function removeCustomCallback(string $name): self;
     public function getCustomCallbacks(): array;
 }

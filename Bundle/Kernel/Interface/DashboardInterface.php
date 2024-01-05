@@ -10,7 +10,6 @@ use Uss\Component\Manager\UrlGenerator;
 
 interface DashboardInterface
 {
-    public function createApp(AppControl $appControl): void;
     public function render(string $template, array $options = []): void;
     public function addDocument(string $name, Document $document): self;
     public function getDocument(string $name): ?Document;

@@ -1,8 +1,20 @@
 "use strict";
 
-(new class {
+let security = new class {
 	
-	initialize($) {
+	constructor($) {
+		this.#initialize($);
+	}
+
+	redirect(event, redirect) {
+		if(redirect) {
+			window.location.href = redirect;
+			return;
+		}
+		console.warn("No redirect value set for property `app:redirect`");
+	}
+
+	#initialize($) {
 		
 		const self = this;
 		
@@ -39,5 +51,5 @@
 		
 	}
 	
-}).initialize(jQuery);
+}(jQuery);
 
