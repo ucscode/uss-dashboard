@@ -13,6 +13,7 @@ abstract class AbstractMailer
     protected bool $mailHogEnabled = false;
     protected ?string $template = '@Mail/classic/base.html.twig';
     protected array $context = [];
+    protected ?string $templateUrl = null;
     protected PHPMailer $PHPMailer;
     
     public function __construct()
@@ -20,6 +21,17 @@ abstract class AbstractMailer
         $memory = Uss::instance()->options;
         $this->checkEnvironment();
         $this->configurePHPMailer($memory);
+    }
+
+    public function getTemplateOutput(): string
+    {
+        return Uss::instance()->render(
+            $this->template, 
+            $this->context + [
+                'template_url' => $this->templateUrl
+            ], 
+            true
+        );
     }
 
     protected function checkEnvironment(): void

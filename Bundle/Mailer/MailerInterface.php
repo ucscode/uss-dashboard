@@ -8,6 +8,7 @@ interface MailerInterface
 {
     public function getPHPMailer(): PHPMailer;
     public function setTemplate(string $template, ?array $context): self;
+    public function getTemplateOutput(): string;
     public function setContext(array $context): self;
     public function useMailHogTesting(bool $enabled = true): self;
     public function setFrom(string $email, string $name, bool $auto): self;

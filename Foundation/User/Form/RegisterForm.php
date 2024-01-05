@@ -67,7 +67,7 @@ class RegisterForm extends AbstractUserAccountForm
             'title' => 'Registration Failed!',
             'message' => 'Sorry! We encountered an issue during the registration process.',
         ];
-
+        
         if(!$user->isAvailable()) {
             $summary = 'You can now log in with your credentials.';
 
@@ -75,11 +75,15 @@ class RegisterForm extends AbstractUserAccountForm
                 'title' => "Registration Successful!",
                 'message' => "Your account has been created successfully."
             ];
-
-            if($processEmail = 1) {
+            
+            if($processEmail = 1) 
+            {
                 $mailer = new Mailer();
                 $mailer->addAddress($user->getEmail());
-                $mailer->setSubject("");
+                $mailer->setTemplate('@Mail/simple/base.html.twig');
+                echo $mailer->getTemplateOutput();
+                exit;
+
                 $summary = ($emailSend ?? 1) ?
                     'Please check your email to confirm the link we sent' :
                     'However, we could not sent an email to you';

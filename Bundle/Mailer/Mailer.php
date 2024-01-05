@@ -3,6 +3,8 @@
 namespace Module\Dashboard\Bundle\Mailer;
 
 use PHPMailer\PHPMailer\PHPMailer;
+use Uss\Component\Kernel\Enumerator;
+use Uss\Component\Kernel\Uss;
 
 class Mailer extends AbstractMailer implements MailerInterface
 {
@@ -20,6 +22,12 @@ class Mailer extends AbstractMailer implements MailerInterface
     public function setTemplate(string $template, ?array $context = null): self
     {
         $this->template = $template;
+        $vector = explode("/", $template);
+        array_pop($vector);
+        $this->templateUrl = Uss::instance()->getTemplateSchema(
+            implode("/", $vector), 
+            Enumerator::URL
+        );
         $this->setContext($context ?? $this->context);
         return $this;
     }
