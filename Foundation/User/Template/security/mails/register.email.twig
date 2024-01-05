@@ -2,12 +2,12 @@
 
 {% block message %}
 
-    <p>Hello {{ clientName ?? 'dear' }},</p> <br>
+    <p>{{ client_name|trim ? 'Hi ' ~ client_name|trim : 'Dear user' }},</p> <br>
 
     <p>Congratulations on successfully registering with us! To ensure the security of your account, please click on the confirmation link below:</p> <br>
 
     <p>
-        <a href="{{ confirmationLink ?? '#' }}" target='_blank' style="display:inline-block; padding:10px 20px; background-color:#4CAF50; color:#fff; text-decoration:none; border-radius:5px;">
+        <a href="{{ confirmation_link ?? '#' }}" target='_blank' style="display:inline-block; padding:10px 20px; background-color:#4CAF50; color:#fff; text-decoration:none; border-radius:5px;">
             Confirm Your Email
         </a>
     </p> <br>

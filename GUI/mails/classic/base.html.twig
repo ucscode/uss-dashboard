@@ -1,4 +1,12 @@
+{# 
+  Template Constants & Config 
+#}
+{% set TEMPLATE_NAME = "classic" %}
+{% set TEMPLATE_URL = Uss.templateSchema('@Mail/' ~ TEMPLATE_NAME, Uss.ENUM.URL) %}
 {% set text_color = text_color ?? '#21282d' %}
+{# 
+  Email HTML Document
+#}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
@@ -266,10 +274,10 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
       {% if compliment is empty %}
 
         {% set compliment %}
-          <h3 class="v-color v-text-align v-font-size" style="margin: 0px 0px 5px; color: {{ text_color }}; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 18px; font-weight: 400;">
-            <strong>{{ agent_name|default('Your Name') }}</strong>
+          <h3 class="v-color v-text-align v-font-size" style="margin: 0px 0px 5px; color: {{ text_color }}; line-height: 140%; text-align: left; word-wrap: break-word; font-size: 16px; font-weight: 400;">
+            <strong>{{ compliment_title|default('Regards') }}</strong>
           </h3>
-          <p style="line-height: 140%;">{{ agent_role|default('CEO') }} @ {{ page_title }}</p>
+          <p style="line-height: 140%;">{{ compliment_content|default('The ' ~ page_title ~ ' Team') }}</p>
         {% endset %}
 
       {% endif %}
@@ -300,7 +308,8 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
 {% endblock compliment_container %}
 
   
-  
+{% block footer %}
+
 <div class="u-row-container" style="padding: 0px;background-color: transparent">
   <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
     <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
@@ -312,137 +321,139 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
   <!--[if (!mso)&(!IE)]><!--><div class="v-col-padding" style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
 
 
-{# ================================================================================================= #}
+  {# ================================================================================================= #}
 
-{% block social_icons %}
+  {% block social_icons %}
 
-    <table id="u_content_social_2" style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-      <tbody>
-        <tr>
-          <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 10px 10px;font-family:'Raleway',sans-serif;" align="left">
-            
-    <div align="center">
-      <div style="display: table; max-width:167px;">
-      <!--[if (mso)|(IE)]><table width="167" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-collapse:collapse;" align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; mso-table-lspace: 0pt;mso-table-rspace: 0pt; width:167px;"><tr><![endif]-->
-      
-        {% macro socialIconElement(name, object, end) %}
+      <table id="u_content_social_2" style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+        <tbody>
+          <tr>
+            <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:60px 10px 10px;font-family:'Raleway',sans-serif;" align="left">
+              
+      <div align="center">
+        <div style="display: table; max-width:167px;">
+        <!--[if (mso)|(IE)]><table width="167" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-collapse:collapse;" align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; mso-table-lspace: 0pt;mso-table-rspace: 0pt; width:167px;"><tr><![endif]-->
+        
+          {% macro socialIconElement(name, object, end) %}
 
-          <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 10px;" valign="top"><![endif]-->
-          <table align="left" border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: {{ end is defined and end == true ? 0 : 10 }}px">
-            <tbody><tr style="vertical-align: top"><td align="left" valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-              <a href="{{ object.url }}" title="{{ name }}" target="_blank">
+            <!--[if (mso)|(IE)]><td width="32" style="width:32px; padding-right: 10px;" valign="top"><![endif]-->
+            <table align="left" border="0" cellspacing="0" cellpadding="0" width="32" height="32" style="width: 32px !important;height: 32px !important;display: inline-block;border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;margin-right: {{ end is defined and end == true ? 0 : 10 }}px">
+              <tbody><tr style="vertical-align: top"><td align="left" valign="middle" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
+                <a href="{{ object.url }}" title="{{ name }}" target="_blank">
 
-              {# ================================================================================================= #}
+                {# ================================================================================================= #}
 
-              <img src="{{ object.image }}" alt="{{ name }}" title="{{ name }}" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+                <img src="{{ object.image }}" alt="{{ name }}" title="{{ name }}" width="32" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;max-width: 32px !important">
+                              
+                {# ================================================================================================= #}
                             
-              {# ================================================================================================= #}
-                          
-              </a>
-            </td></tr>
-          </tbody></table>
-          <!--[if (mso)|(IE)]></td><![endif]-->
+                </a>
+              </td></tr>
+            </tbody></table>
+            <!--[if (mso)|(IE)]></td><![endif]-->
 
-        {% endmacro %}
+          {% endmacro %}
 
-        {% if (not socialItem is defined) or (not socialItem is iterable) %}
+          {% if (not socialItem is defined) or (not socialItem is iterable) %}
 
-          {% set socialLink = socialLink ?? [] %}
+            {% set socialLink = socialLink ?? [] %}
 
-          {% 
-            set socialItem = {
-              Facebook: {
-                url: socialLink.facebook ?? '#',
-                image: template_url ~ '/images/facebook.png'
-              },
-              Linkedin: {
-                url: socialLink.linkedin ?? '#',
-                image: template_url ~ '/images/linkedin.png'
-              },
-              Instagram: {
-                url: socialLink.instagram ?? '#',
-                image: template_url ~ '/images/instagram.png'
-              },
-              X: {
-                url: socialLink.twitter ?? '#',
-                image: template_url ~ '/images/twitter.png',
+            {% 
+              set socialItem = {
+                Facebook: {
+                  url: socialLink.facebook ?? '#',
+                  image: TEMPLATE_URL ~ '/images/facebook.png'
+                },
+                Linkedin: {
+                  url: socialLink.linkedin ?? '#',
+                  image: TEMPLATE_URL ~ '/images/linkedin.png'
+                },
+                Instagram: {
+                  url: socialLink.instagram ?? '#',
+                  image: TEMPLATE_URL ~ '/images/instagram.png'
+                },
+                X: {
+                  url: socialLink.twitter ?? '#',
+                  image: TEMPLATE_URL ~ '/images/twitter.png',
+                }
               }
-            }
-          %}
-        
-        {% endif %}
+            %}
+          
+          {% endif %}
 
-        {% set lastKey = socialItem|keys|last %}
+          {% set lastKey = socialItem|keys|last %}
 
-        {% for name, object in socialItem %}
+          {% for name, object in socialItem %}
 
-          {{ _self.socialIconElement(name, object, name == lastKey) }}
+            {{ _self.socialIconElement(name, object, name == lastKey) }}
 
-        {% endfor %}
-        
-        <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
-      </div>
-    </div>
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-{% endblock social_icons %}
-
-{# ================================================================================================= #}
-
-
-
-{# ================================================================================================= #}
-
-{% block footer_content %}
-
-    <table id="u_content_text_9" style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-      <tbody>
-        <tr>
-          <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 100px 30px;font-family:'Raleway',sans-serif;" align="left">
-            
-      <div class="v-color v-text-align v-font-size" style="font-size: 14px; line-height: 170%; text-align: center; word-wrap: break-word;">
-      
-      {# ================================================================================================= #}
-
-        {% block footer_links %}
-        
-          <p style="font-size: 14px; line-height: 170%;">
-            <a href="{{ unsubscribe_link ?? "#" }}">UNSUBSCRIBE</a> &nbsp; | &nbsp; 
-            <a href="{{ privacy_link ?? "#" }}">PRIVACY POLICY</a>
-          </p>
-
-        {% endblock %}
-
-      {# ================================================================================================= #}
-
-        <p style="font-size: 14px; line-height: 170%;"><br></p>
-      
-      {# ================================================================================================= #}
-
-        {% block footer_text %}
-
-          <p style="font-size: 14px; line-height: 170%;">
-            {{ footer_text|default("Thank you for using " ~ page_title) }}
-          </p>
-
-        {% endblock %}
-
-      {# ================================================================================================= #}
-
+          {% endfor %}
+          
+          <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+        </div>
       </div>
 
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-{% endblock footer_content %}
+  {% endblock social_icons %}
 
-{# ================================================================================================= #}
+  {# ================================================================================================= #}
+
+
+
+  {# ================================================================================================= #}
+
+  {% block footer_content %}
+
+      <table id="u_content_text_9" style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+        <tbody>
+          <tr>
+            <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 100px 30px;font-family:'Raleway',sans-serif;" align="left">
+              
+        <div class="v-color v-text-align v-font-size" style="font-size: 14px; line-height: 170%; text-align: center; word-wrap: break-word;">
+        
+        {# ================================================================================================= #}
+
+          {% block footer_links %}
+          
+            <p style="font-size: 14px; line-height: 170%;">
+              {% if (unsubscribe_url ?? false) %}
+                <a href="{{ unsubscribe_url ?? "#" }}">UNSUBSCRIBE</a> &nbsp; | &nbsp; 
+              {% endif %}
+              <a href="{{ privacy_policy_url ?? "#" }}">PRIVACY POLICY</a>
+            </p>
+
+          {% endblock %}
+
+        {# ================================================================================================= #}
+
+          <p style="font-size: 14px; line-height: 170%;"><br></p>
+        
+        {# ================================================================================================= #}
+
+          {% block footer_text %}
+
+            <p style="font-size: 14px; line-height: 170%;">
+              {{ footer_text|default("Thank you for using " ~ page_title) }}
+            </p>
+
+          {% endblock %}
+
+        {# ================================================================================================= #}
+
+        </div>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+  {% endblock footer_content %}
+
+  {# ================================================================================================= #}
 
 <table style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
   <tbody>
@@ -472,8 +483,10 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
     </div>
   </div>
   </div>
-  
 
+{% endblock footer %}  
+
+{# =========================================================================================== #}
 
     <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
     </td>

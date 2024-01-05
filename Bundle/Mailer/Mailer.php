@@ -2,8 +2,8 @@
 
 namespace Module\Dashboard\Bundle\Mailer;
 
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use Uss\Component\Kernel\Enumerator;
 use Uss\Component\Kernel\Uss;
 
 class Mailer extends AbstractMailer implements MailerInterface
@@ -13,21 +13,22 @@ class Mailer extends AbstractMailer implements MailerInterface
         return $this->PHPMailer;
     }
 
+    public function getPHPMailerException(): ?Exception
+    {
+        return $this->PHPMailerException;
+    }
+
     public function useMailHogTesting(bool $enabled = true): self
     {
-        $this->mailHogEnabled = $enabled;
-        return $this;
+        $this->configurePHPMailer();
+        return $enabled ?
+            $this->configureMailHogTesting() :
+            $this->configureSMTP();
     }
 
     public function setTemplate(string $template, ?array $context = null): self
     {
         $this->template = $template;
-        $vector = explode("/", $template);
-        array_pop($vector);
-        $this->templateUrl = Uss::instance()->getTemplateSchema(
-            implode("/", $vector), 
-            Enumerator::URL
-        );
         $this->setContext($context ?? $this->context);
         return $this;
     }
@@ -50,15 +51,15 @@ class Mailer extends AbstractMailer implements MailerInterface
         return $this;
     }
 
-    public function setSubject(string $subject): self
+    public function setSubject(?string $subject): self
     {
-        $this->PHPMailer->Subject = $subject;
+        $this->PHPMailer->Subject = $subject ?? '';
         return $this;
     }
 
-    public function setBody(string $body): self
+    public function setBody(?string $body): self
     {
-        $this->PHPMailer->Body = $body;
+        $this->PHPMailer->Body = $body ?? '';
         return $this;
     }
 

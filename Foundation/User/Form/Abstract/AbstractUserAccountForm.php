@@ -97,11 +97,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setAttribute('pattern', '^\s*\w+\s*$')
             ->setValue(
                 $this->setFixture(
-                    $name, 
+                    $name,
                     $this->faker->username()
                 )
             )
-            ;
+        ;
 
         $context->label->setValue($label);
         $context->prefix->setValue("<i class='bi bi-person'></i>");
@@ -114,7 +114,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected function createPasswordField(bool $confirmPassword = false, ?string $label = null): Field
     {
         [$field, $context] = $this->getFieldVariation(
-            Field::NODE_INPUT, 
+            Field::NODE_INPUT,
             !$this->faker ? Field::TYPE_PASSWORD : Field::TYPE_TEXT
         );
 
@@ -127,18 +127,18 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         };
 
         $label = !empty($label) ? $label : (!$confirmPassword ? 'Password' : 'Confirm Password');
-        
+
         $context->widget
             ->setAttribute('placeholder', $label)
             ->setAttribute('pattern', '^.{4,}$')
             ->setValue(
                 $this->setFixture(
-                    $name, 
+                    $name,
                     '12345'
                 )
             )
-            ;
-        
+        ;
+
         $context->label->setValue($label);
         $context->prefix->setValue(sprintf("<i class='bi bi-%s'></i>", $icon));
 
@@ -150,7 +150,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected function createEmailField($label = 'Email'): Field
     {
         [$field, $context] = $this->getFieldVariation(
-            Field::NODE_INPUT, 
+            Field::NODE_INPUT,
             !$this->faker ? Field::TYPE_EMAIL : Field::TYPE_TEXT
         );
 
@@ -160,11 +160,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setAttribute("placeholder", $label)
             ->setValue(
                 $this->setFixture(
-                    $name, 
+                    $name,
                     $this->faker->email()
                 )
             )
-            ;
+        ;
 
         $context->label->setValue($label);
         $context->prefix->setValue("<i class='bi bi-at'></i>");
@@ -195,21 +195,21 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
 
         $name = "user[agree]";
 
-        if(empty($label)) 
-        {
-            $tosLink = $this->getProperty('tosLink');
-            $privacyLink = $this->getProperty('privacyLink');
+        if(empty($label)) {
+
             $void = 'javascript:void(0)';
-            
+            $tosLink = $this->getProperty('termsOfServiceUrl');
+            $privacyLink = $this->getProperty('privacyPolicyUrl');
+
             $label = sprintf(
                 "<span>
                     I agree to the 
                     <a href='%s' target='%s'>terms of service</a> &amp; 
                     <a href='%s' target='%s'>privacy policy</a>
                 </spa>",
-                $tosLink ?: $void, 
+                $tosLink ?: $void,
                 $tosLink ? '_blank' : '_self',
-                $privacyLink ?: $void, 
+                $privacyLink ?: $void,
                 $privacyLink ? '_blank' : '_self'
             );
         }
@@ -228,17 +228,17 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                 )
             )
             ->setAttribute('data-anonymous')
-            ;
+        ;
 
         $this->collection->addField($name, $field);
 
         return $field;
     }
-    
+
     protected function createCustomField(array $info): Field
     {
         [$field, $context] = $this->getFieldVariation(
-            $info['nodeName'] ?? Field::NODE_INPUT, 
+            $info['nodeName'] ?? Field::NODE_INPUT,
             $info['nodeType'] ?? Field::TYPE_TEXT
         );
 
@@ -248,11 +248,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setOptions($info['options'] ?? [])
             ->setAttribute('placeholder', $info['label'] ?? null)
             ->setButtonContent(
-                $info['content'] ?? 
+                $info['content'] ??
                 (
                     (!empty($info['value']) ? $info['value'] : null) ??
                     ucfirst(
-                        $context->widget->nodeType ?? 
+                        $context->widget->nodeType ??
                         Field::TYPE_BUTTON
                     )
                 )
@@ -265,7 +265,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                 )
             )
         ;
-        
+
         $context->frame
             ->addClass($info['class'] ?? null);
 
@@ -292,7 +292,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                 (
                     !$context->label->isFixed() ?
                         $context->label->setDOMHidden(true) : null
-                ): null;
+                ) : null;
         }
     }
 
