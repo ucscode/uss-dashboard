@@ -89,14 +89,11 @@ class RegisterForm extends AbstractUserAccountForm
                     'client_name' => $user->getUsername(),
                     'confirmation_link' => 'https://ucscode.com',
                 ]);
-
-                echo $mailer->getTemplateOutput();
-
+                
                 $summary = ($mailer->sendMail()) ?
                     'Please check your email to confirm the link we sent' :
                     'However, we could not sent an email to you';
 
-                exit;
             }
 
             $message['message'] .= '<br>' . $summary;

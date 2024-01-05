@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Kernel\DashboardEnvironment;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
+use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Abstract\AbstractUss;
 use Uss\Component\Kernel\Uss;
 
@@ -62,6 +63,8 @@ abstract class AbstractMailer extends AbstractUss
 
         try {
 
+            // (new Event())->addListener("modules:loaded", ...);
+            
             return $this->PHPMailer->send();
 
         } catch(Exception $PHPMailerException) {
