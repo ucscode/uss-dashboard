@@ -1,0 +1,21 @@
+{% extends '@Mail/classic/base.html.twig' %}
+
+{% block message %}
+
+    <p>Hello {{ clientName ?? 'dear' }},</p> <br>
+
+    <p>Congratulations on successfully registering with us! To ensure the security of your account, please click on the confirmation link below:</p> <br>
+
+    <p>
+        <a href="{{ confirmationLink ?? '#' }}" target='_blank' style="display:inline-block; padding:10px 20px; background-color:#4CAF50; color:#fff; text-decoration:none; border-radius:5px;">
+            Confirm Your Email
+        </a>
+    </p> <br>
+
+    <p>By confirming your email, you'll have access to our platform and stay updated with the lastest information. If you didn't register or this email seems unfamiliar, please disregard it.</p> <br>
+
+    <p>We're excited to have you on board!</p>
+
+    Best regards,
+
+{% endblock %}

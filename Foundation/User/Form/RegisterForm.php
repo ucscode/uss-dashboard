@@ -80,7 +80,7 @@ class RegisterForm extends AbstractUserAccountForm
             {
                 $mailer = new Mailer();
                 $mailer->addAddress($user->getEmail());
-                $mailer->setTemplate('@Mail/simple/base.html.twig');
+                $mailer->setTemplate('@Foundation/User/Template/security/mails/register.email.twig');
                 echo $mailer->getTemplateOutput();
                 exit;
 
