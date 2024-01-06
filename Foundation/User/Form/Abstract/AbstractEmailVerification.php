@@ -4,6 +4,7 @@ namespace Module\Dashboard\Foundation\User\Form\Abstract;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
+use Module\Dashboard\Bundle\User\User;
 
 abstract class AbstractEmailVerification extends AbstractUserAccountForm
 {
@@ -23,11 +24,33 @@ abstract class AbstractEmailVerification extends AbstractUserAccountForm
         }
     }
 
-    protected function verifyEmailContext(?int $userid, ?string $code): void
+    protected function verifyEmailContext(?int $userid, ?string $inputCode): void
     {
-        if(!$userid || $code) {
-            $toast = new Toast();
-            Flash::instance()->addToast("my-toast", $toast);
+        $toast = new Toast();
+        $toast->setBackground(Toast::BG_SECONDARY);
+        $toast->setMessage("Invalid Confirmation Link");
+
+        if($userid && $inputCode) 
+        {
+            $user = new User($userid);
+
+            if($user->isAvailable()) 
+            {
+                $storedCode = $user->meta->get('verify-email:code');
+                $toast->setMessage("Email Confirmation Failed!");
+
+                if($storedCode === null) {
+                    return;
+                }
+
+                if($storedCode === $inputCode) {
+                    $user->meta->remove('verify-email:code');
+                    $toast->setBackground(Toast::BG_SUCCESS);
+                    $toast->setMessage("Your email has been confirmed");
+                }
+            }
         }
+        
+        Flash::instance()->addToast("verify-email", $toast);
     }
 }

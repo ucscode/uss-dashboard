@@ -9,7 +9,7 @@ class Toast extends AbstractFlashConcept implements ToastInterface
 {
     protected int $yAxis = self::POSITION_TOP;
     protected int $xAxis = self::POSITION_RIGHT;
-    protected int $duration = 3000;
+    protected int $duration = 6000;
     protected ?string $destination = null;
     protected bool $newWindow = true;
     protected bool $autoCloseEnabled = false;
