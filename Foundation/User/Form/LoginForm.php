@@ -2,9 +2,14 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
+use Module\Dashboard\Bundle\Flash\Flash;
+use Module\Dashboard\Bundle\Flash\Toast\Toast;
+use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailVerification;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Field\Field;
+use Uss\Component\Kernel\Uss;
 
 class LoginForm extends AbstractEmailVerification
 {
@@ -12,27 +17,49 @@ class LoginForm extends AbstractEmailVerification
 
     public function buildForm(): void
     {
+        $this->populateWithFakeUserInfo([
+            'user[access]' => 'twill@funk.info',
+            'user[password]' => '&z25#W12_',
+        ]);
+
         $this->verifyEmail();
         $this->createAccessField();
         $this->createPasswordField();
         $submitField = $this->createSubmitButton();
         $this->createMailerBlockBefore($submitField);
+        $this->createNonceField();
         $this->hideLabels();
     }
 
     public function validateResource(array $resource): ?array
     {
+        $resource = $this->validateNonce($resource);
+        if($resource) {
+            return $resource['user'];
+        }
         return null;
     }
 
-    public function persistResource(array $resource): bool
+    public function persistResource(array $resource): mixed
     {
-        return false;
+        $uss = Uss::instance();
+        $key = strpos($resource['access'], '@') !== false ? 'email' : 'username';
+
+        $info = $uss->fetchItem(
+            UserInterface::USER_TABLE, 
+            $uss->sanitize($resource['access'], true),
+            $key
+        );
+
+        $user = $this->validateUserInfo($key, $resource['password'], $info);
+
+        return $user ?? false;
     }
 
     protected function resolveSubmission(mixed $response): void
     {
-        
+        $user = $response;
+        $user->saveToSession();
     }
     
     /**
@@ -42,9 +69,15 @@ class LoginForm extends AbstractEmailVerification
     {
         [$field, $context] = $this->getFieldVariation();
 
-        $field->getElementContext()->widget
+        $context->widget
             ->setAttribute('placeholder', 'Email / Username')
             ->setAttribute('pattern', '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$')
+            ->setValue(
+                $this->setFixture(
+                    'user[access]',
+                    mt_rand(0, 1) ? $this->faker?->username() : $this->faker?->email()
+                )
+            )
             ;
 
         $context->prefix->setValue("<i class='bi bi-person-check-fill'></i>");
@@ -80,5 +113,22 @@ class LoginForm extends AbstractEmailVerification
             $this->mailerBlock,
             $element
         );
+    }
+
+    protected function validateUserInfo(string $type, string $password, ?array $info): ?User
+    {
+        if($info) {
+            $user = new User($info['id']);
+            $passwordValid = $user->verifyPassword($password);
+            if($passwordValid) {
+                return $user;
+            }
+        }
+
+        $toast = (new Toast())->setBackground(Toast::BG_DANGER);
+        $toast->setMessage("Incorrect {$type} or password");
+        Flash::instance()->addToast("login", $toast);
+
+        return null;
     }
 }

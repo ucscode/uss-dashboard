@@ -8,7 +8,7 @@ use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserAccountForm extends AbstractDashboardForm
 {
-    private ?\Faker\Generator $faker = null;
+    protected ?\Faker\Generator $faker = null;
     private array $fixtures;
 
     public function isSubmitted(): bool
@@ -28,13 +28,12 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected function createHiddenField(string $name, ?string $value = null): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_HIDDEN);
-
+        
         $context->widget->setValue(
-            $this->setFixture(
-                $name,
-                $value
-            )
+            $this->setFixture($name, $value)
         );
+
+        $context->frame->addClass('d-none');
 
         $this->collection->addField($name, $field);
 
@@ -74,7 +73,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setValue(
                 $this->setFixture(
                     $name,
-                    $this->faker->username()
+                    $this->faker?->username()
                 )
             )
         ;
@@ -137,7 +136,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setValue(
                 $this->setFixture(
                     $name,
-                    $this->faker->email()
+                    $this->faker?->email()
                 )
             )
         ;
@@ -278,9 +277,9 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return [$field, $field->getElementContext()];
     }
 
-    private function setFixture(string $name, ?string $value, bool $checkable = false): ?string
+    protected function setFixture(string $name, ?string $value, bool $checkable = false): ?string
     {
         $value = $this->fixtures[$name] ?? $value;
-        return $this->faker ? ($checkable ? !!$value : $value) : null;
+        return $this->faker ? ($checkable ? !!$value : $value) : ($checkable ? false : $value);
     }
 }

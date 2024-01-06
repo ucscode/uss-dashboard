@@ -9,7 +9,7 @@ final class AppControl
     protected string $base;
     protected string $themeFolder;
     protected array $permissions = [];
-    protected string $permissionDeniedTemplate = '403.html.twig';
+    protected ?string $permissionDeniedTemplate = null;
 
     /**
      * @method setBase
@@ -98,7 +98,7 @@ final class AppControl
     /**
      * @method getPermissionDeniedTemplate
      */
-    public function getPermissionDeniedTemplate(): string
+    public function getPermissionDeniedTemplate(): ?string
     {
         return $this->permissionDeniedTemplate;
     }

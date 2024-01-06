@@ -82,12 +82,12 @@ final class DashboardRenderLogic implements EventInterface
         if($this->isLoggedIn) {
             $permissions = $this->dashboard->appControl->getPermissions();
             $roles = $this->user->meta->get('user.roles');
-            $matchingRoles = array_intersect($permissions, $roles);
+            $matchingRoles = array_intersect($permissions, $roles ?? []);
 
             if(empty($matchingRoles)) {
                 $this->template =
                     $this->dashboard->appControl->getPermissionDeniedTemplate() ?:
-                    $this->dashboard->getTheme('403.html.twig');
+                    $this->dashboard->getTheme('pages/403.html.twig');
             };
         };
     }

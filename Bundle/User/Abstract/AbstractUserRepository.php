@@ -90,9 +90,9 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * Use this method only if password is hashed with PHP "password_hash" function
      *
-     * @method isValidPassword
+     * @method validatePassword
      */
-    public function isValidPassword(string|Password $context): bool
+    public function verifyPassword(string|Password $context): bool
     {
         $context = is_string($context) ? new Password($context) : $context;
         return $context->verifyHash($this->getPassword());

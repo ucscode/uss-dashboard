@@ -1,29 +1,19 @@
-{% extends _theme ~ '/base.html.twig' %}
+{% extends __dashboard.theme('/base.html.twig') %}
 
 {% block body_main %}
 
      <div class="d-flex align-items-center justify-content-center vh-100">
         <div class="text-center">
 
-            <h1 class="display-1 fw-bold">
-                403
-            </h1>
+            <h1 class="display-1 fw-bold">403</h1>
 
             <p class="fs-3 mb-4"> 
                 <span class="text-danger">Opps!</span> Forbidden
             </p>
-            
             <p class="lead mb-4">
                 You do not have sufficient permission to access this page
             </p>
-
-            {% block body_anchor %}
-                {% set url = DashboardExtension.urlGenerator('', [], 'dashboard') %}
-                <a href="{{ url }}" class="btn btn-outline-primary">
-                    <i class='bi bi-microsoft me-1'></i> Return To Dashboard
-                </a>
-            {% endblock %}
-
+            
         </div>
     </div>
 

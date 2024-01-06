@@ -98,7 +98,7 @@ final class DatabaseGenerator
             'user:confirm-email' => 0,
             'user:lock-email' => 0,
             'user:reconfirm-email' => 1,
-            'user:default-roles' => [RoleImmutable::ROLE_USER],
+            'user:default-role' => RoleImmutable::ROLE_USER,
             'user:affiliation' => 0,
             'user:remove-inactive-after-day' => 7, // 0 or null to ignore
             'smtp:state' => 'default'

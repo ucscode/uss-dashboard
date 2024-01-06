@@ -57,7 +57,7 @@ class Flash extends AbstractFlash
         
         if($toastifyComponents) 
         {
-            $javascriptObject = $toastGUI->createJavascriptObject($toastifyComponents); // (string)
+            $javascriptObject = $toastGUI->createJavascriptObject($toastifyComponents, null); // (string)
             
             $key = session_id();
             $delay = $toast->getDelay();

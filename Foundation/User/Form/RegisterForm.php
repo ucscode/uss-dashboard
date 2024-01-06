@@ -4,6 +4,7 @@ namespace Module\Dashboard\Foundation\User\Form;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
+use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
@@ -52,13 +53,19 @@ class RegisterForm extends AbstractUserAccountForm
 
     public function persistResource(array $resource): mixed
     {
+        $uss = Uss::instance();
         $user = new User();
+        $resource = $uss->sanitize($resource, true);
+        $defaultRole = $uss->options->get('user:default-role') ?? RoleImmutable::ROLE_USER;
+        
         $user->setUsername($resource['username'] ?? null);
         $user->setEmail($resource['email']);
         $user->setPassword($resource['password'], true);
         $user->setUsercode(Uss::instance()->keygen(7));
         $user->setParent($resource['parent'] ?? null);
         $user->persist();
+        $user->roles->add($defaultRole);
+
         return $user;
     }
 

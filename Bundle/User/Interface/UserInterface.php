@@ -13,5 +13,5 @@ interface UserInterface
     public function isAvailable(): bool;
     public function persist(): bool;
     public function delete(): ?bool;
-    public function isValidPassword(string $password): bool;
+    public function verifyPassword(string $password): bool;
 }

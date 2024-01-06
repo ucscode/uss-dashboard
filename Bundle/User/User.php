@@ -20,13 +20,14 @@ class User extends AbstractUserRepository
     /**
      * @method saveToSession
      */
-    public function saveToSession(): void
+    public function saveToSession(): self
     {
         if($this->isAvailable()) {
             $secret = $this->getPassword() . $this->getUsercode();
             $sessionValue = $this->getId(). ":" . hash('sha256', $secret);
             $_SESSION[self::SESSION_KEY] = $sessionValue;
         }
+        return $this;
     }
 
     /**
@@ -50,11 +51,12 @@ class User extends AbstractUserRepository
     /**
      * @method destroySession
      */
-    public function destroySession(): void
+    public function destroySession(): self
     {
         if(isset($_SESSION[self::SESSION_KEY])) {
             unset($_SESSION[self::SESSION_KEY]);
         };
+        return $this;
     }    
     
     /**
