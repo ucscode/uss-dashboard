@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
+use Module\Dashboard\Foundation\User\Form\Service\Validator;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Kernel\Uss;
 
@@ -35,11 +36,14 @@ class RegisterForm extends AbstractUserAccountForm
         $resource = $this->validateNonce($resource);
         if($resource) {
             $user = $resource['user'];
+            $validator = new Validator();
             $valid = (
-                $this->validateUsername($user['username'] ?? null) &&
-                $this->validateEmail($user['email'] ?? null) &&
-                $this->validatePassword(
-                    $user['password'] ?? null,
+                $validator->validateUsername($this->collection, $user['username'] ?? null) &&
+                $validator->validateEmail($this->collection, $user['email'] ?? null) &&
+                $validator->validatePassword($this->collection, $user['password'] ?? null) &&
+                $validator->validateConfirmationPassword(
+                    $this->collection,
+                    $user['password'],
                     $user['confirmPassword'] ?? null
                 )
             );
@@ -74,29 +78,29 @@ class RegisterForm extends AbstractUserAccountForm
         $uss = Uss::instance(); // Pairs
         $dashboard = UserDashboard::instance();
 
-        $summary = $this->getProperty('registration-error:summary');
+        $summary = $this->getProperty('error:summary');
 
         $message = [
             'title' => 'Registration Failed',
             'message' =>
-                $this->getProperty('registration-error:message') ??
+                $this->getProperty('error:message') ??
                 'Sorry! We encountered an issue during the registration process.',
         ];
 
         $successRedirect =
-            $this->getProperty('registration-success:redirect') ??
+            $this->getProperty('success:redirect') ??
             $dashboard->getDocument('index')->getUrl();
 
         if($user->isAvailable()) {
 
             $summary =
-                $this->getProperty('registration-success:summary') ??
+                $this->getProperty('success:summary') ??
                 sprintf('You can now <a href="%s">login</a> with your credentials.', $successRedirect);
 
             $message = [
                 'title' => "Registration Successful",
                 'message' =>
-                    $this->getProperty('registration-success:message') ??
+                    $this->getProperty('success:message') ??
                     "Your account has been created successfully."
             ];
 
@@ -122,60 +126,5 @@ class RegisterForm extends AbstractUserAccountForm
             exit;
         }
 
-    }
-
-    protected function validateUsername(?string $username): bool
-    {
-        if($username !== null) {
-            // Username validation logic here
-            if(!preg_match("/^\w{3,}$/i", trim($username))) {
-                $usernameInfo = "Username should be at least 3 characters containing only letter, numbers and underscore";
-                $usernameContext = $this->collection->getField('user[username]')?->getElementContext();
-                if($usernameContext) {
-                    $usernameContext->validation->setValue('* Invalid Username');
-                    $usernameContext->info->setValue($usernameInfo);
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-
-    protected function validateEmail(?string $email): bool
-    {
-        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-        if(!$email) {
-            $emailContext = $this->collection->getField('user[email]')?->getElementContext();
-            $emailContext ? $emailContext->validation->setValue('* Invalid registration email') : null;
-            return false;
-        }
-        return true;
-    }
-
-    protected function validatePassword(?string $password, ?string $confirmPassword): bool
-    {
-        $passwordResolver = $this->getPasswordResolver($password);
-
-        $information = sprintf(
-            "<div class='mb-1'>Your password should contain: %s</div>",
-            Uss::instance()->implodeReadable($passwordResolver['requirements'])
-        );
-
-        if($passwordResolver['strength'] < 5) {
-            $passwordContext = $this->collection->getField("user[password]")?->getElementContext();
-            if($passwordContext) {
-                $passwordContext->info->setValue($information);
-                $passwordContext->validation->setValue($passwordResolver['errorMessage']);
-            }
-            return false;
-        };
-
-        if($confirmPassword !== null && $password !== $confirmPassword) {
-            $passwordContext = $this->collection->getField("user[confirmPassword]")?->getElementContext();
-            $passwordContext ? $passwordContext->validation->setValue("Password does not match") : null;
-            return false;
-        }
-
-        return true;
     }
 }

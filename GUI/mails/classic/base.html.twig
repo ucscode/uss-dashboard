@@ -4,6 +4,7 @@
 {% set TEMPLATE_NAME = "classic" %}
 {% set TEMPLATE_URL = Uss.templateSchema('@Mail/' ~ TEMPLATE_NAME, Uss.ENUM.URL) %}
 {% set text_color = text_color ?? '#21282d' %}
+{% set button_style = 'display:inline-block; padding:10px 20px; background-color:#4CAF50; color:#fff; text-decoration:none; border-radius:5px;' %}
 {# 
   Email HTML Document
 #}
@@ -210,7 +211,6 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
     {% block message %}
 
       {% if message is empty %}
-
         {% set message %}
           <p style="line-height: 160%;"><strong>Dear <span style="line-height: 22.4px;">Developer</span>,</strong></p>
           <p style="line-height: 160%;"><br></p>
@@ -220,10 +220,13 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
           <p style="line-height: 160%;"><br></p>
           <p style="line-height: 160%;"><strong>Best wishes &amp; Happy Coding!</strong></p>
         {% endset %}
-
       {% endif %}
 
-      {{ message }}
+      <p>{{ client_name|trim ? 'Hi ' ~ client_name|trim : 'Dear user' }},</p> <br>
+
+      {% block message_content %}
+        {{ message }}
+      {% endblock %}
 
     {% endblock %}
 
@@ -258,7 +261,7 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
 <!--[if (mso)|(IE)]><td align="center" width="300" class="v-col-padding" style="background-color: #ffffff;width: 300px;padding: 14px 0px 50px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
 <div id="u_column_8" class="u-col u-col-50" style="max-width: 320px;min-width: 300px;display: table-cell;vertical-align: top;">
   <div style="background-color: #ffffff;height: 100%;width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-  <!--[if (!mso)&(!IE)]><!--><div class="v-col-padding" style="box-sizing: border-box; height: 100%; padding: 14px 22px 50px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
+  <!--[if (!mso)&(!IE)]><!--><div class="v-col-padding" style="box-sizing: border-box; height: 100%; padding: 0px 22px 50px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
   
 <table id="u_content_text_6" style="font-family:'Raleway',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
   <tbody>

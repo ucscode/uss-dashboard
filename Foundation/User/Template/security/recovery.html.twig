@@ -1,71 +1,23 @@
-{% extends _theme ~ '/pages/user/security/layout.html.twig' %}
+{% extends '@Foundation/User/Template/security/scheme/layout.html.twig' %}
 
-{% block main_right_form_element %}
+{% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
+
+{% block contentMain %}
     
-    {% if user.exists() is same as false %}
-        
-        {% if form.status is same as false %}
-        
-            {{ form.getHTML(true)|raw }}
+    {{ form.export|raw }}
 
-            {% block after_form %}
-                <div class='mt-2'>
-                    <p class="text-sm text-medium text-dark text-center">
-                        <a href="{{ DashboardExtension.getPageManagerUrl('index') }}" class='btn btn-outline-secondary'>
-                            Go Back To Login
-                        </a>
-                    </p>
-                </div>
-            {% endblock %}
+{% endblock %}
 
-        {% else %}
+{% block contentMainAfter %}
 
-            <div class="card">
-                <div class='card-body text-center'>
+    <br/>
 
-                    {% if form.stage is same as 0 %}
-
-                        <div class="fs-38px">
-                            <i class='bi bi-envelope-paper text-warning'></i>
-                        </div>
-
-                        <div class="">
-                            <h5 class='fw-400'>Password Reset Email Sent</h5>
-                            <p>We've sent you an email. <br> Please check your inbox and click the provided link.</p>
-                            <hr>
-                            <p class="mb-0">If you don't receive the email within a few minutes, please check your spam folder.</p>
-                        </div>
-
-                    {% else %}
-
-                        <div class="fs-38px">
-                            <i class='bi bi-check-circle text-success'></i>
-                        </div>
-
-                        <div class="">
-                            <h5 class='fw-400'>Password Updated</h5>
-                            <p>You can now login with you new password</p>
-                            <hr>
-                            <div class="mb-0">
-                                <a href='{{ DashboardExtension.getPageManagerUrl('login') }}' class='btn btn-primary w-100'>
-                                    Go To Login
-                                </a>
-                            </div>
-                        </div>
-
-                    {% endif %}
-
-                </div>
-            </div>
-
-        {% endif %}
-
-    {% else %}
-
-        {% set action = 'reset your account password' %}
-        
-        {% include _theme ~ '/pages/user/security/await.html.twig' %}
-
-    {% endif %}
+    {{ macros.callToAction(
+        {
+            question: 'Back to',
+            text: 'Login',
+            url: __dashboard.getDocument('index').url
+        }
+    ) }}
 
 {% endblock %}

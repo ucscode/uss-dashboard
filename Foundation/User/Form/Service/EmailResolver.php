@@ -18,34 +18,17 @@ class EmailResolver
 
     public function sendConfirmationEmail(User $user): bool
     {
-        $registrationEmailSubject =
-        $this->properties['registration-email:subject'] ??
-        'Your Confirmation Link';
+        $this->properties['email:subject'] ??= 'Your Confirmation Link';
+        $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/register.email.twig';
+        $this->properties['email:template.context'] ??= $this->getSystemContext($user);
 
-        $registrationEmailTemplate =
-            $this->properties['registration-email:template'] ??
-            '@Foundation/User/Template/security/mails/register.email.twig';
-
-        $registrationEmailTemplateContext =
-            $this->properties['registration-email:template.context'] ??
-            [
-                'privacy_policy_url' => $this->properties['privacyPolicyUrl'] ?? '#',
-                'client_name' => $user->getUsername(),
-                'confirmation_link' => $this->getConfirmationLink(
-                    $user,
-                    UserDashboard::instance()->getDocument('index')->getUrl()
-                ),
-            ];
-
-        $mailer = new Mailer();
-
-        $mailer->useMailHogTesting();
-        $mailer->addAddress($user->getEmail());
-        $mailer->setSubject($registrationEmailSubject);
-        $mailer->setTemplate($registrationEmailTemplate);
-        $mailer->setContext($registrationEmailTemplateContext);
-
-        return $mailer->sendMail();
+        $this->properties['email:template.context'] += [
+            'confirmation_link' => $this->getConfirmationLink(
+                $user, UserDashboard::instance()->getDocument('index')->getUrl()
+            ),
+        ];
+        
+        return $this->emailProcessor($user);
     }
 
     public function getConfirmationEmailSummary(bool $confirmationEmailSent): string
@@ -80,6 +63,29 @@ class EmailResolver
         }
     }
 
+    public function sendRecoveryEmail(User $user): bool
+    {
+        $this->properties['email:subject'] ??= 'Reset Your Password';
+        $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/recovery.email.twig';
+        $this->properties['email:template.context'] ??= $this->getSystemContext($user);
+        
+        return $this->emailProcessor($user);
+    }
+
+    protected function emailProcessor(User $user): bool
+    {
+        $mailer = new Mailer();
+
+        $mailer->useMailHogTesting();
+        $mailer->addAddress($user->getEmail());
+        $mailer->setSubject($this->properties['email:subject']);
+        $mailer->setTemplate($this->properties['email:template']);
+        $mailer->setContext($this->properties['email:template.context']);
+        // echo $mailer->getTemplateOutput();
+        // exit;
+        return $mailer->sendMail();
+    }
+
     protected function verifyEmailContext(?int $userid, ?string $inputCode): void
     {
         $toast = new Toast();
@@ -106,6 +112,14 @@ class EmailResolver
         }
 
         Flash::instance()->addToast("verify-email", $toast);
+    }
+
+    protected function getSystemContext(User $user): array
+    {
+        return [
+            'privacy_policy_url' => $this->properties['privacyPolicyUrl'] ?? '#',
+            'client_name' => $user->getUsername(),
+        ];
     }
 
     protected function getConfirmationLink(User $user, string $destination): string

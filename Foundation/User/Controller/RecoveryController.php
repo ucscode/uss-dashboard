@@ -2,6 +2,8 @@
 
 namespace Module\Dashboard\Foundation\User\Controller;
 
+use Exception;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Route\RouteInterface;
 
@@ -11,10 +13,23 @@ class RecoveryController implements RouteInterface
     {
         $dashboard = UserDashboard::instance()->enableFirewall(false);
         $document = $dashboard->getDocument('recovery');
-        $formInstance = $document->getForm();
-        $formInstance->handleSubmission();
+
+        $form = $document->getCustom('app.form');
+
+        if(!$form instanceof DashboardFormInterface) {
+            throw new Exception(
+                sprintf(
+                    "Dashboard application recovery form must be an instance of %",
+                    DashboardFormInterface::class
+                )
+            );
+        }
+
+        $form->build();
+        $form->handleSubmission();
+
         $dashboard->render($document->getTemplate(), [
-            'form' => $formInstance
+            'form' => $form
         ]);
     }
 }

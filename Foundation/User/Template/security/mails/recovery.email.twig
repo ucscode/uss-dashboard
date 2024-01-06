@@ -1,0 +1,17 @@
+{% extends '@Mail/classic/base.html.twig' %}
+
+{% block message_content %}
+
+    <p>We have received your request to reset your password. To initiate the password reset process, please follow the link provided below:</p><br>
+
+    <p>
+        <a href="{{ reset_link }}" target="_blank" style="{{ button_style }}">
+            Password Reset Link
+        </a>
+    </p><br>
+
+    <p>If you did not initiate this request or have any concerns, please disregard this email. Your account security is important to us.</p><br>
+
+    <p>Thank you!</p>
+
+{% endblock %}
