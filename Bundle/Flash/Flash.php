@@ -3,11 +3,10 @@
 namespace Module\Dashboard\Bundle\Flash;
 
 use Module\Dashboard\Bundle\Flash\Abstract\AbstractFlash;
-use Module\Dashboard\Bundle\Flash\Modal\Button;
 use Module\Dashboard\Bundle\Flash\Modal\Graphics\ModalGUI;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
-use stdClass;
-use Uss\Component\Block\BlockManager;
+use Module\Dashboard\Bundle\Flash\Toast\Toast;
+use Module\Dashboard\Bundle\Flash\Toast\ToastGUI;
 use Uss\Component\Trait\SingletonTrait;
 
 /** 
@@ -26,28 +25,55 @@ class Flash extends AbstractFlash
         
         $this->projectOnEscapeLogic($modal, $modalGUI);
 
-        $bootboxComponents = $modalGUI->createBootboxComponents($modal); // (array)
-        $javascriptObject = $modalGUI->createJavascriptObject($bootboxComponents, null); // (string)
-        
-        $key = session_id();
-        $delay = $modal->getDelay();
-        $content = "<script>$(() => setTimeout(() => bootbox.dialog({$javascriptObject}), {$delay}));</script>";
-        
-        $this->flash->{$key} ??= [];
-        $this->flash->{$key}['created'] ??= time();
-        $this->flash->{$key}['modal'] ??= [];
-        $this->flash->{$key}['modal'][] = [
-            'timestamp' => time(),
-            'content' => $content
-        ];
+        $bootboxComponents = $modalGUI->createBootboxComponents($modal); // (array|null)
 
-        //$this->flash->save();
+        if($bootboxComponents) 
+        {
+            $javascriptObject = $modalGUI->createJavascriptObject($bootboxComponents, null); // (string)
+            
+            $key = session_id();
+            $delay = $modal->getDelay();
+            $content = "<script>$(() => setTimeout(() => console.log(bootbox.dialog({$javascriptObject})), {$delay}));</script>";
+            
+            $this->flash->{$key} ??= [];
+            $this->flash->{$key}['created'] ??= time();
+            $this->flash->{$key}['modal'] ??= [];
+            $this->flash->{$key}['modal'][] = [
+                'timestamp' => time(),
+                'content' => $content
+            ];
+
+            $this->flash->save();
+        }
 
         return $this;
     }
 
     public function addToast(string $name, Toast $toast): self
     {
+        $toastGUI = new ToastGUI();
+
+        $toastifyComponents = $toastGUI->createToastifyComponents($toast);
+        
+        if($toastifyComponents) 
+        {
+            $javascriptObject = $toastGUI->createJavascriptObject($toastifyComponents); // (string)
+            
+            $key = session_id();
+            $delay = $toast->getDelay();
+            $content = "<script>$(() => setTimeout(() => console.log(Toastify({$javascriptObject}).showToast()), {$delay}));</script>";
+            
+            $this->flash->{$key} ??= [];
+            $this->flash->{$key}['created'] ??= time();
+            $this->flash->{$key}['toast'] ??= [];
+            $this->flash->{$key}['toast'][] = [
+                'timestamp' => time(),
+                'content' => $content
+            ];
+            
+            $this->flash->save();
+        }
+
         return $this;
     }
 

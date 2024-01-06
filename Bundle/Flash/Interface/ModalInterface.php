@@ -22,6 +22,4 @@ interface ModalInterface
     public function isBackdropStaticEnabled(): bool;
     public function enableKeyboard($enabled = true): self;
     public function isKeyboardEnabled(): bool;
-    public function setDelay(?int $delay): self;
-    public function getDelay(): int;
 }

@@ -2,16 +2,17 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailVerification;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Field\Field;
 
-class LoginForm extends AbstractUserAccountForm
+class LoginForm extends AbstractEmailVerification
 {
     public readonly UssElement $mailerBlock;
 
     public function buildForm(): void
     {
+        $this->verifyEmail();
         $this->createAccessField();
         $this->createPasswordField();
         $submitField = $this->createSubmitButton();

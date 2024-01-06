@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Flash\Abstract;
 
+use DateTime;
 use Module\Dashboard\Bundle\Flash\Interface\FlashInterface;
 use Ucscode\LocalStorage\LocalStorage;
 use Uss\Component\Block\BlockManager;
@@ -23,35 +24,43 @@ abstract class AbstractFlash implements FlashInterface
     public function dump(): void
     {
         $allContext = $this->flash->getContext();
+        $timeLimit = 0.01;
 
         foreach($allContext as $session_id => $context) 
         {
-            // Test for online presence to sustain flash session
-            if(session_id() == $session_id) {
+            $isFlashForCurrentUser = session_id() == $session_id;
+
+            if($isFlashForCurrentUser) {
                 $this->flash->{$session_id}['created'] = time(); // increase active user time
             };
-
+            
             $time = (time() - $context['created']) / 86400;
-
-            if($time >= 0.1) {
+            
+            if($time >= $timeLimit) {
                 // flash has stay too long and should be discarded
                 unset($this->flash->{$session_id});
                 continue;
             }
 
-            foreach($context['modal'] as $key => $data) 
+            $indexes = ['modal', 'toast'];
+            
+            foreach($indexes as $index) 
             {
-                $time = (time() - $data['timestamp']) / 86400;
-                
-                if($time < 0.1) {
-                    // The time is appropriate
-                    BlockManager::instance()
-                        ->getBlock("body_javascript")
-                        ->addContent("{$session_id}:{$key}", $data['content']);
-                };
-                
-                // Discard entity after pasting it
-                unset($this->flash->{$session_id}['modal'][$key]);
+                $item = $context[$index] ?? [];
+
+                foreach($item as $key => $data) 
+                {
+                    $time = (time() - $data['timestamp']) / 86400;
+                    
+                    if($time < $timeLimit && $isFlashForCurrentUser) {
+                        BlockManager::instance()
+                            ->getBlock("body_javascript")
+                            ->addContent("{$session_id}:{$index}:{$key}", $data['content']);
+                    };
+                    
+                    // Discard entity after pasting it
+                    unset($this->flash->{$session_id}[$index][$key]);
+                }
             }
         }
 

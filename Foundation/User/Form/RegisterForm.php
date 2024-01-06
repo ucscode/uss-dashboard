@@ -55,9 +55,10 @@ class RegisterForm extends AbstractUserAccountForm
         $user = new User();
         $user->setUsername($resource['username'] ?? null);
         $user->setEmail($resource['email']);
-        $user->setPassword($resource['password']);
-        $user->setUsercode(Uss::instance()->keygen());
+        $user->setPassword($resource['password'], true);
+        $user->setUsercode(Uss::instance()->keygen(7));
         $user->setParent($resource['parent'] ?? null);
+        $user->persist();
         return $user;
     }
 
@@ -75,11 +76,11 @@ class RegisterForm extends AbstractUserAccountForm
                 'Sorry! We encountered an issue during the registration process.',
         ];
 
-        if(!$user->isAvailable()) {
+        $successRedirect = 
+            $this->getProperty('registration-success:redirect') ?? 
+            $dashboard->getDocument('index')->getUrl();
 
-            $successRedirect = 
-                $this->getProperty('registration-success:redirect') ?? 
-                $dashboard->getDocument('index')->getUrl();
+        if($user->isAvailable()) {
 
             $summary = 
                 $this->getProperty('registration-success:summary') ?? 
@@ -96,7 +97,7 @@ class RegisterForm extends AbstractUserAccountForm
 
                 $registrationEmailSubject =
                     $this->getProperty('registration-email:subject') ??
-                    'Email Confirmation';
+                    'Your Confirmation Link';
 
                 $registrationEmailTemplate =
                     $this->getProperty('registration-email:template') ??
@@ -142,16 +143,10 @@ class RegisterForm extends AbstractUserAccountForm
         $modal->setMessage($message['message']);
         $modal->setTitle($message['title']);
 
-        if(isset($successRedirect)) {
-            $modal->setCustomCallback('onEscape', 'security.redirect', $successRedirect);
-        }
-
         Flash::instance()->addModal("registeration", $modal);
 
         if($user->isAvailable()) {
-            $indexDocument = UserDashboard::instance()->getDocument("index");
-            $nextLocation = $indexDocument->getUrl();
-            header("location: {$nextLocation}");
+            header("location: {$successRedirect}");
             exit;
         }
 
@@ -215,7 +210,7 @@ class RegisterForm extends AbstractUserAccountForm
     protected function getConfirmationLink(User $user, string $destination): string
     {
         $confirmationCode = Uss::instance()->keygen(20);
-        //$user->meta->set('confirmation-code', $confirmationCode);
+        $user->meta->set('verify-email:code', $confirmationCode);
         $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
         return $this->addUrlParameter($destination, 'verify-email', $emailCode);
     }

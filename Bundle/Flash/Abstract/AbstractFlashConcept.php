@@ -9,6 +9,7 @@ abstract class AbstractFlashConcept implements FlashConceptInterface
     protected ?string $message = null;
     protected ?string $title = null;
     protected array $callbacks = [];
+    protected int $delay = 0;
 
     public function __construct()
     {
@@ -59,8 +60,20 @@ abstract class AbstractFlashConcept implements FlashConceptInterface
         }
         return $this;
     }
+
     public function getCustomCallbacks(): array
     {
         return $this->callbacks;
+    }
+
+    public function setDelay(?int $delay): self
+    {
+        $this->delay = $delay === null ? 0 : abs($delay);
+        return $this;
+    }
+
+    public function getDelay(): int
+    {
+        return $this->delay;
     }
 }

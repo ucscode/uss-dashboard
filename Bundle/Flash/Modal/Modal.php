@@ -14,7 +14,6 @@ class Modal extends AbstractFlashConcept implements ModalInterface
     protected bool $backdropStaticEnabled = true;
     protected bool $keyboardEnabled = true;
     protected ?string $onEscapeCallback = null;
-    protected int $delay = 0;
 
     public function __construct()
     {
@@ -99,16 +98,5 @@ class Modal extends AbstractFlashConcept implements ModalInterface
     public function isKeyboardEnabled(): bool
     {
         return $this->keyboardEnabled;
-    }
-
-    public function setDelay(?int $delay): self
-    {
-        $this->delay = $delay === null ? 0 : abs($delay);
-        return $this;
-    }
-
-    public function getDelay(): int
-    {
-        return $this->delay;
     }
 }

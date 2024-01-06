@@ -12,4 +12,6 @@ interface FlashConceptInterface
     public function getCustomCallback(string $name, bool $getValue = false): ?string;
     public function removeCustomCallback(string $name): self;
     public function getCustomCallbacks(): array;
+    public function setDelay(?int $delay): self;
+    public function getDelay(): int;
 }
