@@ -6,12 +6,12 @@ use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailVerification;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
 
-class LoginForm extends AbstractEmailVerification
+class LoginForm extends AbstractEmailResolver
 {
     public readonly UssElement $mailerBlock;
 
@@ -46,7 +46,7 @@ class LoginForm extends AbstractEmailVerification
         $key = strpos($resource['access'], '@') !== false ? 'email' : 'username';
 
         $info = $uss->fetchItem(
-            UserInterface::USER_TABLE, 
+            UserInterface::USER_TABLE,
             $uss->sanitize($resource['access'], true),
             $key
         );
@@ -61,7 +61,7 @@ class LoginForm extends AbstractEmailVerification
         $user = $response;
         $user->saveToSession();
     }
-    
+
     /**
      * @Build
      */
@@ -78,7 +78,7 @@ class LoginForm extends AbstractEmailVerification
                     mt_rand(0, 1) ? $this->faker?->username() : $this->faker?->email()
                 )
             )
-            ;
+        ;
 
         $context->prefix->setValue("<i class='bi bi-person-check-fill'></i>");
 

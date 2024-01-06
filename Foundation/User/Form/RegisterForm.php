@@ -5,13 +5,12 @@ namespace Module\Dashboard\Foundation\User\Form;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
-use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Kernel\Uss;
 
-class RegisterForm extends AbstractUserAccountForm
+class RegisterForm extends AbstractEmailResolver
 {
     public function buildForm(): void
     {
@@ -57,7 +56,7 @@ class RegisterForm extends AbstractUserAccountForm
         $user = new User();
         $resource = $uss->sanitize($resource, true);
         $defaultRole = $uss->options->get('user:default-role') ?? RoleImmutable::ROLE_USER;
-        
+
         $user->setUsername($resource['username'] ?? null);
         $user->setEmail($resource['email']);
         $user->setPassword($resource['password'], true);
@@ -78,67 +77,31 @@ class RegisterForm extends AbstractUserAccountForm
 
         $message = [
             'title' => 'Registration Failed',
-            'message' => 
-                $this->getProperty('registration-error:message') ?? 
+            'message' =>
+                $this->getProperty('registration-error:message') ??
                 'Sorry! We encountered an issue during the registration process.',
         ];
 
-        $successRedirect = 
-            $this->getProperty('registration-success:redirect') ?? 
+        $successRedirect =
+            $this->getProperty('registration-success:redirect') ??
             $dashboard->getDocument('index')->getUrl();
 
         if($user->isAvailable()) {
 
-            $summary = 
-                $this->getProperty('registration-success:summary') ?? 
+            $summary =
+                $this->getProperty('registration-success:summary') ??
                 sprintf('You can now <a href="%s">login</a> with your credentials.', $successRedirect);
 
             $message = [
                 'title' => "Registration Successful",
-                'message' => 
-                    $this->getProperty('registration-success:message') ?? 
+                'message' =>
+                    $this->getProperty('registration-success:message') ??
                     "Your account has been created successfully."
             ];
 
             if($uss->options->get('user:confirm-email')) {
-
-                $registrationEmailSubject =
-                    $this->getProperty('registration-email:subject') ??
-                    'Your Confirmation Link';
-
-                $registrationEmailTemplate =
-                    $this->getProperty('registration-email:template') ??
-                    '@Foundation/User/Template/security/mails/register.email.twig';
-
-                $registrationEmailTemplateContext =
-                    $this->getProperty('registration-email:template.context') ??
-                    [
-                        'privacy_policy_url' => $this->getProperty('privacyPolicyUrl') ?: '#',
-                        'client_name' => $user->getUsername(),
-                        'confirmation_link' => $this->getConfirmationLink(
-                            $user,
-                            $dashboard->getDocument('index')->getUrl()
-                        ),
-                    ];
-
-                $mailer = new Mailer();
-                $mailer->useMailHogTesting();
-
-                $mailer->addAddress($user->getEmail());
-                $mailer->setSubject($registrationEmailSubject);
-                $mailer->setTemplate($registrationEmailTemplate);
-                $mailer->setContext($registrationEmailTemplateContext);
-
-                $summary = 
-                    $this->getProperty('registration-email-error:summary') ??
-                    'We could not sent a confirmation email to you <br> 
-                    Please contact the support team to resolve your account';
-                
-                if($mailer->sendMail()) {
-                    $summary = 
-                        $this->getProperty('registration-email-success:summary') ??
-                        'Please check your email to confirm the link we sent';
-                }
+                $emailSent = $this->sendConfirmationEmail($user);
+                $summary = $this->getConfirmationEmailSummary($emailSent);
             }
 
             if(!empty($summary)) {
@@ -212,21 +175,5 @@ class RegisterForm extends AbstractUserAccountForm
         }
 
         return true;
-    }
-
-    protected function getConfirmationLink(User $user, string $destination): string
-    {
-        $confirmationCode = Uss::instance()->keygen(20);
-        $user->meta->set('verify-email:code', $confirmationCode);
-        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
-        return $this->addUrlParameter($destination, 'verify-email', $emailCode);
-    }
-
-    protected function addUrlParameter(string $url, string $name, string $value): string
-    {
-        $parsed_url = parse_url($url);
-        $hasQuery = isset($parsed_url['query']);
-        $url .= $hasQuery ? (($parsed_url['query'] === '') ? '' : '&') : '?';
-        return $url . "$name=$value";
     }
 }

@@ -20,7 +20,7 @@ new class () {
 
         new DatabaseGenerator($uss);
         new DashboardEnvironment($uss);
-
+        
         $this->createUserApplication();
         $this->createAdminApplication();
 
