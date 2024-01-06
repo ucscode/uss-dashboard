@@ -17,10 +17,8 @@ final class DocumentFactory
 {
     protected string $base;
 
-    public function __construct(
-        protected DashboardInterface $dashboard,
-        protected string $namespace
-    ){
+    public function __construct(protected DashboardInterface $dashboard, protected string $namespace)
+    {
         $this->base = $this->dashboard->appControl->getBase();
     }
 

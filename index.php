@@ -20,7 +20,7 @@ new class () {
 
         new DatabaseGenerator($uss);
         new DashboardEnvironment($uss);
-        
+
         $this->createUserApplication();
         $this->createAdminApplication();
 
@@ -38,6 +38,7 @@ new class () {
             ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
         UserDashboard::instance($appControl); // One-time Instantiation
+        //(new \Module\Dashboard\Bundle\User\User())->acquireFromSession()->destroySession();
     }
 
     public function createAdminApplication(): void

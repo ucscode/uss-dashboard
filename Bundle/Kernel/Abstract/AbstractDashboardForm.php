@@ -13,6 +13,8 @@ use Ucscode\UssForm\Form\Form;
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
 {
     abstract protected function buildForm(): void;
+    abstract protected function validateResource(array $resource): array|bool|null;
+    abstract protected function persistResource(array $resource): mixed;
     abstract protected function resolveSubmission(mixed $response): void;
 
     public readonly Collection $collection;
@@ -59,6 +61,11 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             unset($this->properties[$name]);
         }
         return $this;
+    }
+
+    final public function getProperties(): array
+    {
+        return $this->properties;
     }
 
     final public function handleSubmission(): void

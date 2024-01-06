@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form\Abstract;
+namespace Module\Dashboard\Foundation\User\Form\Service;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
@@ -9,22 +9,27 @@ use Uss\Component\Kernel\Uss;
 use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Foundation\User\UserDashboard;
 
-abstract class AbstractEmailResolver extends AbstractUserAccountForm
+class EmailResolver
 {
-    protected function sendConfirmationEmail(User $user): ?string
+    public function __construct(protected array $properties)
+    {
+
+    }
+
+    public function sendConfirmationEmail(User $user): bool
     {
         $registrationEmailSubject =
-        $this->getProperty('registration-email:subject') ??
+        $this->properties['registration-email:subject'] ??
         'Your Confirmation Link';
 
         $registrationEmailTemplate =
-            $this->getProperty('registration-email:template') ??
+            $this->properties['registration-email:template'] ??
             '@Foundation/User/Template/security/mails/register.email.twig';
 
         $registrationEmailTemplateContext =
-            $this->getProperty('registration-email:template.context') ??
+            $this->properties['registration-email:template.context'] ??
             [
-                'privacy_policy_url' => $this->getProperty('privacyPolicyUrl') ?: '#',
+                'privacy_policy_url' => $this->properties['privacyPolicyUrl'] ?? '#',
                 'client_name' => $user->getUsername(),
                 'confirmation_link' => $this->getConfirmationLink(
                     $user,
@@ -33,7 +38,7 @@ abstract class AbstractEmailResolver extends AbstractUserAccountForm
             ];
 
         $mailer = new Mailer();
-        
+
         $mailer->useMailHogTesting();
         $mailer->addAddress($user->getEmail());
         $mailer->setSubject($registrationEmailSubject);
@@ -43,23 +48,23 @@ abstract class AbstractEmailResolver extends AbstractUserAccountForm
         return $mailer->sendMail();
     }
 
-    protected function getConfirmationEmailSummary(bool $confirmationEmailSent): string
+    public function getConfirmationEmailSummary(bool $confirmationEmailSent): string
     {
         $summary =
-            $this->getProperty('registration-email-error:summary') ??
+            $this->properties['registration-email-error:summary'] ??
             'We could not sent a confirmation email to you <br> 
         Please contact the support team to resolve your account';
 
         if($confirmationEmailSent) {
             $summary =
-                $this->getProperty('registration-email-success:summary') ??
+                $this->properties['registration-email-success:summary'] ??
                 'Please check your email to confirm the link we sent';
         };
 
         return $summary;
     }
 
-    protected function verifyEmail(): void
+    public function verifyAccountEmail(): void
     {
         if($_SERVER['REQUEST_METHOD'] === 'GET') {
             $encoding = $_GET['verify-email'] ?? null;

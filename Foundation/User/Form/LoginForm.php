@@ -6,12 +6,13 @@ use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
 
-class LoginForm extends AbstractEmailResolver
+class LoginForm extends AbstractUserAccountForm
 {
     public readonly UssElement $mailerBlock;
 
@@ -22,7 +23,8 @@ class LoginForm extends AbstractEmailResolver
             'user[password]' => '&z25#W12_',
         ]);
 
-        $this->verifyEmail();
+        $this->resolveConfirmationEmail();
+
         $this->createAccessField();
         $this->createPasswordField();
         $submitField = $this->createSubmitButton();
@@ -130,5 +132,11 @@ class LoginForm extends AbstractEmailResolver
         Flash::instance()->addToast("login", $toast);
 
         return null;
+    }
+
+    protected function resolveConfirmationEmail(): void
+    {
+        $emailResolver = new EmailResolver($this->getProperties());
+        $emailResolver->verifyAccountEmail();
     }
 }

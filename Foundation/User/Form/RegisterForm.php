@@ -6,11 +6,12 @@ use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Kernel\Uss;
 
-class RegisterForm extends AbstractEmailResolver
+class RegisterForm extends AbstractUserAccountForm
 {
     public function buildForm(): void
     {
@@ -100,8 +101,9 @@ class RegisterForm extends AbstractEmailResolver
             ];
 
             if($uss->options->get('user:confirm-email')) {
-                $emailSent = $this->sendConfirmationEmail($user);
-                $summary = $this->getConfirmationEmailSummary($emailSent);
+                $emailResolver = new EmailResolver($this->getProperties());
+                $emailSent = $emailResolver->sendConfirmationEmail($user);
+                $summary = $emailResolver->getConfirmationEmailSummary($emailSent);
             }
 
             if(!empty($summary)) {

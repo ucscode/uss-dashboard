@@ -5,30 +5,13 @@ namespace Module\Dashboard\Bundle\Kernel\Interface;
 interface DashboardFormInterface
 {
     public function build(): void;
-    
     public function addBuilderAction(string $name, DashboardFormBuilderInterface $exporter): self;
-
+    public function getBuilderAction(string $name): ?DashboardFormBuilderInterface;
     public function removeBuilderAction(string $name): self;
-
-    // Handle Form Submission
+    public function addSubmitAction(string $name, DashboardFormSubmitInterface $submitter): self;
+    public function getSubmitAction(string $name): ?DashboardFormSubmitInterface;
+    public function removeSubmitAction(string $name): self;
     public function handleSubmission(): void;
-
-    // Apply logic to check if the form has been submitted.
     public function isSubmitted(): bool;
-
-    // Apply logic to collect on relevant data from _POST or _GET request.
     public function filterResource(): array;
-
-    // Apply logic to check if filtered contents are valid
-    public function validateResource(array $resource): array|bool|null;
-
-    /**
-     * Apply logic for saving the provided data into database
-     * 
-     * Return Values:
-     * - int: The last inserted id
-     * - array: A group of values to be returned instead of just last inserted id
-     * - bool: Technically false if not inserted
-     */
-    public function persistResource(array $resource): mixed;
 }

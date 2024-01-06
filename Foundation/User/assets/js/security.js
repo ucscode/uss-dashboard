@@ -1,7 +1,7 @@
 "use strict";
 
-let security = new class {
-	
+let security = new class 
+{
 	constructor($) {
 		this.#initialize($);
 	}
@@ -27,31 +27,48 @@ let security = new class {
 				callback: function(value) {
 					if( !value || value.trim() == '') return;
 					Notiflix.Loading.hourglass();
-					self.#createAjax(value);
+					self.#createAjax({
+						email: value,
+						nonce: Uss.dashboard.nonce
+					});
 				},
 			});
 		});
 	}
 
-	#createAjax() {
-		
-		// $.ajax({
-		// 	url: self.action,
-		// 	data: {
-		// 		email: value,
-		// 		route: 'ud-vcode'
-		// 	},
-		// 	method: 'POST',
-		// 	success: function(response) {
-		// 		Notiflix.Loading.remove();
-		// 		let result = JSON.parse(response);
-		// 		bootbox.alert({
-		// 			title: Uss.platform,
-		// 			message: result.message 
-		// 		});
-		// 	}
-		// });
+	#createAjax(data) {
+		const self = this;
+
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: (new URLSearchParams(data)).toString()
+		};
+
+		fetch(Uss.dashboard.url + '/ajax/verify-email', options)
+			.then(response => {
+				if(response.ok) {
+					return response.json();
+				}
+				throw new Error('Error: Could not handle request');
+			})
+			.then(data => {
+				self.#toast(data.status, data.message)
+			})
+			.catch(error => self.#toast(false, error))
+			.finally(() => Notiflix.Loading.remove());
+
 	}
 	
+	#toast(status, message) {
+		let background = status ? 'var(--bs-success)' : 'var(--bs-danger)';
+		Toastify({
+			text: message,
+			style: { background },
+			duration: 5000
+		}).showToast();
+	}
 }(jQuery);
 

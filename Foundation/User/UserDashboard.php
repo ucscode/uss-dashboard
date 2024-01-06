@@ -4,6 +4,7 @@ namespace Module\Dashboard\Foundation\User;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
+use Module\Dashboard\Foundation\User\Compact\AjaxDocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\DocumentFactory;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Trait\SingletonTrait;
@@ -17,12 +18,13 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
 
     public function createApp(AppControl $appControl): void
     {
-        parent::createApp($appControl);
         $this->profileBatch = new TreeNode('profileBatch');
-        $this->createFacade();
+        parent::createApp($appControl);
+        $this->createLocalDocuments();
+        $this->createAjaxDocuments();
     }
 
-    protected function createFacade(): void
+    protected function createLocalDocuments(): void
     {
         $factory = new DocumentFactory($this, '@Foundation/User/Template');
 
@@ -40,5 +42,12 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         // $factory->createUserPasswordPage();
 
         # (new Event())->addListener('dashboard:render', new ProfileBatchRegulator($this), -10);
+    }
+
+    protected function createAjaxDocuments(): void
+    {
+       $ajaxFactory = new AjaxDocumentFactory($this);
+
+       $this->addDocument('ajax:verify-email', $ajaxFactory->createResendRegisterEmailDocument());
     }
 }
