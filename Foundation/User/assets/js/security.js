@@ -49,10 +49,13 @@ let security = new class
 
 		fetch(Uss.dashboard.url + '/ajax/verify-email', options)
 			.then(response => {
+				let errorMessage = 'Could not handle the request';
 				if(response.ok) {
-					return response.json();
+					return response.json().catch(() => {
+						throw new Error(errorMessage);
+					});
 				}
-				throw new Error('Error: Could not handle request');
+				throw new Error(errorMessage);
 			})
 			.then(data => {
 				self.#toast(data.status, data.message)

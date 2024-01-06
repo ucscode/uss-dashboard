@@ -12,7 +12,7 @@ class AjaxDocumentFactory
 
     public function __construct(protected DashboardInterface $dashboard)
     {
-        $this->base = $dashboard->appControl->getBase();   
+        $this->base = $dashboard->appControl->getBase();
     }
 
     public function createResendRegisterEmailDocument(): Document
@@ -21,6 +21,7 @@ class AjaxDocumentFactory
             ->setName('verify-email')
             ->setRoute('/ajax/verify-email', $this->base)
             ->setController(new ReconfirmRegisterEmail())
+            ->setRequestMethods(['POST'])
         ;
     }
 }

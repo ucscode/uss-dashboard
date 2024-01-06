@@ -23,7 +23,7 @@ class ReconfirmRegisterEmail implements RouteInterface
 
         if($isValidNonce) {
 
-            $summary = "The email account was not found!";
+            $summary = "The email account was not found";
 
             $email = Uss::instance()->sanitize($_POST['email'] ?? null);
             $user = (new User())->allocate('email', $email);
