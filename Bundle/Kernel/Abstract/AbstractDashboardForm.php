@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
-use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormBuilderInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
@@ -13,9 +12,9 @@ use Ucscode\UssForm\Form\Form;
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
 {
     abstract protected function buildForm(): void;
-    abstract protected function validateResource(array $resource): array|bool|null;
-    abstract protected function persistResource(array $resource): mixed;
-    abstract protected function resolveSubmission(mixed $response): void;
+    abstract protected function validateResource(array $filteredResource): ?array;
+    abstract protected function persistResource(?array $validatedResource): mixed;
+    abstract protected function resolveSubmission(mixed $presistedResource): void;
 
     public readonly Collection $collection;
     private array $properties = [];
@@ -26,22 +25,6 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         parent::__construct($attribute);
         $this->collection = $this->getCollection(self::DEFAULT_COLLECTION);
-    }
-
-    /**
-     * @Override
-     */
-    public function filterResource(): array
-    {
-        return match($_SERVER['REQUEST_METHOD']) {
-            'POST' => $_POST,
-            'GET' => $_GET,
-            default => call_user_func(function (): ?string {
-                $responseInput = file_get_contents("php://input");
-                $jsonValue = json_decode($responseInput, true);
-                return json_last_error() === JSON_ERROR_NONE ? $jsonValue : $responseInput;
-            }),
-        };
     }
 
     final public function setProperty(string $name, mixed $property): self
@@ -66,41 +49,6 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     final public function getProperties(): array
     {
         return $this->properties;
-    }
-
-    final public function handleSubmission(): void
-    {
-        if($this->isSubmitted()) {
-            $filteredResource = $this->filterResource();
-
-            array_walk(
-                $this->submitInterfaces,
-                fn (DashboardFormSubmitInterface $submitter) => $submitter->onSubmit($filteredResource, $this)
-            );
-
-            $validatedResource = $this->validateResource($filteredResource);
-            $justified = is_array($validatedResource) || $validatedResource === true;
-
-
-            if($justified) {
-
-                array_walk(
-                    $this->submitInterfaces,
-                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource, $this)
-                );
-
-                $response = $this->persistResource(
-                    is_array($validatedResource) ? $validatedResource : $filteredResource
-                );
-
-                array_walk(
-                    $this->submitInterfaces,
-                    fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($response, $this)
-                );
-
-                $this->resolveSubmission($response);
-            }
-        };
     }
 
     final public function addBuilderAction(string $name, DashboardFormBuilderInterface $builder): self
@@ -152,5 +100,48 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             $this->builderInterfaces,
             fn (DashboardFormBuilderInterface $exporter) => $exporter->onBuild($this)
         );
+    }
+
+    final public function handleSubmission(): void
+    {
+        if($this->isSubmitted()) {
+
+            $filteredResource = $this->filterResource(); // Local resolver
+
+            array_walk(
+                $this->submitInterfaces,
+                fn (DashboardFormSubmitInterface $submitter) => $submitter->onSubmit($filteredResource, $this)
+            );
+
+            $validatedResource = $this->validateResource($filteredResource); // Local Resolver
+
+            array_walk(
+                $this->submitInterfaces,
+                fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource, $this)
+            );
+
+            $presistedResource = $this->persistResource($validatedResource); // Local Resolver
+
+            array_walk(
+                $this->submitInterfaces,
+                fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($presistedResource, $this)
+            );
+
+            $this->resolveSubmission($presistedResource); // Local Resolver
+
+        };
+    }
+
+    protected function filterResource(): array
+    {
+        return match($_SERVER['REQUEST_METHOD']) {
+            'POST' => $_POST,
+            'GET' => $_GET,
+            default => call_user_func(function (): ?string {
+                $input = file_get_contents("php://input");
+                $jsonValue = json_decode($input, true);
+                return json_last_error() === JSON_ERROR_NONE ? $jsonValue : ['input' => $input];
+            }),
+        };
     }
 }

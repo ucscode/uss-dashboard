@@ -31,9 +31,9 @@ class RegisterForm extends AbstractUserAccountForm
         $this->hideLabels();
     }
 
-    public function validateResource(array $resource): array|bool|null
+    public function validateResource(array $filteredResource): ?array
     {
-        $resource = $this->validateNonce($resource);
+        $resource = $this->validateNonce($filteredResource);
         if($resource) {
             $user = $resource['user'];
             $validator = new Validator();
@@ -50,81 +50,88 @@ class RegisterForm extends AbstractUserAccountForm
             if($valid && array_key_exists('confirmPassword', $user)) {
                 unset($user['confirmPassword']);
             }
-            return $valid ? $user : false;
+            return $valid ? $user : null;
         };
         return null;
     }
 
-    public function persistResource(array $resource): mixed
+    public function persistResource(?array $validatedResource): mixed
     {
-        $uss = Uss::instance();
-        $user = new User();
-        $resource = $uss->sanitize($resource, true);
-        $defaultRole = $uss->options->get('user:default-role') ?? RoleImmutable::ROLE_USER;
+        if($validatedResource !== null) {
 
-        $user->setUsername($resource['username'] ?? null);
-        $user->setEmail($resource['email']);
-        $user->setPassword($resource['password'], true);
-        $user->setUsercode(Uss::instance()->keygen(7));
-        $user->setParent($resource['parent'] ?? null);
-        $user->persist();
-        $user->roles->add($defaultRole);
+            $uss = Uss::instance();
+            $user = new User();
+            $resource = $uss->sanitize($validatedResource, true);
+            $defaultUserRole = $uss->options->get('user:default-role') ?? RoleImmutable::ROLE_USER;
 
-        return $user;
+            $user->setUsername($resource['username'] ?? null);
+            $user->setEmail($resource['email']);
+            $user->setPassword($resource['password'], true);
+            $user->setUsercode(Uss::instance()->keygen(7));
+            $user->setParent($resource['parent'] ?? null);
+
+            $user->persist();
+            $user->roles->add($defaultUserRole);
+
+            return $user;
+        }
+        return null;
     }
 
     protected function resolveSubmission(mixed $user): void
     {
-        $uss = Uss::instance(); // Pairs
-        $dashboard = UserDashboard::instance();
+        if($user !== null) {
 
-        $summary = $this->getProperty('error:summary');
+            $uss = Uss::instance();
+            $indexDocument = UserDashboard::instance()->getDocument('index');
 
-        $message = [
-            'title' => 'Registration Failed',
-            'message' =>
-                $this->getProperty('error:message') ??
-                'Sorry! We encountered an issue during the registration process.',
-        ];
-
-        $successRedirect =
-            $this->getProperty('success:redirect') ??
-            $dashboard->getDocument('index')->getUrl();
-
-        if($user->isAvailable()) {
-
-            $summary =
-                $this->getProperty('success:summary') ??
-                sprintf('You can now <a href="%s">login</a> with your credentials.', $successRedirect);
+            $summary = $this->getProperty('error:summary');
 
             $message = [
-                'title' => "Registration Successful",
+                'title' => 'Registration Failed',
                 'message' =>
-                    $this->getProperty('success:message') ??
-                    "Your account has been created successfully."
+                    $this->getProperty('error:message') ??
+                    'Sorry! We encountered an issue during the registration process.',
             ];
 
-            if($uss->options->get('user:confirm-email')) {
-                $emailResolver = new EmailResolver($this->getProperties());
-                $emailSent = $emailResolver->sendConfirmationEmail($user);
-                $summary = $emailResolver->getConfirmationEmailSummary($emailSent);
+            $successRedirect =
+                $this->getProperty('success:redirect') ??
+                $indexDocument?->getUrl();
+
+            if($user->isAvailable()) {
+
+                $summary =
+                    $this->getProperty('success:summary') ??
+                    sprintf('You can now <a href="%s">login</a> with your credentials.', $successRedirect);
+
+                $message = [
+                    'title' => "Registration Successful",
+                    'message' =>
+                        $this->getProperty('success:message') ??
+                        "Your account has been created successfully."
+                ];
+
+                if($uss->options->get('user:confirm-email')) {
+                    $resolver = new EmailResolver($this->getProperties());
+                    $emailSent = $resolver->sendConfirmationEmail($user);
+                    $summary = $resolver->getConfirmationEmailSummary($emailSent);
+                }
+
+                if(!empty($summary)) {
+                    $message['message'] .= '<div class="alert alert-secondary mt-2 small mb-0">' . $summary . '</div>';
+                }
             }
 
-            if(!empty($summary)) {
-                $message['message'] .= '<div class="alert alert-secondary mt-2 small mb-0">' . $summary . '</div>';
+            $modal = new Modal();
+            $modal->setMessage($message['message']);
+            $modal->setTitle($message['title']);
+
+            Flash::instance()->addModal("registeration", $modal);
+
+            if($user->isAvailable()) {
+                header("location: {$successRedirect}");
+                exit;
             }
         }
-
-        $modal = new Modal();
-        $modal->setMessage($message['message']);
-        $modal->setTitle($message['title']);
-
-        Flash::instance()->addModal("registeration", $modal);
-
-        if($user->isAvailable()) {
-            header("location: {$successRedirect}");
-            exit;
-        }
-
     }
 }

@@ -19,13 +19,13 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     /**
      * For Testing Purpose Only
      */
-    final protected function populateWithFakeUserInfo(array $fixtures = []): void
+    final public function populateWithFakeUserInfo(array $fixtures = []): void
     {
         $this->fixtures = $fixtures;
         !$this->faker ? $this->faker = \Faker\Factory::create() : null;
     }
 
-    protected function createHiddenField(string $name, ?string $value = null): Field
+    public function createHiddenField(string $name, ?string $value = null): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_HIDDEN);
         
@@ -40,13 +40,13 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createNonceField(string $name = 'nonce'): void
+    public function createNonceField(string $name = 'nonce'): void
     {
         $value = Uss::instance()->nonce($_SESSION[Uss::SESSION_KEY]);
         $this->createHiddenField($name, $value);
     }
 
-    protected function validateNonce(string|array $resource, $name = 'nonce', $unsetNonce = true): array|bool
+    public function validateNonce(string|array $resource, $name = 'nonce', $unsetNonce = true): array|bool
     {
         $nonce = is_array($resource) ? ($resource[$name] ?? null) : $resource;
         if(is_string($nonce)) {
@@ -61,7 +61,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return false;
     }
 
-    protected function createUsernameField(string $label = 'username'): Field
+    public function createUsernameField(string $label = 'username'): Field
     {
         [$field, $context] = $this->getFieldVariation();
 
@@ -86,7 +86,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createPasswordField(bool $confirmPassword = false, ?string $label = null): Field
+    public function createPasswordField(bool $confirmPassword = false, ?string $label = null): Field
     {
         [$field, $context] = $this->getFieldVariation(
             Field::NODE_INPUT,
@@ -109,7 +109,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setValue(
                 $this->setFixture(
                     $name,
-                    '12345'
+                    '1&f@gaL[Hx'
                 )
             )
         ;
@@ -122,7 +122,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createEmailField($label = 'Email'): Field
+    public function createEmailField($label = 'Email'): Field
     {
         [$field, $context] = $this->getFieldVariation(
             Field::NODE_INPUT,
@@ -149,7 +149,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createSubmitButton($label = 'Submit'): Field
+    public function createSubmitButton($label = 'Submit'): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_BUTTON, Field::TYPE_SUBMIT);
 
@@ -164,7 +164,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createAgreementCheckboxField(?string $label = null, bool $checked = false): Field
+    public function createAgreementCheckboxField(?string $label = null, bool $checked = false): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
 
@@ -210,7 +210,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function createCustomField(array $info): Field
+    public function createCustomField(array $info): Field
     {
         [$field, $context] = $this->getFieldVariation(
             $info['nodeName'] ?? Field::NODE_INPUT,
@@ -259,7 +259,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return $field;
     }
 
-    protected function hideLabels(): void
+    public function hideLabels(): void
     {
         foreach($this->collection->getFields() as $field) {
             $context = $field->getElementContext();

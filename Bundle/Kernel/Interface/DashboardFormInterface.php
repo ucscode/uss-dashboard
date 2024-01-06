@@ -13,5 +13,4 @@ interface DashboardFormInterface
     public function removeSubmitAction(string $name): self;
     public function handleSubmission(): void;
     public function isSubmitted(): bool;
-    public function filterResource(): array;
 }

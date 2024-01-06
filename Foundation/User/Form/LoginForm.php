@@ -23,7 +23,7 @@ class LoginForm extends AbstractUserAccountForm
             'user[password]' => '&z25#W12_',
         ]);
 
-        $this->resolveConfirmationEmail();
+        (new EmailResolver($this->getProperties()))->verifyAccountEmail();
 
         $this->createAccessField();
         $this->createPasswordField();
@@ -33,35 +33,26 @@ class LoginForm extends AbstractUserAccountForm
         $this->hideLabels();
     }
 
-    public function validateResource(array $resource): ?array
+    public function validateResource(array $filteredResource): ?array
     {
-        $resource = $this->validateNonce($resource);
-        if($resource) {
-            return $resource['user'];
+        $resource = $this->validateNonce($filteredResource);
+        return $resource ? $resource['user'] : null;
+    }
+
+    public function persistResource(?array $resource): mixed
+    {
+        if($resource !== null) {
+            $uss = Uss::instance();
+            $column = strpos($resource['access'], '@') !== false ? 'email' : 'username';
+            $userItem = $uss->fetchItem(UserInterface::USER_TABLE, $uss->sanitize($resource['access'], true), $column);
+            return $this->getUserInstance($userItem, $column, $resource['password']);
         }
         return null;
     }
 
-    public function persistResource(array $resource): mixed
-    {
-        $uss = Uss::instance();
-        $key = strpos($resource['access'], '@') !== false ? 'email' : 'username';
-
-        $info = $uss->fetchItem(
-            UserInterface::USER_TABLE,
-            $uss->sanitize($resource['access'], true),
-            $key
-        );
-
-        $user = $this->validateUserInfo($key, $resource['password'], $info);
-
-        return $user ?? false;
-    }
-
     protected function resolveSubmission(mixed $response): void
     {
-        $user = $response;
-        $user->saveToSession();
+        //
     }
 
     /**
@@ -117,26 +108,18 @@ class LoginForm extends AbstractUserAccountForm
         );
     }
 
-    protected function validateUserInfo(string $type, string $password, ?array $info): ?User
+    protected function getUserInstance(?array $userItem, string $type, string $password): ?User
     {
-        if($info) {
-            $user = new User($info['id']);
-            $passwordValid = $user->verifyPassword($password);
-            if($passwordValid) {
+        if($userItem) {
+            $user = new User($userItem['id']);
+            if($user->verifyPassword($password)) {
+                $user->saveToSession();
                 return $user;
             }
         }
-
         $toast = (new Toast())->setBackground(Toast::BG_DANGER);
         $toast->setMessage("Incorrect {$type} or password");
         Flash::instance()->addToast("login", $toast);
-
         return null;
-    }
-
-    protected function resolveConfirmationEmail(): void
-    {
-        $emailResolver = new EmailResolver($this->getProperties());
-        $emailResolver->verifyAccountEmail();
     }
 }

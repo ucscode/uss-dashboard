@@ -2,51 +2,36 @@
 
 namespace Module\Dashboard\Foundation\User\Form\Service;
 
+use DateTime;
 use Module\Dashboard\Bundle\Flash\Flash;
+use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\User;
-use Uss\Component\Kernel\Uss;
-use Module\Dashboard\Bundle\Mailer\Mailer;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
 use Module\Dashboard\Foundation\User\UserDashboard;
 
-class EmailResolver
+class EmailResolver extends AbstractEmailResolver
 {
-    public function __construct(protected array $properties)
-    {
-
-    }
-
+    /**
+     * @method sendConfirmationEmail:REGISTRATION
+     */
     public function sendConfirmationEmail(User $user): bool
     {
+        $indexDocument = UserDashboard::instance()->getDocument('index');
+
         $this->properties['email:subject'] ??= 'Your Confirmation Link';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/register.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
-
         $this->properties['email:template.context'] += [
-            'confirmation_link' => $this->getConfirmationLink(
-                $user, UserDashboard::instance()->getDocument('index')->getUrl()
-            ),
+            'confirmation_link' => $this->getConfirmationLink($user, $indexDocument->getUrl()),
         ];
-        
+
         return $this->emailProcessor($user);
     }
 
-    public function getConfirmationEmailSummary(bool $confirmationEmailSent): string
-    {
-        $summary =
-            $this->properties['registration-email-error:summary'] ??
-            'We could not sent a confirmation email to you <br> 
-        Please contact the support team to resolve your account';
-
-        if($confirmationEmailSent) {
-            $summary =
-                $this->properties['registration-email-success:summary'] ??
-                'Please check your email to confirm the link we sent';
-        };
-
-        return $summary;
-    }
-
+    /**
+     * @method verifyAccountEmail:LOGIN
+     */
     public function verifyAccountEmail(): void
     {
         if($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -63,78 +48,60 @@ class EmailResolver
         }
     }
 
+    /**
+     * @method sendRecoveryEmail:RESET-PASSWORD
+     */
     public function sendRecoveryEmail(User $user): bool
     {
+        $recoveryDocument = UserDashboard::instance()->getDocument('recovery');
+
         $this->properties['email:subject'] ??= 'Reset Your Password';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/recovery.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
-        
+        $this->properties['email:template.context'] += [
+            'reset_link' => $this->getResetPasswordLink($user, $recoveryDocument->getUrl())
+        ];
+
         return $this->emailProcessor($user);
     }
 
-    protected function emailProcessor(User $user): bool
+    /**
+     * @method verifyRecoveryEmail:RESET-PASSWORD
+     */
+    public function verifyRecoveryEmail(): ?string
     {
-        $mailer = new Mailer();
-
-        $mailer->useMailHogTesting();
-        $mailer->addAddress($user->getEmail());
-        $mailer->setSubject($this->properties['email:subject']);
-        $mailer->setTemplate($this->properties['email:template']);
-        $mailer->setContext($this->properties['email:template.context']);
-        // echo $mailer->getTemplateOutput();
-        // exit;
-        return $mailer->sendMail();
-    }
-
-    protected function verifyEmailContext(?int $userid, ?string $inputCode): void
-    {
-        $toast = new Toast();
-        $toast->setBackground(Toast::BG_SECONDARY);
-        $toast->setMessage("Invalid Confirmation Link");
-
-        if($userid && $inputCode) {
-            $user = new User($userid);
-
-            if($user->isAvailable()) {
-                $storedCode = $user->meta->get('verify-email:code');
-                $toast->setMessage("Email Confirmation Failed!");
-
-                if($storedCode === null) {
-                    return;
+        if(!empty($_GET['link'])) {
+            $link = base64_decode($_GET['link']);
+            if($link) {
+                $message = "Invalid password reset link";
+                $data = explode(":", $link);
+                if(count($data) === 2) {
+                    $message = "Ineffectve password reset link";
+                    $user = new User($data[0] ?? null);
+                    if($user) {
+                        $message = "Incorrect password reset link";
+                        $valid = $user->meta->get("reset-password:code") == $data[1];
+                        if($valid) {
+                            $message = "Password reset link expired";
+                            $timestamp = $user->meta->get("reset-password:code", true);
+                            $dateTime = (new DateTime())->setTimestamp($timestamp)->diff(new DateTime());
+                            if($dateTime->h < 1) {
+                                return $user->getEmail();
+                            }
+                            $user->meta->remove('reset-password:code');
+                        }
+                    }
                 }
+            }
 
-                if($storedCode === $inputCode) {
-                    $user->meta->remove('verify-email:code');
-                    $toast->setBackground(Toast::BG_SUCCESS);
-                    $toast->setMessage("Your email has been confirmed");
-                }
+            if($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $toast = new Toast();
+                $toast->setMessage($message);
+                $toast->setBackground(Toast::BG_DANGER);
+                Flash::instance()->addToast("reset-link", $toast);
             }
         }
 
-        Flash::instance()->addToast("verify-email", $toast);
-    }
-
-    protected function getSystemContext(User $user): array
-    {
-        return [
-            'privacy_policy_url' => $this->properties['privacyPolicyUrl'] ?? '#',
-            'client_name' => $user->getUsername(),
-        ];
-    }
-
-    protected function getConfirmationLink(User $user, string $destination): string
-    {
-        $confirmationCode = Uss::instance()->keygen(20);
-        $user->meta->set('verify-email:code', $confirmationCode);
-        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
-        return $this->addUrlParameter($destination, 'verify-email', $emailCode);
-    }
-
-    protected function addUrlParameter(string $url, string $name, string $value): string
-    {
-        $parsed_url = parse_url($url);
-        $hasQuery = isset($parsed_url['query']);
-        $url .= $hasQuery ? (($parsed_url['query'] === '') ? '' : '&') : '?';
-        return $url . "$name=$value";
+        return null;
     }
 }
