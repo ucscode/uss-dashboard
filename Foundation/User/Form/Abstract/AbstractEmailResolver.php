@@ -10,16 +10,22 @@ use Module\Dashboard\Bundle\User\User;
 
 abstract class AbstractEmailResolver
 {
+    protected bool $isLocalhost;
+
     public function __construct(protected array $properties)
     {
-
+        $this->isLocalhost = in_array($_SERVER['SERVER_NAME'], [
+            'localhost',
+            '127.0.0.1',
+            '::1'
+        ]);
     }
 
     protected function emailProcessor(User $user): bool
     {
         $mailer = new Mailer();
 
-        $mailer->useMailHogTesting();
+        $this->isLocalhost ? $mailer->useMailHogTesting() : null;
         $mailer->addAddress($user->getEmail());
         $mailer->setSubject($this->properties['email:subject']);
         $mailer->setTemplate($this->properties['email:template']);
@@ -32,8 +38,8 @@ abstract class AbstractEmailResolver
     {
         $summary =
             $this->properties['email:summary.error'] ??
-            'We could not sent a confirmation email to you <br> 
-        Please contact the support team to resolve your account';
+            'We could not sent a confirmation email to you! <br> 
+            Please request for a new confirmation email to access your account';
 
         if($confirmationEmailSent) {
             $summary =
@@ -97,20 +103,12 @@ abstract class AbstractEmailResolver
         ];
     }
 
-    protected function getConfirmationLink(User $user, string $destination): string
+    protected function generateEmailLink(User $user, array $context): string
     {
         $confirmationCode = Uss::instance()->keygen(20);
-        $user->meta->set('verify-email:code', $confirmationCode);
+        $user->meta->set($context['metaKey'], $confirmationCode);
         $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
-        return $this->addUrlParameter($destination, 'verify-email', $emailCode);
-    }
-
-    protected function getResetPasswordLink(User $user, string $destination): string
-    {
-        $confirmationCode = Uss::instance()->keygen(20);
-        $user->meta->set('reset-password:code', $confirmationCode);
-        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
-        return $this->addUrlParameter($destination, "link", $emailCode);
+        return $this->addUrlParameter($context['destination'], $context['urlKey'], $emailCode);
     }
 
     protected function addUrlParameter(string $url, string $name, string $value): string
@@ -119,11 +117,5 @@ abstract class AbstractEmailResolver
         $hasQuery = isset($parsed_url['query']);
         $url .= $hasQuery ? (($parsed_url['query'] === '') ? '' : '&') : '?';
         return $url . "$name=$value";
-    }
-
-    protected function verifyRecoveryContext(User $user, ?string $inputCode): bool
-    {
-        var_dump($user, $inputCode);
-        return false;
     }
 }

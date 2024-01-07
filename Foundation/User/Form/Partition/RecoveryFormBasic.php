@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 use Module\Dashboard\Foundation\User\Form\Service\Validator;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractRecoveryPartition;
 
 class RecoveryFormBasic extends AbstractRecoveryPartition
 {
@@ -20,12 +21,14 @@ class RecoveryFormBasic extends AbstractRecoveryPartition
 
     public function validateResource(array $filteredResource): ?array
     {
+        $filteredResource = array_map('trim', $filteredResource);
         $validator = new Validator();
-        // error will be printed in the user form by the validator
+
         $validEmail = $validator->validateEmail(
-            $this->recoveryForm->collection, 
+            $this->recoveryForm->collection,
             $filteredResource['email']
         );
+
         return $validEmail ? $filteredResource : null;
     }
 
@@ -33,21 +36,20 @@ class RecoveryFormBasic extends AbstractRecoveryPartition
     {
         $user = null;
 
-        if($validatedResource !== null) 
-        {
+        if($validatedResource !== null) {
             $modal = new Modal();
             $modal->setTitle("Request Failed");
             $modal->setMessage("The email account was not found");
 
             $user = new User();
-            $user->allocate('email', $validatedResource['email']);
+            $user->allocate('email', strtolower($validatedResource['email']));
 
             if($user->isAvailable()) {
                 [$sent, $message] = $this->sendPasswordResetEmail($user);
                 $modal->setMessage($message);
                 $sent ? $modal->setTitle("Reset Password Sent") : null;
             }
-            
+
             Flash::instance()->addModal("password-reset", $modal);
         }
 

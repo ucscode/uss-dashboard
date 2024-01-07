@@ -4,7 +4,6 @@ namespace Module\Dashboard\Foundation\User\Form\Service;
 
 use DateTime;
 use Module\Dashboard\Bundle\Flash\Flash;
-use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
@@ -22,8 +21,13 @@ class EmailResolver extends AbstractEmailResolver
         $this->properties['email:subject'] ??= 'Your Confirmation Link';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/register.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
+
         $this->properties['email:template.context'] += [
-            'confirmation_link' => $this->getConfirmationLink($user, $indexDocument->getUrl()),
+            'confirmation_link' => $this->generateEmailLink($user, [
+                'metaKey' => 'verify-email:code',
+                'urlKey' => 'verify-email',
+                'destination' => $indexDocument->getUrl(),
+            ])
         ];
 
         return $this->emailProcessor($user);
@@ -58,8 +62,13 @@ class EmailResolver extends AbstractEmailResolver
         $this->properties['email:subject'] ??= 'Reset Your Password';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/recovery.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
+
         $this->properties['email:template.context'] += [
-            'reset_link' => $this->getResetPasswordLink($user, $recoveryDocument->getUrl())
+            'reset_link' => $this->generateEmailLink($user, [
+                'metaKey' => 'reset-password:code',
+                'urlKey' => 'link',
+                'destination' => $recoveryDocument->getUrl(),
+            ])
         ];
 
         return $this->emailProcessor($user);

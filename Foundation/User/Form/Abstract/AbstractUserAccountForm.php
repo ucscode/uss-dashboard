@@ -28,7 +28,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     public function createHiddenField(string $name, ?string $value = null): Field
     {
         [$field, $context] = $this->getFieldVariation(Field::NODE_INPUT, Field::TYPE_HIDDEN);
-        
+
         $context->widget->setValue(
             $this->setFixture($name, $value)
         );
@@ -61,7 +61,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
         return false;
     }
 
-    public function createUsernameField(string $label = 'username'): Field
+    public function createUsernameField(string $label = 'Username'): Field
     {
         [$field, $context] = $this->getFieldVariation();
 

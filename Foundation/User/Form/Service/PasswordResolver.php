@@ -37,11 +37,11 @@ class PasswordResolver
             ],
             [
                 "fair",
-                "text-info"
+                "text-warning"
             ],
             [
                 "strong",
-                "text-success"
+                "text-warning"
             ],
             [
                 "very strong",

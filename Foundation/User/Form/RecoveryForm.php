@@ -2,32 +2,29 @@
 
 namespace Module\Dashboard\Foundation\User\Form;
 
-use Module\Dashboard\Bundle\Flash\Flash;
-use Module\Dashboard\Bundle\Flash\Modal\Modal;
-use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
-use Module\Dashboard\Foundation\User\Form\Partition\AbstractRecoveryPartition;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractRecoveryPartition;
 use Module\Dashboard\Foundation\User\Form\Partition\RecoveryFormAdvance;
 use Module\Dashboard\Foundation\User\Form\Partition\RecoveryFormBasic;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 
 class RecoveryForm extends AbstractUserAccountForm
 {
-    protected ?string $authorizedEmail = null;
     protected AbstractRecoveryPartition $partition;
 
     public function buildForm(): void
     {
-        $this->authorizedEmail = (new EmailResolver($this->getProperties()))->verifyRecoveryEmail();
-        
-        $this->populateWithFakeUserInfo();
-        
-        $this->partition = !$this->authorizedEmail ? 
-            new RecoveryFormBasic($this, null) : 
-            new RecoveryFormAdvance($this, $this->authorizedEmail);
-        
-        $this->partition->buildForm();
+        // $this->populateWithFakeUserInfo([
+        //     'user[email]' => 'twill@funk.info',
+        // ]);
 
+        $verifiedEmail = (new EmailResolver([]))->verifyRecoveryEmail();
+
+        $this->partition = !$verifiedEmail ?
+            new RecoveryFormBasic($this, null) :
+            new RecoveryFormAdvance($this, $verifiedEmail);
+
+        $this->partition->buildForm();
         $this->createNonceField();
         $this->createSubmitButton();
     }
@@ -42,7 +39,7 @@ class RecoveryForm extends AbstractUserAccountForm
 
     public function persistResource(?array $validatedResource): mixed
     {
-       return $this->partition->persistResource($validatedResource);
+        return $this->partition->persistResource($validatedResource);
     }
 
     protected function resolveSubmission(mixed $user): void

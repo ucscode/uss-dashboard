@@ -18,12 +18,12 @@ class LoginForm extends AbstractUserAccountForm
 
     public function buildForm(): void
     {
-        $this->populateWithFakeUserInfo([
-            'user[access]' => 'twill@funk.info',
-            'user[password]' => '&z25#W12_',
-        ]);
+        // $this->populateWithFakeUserInfo([
+        //     'user[access]' => 'annette.heller@hotmail.com',
+        //     'user[password]' => '5lPO$24rcC5Q',
+        // ]);
 
-        (new EmailResolver($this->getProperties()))->verifyAccountEmail();
+        (new EmailResolver([]))->verifyAccountEmail();
 
         $this->createAccessField();
         $this->createPasswordField();
@@ -36,16 +36,21 @@ class LoginForm extends AbstractUserAccountForm
     public function validateResource(array $filteredResource): ?array
     {
         $resource = $this->validateNonce($filteredResource);
-        return $resource ? $resource['user'] : null;
+        if($resource) {
+            $user = array_map('trim', $resource['user']);
+            $user['access'] = strtolower($user['access']);
+            return $user;
+        }
+        return null;
     }
 
-    public function persistResource(?array $resource): mixed
+    public function persistResource(?array $validatedResource): mixed
     {
-        if($resource !== null) {
+        if($validatedResource !== null) {
             $uss = Uss::instance();
-            $column = strpos($resource['access'], '@') !== false ? 'email' : 'username';
-            $userItem = $uss->fetchItem(UserInterface::USER_TABLE, $uss->sanitize($resource['access'], true), $column);
-            return $this->getUserInstance($userItem, $column, $resource['password']);
+            $column = strpos($validatedResource['access'], '@') !== false ? 'email' : 'username';
+            $userItem = $uss->fetchItem(UserInterface::USER_TABLE, $uss->sanitize($validatedResource['access'], true), $column);
+            return $this->getUserInstance($userItem, $column, $validatedResource['password']);
         }
         return null;
     }
@@ -64,7 +69,7 @@ class LoginForm extends AbstractUserAccountForm
 
         $context->widget
             ->setAttribute('placeholder', 'Email / Username')
-            ->setAttribute('pattern', '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+\.\w{2,}))\s*$')
+            ->setAttribute('pattern', '^\s*(?:\w+|(?:[^@]+@[a-zA-Z0-9\-_]+(?:\.\w{2,})+))\s*$')
             ->setValue(
                 $this->setFixture(
                     'user[access]',

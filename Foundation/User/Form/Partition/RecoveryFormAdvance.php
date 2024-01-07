@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Service\Validator;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Foundation\User\UserDashboard;
+use Module\Dashboard\Foundation\User\Form\Abstract\AbstractRecoveryPartition;
 
 class RecoveryFormAdvance extends AbstractRecoveryPartition
 {
@@ -18,22 +19,23 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
 
         $this->recoveryForm->createPasswordField();
         $this->recoveryForm->createPasswordField(true);
-        $this->recoveryForm->createHiddenField('user[email]', $this->authorizedEmail);
+        $this->recoveryForm->createHiddenField('user[email]', $this->verifiedEmail);
         $this->recoveryForm->hideLabels();
     }
 
     public function validateResource(array $filteredResource): ?array
     {
+        $filteredResource = array_map('trim', $filteredResource);
         $validator = new Validator();
 
         $passwordValid = $validator->validatePassword(
-            $this->recoveryForm->collection, 
+            $this->recoveryForm->collection,
             $filteredResource['password']
         );
 
         $confirmPasswordValid = $validator->validateConfirmationPassword(
-            $this->recoveryForm->collection, 
-            $filteredResource['password'], 
+            $this->recoveryForm->collection,
+            $filteredResource['password'],
             $filteredResource['confirmPassword']
         );
 
@@ -50,11 +52,12 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
             $modal->setMessage("Password reset process could not be completed");
             $modal->setTitle("Request Failed");
 
-            $user = new User();
-            $user->allocate("email", $validatedResource['email']);
-            $user->setPassword($validatedResource['password'], true);
+            $user = (new User())->allocate("email", strtolower($validatedResource['email']));
+            $user = $user->isAvailable() ? $user : null;
 
-            if($user->persist()) {
+            if($user && $user->persist()) {
+                $user->setPassword($validatedResource['password'], true);
+                $user->meta->remove("reset-password:code");
                 $modal->setTitle("Password Reset Success");
                 $modal->setMessage("Your password reset was successful. <br> Your account is now updated with the new password.");
             }

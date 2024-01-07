@@ -48,7 +48,10 @@ class Validator
             $passwordContext = $collection->getField("user[password]")?->getElementContext();
             if($passwordContext) {
                 $passwordContext->info->setValue($information);
-                $passwordContext->validation->setValue($passwordResolver['errorMessage']);
+                $passwordContext->validation
+                    ->setValue('* ' . $passwordResolver['errorMessage'])
+                    ->removeClass('text-danger')
+                    ->addClass($passwordResolver['appearance']);
             }
             return false;
         };
