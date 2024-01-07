@@ -25,11 +25,11 @@
 
         {% block dashboard_user_menu_items %}
 
-            {% for item in DashboardExtension.getDashboardProperty('userMenu').children %}
+            {% for item in __dashboard.userMenu.children %}
                 <li>
-                    <a href="{{ item.getAttr('href') }}" target="{{ item.getAttr('target') }}"> 
-                        <i class="{{ item.getAttr('icon') ?? "bi bi-question-circle" }}"></i>
-                        {{ item.getAttr('label') }} 
+                    <a href="{{ item.getAttribute('href') }}" target="{{ item.getAttribute('target') }}"> 
+                        <i class="{{ item.getAttribute('icon') ?? "bi bi-question-circle" }}"></i>
+                        {{ item.getAttribute('label') }} 
                     </a>
                 </li>
             {% endfor %}  

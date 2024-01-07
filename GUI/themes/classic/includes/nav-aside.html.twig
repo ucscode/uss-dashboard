@@ -2,10 +2,10 @@
 
     {% for item in children %}
 
-        {% set itemId = "menu-" ~ item.nodeId %}
+        {% set itemId = "menu-" ~ item.index %}
         {% set expandable = (item.children|length) and (item.level < 4) %}
-        {% set isActive = item.getAttr('active') %}
-        {% set isExpanded = isActive or item.getAttr('expanded') %}
+        {% set isActive = item.getAttribute('active') %}
+        {% set isExpanded = isActive or item.getAttribute('expanded') %}
         
         {% set itemClass = [
             item.level is same as(1) ? "nav-item" : "nav-sub-item",
@@ -15,7 +15,7 @@
         
         <li class="{{ itemClass[0] }} {{ itemClass[1] }} {{ itemClass[2] }}" data-menu-level='{{ item.level }}'>
 
-            <a href='{{ item.getAttr('href') }}' target='{{ item.getAttr('target') }}'
+            <a href='{{ item.getAttribute('href') }}' target='{{ item.getAttribute('target') }}'
                 {% if expandable %}
                     data-bs-toggle='collapse'
                     data-bs-target='#{{ itemId }}'
@@ -26,10 +26,10 @@
             >   
                 {% if item.level is same as(1) %}
                     <span class='icon'>
-                        <i class="{{ item.getAttr('icon') ?? 'bi bi-question-circle' }}"></i>
+                        <i class="{{ item.getAttribute('icon') ?? 'bi bi-question-circle' }}"></i>
                     </span>
                 {% endif %}
-                <span class='text'>{{ item.getAttr('label')|raw }}</span>
+                <span class='text'>{{ item.getAttribute('label')|raw }}</span>
             </a>
 
             {% if expandable %}
@@ -50,6 +50,4 @@
 
 {% endmacro %}
 
-{% set menu = DashboardExtension.getDashboardProperty('menu') %}
-
-{{ _self.createMenuItem(menu.children) }}
+{{ _self.createMenuItem( __dashboard.menu.children ) }}

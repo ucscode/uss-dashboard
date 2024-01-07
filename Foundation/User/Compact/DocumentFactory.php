@@ -80,10 +80,11 @@ final class DocumentFactory
             ->setRoute('/', $this->base)
             ->setTemplate("/index.html.twig", $this->namespace)
             ->setContext([
-                'official_website' => UssImmutable::PROJECT_WEBSITE,
                 'title' => UssImmutable::PROJECT_NAME,
-                'developer_email' => UssImmutable::AUTHOR_EMAIL,
-                'github_repository' => DashboardImmutable::GITHUB_REPO
+                'app_webpage' => UssImmutable::PROJECT_WEBSITE,
+                'app_version' => '5.5',
+                'author_email' => UssImmutable::AUTHOR_EMAIL,
+                'github_repo' => DashboardImmutable::GITHUB_REPO,
             ])
             ;
 

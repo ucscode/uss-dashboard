@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Form\Attribute;
 use Ucscode\UssForm\Form\Form;
+use Uss\Component\Block\BlockManager;
 
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
 {
@@ -143,5 +144,15 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                 return json_last_error() === JSON_ERROR_NONE ? $jsonValue : ['input' => $input];
             }),
         };
+    }
+
+    protected function replaceWindowState(): void
+    {
+        BlockManager::instance()
+            ->getBlock("body_javascript")
+            ->addContent(
+                "history.state", 
+                "<script>window.history.replaceState && window.history.replaceState(null,null,window.location.href);</script>"
+            );
     }
 }

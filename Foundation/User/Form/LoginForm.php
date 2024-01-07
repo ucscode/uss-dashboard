@@ -57,7 +57,7 @@ class LoginForm extends AbstractUserAccountForm
 
     protected function resolveSubmission(mixed $response): void
     {
-        //
+        $response ? $this->replaceWindowState() : null;
     }
 
     /**
