@@ -5,7 +5,7 @@ namespace Module\Dashboard;
 use Module\Dashboard\Foundation\DatabaseGenerator;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
-use Module\Dashboard\Bundle\Kernel\DashboardEnvironment;
+use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
 use Module\Dashboard\Foundation\Admin\AdminDashboard;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Event\Event;

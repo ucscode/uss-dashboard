@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Compact;
 
 use Exception;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;

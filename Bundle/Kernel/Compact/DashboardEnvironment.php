@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Kernel;
+namespace Module\Dashboard\Bundle\Kernel\Compact;
 
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Uss\Component\Kernel\Abstract\AbstractEnvironmentSystem;

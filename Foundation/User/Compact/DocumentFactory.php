@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\User\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\User\Controller\IndexController;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
@@ -12,6 +13,7 @@ use Module\Dashboard\Foundation\User\Controller\RegisterController;
 use Module\Dashboard\Foundation\User\Form\LoginForm;
 use Module\Dashboard\Foundation\User\Form\RecoveryForm;
 use Module\Dashboard\Foundation\User\Form\RegisterForm;
+use Uss\Component\Kernel\UssImmutable;
 
 final class DocumentFactory
 {
@@ -76,8 +78,13 @@ final class DocumentFactory
         $document = (new Document())
             ->setName("index")
             ->setRoute('/', $this->base)
-            ->setController(new IndexController())
             ->setTemplate("/index.html.twig", $this->namespace)
+            ->setContext([
+                'official_website' => UssImmutable::PROJECT_WEBSITE,
+                'title' => UssImmutable::PROJECT_NAME,
+                'developer_email' => UssImmutable::AUTHOR_EMAIL,
+                'github_repository' => DashboardImmutable::GITHUB_REPO
+            ])
             ;
 
         $document->addMenuItem('index', [

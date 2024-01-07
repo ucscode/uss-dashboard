@@ -4,7 +4,7 @@ namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
-use Module\Dashboard\Bundle\Kernel\DashboardRenderLogic;
+use Module\Dashboard\Bundle\Kernel\Compact\DashboardRenderLogic;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
