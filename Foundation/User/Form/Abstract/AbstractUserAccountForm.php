@@ -109,7 +109,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
             ->setValue(
                 $this->setFixture(
                     $name,
-                    '1&f@gaL[Hx'
+                    $this->faker?->password(8)
                 )
             )
         ;
@@ -280,6 +280,9 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected function setFixture(string $name, ?string $value, bool $checkable = false): ?string
     {
         $value = $this->fixtures[$name] ?? $value;
-        return $this->faker ? ($checkable ? !!$value : $value) : ($checkable ? false : $value);
+        if($this->faker) {
+            return $checkable ? (bool)$value : $value;
+        }
+        return $checkable ? false : $value;
     }
 }

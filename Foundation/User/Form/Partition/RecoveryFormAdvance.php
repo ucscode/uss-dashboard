@@ -52,11 +52,13 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
             $modal->setMessage("Password reset process could not be completed");
             $modal->setTitle("Request Failed");
 
-            $user = (new User())->allocate("email", strtolower($validatedResource['email']));
+            $user = (new User())
+                ->allocate("email", strtolower($validatedResource['email']))
+                ->setPassword($validatedResource['password'], true);
+                
             $user = $user->isAvailable() ? $user : null;
 
             if($user && $user->persist()) {
-                $user->setPassword($validatedResource['password'], true);
                 $user->meta->remove("reset-password:code");
                 $modal->setTitle("Password Reset Success");
                 $modal->setMessage("Your password reset was successful. <br> Your account is now updated with the new password.");
