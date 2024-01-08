@@ -18,15 +18,14 @@ abstract class AbstractProfileController extends AbstractDashboardController
                 "profile_content",
                 new BlockTemplate($document->getTemplate())
             );
-        $layout = '@Foundation/User/Template/profile/layout.html.twig';
+        
+        $document->setTemplate('@Foundation/User/Template/profile/layout.html.twig');
+        
         /**
          * Render works only after all modules have been loaded
-         * Therefore, you can call this method on the child class.
-         * ```
-         * Parent::composeApplication(...)
-         * ```
-         * And handle your code while still within PHP environment
+         * Therefore, you can call `Parent::composeApplication(...)` method on the child class.
+         * And handle your code while still within modules environment
          */
-        $dashboard->render($layout, $document->getContext());
+        //$dashboard->render($layout, $document->getContext());
     }
 }
