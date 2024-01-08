@@ -1,7 +1,7 @@
-{% extends __dashboard.meths.theme('/base.html.twig') %}
+{# % extends __dashboard.meths.theme('base.html.twig') % #}
 
-{% block dashboard_content %}
-
+{# % block dashboard_content % #}
+    
     <div class='container-fluid'>
 
         <div class='mb-3'>
@@ -26,7 +26,7 @@
                         </h1>
                         <figure class='pop-figure'>
                             <div id='pop'></div>
-                            {% set image = __uss.templateSchema('@Foundation/User/assets/images', __uss.ENUM.URL) %}
+                            {% set image = __uss.meths.templateSchema('@Foundation/User/assets/images', __uss.ENUM.URL) %}
                             <div class='d-sm-none'>
                                 <img src='{{ image ~ '/sunset.jpg' }}' class='img-fluid'>
                             </div>
@@ -83,4 +83,4 @@
         });
     </script>
 
-{% endblock %}
+{# % endblock % #}

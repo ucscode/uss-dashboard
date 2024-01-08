@@ -8,6 +8,8 @@ use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
 use Module\Dashboard\Foundation\Admin\AdminDashboard;
 use Module\Dashboard\Foundation\User\UserDashboard;
+use Uss\Component\Block\Block;
+use Uss\Component\Block\BlockManager;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 
@@ -21,6 +23,8 @@ new class () {
         new DatabaseGenerator($uss);
         new DashboardEnvironment($uss);
 
+        BlockManager::instance()->addBlock("dashboard_content", new Block(true));
+        
         $this->createUserApplication();
         $this->createAdminApplication();
 

@@ -5,7 +5,7 @@ namespace Module\Dashboard\Foundation\User\Controller;
 use Uss\Component\Route\RouteInterface;
 
 class ProfileController implements RouteInterface
-{
+{    
     public function onload(array $matches)
     {
         $this->pageManager->getMenuItem('profile-batch-profile', true)?->setAttr('active', true);

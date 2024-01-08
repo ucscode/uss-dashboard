@@ -1,4 +1,4 @@
-{% extends __dashboard.meths.theme('/base.html.twig') %}
+{% extends __dashboard.meths.theme('base.html.twig') %}
 
 {% block body_main %}
 
@@ -17,7 +17,7 @@
                             <div class="title text-center">
 
                                 {% block contentLeftIcon %}
-                                    {% set companyIcon = __uss.getOption('company:logo') ?? page_icon %}
+                                    {% set companyIcon = __uss.option('company:logo') ?? page_icon %}
                                     {% if companyIcon is not empty %}
                                         <div class='mb-2'>
                                             <img src='{{ companyIcon }}' class='img-fluid user-select-none'>
@@ -27,13 +27,13 @@
 
                                 {% block contentLeftTitle %}
                                     <h1 class="text-white mb-2">
-                                        {{ __uss.getOption('company:name') ?? page_title }}
+                                        {{ __uss.option('company:name') ?? page_title }}
                                     </h1>
                                 {% endblock %}
 
                                 {% block contentLeftDescription %}
                                     <p class="text-light">
-                                        {{ __uss.getOption('company:description') ?? page_description }}
+                                        {{ __uss.option('company:description') ?? page_description }}
                                     </p>
                                 {% endblock %}
 

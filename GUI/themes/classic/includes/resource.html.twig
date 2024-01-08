@@ -1,0 +1,26 @@
+{% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', __uss.ENUM.URL) %}
+
+{# stylesheet components #}
+
+{% block head_resource %}
+
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ stylesheet }}">
+
+{% endblock %}
+
+{# javascript components #}
+
+{% block body_javascript %}
+    
+    {{ parent() }}
+
+    <script src="{{ __uss.meths.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
+
+    {% if (user and user.isAvailable()) %}
+	    <script src="{{ __dashboard.meths.theme('/assets/js/dashboard.js', __uss.ENUM.URL) }}"></script>
+        <script src='{{ __dashboard.meths.theme('/assets/js/notifications.js', __uss.ENUM.URL) }}' type='module' ></script>
+    {% endif %}
+
+{% endblock %}

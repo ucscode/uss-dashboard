@@ -1,108 +1,81 @@
 {% extends 'base.html.twig' %}
 
-{% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', __uss.ENUM.URL) %}
-
 {% block head_resource %}
+    {% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', __uss.ENUM.URL) %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ stylesheet }}">
 {% endblock %}
 
-{# Body Block For Uss Dashboard #}
 
 {% block body_main %}
     
-    {% block dashboard_sidebar %} {# sidebar ----------------------> important #}
-
+    {% block dashboard_sidebar %} {# sidebar ------------------------------> important #}
         <aside class="sidebar-nav-wrapper">
-
             {% block sidebar_logo %}
                 <div class="navbar-logo">
                     <a href="{{ __dashboard.meths.urlGenerator('/') }}">
-                        <img src="{{ __uss.getOption('company:logo') ?? page_icon }}" alt="logo" />
+                        <img src="{{ __uss.option('company:logo') ?? page_icon }}" alt="logo" />
                     </a>
                 </div>
             {% endblock %}
-
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
-                    {% block dashboard_menu_items %}
+                    {% block sidebar_menu %}
                         {% include __dashboard.meths.theme('/includes/nav-aside.html.twig') %}
                     {% endblock %}
                 </ul>
             </nav>
-
         </aside> <!-- End Aside -->
-
         <div class="overlay">
             <a href='javascript:void(0)' class='overlay-close'>	
                 <i class='bi bi-x-lg'></i>
             </a>
         </div>
-
     {% endblock dashboard_sidebar %}
     
-    {% block dashboard_main %} {# main ----------------------> important #}
+    {% block dashboard_main %} {# main ------------------------------> important #}
 
         <main class="main-wrapper">
 
-            {% block dashboard_header %} {# header ----------------------> important #}
-
+            {% block dashboard_header %} {# header ------------------------------> important #}
                 <header class="header">
-                
                     <div class="container-fluid">
                         <div class="row align-items-center">
-                        
                             <div class="col-md-6 col-6">
                                 <div class="header-left d-flex align-items-center">
-
                                     <div class="menu-toggle-btn mr-20 d-xl-none">
                                         <button id="menu-toggle" class="btn btn-hover">
                                             <i class="bi bi-list"></i>
                                         </button>
                                     </div>
-
-                                    {% block dashboard_header_void %}{% endblock %}
-
+                                    {% block header_void %}{% endblock %}
                                 </div>
                             </div>
-                            
                             <div class="col-md-6 col-6">
                                 <div class="header-right">
-
-                                    {% block dashboard_header_notification %}
+                                    {% block header_notification %}
                                         {% include __dashboard.meths.theme('/includes/notifications-top.html.twig') %}
                                     {% endblock %}
-                                    
-                                    {% block dashboard_header_profile %}
+                                    {% block header_profile %}
                                         {% include __dashboard.meths.theme('/includes/profile-menu.html.twig') %}
                                     {% endblock %}
-                                    
                                 </div>
                             </div>
-                            
-                        </div>
+                        </div> <!-- /row end -->
                     </div>
-                    
                 </header>
-
             {% endblock dashboard_header %} 
             
-            {% block dashboard_wrapper %}
-            
+            {% block wrapper %}
                 <div class='content-wrapper'>
-
-                    {% block dashboard_content %} {# content ----------------------> important #}
-
-                        {{ __uss.renderBlockElements('dashboard_content')|raw }}
-                        
+                    {% block dashboard_content %} {# content ------------------------------> important #}
+                        {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
                     {% endblock %}
-
                 </div>
-                
             {% endblock %} 
 
-            {% block dashboard_footer %} 
-                {{ __uss.renderBlockElements('dashboard_footer')|raw }}
+            {% block footer %} 
+                {{ __uss.renderBlockElements('dashboard_footer', _context)|raw }}
             {% endblock %} 
 
         </main>
@@ -111,17 +84,12 @@
 
 {% endblock body_main %} 
 
-{# Javascript block for Uss Dashboard #}
 
 {% block body_javascript %}
-    
     {{ parent() }}
-
     <script src="{{ __uss.meths.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
-
     {% if (user and user.isAvailable()) %}
 	    <script src="{{ __dashboard.meths.theme('/assets/js/dashboard.js', __uss.ENUM.URL) }}"></script>
         <script src='{{ __dashboard.meths.theme('/assets/js/notifications.js', __uss.ENUM.URL) }}' type='module' ></script>
     {% endif %}
-
 {% endblock %}

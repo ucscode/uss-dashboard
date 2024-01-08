@@ -6,7 +6,6 @@
         {% set expandable = (item.children|length) and (item.level < 4) %}
         {% set isActive = item.getAttribute('active') %}
         {% set isExpanded = isActive or item.getAttribute('expanded') %}
-        
         {% set itemClass = [
             item.level is same as(1) ? "nav-item" : "nav-sub-item",
             expandable ? "nav-item-has-children" : null,
@@ -14,7 +13,7 @@
         ] %}
         
         <li class="{{ itemClass[0] }} {{ itemClass[1] }} {{ itemClass[2] }}" data-menu-level='{{ item.level }}'>
-
+        
             <a href='{{ item.getAttribute('href') }}' target='{{ item.getAttribute('target') }}'
                 {% if expandable %}
                     data-bs-toggle='collapse'
@@ -33,7 +32,6 @@
             </a>
 
             {% if expandable %}
-
                 <ul id="{{ itemId }}" class="dropdown-nav collapse {{ isExpanded ? "show" : null }}" 
                     {% if item.level is same as(1) %}
                         data-bs-parent="#nav-group"
@@ -41,7 +39,6 @@
                 >
                     {{ _self.createMenuItem(item.children) }}
                 </ul>
-
             {% endif %}
 
         </li>

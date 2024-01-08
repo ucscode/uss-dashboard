@@ -1,5 +1,4 @@
 <div class="profile-box ml-1">
-
     <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
         <div class="profile-info">
             <div class="info">
@@ -13,7 +12,6 @@
     </button>
     
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
-
         <li class='mb-1'>
             <div class='px-3 py-2 text-end bg-light fs-12px'>
                 <span class='text-success'>
@@ -23,19 +21,13 @@
             </div>
         </li>
 
-        {% block dashboard_user_menu_items %}
-
-            {% for item in __dashboard.props.userMenu.children %}
-                <li>
-                    <a href="{{ item.getAttribute('href') }}" target="{{ item.getAttribute('target') }}"> 
-                        <i class="{{ item.getAttribute('icon') ?? "bi bi-question-circle" }}"></i>
-                        {{ item.getAttribute('label') }} 
-                    </a>
-                </li>
-            {% endfor %}  
-
-        {% endblock %}
-
+        {% for item in __dashboard.props.userMenu.children %}
+            <li>
+                <a href="{{ item.getAttribute('href') }}" target="{{ item.getAttribute('target') }}"> 
+                    <i class="{{ item.getAttribute('icon') ?? "bi bi-question-circle" }}"></i>
+                    {{ item.getAttribute('label') }} 
+                </a>
+            </li>
+        {% endfor %} 
     </ul>
-    
 </div>
