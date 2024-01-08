@@ -5,6 +5,7 @@ namespace Module\Dashboard\Foundation\User\Form\Abstract;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Kernel\UssImmutable;
 
 abstract class AbstractUserAccountForm extends AbstractDashboardForm
 {
@@ -42,7 +43,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
 
     public function createNonceField(string $name = 'nonce'): void
     {
-        $value = Uss::instance()->nonce($_SESSION[Uss::SESSION_KEY]);
+        $value = Uss::instance()->nonce($_SESSION[UssImmutable::SESSION_KEY]);
         $this->createHiddenField($name, $value);
     }
 
@@ -50,7 +51,7 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     {
         $nonce = is_array($resource) ? ($resource[$name] ?? null) : $resource;
         if(is_string($nonce)) {
-            $valid = Uss::instance()->nonce($_SESSION[Uss::SESSION_KEY], $nonce);
+            $valid = Uss::instance()->nonce($_SESSION[UssImmutable::SESSION_KEY], $nonce);
             if($valid) {
                 if($unsetNonce && is_array($resource)) {
                     unset($resource[$name]);

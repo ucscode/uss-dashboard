@@ -3,7 +3,7 @@
 namespace Module\Dashboard\Bundle\Mailer;
 
 use Exception;
-use Module\Dashboard\Bundle\Kernel\DashboardEnvironment;
+use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -22,7 +22,7 @@ abstract class AbstractMailer extends AbstractUss
     public function __construct()
     {
         parent::__construct();
-        
+
         new DashboardEnvironment($this);
 
         $this->PHPMailer = new PHPMailer(true);
@@ -64,7 +64,7 @@ abstract class AbstractMailer extends AbstractUss
         try {
 
             // (new Event())->addListener("modules:loaded", ...);
-            
+
             return $this->PHPMailer->send();
 
         } catch(Exception $PHPMailerException) {
