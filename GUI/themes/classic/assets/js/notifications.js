@@ -28,10 +28,10 @@
     }
 
     updateNotification(id, data, action) {
-        data.notificationNonce = Uss.dashboard.nonce;
+        data.notificationNonce = __uss.dashboard.nonce;
         data.id = id;
         $.ajax({
-            url: Uss.dashboard.url + '/notifications',
+            url: __uss.dashboard.url + '/notifications',
             method: 'POST',
             data: data,
             dataType: 'json',

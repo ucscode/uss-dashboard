@@ -2,18 +2,20 @@
 
 namespace Module\Dashboard\Bundle\Extension;
 
-use Module\Dashboard\Bundle\Common\Document;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use ReflectionClass;
-use Uss\Component\Manager\UrlGenerator;
-use Uss\Component\Kernel\Enumerator;
+use Uss\Component\Kernel\Extension\ExtensionInterface;
+use Uss\Component\Kernel\Resource\AccessibleMethods;
+use Uss\Component\Kernel\Resource\AccessibleProperties;
 
-final class DashboardExtension extends AbstractExtension implements GlobalsInterface
+final class DashboardExtension extends AbstractExtension implements GlobalsInterface, ExtensionInterface
 {
     public readonly array $immutable;
+    protected AccessibleProperties $accessibleProperties;
+    protected AccessibleMethods $accessibleMethods;
 
     public function getGlobals(): array
     {
@@ -22,17 +24,35 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
 
     public function __construct(private AbstractDashboard $dashboard)
     {
-        $immutable = new ReflectionClass(DashboardImmutable::class);
-        $this->immutable = $immutable->getConstants();
+        $this->immutable = (new ReflectionClass(DashboardImmutable::class))->getConstants();
+        $this->initializeAccessibleProperties();
+        $this->initializeAccessibleMethods();
     }
 
-    public function props(): array
+    public function props(): AccessibleProperties
     {
-        return get_object_vars($this->dashboard);
+        return $this->accessibleProperties;
     }
 
     public function meths(): AccessibleMethods
     {
-        return new AccessibleMethods($this->dashboard);
+        return $this->accessibleMethods;
+    }
+
+    protected function initializeAccessibleProperties(): void
+    {
+        $properties = array_keys(get_object_vars($this->dashboard));
+        $this->accessibleProperties = new AccessibleProperties($this->dashboard, $properties);
+    }
+
+    protected function initializeAccessibleMethods(): void
+    {
+        $this->accessibleMethods = new AccessibleMethods($this->dashboard, [
+            'getDocument',
+            'getDocuments',
+            'urlGenerator',
+            'isFirewallEnabled',
+            'getTheme',
+        ]);
     }
 }

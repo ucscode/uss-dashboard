@@ -3,8 +3,8 @@
 {% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
 
 {% macro mini(message) %}
-    {% set message = Uss.call_user_func('strip_tags', message) %}
-    {% set message = Uss.call_user_func('substr', message, 0, 200) %}
+    {% set message = __uss.call_user_func('strip_tags', message) %}
+    {% set message = __uss.call_user_func('substr', message, 0, 200) %}
     {{ message }}
 {% endmacro %}
 
@@ -34,7 +34,7 @@
                             </div>
                             <div class="content">
                                 <p class='line-clamp clamp-3'>{{ _self.mini(notification.message) }}</p>
-                                <span>{{ Uss.elapse(notification.period) }}</span>
+                                <span>{{ __uss.elapse(notification.period) }}</span>
                             </div>
                         </a>
                     </li>

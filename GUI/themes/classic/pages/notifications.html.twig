@@ -42,7 +42,7 @@
                                                     {{ notification.message|raw }}
                                                 </div>
                                                 <span class="small text-gray">
-                                                    {{ Uss.relativeTime(notification.period) }}
+                                                    {{ __uss.relativeTime(notification.period) }}
                                                     {% if notification.redirect %}
                                                         <i class='bi bi-link-45deg ms-1'></i>
                                                     {% endif %}
@@ -82,7 +82,7 @@
                                         <div class='row'>
                                             <div class='col-sm-8 m-auto col-lg-6'>
                                                 {% set errorImage = constant('DashboardImmutable::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
-                                                <img src='{{ Uss.pathToUrl(errorImage) }}' class='img-fluid'>
+                                                <img src='{{ __uss.pathToUrl(errorImage) }}' class='img-fluid'>
                                             </div>
                                         </div>
                                         <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>

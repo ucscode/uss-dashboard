@@ -17,7 +17,7 @@
                             <div class="title text-center">
 
                                 {% block contentLeftIcon %}
-                                    {% set companyIcon = Uss.getOption('company:logo') ?? page_icon %}
+                                    {% set companyIcon = __uss.getOption('company:logo') ?? page_icon %}
                                     {% if companyIcon is not empty %}
                                         <div class='mb-2'>
                                             <img src='{{ companyIcon }}' class='img-fluid user-select-none'>
@@ -27,13 +27,13 @@
 
                                 {% block contentLeftTitle %}
                                     <h1 class="text-white mb-2">
-                                        {{ Uss.getOption('company:name') ?? page_title }}
+                                        {{ __uss.getOption('company:name') ?? page_title }}
                                     </h1>
                                 {% endblock %}
 
                                 {% block contentLeftDescription %}
                                     <p class="text-light">
-                                        {{ Uss.getOption('company:description') ?? page_description }}
+                                        {{ __uss.getOption('company:description') ?? page_description }}
                                     </p>
                                 {% endblock %}
 
@@ -83,7 +83,7 @@
 {% block body_javascript %}
     {{ parent() }}
     
-    {% set securityUrl = Uss.templateSchema('@Foundation/User/assets/js/security.js', Uss.ENUM.URL) %}
+    {% set securityUrl = __uss.meths.templateSchema('@Foundation/User/assets/js/security.js', __uss.ENUM.URL) %}
 
 	<script src="{{ securityUrl }}"></script>
 {% endblock %}

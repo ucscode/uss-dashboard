@@ -1,8 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', Uss.ENUM.URL) %}
+{% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', __uss.ENUM.URL) %}
 
 {% block head_resource %}
+    {{ __uss.props.mysqli }}
     {{ parent() }}
     <link rel="stylesheet" href="{{ stylesheet }}">
 {% endblock %}
@@ -18,7 +19,7 @@
             {% block sidebar_logo %}
                 <div class="navbar-logo">
                     <a href="{{ __dashboard.meths.urlGenerator('/') }}">
-                        <img src="{{ Uss.getOption('company:logo') ?? page_icon }}" alt="logo" />
+                        <img src="{{ __uss.getOption('company:logo') ?? page_icon }}" alt="logo" />
                     </a>
                 </div>
             {% endblock %}
@@ -93,7 +94,7 @@
 
                     {% block dashboard_content %} {# content ----------------------> important #}
 
-                        {{ Uss.renderBlockElements('dashboard_content')|raw }}
+                        {{ __uss.renderBlockElements('dashboard_content')|raw }}
                         
                     {% endblock %}
 
@@ -102,7 +103,7 @@
             {% endblock %} 
 
             {% block dashboard_footer %} 
-                {{ Uss.renderBlockElements('dashboard_footer')|raw }}
+                {{ __uss.renderBlockElements('dashboard_footer')|raw }}
             {% endblock %} 
 
         </main>
@@ -117,11 +118,11 @@
     
     {{ parent() }}
 
-    <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
+    <script src="{{ __uss.meths.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
 
     {% if (user and user.isAvailable()) %}
-	    <script src="{{ __dashboard.meths.theme('/assets/js/dashboard.js', Uss.ENUM.URL) }}"></script>
-        <script src='{{ __dashboard.meths.theme('/assets/js/notifications.js', Uss.ENUM.URL) }}' type='module' ></script>
+	    <script src="{{ __dashboard.meths.theme('/assets/js/dashboard.js', __uss.ENUM.URL) }}"></script>
+        <script src='{{ __dashboard.meths.theme('/assets/js/notifications.js', __uss.ENUM.URL) }}' type='module' ></script>
     {% endif %}
 
 {% endblock %}

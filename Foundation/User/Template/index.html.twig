@@ -26,7 +26,7 @@
                         </h1>
                         <figure class='pop-figure'>
                             <div id='pop'></div>
-                            {% set image = Uss.templateSchema('@Foundation/User/assets/images', Uss.ENUM.URL) %}
+                            {% set image = __uss.templateSchema('@Foundation/User/assets/images', __uss.ENUM.URL) %}
                             <div class='d-sm-none'>
                                 <img src='{{ image ~ '/sunset.jpg' }}' class='img-fluid'>
                             </div>

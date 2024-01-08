@@ -11,7 +11,7 @@ use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Kernel\Enumerator;
+use Uss\Component\Kernel\Resource\Enumerator;
 
 abstract class AbstractDashboard extends AbstractDashboardCentral
 {
