@@ -1,6 +1,6 @@
-{# {% extends __dashboard.meths.theme('/base.html.twig') %}
+{% extends __dashboard.meths.theme('/base.html.twig') %}
 
-{% block dashboard_content %} #}
+{% block dashboard_content %}
 
     <div class="container-xl profile-base">
         
@@ -33,8 +33,10 @@
 
         <hr class="mt-2 mb-4">
 
-        {% block profile_content %}{% endblock %}
+        {% block profile_content %}
+            {{ __uss.renderBlockElements('profile_content', _context)|raw }}
+        {% endblock %}
 
     </div>
     
-{# {% endblock %} #}
+{% endblock %}

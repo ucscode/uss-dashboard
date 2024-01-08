@@ -24,6 +24,7 @@ new class () {
         new DashboardEnvironment($uss);
 
         BlockManager::instance()->addBlock("dashboard_content", new Block(true));
+        BlockManager::instance()->addBlock("profile_content", new Block(true));
         
         $this->createUserApplication();
         $this->createAdminApplication();

@@ -6,5 +6,5 @@ use Module\Dashboard\Foundation\User\Controller\Abstract\AbstractProfileControll
 
 class PasswordController extends AbstractProfileController
 {
-
+    
 }
