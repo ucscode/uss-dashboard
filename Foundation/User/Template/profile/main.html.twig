@@ -1,7 +1,7 @@
-{% extends _theme ~ '/pages/user/profile/layout.html.twig' %}
+{% extends '@Foundation/User/Template/profile/layout.html.twig' %}
 
 {% block profile_content %}
-
+    
     <form method='POST' enctype='multipart/form-data'>
         <div class="row">
         
@@ -38,11 +38,11 @@
                                         </li>
 
                                         <li class='small fw-light mb-0'>
-                                            Joined: {{ user.registerTime.format('dS, M Y') }}
+                                            Joined: {#{ user.registerTime.format('dS, M Y') }#}
                                         </li>
 
                                         <li class='small fw-light mb-0'>
-                                            Last seen: {{ Uss.relativeTime(user.last_seen, true) }}
+                                            Last seen: {#{ Uss.relativeTime(user.last_seen, true) }#}
                                         </li>
 
                                     {% endblock %}

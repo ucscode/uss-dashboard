@@ -25,7 +25,7 @@
 
         {% block dashboard_user_menu_items %}
 
-            {% for item in __dashboard.userMenu.children %}
+            {% for item in __dashboard.props.userMenu.children %}
                 <li>
                     <a href="{{ item.getAttribute('href') }}" target="{{ item.getAttribute('target') }}"> 
                         <i class="{{ item.getAttribute('icon') ?? "bi bi-question-circle" }}"></i>

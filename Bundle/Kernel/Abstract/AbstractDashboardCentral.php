@@ -37,20 +37,12 @@ abstract class AbstractDashboardCentral implements DashboardInterface
         $this->userMenu = new TreeNode('User Menu');
         (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -10);
     }
-    
+
     /**
      * Process the GUI/Theme for the created dashboard Application
      */
     private function createGUI(): void
     {
-        foreach($this->getDocuments() as $document) {
-            foreach(array_filter($document->getMenuItems(true)) as $name => $parentItem) {
-                if(!$parentItem->getChild($name)) { // get relative child item
-                    $parentItem->addChild($name, $document->getMenuItem($name));
-                }
-            };
-        }
-
         (new DashboardMenuFormation($this->menu))->beginProcess();
         (new DashboardMenuFormation($this->userMenu))->beginProcess();
 

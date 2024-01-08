@@ -8,15 +8,12 @@ use Twig\Extension\GlobalsInterface;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use ReflectionClass;
-use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Kernel\Enumerator;
 
 final class DashboardExtension extends AbstractExtension implements GlobalsInterface
 {
     public readonly array $immutable;
-    public readonly TreeNode $menu;
-    public readonly TreeNode $userMenu;
 
     public function getGlobals(): array
     {
@@ -27,8 +24,11 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
     {
         $immutable = new ReflectionClass(DashboardImmutable::class);
         $this->immutable = $immutable->getConstants();
-        $this->menu = $dashboard->menu;
-        $this->userMenu = $dashboard->userMenu;
+    }
+
+    public function getProps(): array
+    {
+        return get_object_vars($this->dashboard);
     }
 
     /**

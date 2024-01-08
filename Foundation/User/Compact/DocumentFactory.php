@@ -5,9 +5,9 @@ namespace Module\Dashboard\Foundation\User\Compact;
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Foundation\User\Controller\IndexController;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
+use Module\Dashboard\Foundation\User\Controller\ProfileController;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\RegisterController;
 use Module\Dashboard\Foundation\User\Form\LoginForm;
@@ -30,7 +30,7 @@ final class DocumentFactory
             ->setName('login')
             ->setTemplate('/security/login.html.twig', $this->namespace)
             ->setCustom('app.form', new LoginForm())
-            ;
+        ;
     }
 
     public function createRegisterDocument(): Document
@@ -41,7 +41,7 @@ final class DocumentFactory
             ->setTemplate('/security/register.html.twig', $this->namespace)
             ->setCustom('app.form', new RegisterForm())
             ->setController(new RegisterController())
-            ;
+        ;
     }
 
     public function createPasswordResetDocument(): Document
@@ -52,7 +52,7 @@ final class DocumentFactory
             ->setTemplate("/security/recovery.html.twig", $this->namespace)
             ->setController(new RecoveryController())
             ->setCustom('app.form', new RecoveryForm())
-            ;
+        ;
     }
 
     public function createLogoutDocument(): Document
@@ -62,14 +62,16 @@ final class DocumentFactory
             ->setRoute("/logout", $this->base)
             ->setController(new LogoutController())
             ->setCustom('endpoint', $this->dashboard->urlGenerator());
-        
-        $document->addMenuItem('logout', [
+
+        $logoutMenuContext = [
             'label' => 'logout',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-power',
             'order' => 1024,
-        ], $this->dashboard->userMenu);
-        
+        ];
+
+        $document->addMenuItem('logout', $logoutMenuContext, $this->dashboard->userMenu);
+
         return $document;
     }
 
@@ -86,77 +88,75 @@ final class DocumentFactory
                 'author_email' => UssImmutable::AUTHOR_EMAIL,
                 'github_repo' => DashboardImmutable::GITHUB_REPO,
             ])
-            ;
-
-        $document->addMenuItem('index', [
+        ;
+        
+        $indexMenuContext = [
             'label' => 'dashboard',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-speedometer',
             'order' => 0,
-        ], $this->dashboard->menu);
+        ];
+
+        $document->addMenuItem('index', $indexMenuContext, $this->dashboard->menu);
 
         return $document;
     }
 
     public function createNotificationDocument(): Document
     {
-       return (new Document())
-            ->setName("notification")
-            ->setController(new NotificationController())
-            ->setTemplate('')
-            ;
+        return (new Document())
+             ->setName("notification")
+             ->setController(new NotificationController())
+             ->setTemplate('')
+        ;
     }
 
-    // /**
-    //  * @method createUserProfilePage
-    //  */
-    // public function createUserProfilePage(): PageManager
-    // {
-    //     $profileNavigation = [
-    //         'label' => 'Profile',
-    //         'href' => $this->dashboard->urlGenerator('/' . UserDashboardInterface::PAGE_USER_PROFILE),
-    //         'icon' => 'bi bi-person'
-    //     ];
-        
-    //     $profilePillNavigation = [
-    //         'label' => 'Profile',
-    //         'href' => $this->dashboard->urlGenerator('/' . UserDashboardInterface::PAGE_USER_PROFILE),
-    //         'icon' => 'bi bi-person-circle',
-    //     ];
-        
-    //     return $this->createPage(UserDashboardInterface::PAGE_USER_PROFILE)
-    //         ->setController(UserProfileController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/user/profile/main.html.twig'))
-    //         ->addMenuItem(
-    //             UserDashboardInterface::PAGE_USER_PROFILE, 
-    //             $profileNavigation, 
-    //             $this->dashboard->menu
-    //         )
-    //         ->addMenuItem(
-    //             'profile-batch-profile', 
-    //             $profilePillNavigation, 
-    //             $this->dashboard->profileBatch
-    //         );
-    // }
+    /**
+     * @method createUserProfileDocument
+     */
+    public function createUserProfileDocument(): Document
+    {
+        $document = (new Document())
+            ->setName('profile')
+            ->setRoute('/profile', $this->base)
+            //->setController(new ProfileController())
+            ->setTemplate("/profile/main.html.twig", $this->namespace);
 
-    // /**
-    //  * @method createUserPasswordPage
-    //  */
-    // public function createUserPasswordPage(): PageManager
-    // {
-    //     $passwordPillNavigation = [
-    //         'label' => 'password',
-    //         'href' => $this->dashboard->urlGenerator('/' . UserDashboardInterface::PAGE_USER_PASSWORD),
-    //         'icon' => 'bi bi-unlock'
-    //     ];
+        $profileMenuContext = [
+            'label' => 'Profile',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-person'
+        ];
 
-    //     return $this->createPage(UserDashboardInterface::PAGE_USER_PASSWORD)
-    //         ->setController(UserPasswordController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/user/profile/password.html.twig'))
-    //         ->addMenuItem(
-    //             'profile-batch-password', 
-    //             $passwordPillNavigation, 
-    //             $this->dashboard->profileBatch
-    //         );
-    // }
+        $document
+            ->addMenuItem('profile', $profileMenuContext, $this->dashboard->menu)
+            ->addMenuItem('profile', $profileMenuContext, $this->dashboard->profileBatch);
+
+        return $document;
+    }
+
+    /**
+     * @method createUserPasswordPage
+     */
+    public function createUserProfilePasswordDocument(): Document
+    {
+        $document = (new Document())
+            //->setController()
+            ->setRoute("/profile/password", $this->base)
+            ->setTemplate("/profile/password.html.twig", $this->namespace);
+
+        $passwordMenuContext = [
+            'label' => 'password',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-unlock'
+        ];
+
+        $document->addMenuItem(
+            'profilePassword', 
+            $passwordMenuContext, 
+            $this->dashboard->profileBatch
+        );
+
+        return $document;
+    }
 }

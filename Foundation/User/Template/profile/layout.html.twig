@@ -1,10 +1,10 @@
-{% extends _theme ~ '/base.html.twig' %}
+{% extends __dashboard.theme('/base.html.twig') %}
 
 {% block dashboard_content %}
 
     <div class="container-xl profile-base">
         
-        {% set profileBatch = DashboardExtension.getDashboardProperty('profileBatch') %}
+        {% set profileBatch = __dashboard.props.profileBatch %}
         
         {% if profileBatch and profileBatch.children is not empty %}
 
@@ -12,17 +12,17 @@
 
                 {% for TreeNode in profileBatch.children %}
 
-                    {% set icon = TreeNode.getAttr('icon') %}
+                    {% set icon = TreeNode.getAttribute('icon') %}
 
                     <a 
-                        class="nav-link me-1 {{ TreeNode.getAttr('active') ? 'active' : '' }}" 
-                        href="{{ TreeNode.getAttr('href') }}" 
-                        target="{{ TreeNode.getAttr('target') }}"
+                        class="nav-link me-1 {{ TreeNode.getAttribute('active') ? 'active' : '' }}" 
+                        href="{{ TreeNode.getAttribute('href') }}" 
+                        target="{{ TreeNode.getAttribute('target') }}"
                     >
                         {% if icon is not empty %}
-                            <i class='{{ TreeNode.getAttr('icon') }} me-1'></i> 
+                            <i class='{{ TreeNode.getAttribute('icon') }} me-1'></i> 
                         {% endif %}
-                        {{ TreeNode.getAttr('label') }}
+                        {{ TreeNode.getAttribute('label') }}
                     </a>
 
                 {% endfor %}

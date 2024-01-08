@@ -3,11 +3,11 @@
 namespace Module\Dashboard\Bundle\Kernel\Compact;
 
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
-use Uss\Component\Kernel\Abstract\AbstractEnvironmentSystem;
+use Uss\Component\Kernel\Interface\UssFrameworkInterface;
 
 final class DashboardEnvironment
 {
-    public function __construct(AbstractEnvironmentSystem $system)
+    public function __construct(UssFrameworkInterface $system)
     {
         $system->filesystemLoader
             ->addPath(DashboardImmutable::FOUNDATION_DIR, 'Foundation');

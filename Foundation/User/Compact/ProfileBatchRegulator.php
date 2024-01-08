@@ -1,6 +1,9 @@
 <?php
 
+namespace Module\Dashboard\Foundation\User\Compact;
+
 use Ucscode\TreeNode\TreeNode;
+use Uss\Component\Event\EventInterface;
 
 final class ProfileBatchRegulator implements EventInterface 
 {

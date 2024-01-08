@@ -22,6 +22,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         parent::createApp($appControl);
         $this->createLocalDocuments();
         $this->createAjaxDocuments();
+        // (new Event())->addListener('dashboard:render', new ProfileBatchRegulator($this), -10);
     }
 
     protected function createLocalDocuments(): void
@@ -34,14 +35,8 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         $this->addDocument('logout', $factory->createLogoutDocument());
         $this->addDocument('index', $factory->createIndexDocument());
         $this->addDocument('notification', $factory->createNotificationDocument());
-
-        //$this->addDocument('settings', new Document());
-        //$this->addDocument('profile', new Document());
-
-        // $factory->createUserProfilePage();
-        // $factory->createUserPasswordPage();
-
-        # (new Event())->addListener('dashboard:render', new ProfileBatchRegulator($this), -10);
+        $this->addDocument('userProfile', $factory->createUserProfileDocument());
+        $this->addDocument('userProfilePassword', $factory->createUserProfilePasswordDocument());
     }
 
     protected function createAjaxDocuments(): void

@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Common;
 
+use Exception;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Route\RouteInterface;
@@ -51,10 +52,7 @@ class Document
      */
     public function getUrl(bool $ignoreHost = false): ?string
     {
-        if($this->route) {
-            return (new UrlGenerator($this->route))->getResult($ignoreHost);
-        };
-        return null;
+        return ($this->route) ? (new UrlGenerator($this->route))->getResult($ignoreHost) : null;
     }
 
     /**
@@ -107,7 +105,7 @@ class Document
      */
     public function setRequestMethods(array $methods): self
     {
-        $this->validateMethod($methods, __METHOD__);
+        $this->verifyRequestMethods($methods, __METHOD__);
         $this->requestMethods = $methods;
         return $this;
     }
@@ -142,26 +140,39 @@ class Document
      */
     public function addMenuItem(string $name, array|TreeNode $menu, ?TreeNode $parentMenu = null): self
     {
-        $this->validateMenuItem($menu, $parentMenu);
+        $this->discernMenuItem($menu, $parentMenu);
         $menu = is_array($menu) ? new TreeNode($name, $menu) : $menu;
-        $this->menuItems[$name] = [$menu, $parentMenu];
+        if($parentMenu && !$parentMenu->hasChild($name)) {
+            $parentMenu->addChild($name, $menu);
+        }
+        $this->menuItems[$name] = $menu;
         return $this;
     }
 
     /**
      * @method getMenuItem
      */
-    public function getMenuItem(string $name, bool $parent = false): ?TreeNode
+    public function getMenuItem(string $name): ?TreeNode
     {
-        return ($this->menuItems[$name] ?? [])[(int)$parent] ?? null;
+        return $this->menuItems[$name] ?? null;
+    }
+
+    public function removeMenuItem(string $name): self
+    {
+        $menuItem = $this->getMenuItem($name);
+        if($menuItem) {
+            $menuItem->getParent()?->removeChild($menuItem);
+            unset($this->menuItems[$name]);
+        }
+        return $this;
     }
 
     /**
      * @method getMenuItems
      */
-    public function getMenuItems(bool $parent = false): array
+    public function getMenuItems(): array
     {
-        return array_map(fn($item) => $item[(int)$parent], $this->menuItems);
+        return $this->menuItems;
     }
 
     public function __debugInfo(): array
@@ -179,7 +190,7 @@ class Document
         ];
     }
 
-    private function validateMethod(array $method, string $caller): void
+    private function verifyRequestMethods(array $method, string $caller): void
     {
         $methods = [
             'GET',
@@ -198,7 +209,7 @@ class Document
         };
     }
 
-    private function validateMenuItem(array|TreeNode $menu, ?TreeNode $parentMenu): void
+    private function discernMenuItem(array|TreeNode $menu, ?TreeNode $parentMenu): void
     {
         if ($parentMenu === $menu) {
             throw new \Exception(
