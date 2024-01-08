@@ -26,35 +26,13 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
         $this->immutable = $immutable->getConstants();
     }
 
-    public function getProps(): array
+    public function props(): array
     {
         return get_object_vars($this->dashboard);
     }
 
-    /**
-     * Get a path from the current theme and return value as file system or URL
-     */
-    public function getTheme(string $path, Enumerator $enum = Enumerator::THEME): string
+    public function meths(): AccessibleMethods
     {
-        return $this->dashboard->getTheme($path, $enum);
-    }
-
-    /**
-     * @method urlGenerator
-     */
-    public function urlGenerator(string $path = '', array $param = [], ?string $base = null): string
-    {
-        $urlGenerator = !is_null($base) ?
-            new UrlGenerator($path, $param, $base) :
-            $this->dashboard->urlGenerator($path, $param);
-        return $urlGenerator->getResult();
-    }
-
-    /**
-     * @method getDocument
-     */
-    public function getDocument(string $name): ?Document
-    {
-        return $this->dashboard->getDocument($name);
+        return new AccessibleMethods($this->dashboard);
     }
 }

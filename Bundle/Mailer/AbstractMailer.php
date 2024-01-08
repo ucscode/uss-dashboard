@@ -7,7 +7,6 @@ use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
-use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Abstract\AbstractUss;
 use Uss\Component\Kernel\Uss;
 

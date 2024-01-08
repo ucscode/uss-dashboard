@@ -1,29 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% set stylesheet = __dashboard.theme('/assets/css/default.css', Uss.ENUM.URL) %}
+{% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', Uss.ENUM.URL) %}
 
 {% block head_resource %}
-
     {{ parent() }}
-    
     <link rel="stylesheet" href="{{ stylesheet }}">
-
 {% endblock %}
-
 
 {# Body Block For Uss Dashboard #}
 
 {% block body_main %}
     
-    {# Sidebar Block: Includes navigation with logo and menu items #}
-    
-    {% block dashboard_sidebar %}
+    {% block dashboard_sidebar %} {# sidebar ----------------------> important #}
 
         <aside class="sidebar-nav-wrapper">
 
             {% block sidebar_logo %}
                 <div class="navbar-logo">
-                    <a href="{{ __dashboard.urlGenerator('/') }}">
+                    <a href="{{ __dashboard.meths.urlGenerator('/') }}">
                         <img src="{{ Uss.getOption('company:logo') ?? page_icon }}" alt="logo" />
                     </a>
                 </div>
@@ -32,12 +26,12 @@
             <nav class="sidebar-nav text-capitalize">
                 <ul id='nav-group'>
                     {% block dashboard_menu_items %}
-                        {% include __dashboard.theme('/includes/nav-aside.html.twig') %}
+                        {% include __dashboard.meths.theme('/includes/nav-aside.html.twig') %}
                     {% endblock %}
                 </ul>
             </nav>
 
-        </aside>
+        </aside> <!-- End Aside -->
 
         <div class="overlay">
             <a href='javascript:void(0)' class='overlay-close'>	
@@ -46,16 +40,12 @@
         </div>
 
     {% endblock dashboard_sidebar %}
-
-    {# Main Block For Dashboard Content #}
     
-    {% block dashboard_main %}
+    {% block dashboard_main %} {# main ----------------------> important #}
 
         <main class="main-wrapper">
-        
-            {# Header section for dashboard #}
 
-            {% block dashboard_header %}
+            {% block dashboard_header %} {# header ----------------------> important #}
 
                 <header class="header">
                 
@@ -80,11 +70,11 @@
                                 <div class="header-right">
 
                                     {% block dashboard_header_notification %}
-                                        {% include __dashboard.theme('/includes/notifications-top.html.twig') %}
+                                        {% include __dashboard.meths.theme('/includes/notifications-top.html.twig') %}
                                     {% endblock %}
                                     
                                     {% block dashboard_header_profile %}
-                                        {% include __dashboard.theme('/includes/profile-menu.html.twig') %}
+                                        {% include __dashboard.meths.theme('/includes/profile-menu.html.twig') %}
                                     {% endblock %}
                                     
                                 </div>
@@ -98,12 +88,22 @@
             {% endblock dashboard_header %} 
             
             {% block dashboard_wrapper %}
+            
                 <div class='content-wrapper'>
-                    {% block dashboard_content %}{% endblock %}
+
+                    {% block dashboard_content %} {# content ----------------------> important #}
+
+                        {{ Uss.renderBlockElements('dashboard_content')|raw }}
+                        
+                    {% endblock %}
+
                 </div>
+                
             {% endblock %} 
 
-            {% block dashboard_footer %}{% endblock %} {# Footer #}
+            {% block dashboard_footer %} 
+                {{ Uss.renderBlockElements('dashboard_footer')|raw }}
+            {% endblock %} 
 
         </main>
 
@@ -120,8 +120,8 @@
     <script src="{{ Uss.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
 
     {% if (user and user.isAvailable()) %}
-	    <script src="{{ __dashboard.theme('/assets/js/dashboard.js', Uss.ENUM.URL) }}"></script>
-        <script src='{{ __dashboard.theme('/assets/js/notifications.js', Uss.ENUM.URL) }}' type='module' ></script>
+	    <script src="{{ __dashboard.meths.theme('/assets/js/dashboard.js', Uss.ENUM.URL) }}"></script>
+        <script src='{{ __dashboard.meths.theme('/assets/js/notifications.js', Uss.ENUM.URL) }}' type='module' ></script>
     {% endif %}
 
 {% endblock %}
