@@ -115,15 +115,21 @@ class LoginForm extends AbstractUserAccountForm
 
     protected function getUserInstance(?array $userItem, string $type, string $password): ?User
     {
+        $toast = (new Toast())->setBackground(Toast::BG_DANGER);
+        $toast->setMessage("Incorrect {$type} or password");
+
         if($userItem) {
             $user = new User($userItem['id']);
             if($user->verifyPassword($password)) {
-                $user->saveToSession();
-                return $user;
+                $emailConfirmed = empty($user->meta->get('verify-email:code'));
+                if($emailConfirmed) {
+                    $user->saveToSession();
+                    return $user;
+                }
+                $toast->setMessage("Please verify your email to proceed");
             }
         }
-        $toast = (new Toast())->setBackground(Toast::BG_DANGER);
-        $toast->setMessage("Incorrect {$type} or password");
+
         Flash::instance()->addToast("login", $toast);
         return null;
     }
