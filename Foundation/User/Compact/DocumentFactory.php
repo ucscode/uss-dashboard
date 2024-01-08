@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
+use Module\Dashboard\Foundation\User\Controller\PasswordController;
 use Module\Dashboard\Foundation\User\Controller\ProfileController;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\RegisterController;
@@ -119,7 +120,7 @@ final class DocumentFactory
         $document = (new Document())
             ->setName('profile')
             ->setRoute('/profile', $this->base)
-            //->setController(new ProfileController())
+            ->setController(new ProfileController())
             ->setTemplate("/profile/main.html.twig", $this->namespace);
 
         $profileMenuContext = [
@@ -141,7 +142,7 @@ final class DocumentFactory
     public function createUserProfilePasswordDocument(): Document
     {
         $document = (new Document())
-            //->setController()
+            ->setController(new PasswordController())
             ->setRoute("/profile/password", $this->base)
             ->setTemplate("/profile/password.html.twig", $this->namespace);
 

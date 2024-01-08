@@ -2,28 +2,24 @@
 
 namespace Module\Dashboard\Foundation\User\Controller;
 
-use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Manager\UrlGenerator;
-use Uss\Component\Route\RouteInterface;
 
-class LogoutController implements RouteInterface
+class LogoutController extends AbstractDashboardController
 {
-    public function onload($match)
+    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
-        (new User())
-            ->acquireFromSession()
-            ->destroySession();
+        (new User())->acquireFromSession()->destroySession();
 
-        $dashboard = UserDashboard::instance();
-        $document = $dashboard->getDocument('logout');
-        $endpoint = $document->getCustom('endpoint') ?? null;
-
-        if(!($endpoint instanceof UrlGenerator) && !is_string($endpoint)) {
-            $endpoint = $dashboard->urlGenerator();
-        };
-
+        $endpoint = $document->getCustom('endpoint');
+        $endpoint = 
+            $endpoint instanceof UrlGenerator || 
+            is_string($endpoint) ? $endpoint : $dashboard->urlGenerator();
+        
         header("location: " . $endpoint);
         exit;
     }

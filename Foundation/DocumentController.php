@@ -14,15 +14,14 @@ class DocumentController implements RouteInterface
     {
     }
 
-    public function onload(array $matches)
+    public function onload(array $context): void
     {
         $controller = $this->document->getController();
-
+        
         if($controller) {
-            $controller->onload([
-                'matches' => $matches,
-                'dashboard' => $this->dashboard,
-                'document' => $this->document
+            $controller->onload($context + [
+                'dashboardInterface' => $this->dashboard,
+                'dashboardDocument' => $this->document
             ]);
         }
         

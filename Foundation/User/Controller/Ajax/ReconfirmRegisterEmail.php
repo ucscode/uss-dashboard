@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\ControllerAjax;
+namespace Module\Dashboard\Foundation\User\Controller\Ajax;
 
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
@@ -12,7 +12,7 @@ class ReconfirmRegisterEmail implements RouteInterface
 {
     protected Uss $uss;
 
-    public function onload(array $matches)
+    public function onload(array $context): void
     {
         $this->uss = Uss::instance();
 

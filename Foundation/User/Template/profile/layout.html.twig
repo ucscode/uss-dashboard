@@ -1,6 +1,6 @@
-{% extends __dashboard.meths.theme('/base.html.twig') %}
+{# {% extends __dashboard.meths.theme('/base.html.twig') %}
 
-{% block dashboard_content %}
+{% block dashboard_content %} #}
 
     <div class="container-xl profile-base">
         
@@ -10,19 +10,19 @@
 
             <nav class="nav nav-pills profile-base-nav">
 
-                {% for TreeNode in profileBatch.children %}
+                {% for menuItem in profileBatch.children %}
 
-                    {% set icon = TreeNode.getAttribute('icon') %}
+                    {% set icon = menuItem.getAttribute('icon') %}
 
                     <a 
-                        class="nav-link me-1 {{ TreeNode.getAttribute('active') ? 'active' : '' }}" 
-                        href="{{ TreeNode.getAttribute('href') }}" 
-                        target="{{ TreeNode.getAttribute('target') }}"
+                        class="nav-link me-1 {{ menuItem.getAttribute('active') ? 'active' : '' }}" 
+                        href="{{ menuItem.getAttribute('href') }}" 
+                        target="{{ menuItem.getAttribute('target') }}"
                     >
                         {% if icon is not empty %}
-                            <i class='{{ TreeNode.getAttribute('icon') }} me-1'></i> 
+                            <i class='{{ menuItem.getAttribute('icon') }} me-1'></i> 
                         {% endif %}
-                        {{ TreeNode.getAttribute('label') }}
+                        {{ menuItem.getAttribute('label') }}
                     </a>
 
                 {% endfor %}
@@ -37,4 +37,4 @@
 
     </div>
     
-{% endblock %}
+{# {% endblock %} #}

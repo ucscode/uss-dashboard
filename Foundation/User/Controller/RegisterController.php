@@ -2,33 +2,18 @@
 
 namespace Module\Dashboard\Foundation\User\Controller;
 
-use Exception;
+use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
-use Module\Dashboard\Foundation\User\UserDashboard;
-use Uss\Component\Route\RouteInterface;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 
-class RegisterController implements RouteInterface
+class RegisterController extends AbstractDashboardController
 {
-    public function onload(array $regex)
+    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
-        $dashboard = UserDashboard::instance();
         $dashboard->enableFirewall(false);
-
-        $document = $dashboard->getDocument('register');
-        $form = $document->getCustom('app.form');
-
-        if(!($form instanceof DashboardFormInterface)) {
-            throw new Exception(
-                sprintf(
-                    "Dashboard application registration form must be an instance of %",
-                    DashboardFormInterface::class
-                )
-            );
-        }
-
         $form->build();
         $form->handleSubmission();
-        
         $dashboard->render($document->getTemplate(), ['form' => $form]);
     }
 

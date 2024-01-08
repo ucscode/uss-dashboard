@@ -9,7 +9,7 @@ class NotificationController implements RouteInterface
 {
     private $parseDown;
 
-    public function onload($pageInfo)
+    public function onload(array $pageInfo): void
     {
         $user = new User();
         $user->acquireFromSession();
