@@ -3,7 +3,6 @@
 {% set stylesheet = __dashboard.meths.theme('/assets/css/default.css', __uss.ENUM.URL) %}
 
 {% block head_resource %}
-    {{ __uss.props.mysqli }}
     {{ parent() }}
     <link rel="stylesheet" href="{{ stylesheet }}">
 {% endblock %}
