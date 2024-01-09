@@ -2,9 +2,9 @@
 
 {% block profile_content %} #}
     
-    <form method='POST' enctype='multipart/form-data'>
+    <form {{ __uss.meths.arrayToHtmlAttrs(form.attribute.fetchAll(true))|raw }}>
+
         <div class="row">
-        
             <div class="col-xl-4">
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-body">
@@ -14,73 +14,36 @@
                                 <figure class="mb-2 img-resolution profile-figure rounded-circle">
                                     <img class="" src="{{ user.avatar }}" id="image" alt="">
                                 </figure>
-
-                                <input type='file' name='avatar' accept=".jpg,.png,.gif,.jpeg,.webp" class='d-none' id="input" data-ui-preview-uploaded-image-in="#image">
-
-                                <button class="btn btn-primary" type="button" data-ui-transfer-click-event-to="#input">
-                                    <i class="bi bi-camera me-1"></i> Change Photo
-                                </button>
+                                {{ form.avatarCollection.elementContext.export|raw }} {# --------------> collection #}
                             </div>
 
                             <div class="col-sm-8 col-md-7 col-xl-12 text-center text-sm-start text-xl-center">
                                 <ul class="list-unstyled">
-
                                     {% block profile_info %}
-
                                         {% if user.username %}
-                                            <li>
-                                                <span class="text-capitalize fs-5">{{ user.username }}</span>
-                                            </li>
+                                            <li><span class="text-capitalize fs-5">{{ user.username }}</span></li>
                                         {% endif %}
-
-                                        <li class='text-muted mb-2'>
-                                            {{ user.email }}
-                                        </li>
-
-                                        <li class='small fw-light mb-0'>
-                                            Joined: {#{ user.registerTime.format('dS, M Y') }#}
-                                        </li>
-
-                                        <li class='small fw-light mb-0'>
-                                            Last seen: {#{ __uss.relativeTime(user.last_seen, true) }#}
-                                        </li>
-
+                                        <li class='text-muted mb-2'>{{ user.email }}</li>
+                                        <li class='small fw-light mb-1'>Joined: {{ user.registerTime.format('dS, M Y') }}</li>
+                                        <li class='small fw-light mb-1'>Last seen: {{ __uss.relativeTime(user.last_seen, true) }}</li>
                                     {% endblock %}
-
                                 </ul>
                             </div>
 
-                        </div>
+                        </div> <!-- row g-3 -->
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-8">
                 <div class="card mb-4">
-
                     <div class="card-body p-4">
-
-                        {% block profile_content_right %}
-
-                            <div class="mb-3">
-                                <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" name="user[email]" value="{{ user.email }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="small mb-1" for="about">About</label>
-                                <textarea class="form-control fs-14px" id="about" placeholder="My Bio" rows="7" name="meta[user.about]">{{ user.getUserMeta("user.about")}}</textarea>
-                            </div>
-
-                        {% endblock %}
-
-                        <button class="btn btn-primary" type="submit">Save Changes</button>
+                        {{ form.collection.elementContext.export|raw }} {# ----------------> collection #}
                     </div>
-
                 </div>
             </div>
-
         </div>
+        
     </form>
 
 {# {% endblock %} #}

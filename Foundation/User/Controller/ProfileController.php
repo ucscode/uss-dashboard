@@ -11,6 +11,7 @@ class ProfileController extends AbstractProfileController
 {    
     public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
-        
+        $form->build();
+        $form->handleSubmission();
     }
 }

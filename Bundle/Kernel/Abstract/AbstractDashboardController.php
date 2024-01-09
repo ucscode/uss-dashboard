@@ -25,6 +25,7 @@ class AbstractDashboardController implements RouteInterface
 
     protected function GUIBuilder(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
+        $document->setContext($document->getContext() + ['form' => $form]);
         $this->composeApplication($dashboard, $document, $form);
     }
 }

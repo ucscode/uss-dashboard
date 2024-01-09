@@ -12,6 +12,7 @@ use Module\Dashboard\Foundation\User\Controller\ProfileController;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\RegisterController;
 use Module\Dashboard\Foundation\User\Form\LoginForm;
+use Module\Dashboard\Foundation\User\Form\ProfileForm;
 use Module\Dashboard\Foundation\User\Form\RecoveryForm;
 use Module\Dashboard\Foundation\User\Form\RegisterForm;
 use Uss\Component\Kernel\UssImmutable;
@@ -62,7 +63,8 @@ final class DocumentFactory
             ->setName('logout')
             ->setRoute("/logout", $this->base)
             ->setController(new LogoutController())
-            ->setCustom('endpoint', $this->dashboard->urlGenerator());
+            ->setCustom('endpoint', $this->dashboard->urlGenerator())
+        ;
 
         $logoutMenuContext = [
             'label' => 'logout',
@@ -121,7 +123,9 @@ final class DocumentFactory
             ->setName('profile')
             ->setRoute('/profile', $this->base)
             ->setController(new ProfileController())
-            ->setTemplate("/profile/main.html.twig", $this->namespace);
+            ->setTemplate("/profile/main.html.twig", $this->namespace)
+            ->setCustom('app.form', new ProfileForm())
+        ;
 
         $profileMenuContext = [
             'label' => 'Profile',
@@ -144,7 +148,8 @@ final class DocumentFactory
         $document = (new Document())
             ->setController(new PasswordController())
             ->setRoute("/profile/password", $this->base)
-            ->setTemplate("/profile/password.html.twig", $this->namespace);
+            ->setTemplate("/profile/password.html.twig", $this->namespace)
+        ;
 
         $passwordMenuContext = [
             'label' => 'password',

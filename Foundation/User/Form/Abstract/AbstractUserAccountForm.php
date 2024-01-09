@@ -220,10 +220,12 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
 
         $name = $info['name'] ?? "user[]";
 
-        $context->widget
-            ->setOptions($info['options'] ?? [])
-            ->setAttribute('placeholder', $info['label'] ?? null)
-            ->setButtonContent(
+        if($context->widget->isSelective()) {
+            $context->widget->setOptions($info['options'] ?? []);
+        }
+        
+        if($context->widget->isButton()) {
+            $context->widget->setButtonContent(
                 $info['content'] ??
                 (
                     (!empty($info['value']) ? $info['value'] : null) ??
@@ -232,7 +234,11 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                         Field::TYPE_BUTTON
                     )
                 )
-            )
+            );
+        }
+
+        $context->widget
+            ->setAttribute('placeholder', $info['placeholder'] ?? ($info['label'] ?? null))
             ->setValue(
                 $this->setFixture(
                     $name,

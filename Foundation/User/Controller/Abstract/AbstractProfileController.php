@@ -21,6 +21,6 @@ abstract class AbstractProfileController extends AbstractDashboardController
 
         $document->setTemplate($layout);
         
-        $this->composeApplication($dashboard, $document, $form);
+        parent::GUIBuilder($dashboard, $document, $form);
     }
 }
