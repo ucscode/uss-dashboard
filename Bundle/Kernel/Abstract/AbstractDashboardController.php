@@ -11,7 +11,7 @@ class AbstractDashboardController implements RouteInterface
 {
     public function onload(array $context): void
     {
-        $this->composeApplication(
+        $this->GUIBuilder(
             $context['dashboardInterface'], 
             $context['dashboardDocument'],
             $context['dashboardDocument']?->getCustom('app.form')
@@ -21,5 +21,10 @@ class AbstractDashboardController implements RouteInterface
     protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         // Your code here
+    }
+
+    protected function GUIBuilder(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    {
+        $this->composeApplication($dashboard, $document, $form);
     }
 }

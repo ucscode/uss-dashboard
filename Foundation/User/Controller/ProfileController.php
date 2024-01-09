@@ -11,6 +11,6 @@ class ProfileController extends AbstractProfileController
 {    
     protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
-        parent::composeApplication($dashboard, $document, $form);
+        
     }
 }

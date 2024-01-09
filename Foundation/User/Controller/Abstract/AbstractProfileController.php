@@ -11,7 +11,7 @@ use Uss\Component\Block\BlockTemplate;
 
 abstract class AbstractProfileController extends AbstractDashboardController
 {
-    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    protected function GUIBuilder(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         $layout = '@Foundation/User/Template/profile/layout.html.twig';
         $content = $document->getTemplate();
@@ -20,5 +20,7 @@ abstract class AbstractProfileController extends AbstractDashboardController
             ->addTemplate("resource", new BlockTemplate($content));
 
         $document->setTemplate($layout);
+
+        $this->composeApplication($dashboard, $document, $form);
     }
 }
