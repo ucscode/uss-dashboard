@@ -71,7 +71,7 @@ final class DocumentFactory
             'order' => 1024,
         ];
 
-        $document->addMenuItem('logout', $logoutMenuContext, $this->dashboard->userMenu);
+        $document->addMenuItem('user:logout', $logoutMenuContext, $this->dashboard->userMenu);
 
         return $document;
     }
@@ -98,7 +98,7 @@ final class DocumentFactory
             'order' => 0,
         ];
 
-        $document->addMenuItem('index', $indexMenuContext, $this->dashboard->menu);
+        $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
 
         return $document;
     }
@@ -126,12 +126,12 @@ final class DocumentFactory
         $profileMenuContext = [
             'label' => 'Profile',
             'href' => $document->getUrl(),
-            'icon' => 'bi bi-person'
+            'icon' => 'bi bi-person',
         ];
 
         $document
-            ->addMenuItem('profile', $profileMenuContext, $this->dashboard->menu)
-            ->addMenuItem('profile', $profileMenuContext, $this->dashboard->profileBatch);
+            ->addMenuItem('main:profile', $profileMenuContext, $this->dashboard->menu)
+            ->addMenuItem('profile:primary', $profileMenuContext, $this->dashboard->profileBatch);
 
         return $document;
     }
@@ -149,14 +149,11 @@ final class DocumentFactory
         $passwordMenuContext = [
             'label' => 'password',
             'href' => $document->getUrl(),
-            'icon' => 'bi bi-unlock'
+            'icon' => 'bi bi-unlock',
+            // 'autoFocus' => false
         ];
 
-        $document->addMenuItem(
-            'profilePassword', 
-            $passwordMenuContext, 
-            $this->dashboard->profileBatch
-        );
+        $document->addMenuItem('profile:password', $passwordMenuContext, $this->dashboard->profileBatch);
 
         return $document;
     }

@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Bundle\Common;
 
 use Exception;
+use PhpParser\Node\Expr\Instanceof_;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Manager\UrlGenerator;
 use Uss\Component\Route\RouteInterface;
@@ -142,7 +143,7 @@ class Document
     {
         $this->discernMenuItem($menu, $parentMenu);
         $menu = is_array($menu) ? new TreeNode($name, $menu) : $menu;
-        if($parentMenu && !$parentMenu->hasChild($name)) {
+        if($parentMenu && !$parentMenu->hasChild($menu)) {
             $parentMenu->addChild($name, $menu);
         }
         $this->menuItems[$name] = $menu;

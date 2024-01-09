@@ -20,7 +20,7 @@ abstract class AbstractProfileController extends AbstractDashboardController
             ->addTemplate("resource", new BlockTemplate($content));
 
         $document->setTemplate($layout);
-
+        
         $this->composeApplication($dashboard, $document, $form);
     }
 }

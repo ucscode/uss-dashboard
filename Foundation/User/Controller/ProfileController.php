@@ -9,7 +9,7 @@ use Module\Dashboard\Foundation\User\Controller\Abstract\AbstractProfileControll
 
 class ProfileController extends AbstractProfileController
 {    
-    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         
     }

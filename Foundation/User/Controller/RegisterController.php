@@ -9,7 +9,7 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 
 class RegisterController extends AbstractDashboardController
 {
-    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         $dashboard->enableFirewall(false);
         $form->build();

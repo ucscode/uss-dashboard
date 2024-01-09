@@ -11,7 +11,7 @@ use Uss\Component\Manager\UrlGenerator;
 
 class LogoutController extends AbstractDashboardController
 {
-    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         (new User())->acquireFromSession()->destroySession();
 

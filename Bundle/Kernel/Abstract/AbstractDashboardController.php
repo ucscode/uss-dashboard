@@ -18,7 +18,7 @@ class AbstractDashboardController implements RouteInterface
         );
     }
 
-    protected function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         // Your code here
     }
