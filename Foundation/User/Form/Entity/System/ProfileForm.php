@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\User\Form\Entity\System;
 
-use Module\Dashboard\Bundle\Common\FileUploader\FileUploader;
+use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Ucscode\UssForm\Collection\Collection;
@@ -28,8 +28,8 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function validateResource(array $filteredResource): ?array
     {
+        // use try catch block;
         $file = $this->getAvatarMetaValue();
-        var_dump($file);
         return [];
     }
 
@@ -89,15 +89,32 @@ class ProfileForm extends AbstractUserAccountForm
         $this->avatarCollection->addField('void', $buttonField);
     }
 
-    protected function getAvatarMetaValue(): array
+    protected function getAvatarMetaValue(): ?string
     {
         $file = [];
+
         foreach($_FILES['meta'] as $key => $list) {
             $file[$key] = $list['avatar'];
         }
-        $uploader = new FileUploader($file);
+
+        $uploader = (new FileUploader($file))
+            ->setMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image,jpg',
+                'image/webp',
+            ])
+            ->setUploadDirectory('')
+            ->setFilenamePrefix($this->user->getId() . "-")
+            ->setMaxFileSize(1000 * 1024) // 1000 KB
+        ;
         var_dump($uploader);
-        return $file;
+
+        if(!$uploader->uploadFile()) {
+            throw new \Exception($uploader->getError(true));
+        }
+
+        return $uploader->getUploadedFilepath();
     }
 
     protected function populateFields(): void

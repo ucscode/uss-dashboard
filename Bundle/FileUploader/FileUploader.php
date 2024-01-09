@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Common\FileUploader;
+namespace Module\Dashboard\Bundle\FileUploader;
 
 use Uss\Component\Kernel\Uss;
 
@@ -53,8 +53,9 @@ class FileUploader extends AbstractFileUploader
     }
 
     /**
-     * The max filesize is set in byte. Hence;
-     * 1024 bytes = 1KB
+     * The max filesize is set in byte.
+     * 
+     * TIP: 1024 bytes = 1KB
      */
     public function setMaxFileSize(int $maxBytes): self
     {
@@ -135,11 +136,12 @@ class FileUploader extends AbstractFileUploader
     public function uploadFile(): bool
     {
         try {
-            $this->fileAvailable();
+            $this->validateFileAvailability();
             $this->validateMimeType();
             $this->validateFileSize();
         } catch(\Exception $e) {
-            return !($this->error = $e->getMessage());
+            $this->error = $e->getMessage();
+            return false;
         }
         $this->generateFilepath();
         return $this->moveUploadedPath();
@@ -151,5 +153,13 @@ class FileUploader extends AbstractFileUploader
     public function getUploadedFilepath(): ?string
     {
         return $this->isUploaded ? $this->filepath : null;
+    }
+
+    /**
+     * @method getError
+     */
+    public function getError(bool $msg = false): string|int|null
+    {
+        return $msg ? $this->error : $this->file['error'];
     }
 }

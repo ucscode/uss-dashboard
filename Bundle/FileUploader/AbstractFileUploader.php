@@ -1,8 +1,9 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Common\FileUploader;
+namespace Module\Dashboard\Bundle\FileUploader;
 
 use finfo;
+use Uss\Component\Kernel\Uss;
 
 abstract class AbstractFileUploader
 {
@@ -22,21 +23,18 @@ abstract class AbstractFileUploader
     }
 
     /**
-     * @method getError
-     */
-    public function getError(bool $msg = false): string|int|null
-    {
-        return $msg ? $this->error : $this->file['error'];
-    }
-
-    /**
      * @method fileAvailable
      */
-    protected function fileAvailable(): void
+    protected function validateFileAvailability(): void
     {
-        $fileExists = $this->file && isset($this->file['tmp_name']) && $this->file['error'] === UPLOAD_ERR_OK;
+        $fileExists = 
+            $this->file && 
+            isset($this->file['tmp_name']) && 
+            $this->file['error'] === UPLOAD_ERR_OK;
+
         if(!$fileExists) {
-            $errorList = array(
+
+            $errorList = [
                 0 => 'File is uploaded successfully',
                 1 => 'Uploaded file exceeds the upload_max_filesize limit',
                 2 => 'Uploaded file exceeds the MAX_FILE_SIZE directive specified in the HTML form',
@@ -45,8 +43,10 @@ abstract class AbstractFileUploader
                 6 => 'Missing a temporary folder',
                 7 => 'Failed to write file to disk',
                 8 => 'A PHP extension stopped the uploading process'
-            );
+            ];
+
             $index = $this->file['error'];
+
             throw new \Exception($errorList[$index]);
         };
     }
@@ -62,8 +62,8 @@ abstract class AbstractFileUploader
             if (!in_array($mimeType, $this->mimeTypes)) {
                 throw new \Exception(
                     sprintf(
-                        "Invalid file type. Allowed types: %s",
-                        implode(', ', $this->mimeTypes)
+                        "Invalid file type. Allowed types are: %s",
+                        Uss::instance()->implodeReadable($this->mimeTypes)
                     )
                 );
             };
@@ -80,6 +80,34 @@ abstract class AbstractFileUploader
                 throw new \Exception("File size exceeds the allowed limit");
             }
         }
+    }
+
+    /**
+     * @method generateFilepath
+     */
+    protected function generateFilepath(): void
+    {
+        if(!$this->uploadDirectory) {
+            throw new \Exception(
+                sprintf(
+                    "%s: No upload directory is defined",
+                    __CLASS__
+                )
+            );
+        };
+
+        $this->createDirectoryIfNotExists();
+
+        if(!$this->filename) {
+            $this->filename = hash_file('md5', $this->file['tmp_name']);
+        }
+
+        if(!$this->fileExtension) {
+            $this->fileExtension = pathinfo($this->file['name'], PATHINFO_EXTENSION);
+        }
+
+        $this->basename = $this->filenamePrefix . $this->filename . "." . $this->fileExtension;
+        $this->filepath = $this->uploadDirectory . '/' . $this->basename;
     }
 
     /**
@@ -111,33 +139,5 @@ abstract class AbstractFileUploader
             $this->error = "Failed to move uploaded file";
         };
         return $this->isUploaded;
-    }
-
-    /**
-     * @method generateFilepath
-     */
-    protected function generateFilepath(): void
-    {
-        if(!$this->uploadDirectory) {
-            throw new \Exception(
-                sprintf(
-                    "%s: No upload directory is defined",
-                    __CLASS__
-                )
-            );
-        };
-
-        $this->createDirectoryIfNotExists();
-
-        if(!$this->filename) {
-            $this->filename = hash_file('md5', $this->file['tmp_name']);
-        }
-
-        if(!$this->fileExtension) {
-            $this->fileExtension = pathinfo($this->file['name'], PATHINFO_EXTENSION);
-        }
-
-        $this->basename = $this->filenamePrefix . $this->filename . "." . $this->fileExtension;
-        $this->filepath = $this->uploadDirectory . '/' . $this->basename;
     }
 }
