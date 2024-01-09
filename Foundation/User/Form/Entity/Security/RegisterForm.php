@@ -38,7 +38,6 @@ class RegisterForm extends AbstractUserAccountForm
     public function validateResource(array $filteredResource): ?array
     {
         $resource = $this->validateNonce($filteredResource);
-        echo 1;
         if($resource) {
 
             $user = $resource['user'];

@@ -14,4 +14,5 @@ interface UserInterface
     public function persist(): bool;
     public function delete(): ?bool;
     public function verifyPassword(string $password): bool;
+    public function getRawInfo(): array;
 }

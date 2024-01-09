@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Module\Dashboard\Bundle\User;
 
@@ -15,6 +15,14 @@ class User extends AbstractUserRepository
     public function isAvailable(): bool
     {
         return !!$this->getId();
+    }
+
+    /**
+     * Get the user raw information
+     */
+    public function getRawInfo(): array
+    {
+        return $this->user;
     }
 
     /**
@@ -57,8 +65,8 @@ class User extends AbstractUserRepository
             unset($_SESSION[self::SESSION_KEY]);
         };
         return $this;
-    }    
-    
+    }
+
     /**
     * @method persist
     */
@@ -85,14 +93,14 @@ class User extends AbstractUserRepository
                     (new Condition())
                         ->add('id', $this->getId())
                 );
-            
+
             $SQL = $squery->build();
             $upsert = $uss->mysqli->query($SQL);
 
         }
-        
+
         return $upsert;
-    }    
+    }
 
     /**
      * @method allocate
@@ -104,7 +112,7 @@ class User extends AbstractUserRepository
                 "Allocation is only possible if user does not already exist"
             );
         };
-        
+
         if($user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key)) {
             $this->user = $user;
         }
