@@ -29,7 +29,7 @@ class ProfileForm extends AbstractUserAccountForm
     protected function validateResource(array $filteredResource): ?array
     {
         // use try catch block;
-        $file = $this->getAvatarMetaValue();
+        $file = $this->getUploadedAvatarValue();
         return [];
     }
 
@@ -89,7 +89,7 @@ class ProfileForm extends AbstractUserAccountForm
         $this->avatarCollection->addField('void', $buttonField);
     }
 
-    protected function getAvatarMetaValue(): ?string
+    protected function getUploadedAvatarValue(): ?string
     {
         $file = [];
 
