@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Foundation\User\Form\Entity\System;
 
+use Module\Dashboard\Bundle\Common\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Ucscode\UssForm\Collection\Collection;
@@ -27,7 +28,8 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function validateResource(array $filteredResource): ?array
     {
-        $file = $this->getSubmittedAvatar();
+        $file = $this->getAvatarMetaValue();
+        var_dump($file);
         return [];
     }
 
@@ -87,20 +89,21 @@ class ProfileForm extends AbstractUserAccountForm
         $this->avatarCollection->addField('void', $buttonField);
     }
 
-    protected function getSubmittedAvatar(): array
+    protected function getAvatarMetaValue(): array
     {
         $file = [];
         foreach($_FILES['meta'] as $key => $list) {
             $file[$key] = $list['avatar'];
         }
+        $uploader = new FileUploader($file);
+        var_dump($uploader);
         return $file;
     }
 
     protected function populateFields(): void
     {
-        $userContext = [
+        $this->populate([
             'user' => $this->user->getRawInfo()
-        ];
-        $this->populate($userContext);
+        ]);
     }
 }

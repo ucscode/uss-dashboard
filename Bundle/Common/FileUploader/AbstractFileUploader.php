@@ -1,120 +1,24 @@
 <?php
 
-class FileUploader
+namespace Module\Dashboard\Bundle\Common\FileUploader;
+
+use finfo;
+
+abstract class AbstractFileUploader
 {
-    private array $mimeTypes = [];
-    private int $maxFileSize = 0;
-    private ?string $uploadDirectory = null;
-    private string $filenamePrefix = '';
-    private ?string $filename = null;
-    private ?string $fileExtension = null;
-    private ?string $basename = null;
-    private ?string $filepath = null;
-    private ?string $error = null;
-    private bool $uploaded = false;
+    protected array $mimeTypes = [];
+    protected int $maxFileSize = 0;
+    protected ?string $uploadDirectory = null;
+    protected ?string $filenamePrefix = null;
+    protected ?string $filename = null;
+    protected ?string $fileExtension = null;
+    protected ?string $basename = null;
+    protected ?string $filepath = null;
+    protected ?string $error = null;
+    protected bool $isUploaded = false;
 
-    public function __construct(
-        private array|null $file
-    ) {
-    }
-
-    /**
-     * Example of MimeType includes:
-     * 
-     * - image/png
-     * - application/zip
-     * - text/plain
-     * - video/mp4 ...
-     * 
-     * @method addMimeType
-     */
-    public function addMimeType(string|array $mimeType): self
+    public function __construct(protected array|null $file)
     {
-        if(is_string($mimeType)) {
-            $mimeType = [$mimeType];
-        }
-        $mimeType = array_values($mimeType);
-        $this->mimeTypes = array_map(function ($value) {
-            return trim(strtolower($value));
-        }, array_unique([...$this->mimeTypes, ...$mimeType]));
-        return $this;
-    }
-
-    /**
-     * The max filesize is set in byte. Hence;
-     * 1024 bytes = 1KB
-     * @method setMaxFileSize
-     */
-    public function setMaxFileSize(int $maxFileSize): self
-    {
-        $this->maxFileSize = abs($maxFileSize);
-        return $this;
-    }
-
-    /**
-     * @method setUploadDirectory
-     */
-    public function setUploadDirectory(string $uploadDirectory): self
-    {
-        $abspath = Uss::instance()->isAbsolutePath($uploadDirectory);
-        if(!$abspath) {
-            throw new \Exception(
-                sprintf(
-                    "%s: Upload directory must be a valid absolute path",
-                    __CLASS__
-                )
-            );
-        }
-        $this->uploadDirectory = $uploadDirectory;
-        return $this;
-    }
-
-    /**
-     * You may need to use function like "uniqid()" to generate unique filenames
-     * to avoid overwriting existing files
-     * @method setFilenamePrefix
-     */
-    public function setFilenamePrefix(string $filenamePrefix): self
-    {
-        $this->filenamePrefix = $filenamePrefix;
-        return $this;
-    }
-
-    /**
-     * @method setFilename
-     */
-    public function setFilename(string $filename, ?string $fileExtension = null): self
-    {
-        $this->filename = $filename;
-        if($fileExtension) {
-            preg_match('/\b[a-z]+\b/', $fileExtension, $matches);
-            $this->fileExtension = $matches[0];
-        }
-        return $this;
-    }
-
-    /**
-     * @method uploadFile
-     */
-    public function uploadFile(): bool
-    {
-        try {
-            $this->fileAvailable();
-            $this->validateMimeType();
-            $this->validateFileSize();
-        } catch(\Exception $e) {
-            return !($this->error = $e->getMessage());
-        }
-        $this->generateFilepath();
-        return $this->moveUploadedPath();
-    }
-
-    /**
-     * @method getFilepath
-     */
-    public function getUploadedFilepath(): ?string
-    {
-        return $this->uploaded ? $this->filepath : null;
     }
 
     /**
@@ -202,11 +106,11 @@ class FileUploader
      */
     protected function moveUploadedPath(): bool
     {
-        $this->uploaded = move_uploaded_file($this->file['tmp_name'], $this->filepath);
-        if(!$this->uploaded) {
+        $this->isUploaded = move_uploaded_file($this->file['tmp_name'], $this->filepath);
+        if(!$this->isUploaded) {
             $this->error = "Failed to move uploaded file";
         };
-        return $this->uploaded;
+        return $this->isUploaded;
     }
 
     /**
