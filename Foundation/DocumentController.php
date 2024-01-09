@@ -27,7 +27,7 @@ class DocumentController implements RouteInterface
         
         BlockManager::instance()->getBlock('dashboard_content')
             ->addTemplate(
-                "content",
+                "content_content",
                 new BlockTemplate($this->document->getTemplate())
             )
         ;
