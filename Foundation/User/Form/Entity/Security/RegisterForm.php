@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form;
+namespace Module\Dashboard\Foundation\User\Form\Entity\Security;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
@@ -38,6 +38,7 @@ class RegisterForm extends AbstractUserAccountForm
     public function validateResource(array $filteredResource): ?array
     {
         $resource = $this->validateNonce($filteredResource);
+        echo 1;
         if($resource) {
 
             $user = $resource['user'];

@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form;
+namespace Module\Dashboard\Foundation\User\Form\Entity\Security;
 
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractRecoveryPartition;
-use Module\Dashboard\Foundation\User\Form\Partition\RecoveryFormAdvance;
-use Module\Dashboard\Foundation\User\Form\Partition\RecoveryFormBasic;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\Partition\RecoveryFormAdvance;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\Partition\RecoveryFormBasic;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 
 class RecoveryForm extends AbstractUserAccountForm

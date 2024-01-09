@@ -3,7 +3,7 @@
 namespace Module\Dashboard\Foundation\User\Form\Abstract;
 
 use Module\Dashboard\Bundle\User\User;
-use Module\Dashboard\Foundation\User\Form\RecoveryForm;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\RecoveryForm;
 
 abstract class AbstractRecoveryPartition
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form;
+namespace Module\Dashboard\Foundation\User\Form\Entity\System;
 
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Ucscode\UssForm\Collection\Collection;
@@ -35,12 +35,12 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function persistResource(?array $validatedResource): mixed
     {
-        
+
     }
 
     protected function resolveSubmission(mixed $presistedResource): void
     {
-        
+
     }
 
     protected function createAvatarField(): void

@@ -80,6 +80,10 @@ final class DashboardRenderLogic implements EventInterface
     protected function examineUserPermission(): void
     {
         if($this->isLoggedIn) {
+
+            $this->user->setLastSeen(new \DateTime());
+            $this->user->persist();
+
             $permissions = $this->dashboard->appControl->getPermissions();
             $roles = $this->user->meta->get('user.roles');
             $matchingRoles = array_intersect($permissions, $roles ?? []);
@@ -89,6 +93,7 @@ final class DashboardRenderLogic implements EventInterface
                     $this->dashboard->appControl->getPermissionDeniedTemplate() ?:
                     $this->dashboard->getTheme('pages/403.html.twig');
             };
+
         };
     }
 

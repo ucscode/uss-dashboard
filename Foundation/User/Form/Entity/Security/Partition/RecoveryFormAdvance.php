@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form\Partition;
+namespace Module\Dashboard\Foundation\User\Form\Entity\Security\Partition;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\User\User;
@@ -55,7 +55,7 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
             $user = (new User())
                 ->allocate("email", strtolower($validatedResource['email']))
                 ->setPassword($validatedResource['password'], true);
-                
+
             $user = $user->isAvailable() ? $user : null;
 
             if($user && $user->persist()) {

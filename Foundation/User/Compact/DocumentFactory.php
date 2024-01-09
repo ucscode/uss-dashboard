@@ -11,10 +11,10 @@ use Module\Dashboard\Foundation\User\Controller\PasswordController;
 use Module\Dashboard\Foundation\User\Controller\ProfileController;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\RegisterController;
-use Module\Dashboard\Foundation\User\Form\LoginForm;
-use Module\Dashboard\Foundation\User\Form\ProfileForm;
-use Module\Dashboard\Foundation\User\Form\RecoveryForm;
-use Module\Dashboard\Foundation\User\Form\RegisterForm;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\LoginForm;
+use Module\Dashboard\Foundation\User\Form\Entity\System\ProfileForm;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\RecoveryForm;
+use Module\Dashboard\Foundation\User\Form\Entity\Security\RegisterForm;
 use Uss\Component\Kernel\UssImmutable;
 
 final class DocumentFactory
@@ -92,7 +92,7 @@ final class DocumentFactory
                 'github_repo' => DashboardImmutable::GITHUB_REPO,
             ])
         ;
-        
+
         $indexMenuContext = [
             'label' => 'dashboard',
             'href' => $document->getUrl(),

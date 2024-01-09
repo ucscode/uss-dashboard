@@ -11,7 +11,7 @@
                         <div class="row g-3">
 
                             <div class="col-sm-4 col-md-3 col-xl-12 text-center mb-2">
-                                <figure class="mb-2 img-resolution profile-figure rounded-circle">
+                                <figure class="mb-2 image-central profile-figure rounded-circle">
                                     <img class="" src="{{ user.avatar }}" id="image" alt="">
                                 </figure>
                                 {{ form.avatarCollection.elementContext.export|raw }} {# --------------> collection #}
@@ -25,7 +25,7 @@
                                         {% endif %}
                                         <li class='text-muted mb-2'>{{ user.email }}</li>
                                         <li class='small fw-light mb-1'>Joined: {{ user.registerTime.format('dS, M Y') }}</li>
-                                        <li class='small fw-light mb-1'>Last seen: {{ __uss.relativeTime(user.last_seen, true) }}</li>
+                                        <li class='small fw-light mb-1'>Last seen: {{ __uss.meths.relativeTime(user.lastSeen, true) }}</li>
                                     {% endblock %}
                                 </ul>
                             </div>

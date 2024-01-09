@@ -1,28 +1,14 @@
 @import url('main.css');
 
-.img-resolution {
-	position: relative;
-	overflow: hidden;
-}
-
-.img-resolution::before {
-	content: '';
-	display: block;
-	/* SQUARE SHAPED: Height / Weight */
-	padding-top: calc((50 / 50) * 100%);
-}
-
-.img-resolution > img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-}
-
 .profile-figure {
 	max-width: 140px;
     margin: auto;
     border: 2px solid var(--bs-gray-300);
+}
+
+.profile-figure img {
+	min-width: 100%;
+    height: 100%;
 }
 
 .sidebar-nav-wrapper {

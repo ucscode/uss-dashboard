@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form;
+namespace Module\Dashboard\Foundation\User\Form\Entity\Security;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;

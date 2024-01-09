@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User\Form\Partition;
+namespace Module\Dashboard\Foundation\User\Form\Entity\Security\Partition;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\User\User;
