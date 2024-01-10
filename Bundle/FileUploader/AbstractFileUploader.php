@@ -27,9 +27,9 @@ abstract class AbstractFileUploader
      */
     protected function validateFileAvailability(): void
     {
-        $fileExists = 
-            $this->file && 
-            isset($this->file['tmp_name']) && 
+        $fileExists =
+            $this->file &&
+            isset($this->file['tmp_name']) &&
             $this->file['error'] === UPLOAD_ERR_OK;
 
         if(!$fileExists) {
@@ -62,8 +62,9 @@ abstract class AbstractFileUploader
             if (!in_array($mimeType, $this->mimeTypes)) {
                 throw new \Exception(
                     sprintf(
-                        "Invalid file type. Allowed types are: %s",
-                        Uss::instance()->implodeReadable($this->mimeTypes)
+                        "Unsupported File Type! \n
+                        Please ensure your file is in one of the following formats: %s",
+                        Uss::instance()->implodeReadable($this->mimeTypes, 'or')
                     )
                 );
             };

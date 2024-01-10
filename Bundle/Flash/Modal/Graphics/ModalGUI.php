@@ -10,8 +10,8 @@ class ModalGUI extends AbstractGUI
 {
     public function createBootboxComponents(Modal $modal): ?array
     {
-        if(!empty($modal->getMessage())) 
-        {
+        if(!empty($modal->getMessage())) {
+
             $bootboxObject = [
                 'message' => $this->stringify($modal->getMessage()),
                 'title' => $this->stringify($modal->getTitle()),
@@ -20,20 +20,24 @@ class ModalGUI extends AbstractGUI
                 'keyboard' => $modal->isKeyboardEnabled(),
                 'buttons' => [],
             ];
-            
-            $bootboxObject['backdrop'] = 
-                $modal->isBackdropEnabled() ? 
+
+            $bootboxObject['backdrop'] =
+                $modal->isBackdropEnabled() ?
                     ($modal->isBackdropStaticEnabled() ? $this->stringify('static') : true) : false;
-            
+
             $buttons = $modal->getButtons();
-            
-            array_walk($buttons, function(Button $button, $name) use (&$bootboxObject)
-            {
+
+            array_walk($buttons, function (Button $button, $name) use (&$bootboxObject, $modal) {
+
+                $resize = trim($modal->getSize()) === 'small' ? ' btn-sm' : '';
+
                 $bootboxObject['buttons'][$name] = [
                     'label' => $this->stringify($button->getLabel()),
-                    'className' => $this->stringify($button->getClassName()),
+                    'className' => $this->stringify(
+                        $button->getClassName() . $resize
+                    ),
                 ];
-                
+
                 $callback = $this->generateJSCallback(
                     $button->getCallback(),
                     $button->getCallbackValue()
@@ -42,16 +46,18 @@ class ModalGUI extends AbstractGUI
                 if(!empty($callback)) {
                     $bootboxObject['buttons'][$name]['callback'] = $callback;
                 }
+
             });
 
             $callbacks = $modal->getCustomCallbacks();
-            
-            $bootboxObject += array_map(function($context) {
+
+            $bootboxObject += array_map(function ($context) {
                 return $this->generateJSCallback($context['callback'], $context['value']);
             }, $callbacks);
 
             return $bootboxObject;
         }
+
         return null;
     }
 }

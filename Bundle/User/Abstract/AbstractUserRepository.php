@@ -30,7 +30,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
         if(!filter_var(trim($email), FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(
                 "The provided email address is invalid."
-            );            
+            );
         };
         $this->user['email'] = strtolower(trim($email));
         return $this;
@@ -210,7 +210,8 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
             $squery = call_user_func($filter, $squery);
             if(!($squery instanceof SQuery)) {
                 throw new Exception(
-                    sprintf("%s Argument must return an instance of SQuery",
+                    sprintf(
+                        "%s Argument must return an instance of SQuery",
                         __METHOD__
                     )
                 );
@@ -228,7 +229,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
 
         return $children;
     }
-    
+
     /**
      * @method getAvatar
      */

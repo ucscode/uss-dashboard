@@ -2,11 +2,18 @@
 
 namespace Module\Dashboard\Foundation\User\Form\Entity\System;
 
+use Exception;
 use Module\Dashboard\Bundle\FileUploader\FileUploader;
+use Module\Dashboard\Bundle\Flash\Flash;
+use Module\Dashboard\Bundle\Flash\Modal\Modal;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
+use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
+use Module\Dashboard\Foundation\User\Form\Service\Validator;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
+use Uss\Component\Kernel\Uss;
 
 class ProfileForm extends AbstractUserAccountForm
 {
@@ -28,13 +35,96 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function validateResource(array $filteredResource): ?array
     {
-        // use try catch block;
-        $file = $this->getUploadedAvatarValue();
-        return [];
+        $uss = Uss::instance();
+
+        if($resource = $this->validateNonce($filteredResource)) {
+
+            $resource['user']['email'] = $email = trim(strtolower($resource['user']['email']));
+            $resource['meta'] ??= [];
+
+            $validator = new Validator();
+            $isValidEmail = $validator->validateEmail($this->collection, $email);
+
+            if($isValidEmail) {
+
+                try {
+
+                    $file = $this->getUploadedAvatarValue();
+                    if($file !== null) {
+                        $resource['meta']['avatar'] = $file;
+                    };
+
+                    if($uss->options->get('user:reconfirm-email') && $email != $this->user->getEmail()) {
+                        $alternateUser = (new User())->allocate("email", $email);
+                        if($alternateUser->isAvailable()) {
+                            throw new Exception("The updated email address is already allocated to another account");
+                        }
+                    }
+
+                    return $resource;
+
+                } catch(Exception $e) {
+
+                    $modal = new Modal();
+                    $modal->setTitle("Profile Update Error");
+                    $modal->setMessage($e->getMessage());
+
+                    Flash::instance()->addModal("profile-error", $modal);
+
+                }
+
+            } // valid email
+
+        }; // resource
+
+        return null;
     }
 
     protected function persistResource(?array $validatedResource): mixed
     {
+        if($validatedResource) {
+
+            $uss = Uss::instance();
+
+            $modal = new Modal();
+            $title = "Profile Update Failed";
+
+            $emailConfirmationRequired = $uss->options->get('user:reconfirm-email');
+            $updatedEmail = $validatedResource['user']['email'];
+
+            $message = "Your profile update could not be completed!";
+            $summary = '';
+
+            if(!$emailConfirmationRequired) {
+                $this->user->setEmail($updatedEmail);
+            };
+
+            if($this->user->persist()) 
+            {
+                $title = "Profile Update Successful";
+                $message = "Congratulations! Your profile has been successfully updated";
+
+                if($emailConfirmationRequired) 
+                {
+                    $mailContext = $this->sendReconfirmationEmail($updatedEmail);
+                    $summary = sprintf(
+                        "<div class='my-2 small alert alert-%s'>%s</div>",
+                        $mailContext['status'] ? 'success' : 'secondary',
+                        $mailContext['summary']
+                    );
+                }
+            }
+
+            $message .= $summary;
+            $modal->setTitle($title);
+            $modal->setMessage($message);
+
+            Flash::instance()->addModal("user-profile", $modal);
+
+            return $this->user;
+
+        }
+
         return null;
     }
 
@@ -101,17 +191,18 @@ class ProfileForm extends AbstractUserAccountForm
             ->setMimeTypes([
                 'image/png',
                 'image/jpeg',
-                'image,jpg',
+                'image/jpg',
                 'image/webp',
             ])
-            ->setUploadDirectory('')
+            ->setUploadDirectory(DashboardImmutable::ASSETS_DIR . "/images/profile")
             ->setFilenamePrefix($this->user->getId() . "-")
             ->setMaxFileSize(1000 * 1024) // 1000 KB
         ;
-        var_dump($uploader);
 
         if(!$uploader->uploadFile()) {
-            throw new \Exception($uploader->getError(true));
+            if($uploader->getError() !== 4) {
+                throw new Exception($uploader->getError(true));
+            }
         }
 
         return $uploader->getUploadedFilepath();
@@ -122,5 +213,16 @@ class ProfileForm extends AbstractUserAccountForm
         $this->populate([
             'user' => $this->user->getRawInfo()
         ]);
+    }
+
+    protected function sendReconfirmationEmail(string $email): array
+    {
+        $mailer = [];
+        $emailResolver = new EmailResolver($this->getProperties());
+        $mailer['status'] = $emailResolver->sendProfileUpdateEmail($this->user, $email);
+        $mailer['summary'] = $mailer['status'] ?
+            "Please confirm the link sent to your new email" :
+            "Unable to send a confirmation link to your new email address";
+        return $mailer;
     }
 }

@@ -66,8 +66,21 @@ abstract class AbstractEmailResolver
         return $summary;
     }
 
+    public function generateEmailLink(User $user, array $context): string
+    {
+        $context['data'] ??= null;
+        $confirmationCode = Uss::instance()->keygen(20);
+        $metaValue = is_null($context['data']) ? $confirmationCode : [
+            "code" => $confirmationCode,
+            "data" => $context['data'],
+        ];
+        $user->meta->set($context['metaKey'], $metaValue);
+        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
+        return $this->addUrlParameter($context['destination'], $context['urlKey'], $emailCode);
+    }
 
-    protected function verifyEmailContext(?int $userid, ?string $inputCode): void
+
+    protected function verifyEmailContext(?int $userid, ?string $inputCode, string $metaKey): void
     {
         $toast = new Toast();
         $toast->setBackground(Toast::BG_SECONDARY);
@@ -77,7 +90,7 @@ abstract class AbstractEmailResolver
             $user = new User($userid);
 
             if($user->isAvailable()) {
-                $storedCode = $user->meta->get('verify-email:code');
+                $storedCode = $user->meta->get($metaKey);
                 $toast->setMessage("Email Confirmation Failed!");
 
                 if($storedCode === null) {
@@ -85,7 +98,7 @@ abstract class AbstractEmailResolver
                 }
 
                 if($storedCode === $inputCode) {
-                    $user->meta->remove('verify-email:code');
+                    $user->meta->remove($metaKey);
                     $toast->setBackground(Toast::BG_SUCCESS);
                     $toast->setMessage("Your email has been confirmed");
                 }
@@ -101,14 +114,6 @@ abstract class AbstractEmailResolver
             'privacy_policy_url' => $this->properties['privacyPolicyUrl'] ?? '#',
             'client_name' => $user->getUsername(),
         ];
-    }
-
-    protected function generateEmailLink(User $user, array $context): string
-    {
-        $confirmationCode = Uss::instance()->keygen(20);
-        $user->meta->set($context['metaKey'], $confirmationCode);
-        $emailCode = base64_encode($user->getId() . ":" . $confirmationCode);
-        return $this->addUrlParameter($context['destination'], $context['urlKey'], $emailCode);
     }
 
     protected function addUrlParameter(string $url, string $name, string $value): string

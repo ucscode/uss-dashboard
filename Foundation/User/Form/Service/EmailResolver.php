@@ -12,7 +12,9 @@ use Module\Dashboard\Foundation\User\UserDashboard;
 class EmailResolver extends AbstractEmailResolver
 {
     /**
-     * @method sendConfirmationEmail:REGISTRATION
+     * Registration page email
+     *
+     * Send a confirmation email to user at the point of registration
      */
     public function sendConfirmationEmail(User $user): bool
     {
@@ -34,7 +36,9 @@ class EmailResolver extends AbstractEmailResolver
     }
 
     /**
-     * @method verifyAccountEmail:LOGIN
+     * Login page email verification
+     *
+     * Verity the email when user clicks the confirmation link sent at the point registration
      */
     public function verifyAccountEmail(): void
     {
@@ -45,7 +49,11 @@ class EmailResolver extends AbstractEmailResolver
                 if($data !== false) {
                     $context = explode(":", $data);
                     if(count($context) == 2) {
-                        $this->verifyEmailContext($context[0] ?? null, $context[1] ?? null);
+                        $this->verifyEmailContext(
+                            $context[0] ?? null,
+                            $context[1] ?? null,
+                            'verify-email:code'
+                        );
                     };
                 }
             }
@@ -53,7 +61,9 @@ class EmailResolver extends AbstractEmailResolver
     }
 
     /**
-     * @method sendRecoveryEmail:RESET-PASSWORD
+     * Password reset email
+     *
+     * Send a reset password verification link when user submit their email for changing password
      */
     public function sendRecoveryEmail(User $user): bool
     {
@@ -75,7 +85,9 @@ class EmailResolver extends AbstractEmailResolver
     }
 
     /**
-     * @method verifyRecoveryEmail:RESET-PASSWORD
+     * Password reset email verification
+     *
+     * Verify the password link sent to user email to enable them change their password externally
      */
     public function verifyRecoveryEmail(): ?string
     {
@@ -112,5 +124,32 @@ class EmailResolver extends AbstractEmailResolver
         }
 
         return null;
+    }
+
+    /**
+     * Profile update email
+     *
+     * Send a confirmation email to user at the point of updating profile
+     */
+    public function sendProfileUpdateEmail(User $user, string $newEmail): bool
+    {
+        $userProfileDocument = UserDashboard::instance()->getDocument('userProfile');
+
+        $this->properties['email:subject'] ??= 'Confirm Your new email';
+        $this->properties['email:template'] ??= '@Foundation/User/Template/profile/mails/reconfirm.email.twig';
+        $this->properties['email:template.context'] ??= $this->getSystemContext($user);
+
+        $this->properties['email:template.context'] += [
+            'confirmation_link' => $this->generateEmailLink($user, [
+                'metaKey' => 'profile-email:code',
+                'urlKey' => 'verify',
+                'destination' => $userProfileDocument->getUrl(),
+                'data' => [
+                    'email' => $newEmail
+                ]
+            ])
+        ];
+
+        return $this->emailProcessor($user);
     }
 }

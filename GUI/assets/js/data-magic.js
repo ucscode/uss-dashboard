@@ -33,10 +33,12 @@ new class {
 					reader.readAsDataURL(file);
 				} else {
 					this.value = '';
-					iziToast.error({
-						message: "Please select a valid image",
-						position: "bottomLeft"
-					})
+					Toastify({
+						text: "Please select a valid image",
+                        style: {
+                            background: "var(--bs-danger)"
+                        }
+					}).showToast();
 				}
 			}
 		});
@@ -55,18 +57,24 @@ new class {
                 }
                 const promise = navigator.clipboard.writeText(text);
                 promise.then(output => {
-                    iziToast.info({
-                        message: "Text copied to clipboard"
-                    })
+                    Toastify({
+                        text: "Text copied to clipboard"
+                    }).showToast();
                 }, (output) => {
-                    iziToast.error({
-                        message: "The text was not copied"
-                    })
+                    Toastify({
+                        text: "The text was not copied",
+                        style: {
+                            background: "var(--bs-danger)"
+                        }
+                    }).showToast();
                 })
             } else {
-                iziToast.warning({
-                    message: "Apparently nothing to copy"
-                })
+                Toastify({
+                    text: "Apparently nothing to copy",
+                    style: {
+                        background: "var(--bs-warning)"
+                    }
+                }).showToast();
             }
         })
     }
@@ -152,10 +160,12 @@ new class {
                             closeButton: false
                         })
                     } else {
-                        iziToast.info({
-                            message: "No item was selected",
-                            position: 'topRight'
-                        })
+                        Toastify({
+                            text: "No item was selected",
+                            style: {
+                                background: "var(--bs-info)"
+                            }
+                        }).showToast();
                     }
                 });
             }

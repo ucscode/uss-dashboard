@@ -16,7 +16,6 @@ abstract class AbstractUserFoundation implements UserInterface
     protected array $user;
     public readonly Meta $meta;
     public readonly Roles $roles;
-    public readonly Mailer $mailer;
     public readonly Notification $notification;
     private static ?Pairs $usermeta = null;
 
@@ -25,7 +24,6 @@ abstract class AbstractUserFoundation implements UserInterface
         $this->syncOnce();
         $this->meta = new Meta($this, self::$usermeta);
         $this->roles = new Roles($this);
-        $this->mailer = new Mailer($this);
         $this->notification = new Notification($this);
         $this->user = $this->acquireUser($id) ?? [];
     }
