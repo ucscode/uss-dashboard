@@ -24,12 +24,16 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function buildForm(): void
     {
+        (new EmailResolver([]))->verifyProfileUpdateEmail();
         $this->attribute->setEnctype('multipart/form-data');
+
         $this->user = (new User())->acquireFromSession();
         $this->createLocalCollectionFields();
+
         $this->avatarCollection = new Collection();
         $this->addCollection(self::AVATAR_COLLECTION, $this->avatarCollection);
         $this->createAvatarField();
+
         $this->populateFields();
     }
 
@@ -51,7 +55,7 @@ class ProfileForm extends AbstractUserAccountForm
 
                     $file = $this->getUploadedAvatarValue();
                     if($file !== null) {
-                        $resource['meta']['avatar'] = $file;
+                        $resource['meta']['avatar'] = $uss->pathToUrl($file);
                     };
 
                     if($uss->options->get('user:reconfirm-email') && $email != $this->user->getEmail()) {
@@ -61,13 +65,18 @@ class ProfileForm extends AbstractUserAccountForm
                         }
                     }
 
+                    if(!empty($resource['discard-pending-email'])) {
+                        $this->user->meta->remove('profile-email:code');
+                        unset($resource['discard-pending-email']);
+                    }
+
                     return $resource;
 
                 } catch(Exception $e) {
 
                     $modal = new Modal();
                     $modal->setTitle("Profile Update Error");
-                    $modal->setMessage($e->getMessage());
+                    $modal->setMessage(str_replace("\n", "<br/>", $e->getMessage()));
 
                     Flash::instance()->addModal("profile-error", $modal);
 
@@ -85,27 +94,32 @@ class ProfileForm extends AbstractUserAccountForm
         if($validatedResource) {
 
             $uss = Uss::instance();
+            $validatedResource = $uss->sanitize($validatedResource);
 
             $modal = new Modal();
             $title = "Profile Update Failed";
 
-            $emailConfirmationRequired = $uss->options->get('user:reconfirm-email');
+            $currentEmail = $this->user->getEmail();
             $updatedEmail = $validatedResource['user']['email'];
+            $confirmationRequired = $uss->options->get('user:reconfirm-email');
 
             $message = "Your profile update could not be completed!";
             $summary = '';
 
-            if(!$emailConfirmationRequired) {
-                $this->user->setEmail($updatedEmail);
-            };
+            $this->user->setEmail($confirmationRequired ? $currentEmail : $updatedEmail);
 
-            if($this->user->persist()) 
-            {
+            $persisted = $this->user->persist();
+
+            if($persisted) {
+
                 $title = "Profile Update Successful";
                 $message = "Congratulations! Your profile has been successfully updated";
 
-                if($emailConfirmationRequired) 
-                {
+                foreach($validatedResource['meta'] as $key => $value) {
+                    $this->user->meta->set("user.{$key}", $value);
+                };
+
+                if($confirmationRequired && $currentEmail !== $updatedEmail) {
                     $mailContext = $this->sendReconfirmationEmail($updatedEmail);
                     $summary = sprintf(
                         "<div class='my-2 small alert alert-%s'>%s</div>",
@@ -121,7 +135,11 @@ class ProfileForm extends AbstractUserAccountForm
 
             Flash::instance()->addModal("user-profile", $modal);
 
-            return $this->user;
+            return [
+                'resource' => $validatedResource,
+                'persisted' => $persisted,
+                'user' => $this->user
+            ];
 
         }
 
@@ -130,7 +148,7 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function resolveSubmission(mixed $presistedResource): void
     {
-
+        $this->populateFields();
     }
 
     protected function createLocalCollectionFields(): void
@@ -210,9 +228,18 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function populateFields(): void
     {
+        $metas = $this->user->meta->getAll('user.%');
+        $keys = array_map(fn ($key) => str_replace("user.", '', $key), array_keys($metas));
+        $values = array_column($metas, "value");
+        $metaOutcome = array_combine($keys, $values);
+
         $this->populate([
-            'user' => $this->user->getRawInfo()
+            'user' => $this->user->getRawInfo(),
+            'meta' => $metaOutcome
         ]);
+
+        $emailContext = $this->collection->getField('user[email]')?->getElementContext();
+        $emailContext?->info->setValue($this->generateEmailFieldInfo());
     }
 
     protected function sendReconfirmationEmail(string $email): array
@@ -222,7 +249,48 @@ class ProfileForm extends AbstractUserAccountForm
         $mailer['status'] = $emailResolver->sendProfileUpdateEmail($this->user, $email);
         $mailer['summary'] = $mailer['status'] ?
             "Please confirm the link sent to your new email" :
-            "Unable to send a confirmation link to your new email address";
+            "<i class='bi bi-exclamation-circle'></i> Email not updated: <br/> Unable to send a confirmation link to the new email address";
         return $mailer;
+    }
+
+    protected function generateEmailFieldInfo(): ?string
+    {
+        $profileContext = $this->user->meta->get('profile-email:code');
+
+        $discardField = new Field(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
+        $discardContext = $discardField->getElementContext();
+
+        $discardContext->label
+            ->setValue("Discard email confirmation")
+            ->setAttribute('for', 'discard-pending-email')
+        ;
+
+        $discardContext->container
+            ->removeClass('my-1')
+            ->addClass('mb-0')
+        ;
+
+        $discardContext->widget
+            ->setRequired(false)
+            ->setAttribute('id', 'discard-pending-email')
+            ->setAttribute('name', 'discard-pending-email')
+            ->setValue(1)
+        ;
+
+        $template = "<div class='small overflow-auto border rounded-1 py-2 px-3'>
+            <div class='mb-1 border-bottom'>
+                <i class='bi bi-info-circle me-1'></i> 
+                <span class='text-danger'>Unconfirmed pending email</span>
+                <span class='text-nowrap'>( <span class='text-info'>%s</span> )</span>
+            </div>
+            <div class='discard-gadget'>%s</div>
+        </div>";
+
+        if($profileContext) {
+            $pendingEmail = $profileContext['data']['email'];
+            return sprintf($template, $pendingEmail, $discardContext->gadget->export());
+        }
+
+        return null;
     }
 }

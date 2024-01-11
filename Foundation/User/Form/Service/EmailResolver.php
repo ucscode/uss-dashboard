@@ -150,6 +150,40 @@ class EmailResolver extends AbstractEmailResolver
             ])
         ];
 
-        return $this->emailProcessor($user);
+        return $this->emailProcessor($newEmail);
+    }
+
+    public function verifyProfileUpdateEmail(): void
+    {
+        $profileEmailKey = 'profile-email:code';
+        if(!empty($_GET['verify'])) {
+            $decoding = base64_decode($_GET['verify']);
+            if($decoding && $data = explode(":", $decoding)) {
+                if(count($data) === 2) {
+                    $toast = new Toast();
+                    $toast->setBackground(Toast::BG_DANGER);
+                    $message = "Invalid verfication code";
+                    $user = new User($data[0]);
+                    if($user->isAvailable()) {
+                        $context  = $user->meta->get($profileEmailKey);
+                        if(!$context) {
+                            return;
+                        }
+                        $message = "Verification code expired";
+                        if($context['code'] === $data[1]) {
+                            $message = "Email update failed";
+                            $user->setEmail($context['data']['email']);
+                            if($user->persist()) {
+                                $user->meta->remove($profileEmailKey);
+                                $message = "Email address updated!";
+                                $toast->setBackground(Toast::BG_SUCCESS);
+                            }
+                        };
+                    };
+                    $toast->setMessage($message);
+                    Flash::instance()->addToast("profile-email", $toast);
+                }
+            }
+        };
     }
 }

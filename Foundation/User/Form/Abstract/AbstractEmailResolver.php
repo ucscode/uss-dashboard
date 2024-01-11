@@ -21,12 +21,12 @@ abstract class AbstractEmailResolver
         ]);
     }
 
-    protected function emailProcessor(User $user): bool
+    protected function emailProcessor(User|string $recipent): bool
     {
         $mailer = new Mailer();
 
         $this->isLocalhost ? $mailer->useMailHogTesting() : null;
-        $mailer->addAddress($user->getEmail());
+        $mailer->addAddress($recipent instanceof User ? $recipent->getEmail() : $recipent);
         $mailer->setSubject($this->properties['email:subject']);
         $mailer->setTemplate($this->properties['email:template']);
         $mailer->setContext($this->properties['email:template.context']);

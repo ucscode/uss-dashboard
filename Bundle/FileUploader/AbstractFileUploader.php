@@ -27,17 +27,17 @@ abstract class AbstractFileUploader
      */
     protected function validateFileAvailability(): void
     {
-        $fileExists =
+        $hasNoError =
             $this->file &&
             isset($this->file['tmp_name']) &&
             $this->file['error'] === UPLOAD_ERR_OK;
 
-        if(!$fileExists) {
+        if($hasNoError === false) {
 
             $errorList = [
                 0 => 'File is uploaded successfully',
-                1 => 'Uploaded file exceeds the upload_max_filesize limit',
-                2 => 'Uploaded file exceeds the MAX_FILE_SIZE directive specified in the HTML form',
+                1 => 'Uploaded file exceeds the `upload_max_filesize` limit',
+                2 => 'Uploaded file exceeds the `MAX_FILE_SIZE` directive specified in the HTML form',
                 3 => 'File is partially uploaded or there is an error in between uploading',
                 4 => 'No file was uploaded',
                 6 => 'Missing a temporary folder',
@@ -62,8 +62,7 @@ abstract class AbstractFileUploader
             if (!in_array($mimeType, $this->mimeTypes)) {
                 throw new \Exception(
                     sprintf(
-                        "Unsupported File Type! \n
-                        Please ensure your file is in one of the following formats: %s",
+                        "Unsupported File Type! \n Please ensure your file matches one of the following formats: \n %s",
                         Uss::instance()->implodeReadable($this->mimeTypes, 'or')
                     )
                 );
@@ -78,7 +77,7 @@ abstract class AbstractFileUploader
     {
         if($this->maxFileSize) {
             if ($this->file['size'] > $this->maxFileSize) {
-                throw new \Exception("File size exceeds the allowed limit");
+                throw new \Exception("The uploaded file exceeds the maximum allowed upload size");
             }
         }
     }
