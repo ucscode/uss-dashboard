@@ -153,7 +153,11 @@ class ProfileForm extends AbstractUserAccountForm
 
     protected function createLocalCollectionFields(): void
     {
-        $this->createEmailField();
+        $uss = Uss::instance();
+        $emailContext = $this->createEmailField()->getElementContext();
+        $emailContext->widget
+            ->setReadonly((bool)$uss->options->get('user:lock-email'))
+        ;
 
         $textareaField = $this->createCustomField([
             'nodeName' => Field::NODE_TEXTAREA,
