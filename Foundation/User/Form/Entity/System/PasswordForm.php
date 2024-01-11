@@ -4,7 +4,6 @@ namespace Module\Dashboard\Foundation\User\Form\Entity\System;
 
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
-use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Module\Dashboard\Foundation\User\Form\Service\PasswordResolver;

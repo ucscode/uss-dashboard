@@ -14,7 +14,9 @@ class Notification
     protected Uss $uss;
 
     public function __construct(protected User $user)
-    {}
+    {
+        $this->uss = Uss::instance();
+    }
 
     /**
      * @method addNotification
@@ -46,13 +48,13 @@ class Notification
     /**
      * @method getNotification
      */
-    public function get(?Condition $filter = null, int $offset = 0, int $limit = 20, string $order = 'DESC'): ?array 
+    public function get(null|array|Condition $filter = null, int $offset = 0, int $limit = 20, string $order = 'DESC'): ?array 
     {
         $data = [];
-        $filter ??= new Condition();
-
+        
         if($this->user->isAvailable()) {
             
+            $filter = $this->deriveCondition($filter);
             $filter->add('userid', $this->user->getId());
 
             $squery = (new SQuery())
@@ -75,17 +77,14 @@ class Notification
     /**
      * @method updateNotification
      */
-    public function update(array $data, int|Condition $filter): bool
+    public function update(array $data, int|array|Condition $filter): bool
     {
         if($this->user->isAvailable()) 
         {
             $data = $this->filter($data);
             $data = $this->uss->sanitize($data, true);
 
-            if(is_int($filter)) {
-                $filter = (new Condition())->add('id', $filter);
-            };
-
+            $filter = $this->deriveCondition( is_int($filter) ? ['id' => $filter] : $filter );
             $filter->and('userid', $this->user->getId());
 
             $squery = (new SQuery())
@@ -103,14 +102,11 @@ class Notification
     /**
      * @method removeNotification
      */
-    public function remove(int|Condition $filter): bool
+    public function remove(int|array|Condition $filter): bool
     {
         if($this->user->isAvailable()) 
         {
-            if(is_int($filter)) {
-                $filter = (new Condition())->add('id', $filter);
-            }
-
+            $filter = $this->deriveCondition( is_int($filter) ? ['id' => $filter] : $filter );
             $filter->and('userid', $this->user->getId());
 
             $squery = (new SQuery())
@@ -128,11 +124,11 @@ class Notification
     /**
      * @method countNotification
      */
-    public function count(?Condition $filter = null): int
+    public function count(null|array|Condition $filter = null): int
     {
         if($this->user->isAvailable()) 
         {
-            $filter ??= new Condition();
+            $filter = $this->deriveCondition($filter);
             $filter->add('userid', $this->user->getId());
 
             $squery = (new SQuery())
@@ -153,7 +149,7 @@ class Notification
     /**
      * Remove irrelevant columns from the input data
      */
-    private function filter(array $originalItem): array
+    protected function filter(array $originalItem): array
     {
         $keysToExtract = Uss::instance()->getTableColumns(self::TABLE_NAME);
         unset($keysToExtract['userid']);
@@ -162,5 +158,18 @@ class Notification
             return is_scalar($value) || is_null($value);
         });
         return $result;
+    }
+
+    protected function deriveCondition(null|array|Condition $filter): Condition
+    {
+        $filter ??= new Condition();
+        if(is_array($filter)) {
+            $preservedFilter = $filter;
+            $filter = new Condition();
+            foreach($preservedFilter as $key => $value) {
+                $filter->add($key, $value);
+            }
+        };
+        return $filter;
     }
 }

@@ -1,6 +1,6 @@
-{% extends _theme ~ '/base.html.twig' %}
+{# {% extends _theme ~ '/base.html.twig' %}
 
-{% block dashboard_content %}
+{% block dashboard_content %} #}
 
     {% set row_size = 'col-md-10 col-lg-9 mx-auto' %}
 
@@ -81,11 +81,12 @@
                                     <div class='px-md-5'>
                                         <div class='row'>
                                             <div class='col-sm-8 m-auto col-lg-6'>
-                                                {% set errorImage = constant('DashboardImmutable::ASSETS_DIR') ~ '/images/notification-empty.webp' %}
-                                                <img src='{{ __uss.pathToUrl(errorImage) }}' class='img-fluid'>
+                                                {% set errorImage = __dashboard.meths.theme('/assets/images/notification-empty.webp', __uss.ENUM.URL) %}
+                                                <img src='{{ errorImage }}' class='img-fluid'>
                                             </div>
                                         </div>
-                                        <h2 class='text-capitalize fw-light'>No Notifications <br> to display</h2>
+                                        <h2 class='text-capitalize fw-light'>Whoopsy! </h2> 
+                                        <h5 class='fw-light'>Nothing to display</h5>
                                     </div>
                                 </div>
 
@@ -98,11 +99,11 @@
 
                 {% block notification_pagination %}
 
-                    {% include _theme ~ '/includes/paginator.html.twig' with {'nav_class': row_size} %}
+                    {% include __dashboard.meths.theme('/includes/paginator.html.twig') with {'nav_class': row_size} %}
 
                 {% endblock %}
 
         </div>
     </div>
 
-{% endblock %}
+{# {% endblock %} #}

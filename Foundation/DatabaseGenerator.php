@@ -71,15 +71,15 @@ final class DatabaseGenerator
 
             "CREATE TABLE IF NOT EXISTS %{prefix}notifications (
                 id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                origin INT,
-                model VARCHAR(100) DEFAULT NULL COMMENT 'TYPE: Comment, Reply, Module-Name...',
+                category VARCHAR(100) DEFAULT NULL,
                 userid INT UNSIGNED NOT NULL,
                 period TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 message VARCHAR(5000),
                 viewed TINYINT NOT NULL DEFAULT 0,
-                redirect VARCHAR(255) DEFAULT NULL COMMENT 'URL',
-                image VARCHAR(255),
+                redirect_url VARCHAR(255),
+                avatar_url VARCHAR(255),
                 hidden TINYINT NOT NULL DEFAULT 0,
+                internal_note TINYTEXT,
                 FOREIGN KEY(userid) REFERENCES %{prefix}users(id) ON DELETE CASCADE
             )"
         ];

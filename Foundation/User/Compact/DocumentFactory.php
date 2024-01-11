@@ -109,9 +109,10 @@ final class DocumentFactory
     public function createNotificationDocument(): Document
     {
         return (new Document())
-             ->setName("notification")
+             ->setName("notifications")
+             ->setRoute("/notifications", $this->base)
              ->setController(new NotificationController())
-             ->setTemplate('')
+             ->setTemplate('/pages/notifications.html.twig', $this->dashboard->getTheme(''))
         ;
     }
 

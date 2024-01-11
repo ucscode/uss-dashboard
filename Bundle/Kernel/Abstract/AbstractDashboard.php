@@ -107,7 +107,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     /**
      * @method themeFile
      */
-    public function getTheme(string $path, Enumerator $enum = Enumerator::THEME): string
+    public function getTheme(string $path = '', Enumerator $enum = Enumerator::THEME): string
     {
         $uss = Uss::instance();
         $path = $uss->filterContext($path);

@@ -1,12 +1,5 @@
-{% set notifications = user.getNotifications({ "hidden": 0 }, 0, 4) %}
-
-{% set unseen = user.countNotifications({ "viewed": 0, "hidden": 0 }) %}
-
-{% macro mini(message) %}
-    {% set message = __uss.call('strip_tags', message) %}
-    {% set message = __uss.call('substr', message, 0, 200) %}
-    {{ message }}
-{% endmacro %}
+{% set notifications = user.notification.get({ "hidden": 0 }, 0, 4) %}
+{% set unseen = user.notification.count({ "viewed": 0, "hidden": 0 }) %}
 
 <div class="notification-box ml-15">
     <div class='d-sm-flex'>
@@ -23,17 +16,20 @@
             {% if notifications|length %}
 
                 {% for notification in notifications %}
-                    
+
                     <li data-id='{{ notification.id }}'>
-                        <a href="{{ (notification.redirect is not empty) ? notification.redirect : 'javascript:void(0)' }}" 
+                        <a 
+                            href="{{ notification.redirect_url|default("javascript:void(0)") }}" 
                             class='{{ notification.viewed is same as('0') ? "unviewed" : null }}'
                             data-viewed='1'
                         >
                             <div class="image">
-                                <img src="{{ notification.image ? notification.image : user.avatar }}" alt="" />
+                                <img src="{{ notification.avatar_url|default(user.meta.get('user.avatar')) }}" alt="" />
                             </div>
                             <div class="content">
-                                <p class='line-clamp clamp-3'>{{ _self.mini(notification.message) }}</p>
+                                <p class='line-clamp clamp-3'>
+                                    {{ notification.message|striptags|slice(0, 200) }}
+                                </p>
                                 <span>{{ __uss.meths.relativeTime(notification.period) }}</span>
                             </div>
                         </a>
@@ -42,7 +38,7 @@
                 {% endfor %}
 
                 <li>
-                    <a href="{{ DashboardExtension.getPageManagerUrl('notifications') }}" class='d-block text-center'>
+                    <a href="{{ __dashboard.meths.document('notifications').url }}" class='d-block text-center'>
                         <small> <i class='bi bi-bell me-1'></i> View all </small>
                     </a>
                 </li>
