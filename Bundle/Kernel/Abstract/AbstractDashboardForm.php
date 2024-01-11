@@ -130,6 +130,13 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
 
             $this->resolveSubmission($presistedResource); // Local Resolver
 
+            /**
+             * Prevent resubmission of form when reload is clicked on the browser
+             */
+            if(!empty($this->getProperty('history.replaceState') ?? true)) {
+                $this->replaceHistoryState();
+            }
+
         };
     }
 
@@ -146,7 +153,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         };
     }
 
-    protected function replaceWindowState(): void
+    protected function replaceHistoryState(): void
     {
         BlockManager::instance()
             ->getBlock("body_javascript")
