@@ -15,6 +15,7 @@ use Module\Dashboard\Foundation\User\Form\Entity\Security\LoginForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\ProfileForm;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\RecoveryForm;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\RegisterForm;
+use Module\Dashboard\Foundation\User\Form\Entity\System\PasswordForm;
 use Uss\Component\Kernel\UssImmutable;
 
 final class DocumentFactory
@@ -149,6 +150,7 @@ final class DocumentFactory
             ->setController(new PasswordController())
             ->setRoute("/profile/password", $this->base)
             ->setTemplate("/profile/password.html.twig", $this->namespace)
+            ->setCustom("app.form", new PasswordForm())
         ;
 
         $passwordMenuContext = [
