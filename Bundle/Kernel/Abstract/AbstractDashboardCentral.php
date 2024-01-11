@@ -43,8 +43,8 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      */
     private function createGUI(): void
     {
-        (new DashboardMenuFormation($this->menu))->beginProcess();
-        (new DashboardMenuFormation($this->userMenu))->beginProcess();
+        new DashboardMenuFormation($this->menu);
+        new DashboardMenuFormation($this->userMenu);
 
         foreach($this->getDocuments() as $document) {
             if($document->getRoute() !== null) {

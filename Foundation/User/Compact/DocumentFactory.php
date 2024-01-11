@@ -98,7 +98,7 @@ final class DocumentFactory
             'label' => 'dashboard',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-speedometer',
-            'order' => 0,
+            'order' => 1,
         ];
 
         $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
@@ -136,8 +136,16 @@ final class DocumentFactory
         ];
 
         $document
-            ->addMenuItem('main:profile', $profileMenuContext, $this->dashboard->menu)
-            ->addMenuItem('profile:primary', $profileMenuContext, $this->dashboard->profileBatch);
+            ->addMenuItem(
+                'main:profile', 
+                $profileMenuContext + ['order' => 1], 
+                $this->dashboard->menu
+            )
+            ->addMenuItem(
+                'profile:primary', 
+                $profileMenuContext + ['order' => 0], 
+                $this->dashboard->profileBatch
+            );
 
         return $document;
     }
@@ -158,7 +166,8 @@ final class DocumentFactory
             'label' => 'password',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-unlock',
-            // 'autoFocus' => false
+            'order' => 1,
+            // 'autoFocus' => false,
         ];
 
         $document->addMenuItem('profile:password', $passwordMenuContext, $this->dashboard->profileBatch);

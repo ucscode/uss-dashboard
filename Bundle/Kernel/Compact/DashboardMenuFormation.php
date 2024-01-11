@@ -8,15 +8,19 @@ use Ucscode\UssElement\UssElement;
 
 class DashboardMenuFormation
 {
-    public function __construct(protected TreeNode $menu)
-    {}
-
-    public function beginProcess(?callable $func = null): void
+    public function __construct(protected TreeNode $menu, ?callable $func = null)
     {
+        $this->beginProcess($func);
+    }
+
+    protected function beginProcess(?callable $func): void
+    {
+        $this->applySortAlgorithm($this->menu);
         $this->menu->traverseChildren(function(TreeNode $node) use ($func) {
             $this->verifyLabel($node);
             $func ? call_user_func($func, $node) : $this->localConcept($node);
-            $this->concludeSetup($node);
+            $this->updateAttributes($node);
+            $this->applySortAlgorithm($node);
         });
     }
 
@@ -51,24 +55,26 @@ class DashboardMenuFormation
         }
     }
 
-    public function concludeSetup(TreeNode $node): void
+    protected function updateAttributes(TreeNode $node): void
     {
-        $node->sortChildren(function (TreeNode $a, TreeNode $b) {
-            $sortA = $a->getAttribute('order') ?? 0;
-            $sortB = $b->getAttribute('order') ?? 0;
-            return (int)$sortA <=> (int)$sortB;
-        });
-
         $attributes = [
             'target' => '_self',
             'href' => 'javascript:void(0)',
             'pinned' => false,
         ];
-
         foreach($attributes as $key => $value) {
             if(empty($node->getAttribute($key))) {
                 $node->setAttribute($key, $value);
             };
         }
+    }
+
+    protected function applySortAlgorithm(TreeNode $node): void
+    {
+        $node->sortChildren(function (TreeNode $a, TreeNode $b) {
+            $orderA = $a->getAttribute('order') ?? 0;
+            $orderB = $b->getAttribute('order') ?? 0;
+            return (float)$orderA <=> (float)$orderB;
+        });
     }
 }
