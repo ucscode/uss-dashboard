@@ -156,7 +156,7 @@ class ProfileForm extends AbstractUserAccountForm
         $uss = Uss::instance();
         $emailContext = $this->createEmailField()->getElementContext();
         $emailContext->widget
-            ->setReadonly((bool)$uss->options->get('user:lock-email'))
+            ->setReadonly((bool)$uss->options->get('user:readonly-email'))
         ;
 
         $textareaField = $this->createCustomField([

@@ -96,7 +96,7 @@ final class DatabaseGenerator
             'user:disable-signup' => 0,
             'user:collect-username' => 0,
             'user:confirm-email' => 0,
-            'user:lock-email' => 0,
+            'user:readonly-email' => 0,
             'user:reconfirm-email' => 1,
             'user:default-role' => RoleImmutable::ROLE_USER,
             'user:affiliation' => 0,

@@ -45,7 +45,7 @@ class AdminSettingsUserForm extends AbstractDashboardForm
         );
 
         $this->addField(
-            'user[lock-email]',
+            'user[readonly-email]',
             (new FormField(Form::NODE_INPUT, Form::TYPE_SWITCH))
                 ->setLabelValue("Lock user email")
                 ->setInfoMessage("Prevent user from changing their email after login")
