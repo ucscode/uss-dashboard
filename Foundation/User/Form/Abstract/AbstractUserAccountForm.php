@@ -59,6 +59,9 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                 return is_array($resource) ? $resource : true;
             }
         }
+        /**
+         * A Toast is required saying: "Security token could not be verified"
+         */
         return false;
     }
 

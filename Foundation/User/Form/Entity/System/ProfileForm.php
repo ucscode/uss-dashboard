@@ -173,7 +173,7 @@ class ProfileForm extends AbstractUserAccountForm
         ;
 
         $this->createNonceField();
-        $this->createSubmitButton();
+        $this->createSubmitButton('Save Changes');
     }
 
     protected function createAvatarField(): void

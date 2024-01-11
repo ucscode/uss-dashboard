@@ -4,6 +4,8 @@ namespace Module\Dashboard\Bundle\Common;
 
 class Password
 {
+    public readonly int $strengthLimit;
+
     protected int $minLength = 8;
 
     protected array $strength = [
@@ -16,6 +18,7 @@ class Password
 
     public function __construct(protected ?string $password)
     {
+        $this->strengthLimit = count($this->strength);
         $this->inspectPassword();
     }
 

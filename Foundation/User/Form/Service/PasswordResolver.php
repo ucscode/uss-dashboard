@@ -50,7 +50,8 @@ class PasswordResolver
         ];
 
         $passwordResolver = [
-            'strength' => $strength
+            'strength' => $strength,
+            'strengthLimit' => $password->strengthLimit,
         ];
 
         foreach($factors as $key => $value) {
