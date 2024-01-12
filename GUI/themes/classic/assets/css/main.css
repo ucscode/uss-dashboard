@@ -1726,17 +1726,6 @@ p {
   border-bottom: 1px solid #efefef;
   position: relative;
 }
-.single-notification:first-child,
-.single-notification:first-child .notification-redirect {
-  padding-top: 0px;
-  border-radius: 5px 5px 0 0;
-}
-.single-notification:last-child,
-.single-notification:last-child .notification-redirect {
-  padding-bottom: 0px;
-  border-bottom: 0px;
-  border-radius: 0 0 5px 5px;
-}
 .single-notification .checkbox {
   max-width: 50px;
   width: 100%;
@@ -1802,29 +1791,6 @@ p {
   padding-top: 10px;
   position: relative;
   margin-left: 4px;
-}
-@media (max-width: 767px) {
-  .single-notification .action {
-    /* display: none; */
-  }
-}
-.single-notification .action button {
-  border: none;
-  background: transparent;
-  color: #5d657b;
-  padding: 6px;
-  font-size: 18px;
-  line-height: 0;
-  border: 1px solid transparent;
-  border-radius: 50%;
-}
-.single-notification .action button:hover {
-	color: var(--bs-cyan);
-    border-color: var(--bs-gray-300);
-    background-color: var(--bs-gray-200);
-}
-.single-notification .action .dropdown-toggle::after {
-  display: none;
 }
 
 /* ========== header css ========== */

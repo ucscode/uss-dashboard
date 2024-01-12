@@ -1,109 +1,103 @@
-{# {% extends _theme ~ '/base.html.twig' %}
+{# Isolated in "dashboard_content" block #}
 
-{% block dashboard_content %} #}
-
-    {% set row_size = 'col-md-10 col-lg-9 mx-auto' %}
-
-    <div class='container-fluid'>
-        <div class='row'>
-
-                {% block notification_widgets %}
-
-                    {% if notifications|length %}
-                        <div class='text-end mb-2 {{ row_size }}' id='notification-widget' data-id='*'>
-                            <a href='javascript:void(0)' class='btn btn-sm btn-outline-success' data-viewed='1'>
-                                Mark all as read
-                            </a>
+<div class='container-fluid'>
+    <div class='row'>
+        <div class="col-md-10 col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="row small">
+                        <div class='col-sm-6 d-none d-sm-block'>
+                            <h6 class='my-0'>
+                                Notifications <span class="ms-2 badge bg-primary">4</span>
+                            </h6>
                         </div>
-                    {% endif %}
-                
-                {% endblock %}
-
-                {% block notification_content %}
-
-                    <div class='mb-4 {{ row_size }}'>
-                        <div class='card' id='notification-list'>
-                            
-                            {% if notifications|length %}
-
-                                {% for notification in notifications %}
-
-                                    <div class="single-notification p-3" data-id='{{ notification.id }}'>
-                                        
-                                        <a href='{{ notification.redirect ?? 'javascript:void(0)' }}' 
-                                            class='notification-redirect {{ notification.viewed is same as('0') ? 'unviewed' : null }}' data-viewed='1'></a>
-                                        
-                                        <div class="notification">
-                                            <div class="image ">
-                                                <img src='{{ notification.image ?? user.avatar }}' class=''>
-                                            </div>
-                                            <div class="content">
-                                                <div class='notification-wrapper text-gray'>
-                                                    {{ notification.message|raw }}
-                                                </div>
-                                                <span class="small text-gray">
-                                                    {{ __uss.relativeTime(notification.period) }}
-                                                    {% if notification.redirect %}
-                                                        <i class='bi bi-link-45deg ms-1'></i>
-                                                    {% endif %}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div class="action">
-
-                                            <button class="more-btn dropdown-toggle" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            
-                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
-                                                <li class="dropdown-item">                                                    
-                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-viewed='1'>
-                                                        <i class='bi bi-check-circle me-1'></i> Mark as read
-                                                    </a>
-                                                </li>
-                                                <li class="dropdown-item">
-                                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-hidden='1'>
-                                                        <i class='bi bi-trash me-1'></i> Remove
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                            
-                                        </div>
-                                        
-                                    </div>
-
-                                {% endfor %}
-                            
-                            {% else %}
-
-                                <div class='text-center py-5' id='notification-empty'>
-                                    <div class='px-md-5'>
-                                        <div class='row'>
-                                            <div class='col-sm-8 m-auto col-lg-6'>
-                                                {% set errorImage = __dashboard.meths.theme('/assets/images/notification-empty.webp', __uss.ENUM.URL) %}
-                                                <img src='{{ errorImage }}' class='img-fluid'>
-                                            </div>
-                                        </div>
-                                        <h2 class='text-capitalize fw-light'>Whoopsy! </h2> 
-                                        <h5 class='fw-light'>Nothing to display</h5>
-                                    </div>
-                                </div>
-
-                            {% endif %}
-                                
+                        <div class='col-sm-6 text-end fw-light'>
+                            <i class="bi bi-check-circle me-1"></i> 
+                            <a href=''>Mark all as read</a>
                         </div>
                     </div>
+                    <hr>
 
-                {% endblock %}
+                    {% if notifications|length %}
 
-                {% block notification_pagination %}
+                        {% for notification in notifications %}
 
-                    {% include __dashboard.meths.theme('/includes/paginator.html.twig') with {'nav_class': row_size} %}
+                            <div class="single-notification border rounded p-1 my-2 small" data-id='{{ notification.id }}'>
+                                
+                                <a 
+                                    href='{{ notification.redirect_url|default('javascript:void(0)') }}' 
+                                    class='d-block w-100 rounded p-2 notification-anchor {{ notification.viewed is same as('0') ? 'unviewed' : null }}' data-viewed='1'
+                                >
+                                    <div class="notification">
+                                        <div class="image ">
+                                            <img src='{{ notification.avatar_url|default(user.meta.get('user.avatar')) }}' class=''>
+                                        </div>
+                                        <div class="content">
+                                            <div class='notification-wrapper text-gray'>
+                                                {{ notification.message|raw }}
+                                            </div>
+                                            <span class="small text-gray">
+                                                {{ __uss.meths.relativeTime(notification.period) }}
+                                                {% if notification.redirect_url %}
+                                                    <i class='bi bi-link-45deg ms-1'></i>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
 
-                {% endblock %}
+                                <div class="action">
 
+                                    <button class="btn btn-sm" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
+                                        <li class="dropdown-item">                                                    
+                                            <a href="javascript:void(0)" class="text-gray text-sm d-block" data-viewed='1'>
+                                                <i class='bi bi-check-circle me-1'></i> Mark as read
+                                            </a>
+                                        </li>
+                                        <li class="dropdown-item">
+                                            <a href="javascript:void(0)" class="text-gray text-sm d-block" data-hidden='1'>
+                                                <i class='bi bi-trash me-1'></i> Remove
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    
+                                </div>
+                                
+                            </div>
+
+                        {% endfor %}
+                    
+                    {% else %}
+
+                        <div class='text-center py-5' id='notification-empty'>
+                            <div class='px-md-5'>
+                                <div class='row'>
+                                    <div class='col-sm-8 m-auto col-lg-6'>
+                                        {% set errorImage = __dashboard.meths.theme('/assets/images/notification-empty.webp', __uss.ENUM.URL) %}
+                                        <img src='{{ errorImage }}' class='img-fluid'>
+                                    </div>
+                                </div>
+                                <h2 class='text-capitalize fw-light'>Whoopsy! </h2> 
+                                <h5 class='fw-light'>Nothing to display</h5>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                    {% block notification_pagination %}
+
+                        {% include __dashboard.meths.theme('/includes/paginator.html.twig') with {'nav_class': row_size} %}
+
+                    {% endblock %}
+
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-{# {% endblock %} #}

@@ -217,24 +217,15 @@
 	box-shadow: 0 0 6px var(--bs-gray-200);
 }
 
-.single-notification .notification-redirect {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	border-radius: 6px;
-}
-
 .single-notification .notification {
 	max-width: calc(100% - 45px);
 }
 
-.single-notification .notification-redirect.unviewed {
+.single-notification .notification-anchor.unviewed {
 	background-color: rgb(255 223 117 / 12%);
 }
 
-.single-notification .notification-redirect:hover {
+.single-notification .notification-anchor:hover {
 	background-color: rgba(74, 108, 247, 0.05);
 }
 
