@@ -7,7 +7,9 @@
         <button class="dropdown-toggle" id="notification" data-bs-toggle="dropdown" aria-expanded="false" type="button">
             <i class="bi bi-bell-fill"></i>
             {% if unseen > 0 %}
-                <span class='animate__animated animate__wobble animate__infinite' data-nx-count>{{ unseen }}</span>
+                <span class='animate__animated animate__wobble animate__infinite' data-nx-count>
+                    {{ unseen }}
+                </span>
             {% endif %}
         </button>
 
@@ -24,8 +26,11 @@
                             data-viewed='1'
                         >
                             <div class="image">
-                                <img src="{{ notification.avatar_url|default(user.meta.get('user.avatar')) }}" alt="" />
-                            </div>
+                                <img src="{{ 
+                                    notification.avatar_url|
+                                    default(user.meta.get('user.avatar') ?? default_user_avatar) 
+                                }}" alt="" />
+                            </div> 
                             <div class="content">
                                 <p class='line-clamp clamp-3'>
                                     {{ notification.message|striptags|slice(0, 200) }}

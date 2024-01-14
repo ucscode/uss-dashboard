@@ -31,7 +31,10 @@
                                 >
                                     <div class="notification">
                                         <div class="image ">
-                                            <img src='{{ notification.avatar_url|default(user.meta.get('user.avatar')) }}' class=''>
+                                            <img src='{{ 
+                                                notification.avatar_url|
+                                                default(user.meta.get('user.avatar') ?? default_user_avatar) 
+                                            }}' class=''>
                                         </div>
                                         <div class="content">
                                             <div class='notification-wrapper text-gray'>
