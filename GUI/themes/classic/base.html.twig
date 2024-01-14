@@ -69,7 +69,13 @@
             {% block wrapper %}
                 <div class='content-wrapper'>
                     {% block dashboard_content %} {# content ------------------------------> important #}
-                        {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+                        <div class="{{ content_container_class ?? 'container-fluid' }}">
+                            <div class="{{ content_row_class ?? 'row' }}">
+                                <!-- [block.start]:dashboard-content -->
+                                {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+                                <!-- [block.end]:dashboard-content -->
+                            </div>
+                        </div>
                     {% endblock %}
                 </div>
             {% endblock %} 

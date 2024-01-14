@@ -34,7 +34,11 @@
         <hr class="mt-2 mb-4">
 
         {% block profile_content %}
-            {{ __uss.renderBlockElements('profile_content', _context)|raw }}
+            <div class="row">
+                <!-- [block.start]:profile_content -->
+                {{ __uss.renderBlockElements('profile_content', _context)|raw }}
+                <!-- [block.end]:profile_content -->
+            </div>
         {% endblock %}
 
     </div>

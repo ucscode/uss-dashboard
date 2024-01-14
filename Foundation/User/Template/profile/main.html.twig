@@ -2,56 +2,56 @@
 
 {% block profile_content %} #}
     
-    <form {{ __uss.meths.arrayToHtmlAttrs(form.attribute.fetchAll(true))|raw }}>
+    <div class="col-12">
+        <form {{ __uss.meths.arrayToHtmlAttrs(form.attribute.fetchAll(true))|raw }}>
+            <div class="row">
 
-        <div class="row">
+                {% block avatar %}
+                    <div class="col-xl-4">
+                        <div class="card mb-4 mb-xl-0">
+                            <div class="card-body">
+                                <div class="row g-3">
 
-            {% block avatar %}
-                <div class="col-xl-4">
-                    <div class="card mb-4 mb-xl-0">
-                        <div class="card-body">
-                            <div class="row g-3">
+                                    <div class="col-sm-4 col-md-3 col-xl-12 text-center mb-2">
+                                        <figure class="mb-2 image-central profile-figure rounded-circle">
+                                            <img class="" src="{{ user.avatar }}" id="image" alt="">
+                                        </figure>
+                                        {{ form.avatarCollection.elementContext.export|raw }} {# --------------> collection #}
+                                    </div>
 
-                                <div class="col-sm-4 col-md-3 col-xl-12 text-center mb-2">
-                                    <figure class="mb-2 image-central profile-figure rounded-circle">
-                                        <img class="" src="{{ user.avatar }}" id="image" alt="">
-                                    </figure>
-                                    {{ form.avatarCollection.elementContext.export|raw }} {# --------------> collection #}
-                                </div>
+                                    <div class="col-sm-8 col-md-7 col-xl-12 text-center text-sm-start text-xl-center">
+                                        <ul class="list-unstyled">
 
-                                <div class="col-sm-8 col-md-7 col-xl-12 text-center text-sm-start text-xl-center">
-                                    <ul class="list-unstyled">
+                                            {% block profile_info %}
+                                                {% if user.username %}
+                                                    <li><span class="text-capitalize fs-5">{{ user.username }}</span></li>
+                                                {% endif %}
+                                                <li class='text-muted mb-2'>{{ user.email }}</li>
+                                                <li class='small fw-light mb-1'>Joined: {{ user.registerTime.format('dS, M Y') }}</li>
+                                                <li class='small fw-light mb-1'>Last seen: {{ __uss.meths.relativeTime(user.lastSeen, true) }}</li>
+                                            {% endblock %}
+                                            
+                                        </ul>
+                                    </div>
 
-                                        {% block profile_info %}
-                                            {% if user.username %}
-                                                <li><span class="text-capitalize fs-5">{{ user.username }}</span></li>
-                                            {% endif %}
-                                            <li class='text-muted mb-2'>{{ user.email }}</li>
-                                            <li class='small fw-light mb-1'>Joined: {{ user.registerTime.format('dS, M Y') }}</li>
-                                            <li class='small fw-light mb-1'>Last seen: {{ __uss.meths.relativeTime(user.lastSeen, true) }}</li>
-                                        {% endblock %}
-                                        
-                                    </ul>
-                                </div>
-
-                            </div> <!-- row g-3 -->
+                                </div> <!-- row g-3 -->
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endblock avatar %}
+                {% endblock avatar %}
 
-            {% block userItems %}
-                <div class="col-xl-8">
-                    <div class="card mb-4">
-                        <div class="card-body p-4">
-                            {{ form.collection.elementContext.export|raw }} {# ----------------> collection #}
+                {% block userItems %}
+                    <div class="col-xl-8">
+                        <div class="card mb-4">
+                            <div class="card-body p-4">
+                                {{ form.collection.elementContext.export|raw }} {# ----------------> collection #}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endblock %}
+                {% endblock %}
 
-        </div>
-        
-    </form>
+            </div>
+        </form>
+    </div>
 
 {# {% endblock %} #}
