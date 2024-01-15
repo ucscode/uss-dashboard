@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
 use Module\Dashboard\Foundation\Admin\AdminDashboard;
+use Module\Dashboard\Foundation\System\Notification\NotificationApi;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Block\Block;
 use Uss\Component\Block\BlockManager;
@@ -26,6 +27,7 @@ new class () {
         BlockManager::instance()->addBlock("dashboard_content", new Block(true));
         BlockManager::instance()->addBlock("profile_content", new Block(true));
         
+        $this->createSystemApplication();
         $this->createUserApplication();
         $this->createAdminApplication();
 
@@ -36,6 +38,11 @@ new class () {
         );
     }
 
+    protected function createSystemApplication(): void
+    {
+        new NotificationApi();
+    }
+
     protected function createUserApplication(): void
     {
         $appControl = (new AppControl())
@@ -43,7 +50,6 @@ new class () {
             ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
         UserDashboard::instance($appControl); // One-time Instantiation
-        //(new \Module\Dashboard\Bundle\User\User())->acquireFromSession()->destroySession();
     }
 
     public function createAdminApplication(): void

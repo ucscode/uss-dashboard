@@ -21,7 +21,7 @@ class NotificationController extends AbstractDashboardController
         $offset = ($paginator->getCurrentPage() - 1) * self::ITEMS_PER_PAGE;
 
         $notifications = $user->notification->get(['hidden' => 0,], $offset, self::ITEMS_PER_PAGE);
-        $unseen = $user->notification->count(["viewed" => 0]);
+        $unseen = $user->notification->count(["viewed" => 0, 'hidden' => 0]);
 
         $document->setContext([
             'notifications' => $notifications,

@@ -49,7 +49,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     protected function createAjaxDocuments(): void
     {
        $ajaxFactory = new AjaxDocumentFactory($this);
-
+       
        $this->addDocument('ajax:verify-email', $ajaxFactory->createResendRegisterEmailDocument());
     }
 }

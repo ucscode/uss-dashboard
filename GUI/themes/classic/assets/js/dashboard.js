@@ -4,6 +4,7 @@ new class {
 	
 	constructor() {
 		this.toggleSidebar();
+		this.notificationAPI();
 	}
 	
 	toggleSidebar() {
@@ -19,6 +20,11 @@ new class {
 		for(let x of list) {
 			$(x)[action]('active');
 		};
+	}
+
+	notificationAPI() {
+		const notification = new Notification();
+		console.log(notification.markAsRead([3]));
 	}
 	
 };
