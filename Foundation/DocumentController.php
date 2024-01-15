@@ -14,21 +14,21 @@ class DocumentController implements RouteInterface
     {
     }
 
-    public function onload(array $context): void
+    public function onload(array $routeContext): void
     {
         $this->enablePrimaryMenus();
 
         $controller = $this->document->getController();
         
         if($controller) {
-            $controller->onload($context + [
+            $controller->onload($routeContext + [
                 'dashboardInterface' => $this->dashboard,
                 'dashboardDocument' => $this->document
             ]);
         }
         
-        $template = new BlockTemplate($this->document->getTemplate());
         $context = $this->document->getContext();
+        $template = new BlockTemplate($this->document->getTemplate(), $context);
         $currentTheme = $this->dashboard->appControl->getThemeFolder();
         $baseTemplate = "@Theme/{$currentTheme}/base.html.twig";
 
@@ -36,7 +36,7 @@ class DocumentController implements RouteInterface
             ->getBlock('dashboard_content')
             ->addTemplate("native_element", $template);
 
-        $this->dashboard->render($baseTemplate, $context);
+        $this->dashboard->render($baseTemplate, []);
     }
 
     /**

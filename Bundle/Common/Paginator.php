@@ -1,5 +1,7 @@
 <?php
 
+namespace Module\Dashboard\Bundle\Common;
+
 use Ucscode\UssElement\UssElement;
 
 class Paginator extends \JasonGrimes\Paginator
@@ -68,6 +70,7 @@ class Paginator extends \JasonGrimes\Paginator
                 )
             );
         }
+        
         return $nav;
     }
 

@@ -1,7 +1,7 @@
 {% set notifications = user.notification.get({ "hidden": 0 }, 0, 4) %}
 {% set unseen = user.notification.count({ "viewed": 0, "hidden": 0 }) %}
 
-<div class="notification-box ml-15">
+<div class="notification-box ml-15 small">
     <div class='d-sm-flex'>
     
         <button class="dropdown-toggle" id="notification" data-bs-toggle="dropdown" aria-expanded="false" type="button">
