@@ -76,7 +76,7 @@
 
                 <hr>
 
-                {# {{ paginator.element.html|raw }} #}
+                {{ paginator.element.html|raw }}
 
             {% else %}
 
@@ -94,12 +94,6 @@
                 </div>
 
             {% endif %}
-
-            {% block notification_pagination %}
-
-                {% include __dashboard.meths.theme('/includes/paginator.html.twig') with {'nav_class': row_size} %}
-
-            {% endblock %}
 
         </div>
     </div>
