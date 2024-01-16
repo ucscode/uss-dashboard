@@ -5,6 +5,7 @@ class Notification {
     API_ENDPOINT = Uss.url + "/api/notification";
 
     #template;
+    #secondaryItemsLimit = 4;
 
     /**
      * Mark a list of user dedicated notifications as read
@@ -74,15 +75,17 @@ class Notification {
      * @returns undefined
      */
 	applyGlobalLogic() {
-
+        
         let _self = this;
+        let selector = "#notification-primary .notification-item [data-action]";
         this.#template = $(`#notification-secondary .notification-item`).first().clone();
 
 		$(this.#entitySelector()).on('click', ".notification-item [data-item]", function() {
             _self.#notificationRead(this.dataset.item)
         });
 
-        let selector = "#notification-primary .notification-item [data-action]";
+        this.#notificationReadAll();
+
 		$(selector).click(function() {
 			let key = $(this).closest(".notification-item").find("[data-item]").attr("data-item");
 			switch(this.dataset.action) {
@@ -94,7 +97,6 @@ class Notification {
 					break;
 			}
 		});
-
 	}
     
     /**
@@ -137,11 +139,11 @@ class Notification {
      * @param {int} key 
      */
 	#notificationRead(key) {
-		this.markAsRead([key]).then(data => {
-			if(data.status) {
-				this.#notificationEntities().then(resolved => {
+		this.markAsRead([key]).then(result => {
+			if(result.status) {
+				this.#notificationEntities(result.data).then(() => {
                     const selector = this.#entitySelector(`.notification-item [data-item='${key}']`);
-					resolved ? $(selector).removeClass('unseen') : null;
+					$(selector).removeClass('unseen');
 				});
 			}
 		});
@@ -153,25 +155,38 @@ class Notification {
      * @param {int} key 
      */
 	#notificationHidden(key) {
-        let secondaryItemsLimit = 4;
-		this.markAsHidden([key]).then(data => {
-			if(data.status) {
-				this.#notificationEntities(true).then(entities => {
-					if(entities) {
-                        let promise = new Promise(resolve => {
-                            $(`.notification-item [data-item='${key}']`).parent().fadeOut("fast", function() {
-                                $(this).remove();
-                                let accessibleItems = $("#notification-secondary .notification-item").length;
-                                let vacancy = secondaryItemsLimit - accessibleItems;
-                                if(entities.length && vacancy > 0) resolve({entities, vacancy});
-                            });
+        const _self = this;
+		this.markAsHidden([key]).then(result => {
+			if(result.status) {
+				this.#notificationEntities(result.data, {hidden: 0}).then(entities => {
+                    let promises = [];
+                    $(`.notification-item [data-item='${key}']`).each(function() {
+                        let deferred = $.Deferred();
+                        $(this).parent().fadeOut("fast", function() {
+                            $(this).remove();
+                            deferred.resolve();
                         });
-                        this.#resolveHiddenPromise(promise);
-					}
+                        promises.push(deferred.promise());
+                    });
+                    $.when.apply($, promises).done(function() {
+                        _self.#resolveHiddenPromise(entities);
+                    });
 				});
 			}
 		})
 	}
+
+    #notificationReadAll() {
+        $("#notification-primary [data-action='mark-all-as-read']").click(() => {
+            this.markAsRead([]).then(result => {
+                if(result.status) {
+                    this.#notificationEntities(result.data).then(entities => {
+                        $(this.#entitySelector(`.notification-item [data-item]`)).removeClass("unseen");
+                    });
+                }
+            });
+        })
+    }
 
     /**
      * Get entities, update the notification brand and return a promise
@@ -179,35 +194,61 @@ class Notification {
      * @param {bool} getItems 
      * @returns Promise
      */
-	async #notificationEntities(getItems = false) {
-		return this.get({seen: 0, hidden: 0}, !getItems)
-		.then(data => {
-            let context = data.data;
-			if(data.status) {
-				const element = $("#notification-secondary .notification-badge");
-				const index = !getItems ? context : context.length;
-				index ? element.removeClass('d-none').text(index) : element.addClass('d-none');
-                return getItems ? context : data.status;
-			}
-            return false;
-		});
+	async #notificationEntities(data, object = null) {
+        const element = $("#notification-secondary .notification-badge");
+        data.pending ? element.removeClass('d-none').text(data.pending) : element.addClass('d-none');
+        if(object) {
+            data = await this.get(object).then(result => {
+                return (result.status) ? result.data : data;
+            });
+        }
+        return data.entities;
 	}
+
+    /**
+     * Derive node selector matching both primary & secondary notification block
+     * 
+     * @param {string} nodeSelector 
+     * @returns string
+     */
+    #entitySelector(nodeSelector = '') {
+        return [
+            `#notification-secondary ${nodeSelector}`, 
+            `#notification-primary ${nodeSelector}`
+        ]
+        .map(selector => selector.trim())
+        .join(", ");
+    }
 
     /**
      * A custom action after promise resolved
      * 
-     * @param {Promise} promise 
+     * @param {object} entities
      */
-    #resolveHiddenPromise(promise) {
-        promise.then(object => {
-            const container = $("#notification-secondary");
-            for(let entity of object.entities) {
+    #resolveHiddenPromise(entities) {
+        const primaryItems = $("#notification-primary .notification-item").length;
+        if(!primaryItems) {
+            Notiflix.Loading.circle();
+            return window.location.reload();
+        }
+        const secondaryContainer = $("#notification-secondary");
+        let secondaryItems = secondaryContainer.find(".notification-item").length;
+        let vacancy = this.#secondaryItemsLimit - secondaryItems;
+
+        if(entities.length && vacancy > 0) {
+            for(let entity of entities) {
+
                 let selector = this.#entitySelector(`.notification-item [data-item='${entity.id}']`);
                 let nodes = $(selector);
+
                 if(nodes.length === 1) {
                     let clone = this.#template.clone();
-                    clone.find("[data-item]").attr("data-item", entity.id);
-                    clone[parseInt(entity.seen) ? 'removeClass' : 'addClass']("unseen");
+
+                    clone.find("[data-item]")
+                        .attr("data-item", entity.id)[
+                            parseInt(entity.seen) ? 'removeClass' : 'addClass'
+                        ]("unseen");
+
                     clone.find("[data-html], [data-bind]").each(function() {
                         if(this.hasAttribute("data-html")) {
                             this.innerHTML = entity[this.dataset.html];
@@ -217,18 +258,15 @@ class Notification {
                             this.setAttribute(attr[0], entity[attr[1]]);
                         }
                     });
-                    let lastNode = container.find(".notification-item").last();
-                    lastNode.length ? lastNode.after(clone) : container.prepend(clone);
-                    object.vacancy--;
-                    if(object.vacancy < 1) {
-                        break;
-                    }
-                }
-            }
-        });
-    }
 
-    #entitySelector(nodeSelector = '') {
-        return `#notification-secondary ${nodeSelector}, #notification-primary ${nodeSelector}`;
+                    let lastNode = secondaryContainer.find(".notification-item").last();
+                    lastNode.length ? lastNode.after(clone) : secondaryContainer.prepend(clone);
+                    
+                    vacancy--;
+                    if(vacancy < 1) break;
+                }
+
+            }
+        }
     }
 }

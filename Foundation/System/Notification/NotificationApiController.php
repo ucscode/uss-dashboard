@@ -69,27 +69,23 @@ class NotificationApiController implements RouteInterface
 
     protected function markAsRead(array $data): array
     {
-        $response = $this->markEntityAs([
-            'seen' => $data['read']
-        ], $data['indexes']);
+        $response = $this->markEntityAs(array('seen' => $data['read']), $data['indexes']);
         $status = $response !== null;
-        $message = $status ? 
-            "Notification successfully marked as %s" : 
-            "Notification could not be marked as %s";
-        $message = sprintf($message, empty($data['read']) ? 'unread' : 'read');
+        $message = sprintf(
+            $status ? "Notification successfully marked as %s" : "Notification could not be marked as %s",
+            empty($data['read']) ? 'unread' : 'read'
+        );
         return [$status, $message, $response];
     }
 
     protected function markAsHidden(array $data): array
     {
-        $response = $this->markEntityAs([
-            'hidden' => $data['hidden']
-        ], $data['indexes']);
+        $response = $this->markEntityAs(array('hidden' => $data['hidden']), $data['indexes']);
         $status = $response !== null;
-        $message = $status ?
-            "Notification successfully marked as %s" :
-            "Notification could not be marked as %s";
-        $message = sprintf($message, empty($data['hidden']) ? 'not hidden' : 'hidden');
+        $message = sprintf(
+            $status ? "Notification successfully marked as %s" : "Notification could not be marked as %s",
+            empty($data['hidden']) ? 'not hidden' : 'hidden'
+        );
         return [$status, $message, $response];
     }
 
@@ -98,7 +94,7 @@ class NotificationApiController implements RouteInterface
         $response = $this->user->notification->{$count ? "count" : "get"}($data, 0, null);
         $status = !empty($response);
         $message = $status ? "Notification items retrieved" : "No items found";
-        return [$status, $message, $this->mapEntity($response)];
+        return [$status, $message, $this->refactor($response)];
     }
 
     protected function removeEntity(array $data, int $count): array
@@ -108,7 +104,7 @@ class NotificationApiController implements RouteInterface
         $message = $status ? 
             "Notification items successfully removed" : 
             "Notification items removal failed";
-        return [$status, $message, $this->mapEntity($response)];
+        return [$status, $message, $this->refactor($response)];
     }
 
     protected function markEntityAs(array $query, array $indexes): ?array
@@ -117,7 +113,18 @@ class NotificationApiController implements RouteInterface
         !empty($indexes) ? $condition->add("id", $indexes) : null;
         $status = $this->user->notification->update($query, $condition);
         $associates = $this->user->notification->get($condition, 0, null);
-        return $status && !empty($associates) ? $associates : null;
+        return $status && !empty($associates) ? $this->refactor($associates) : null;
+    }
+
+    protected function refactor(int|array $entities): array
+    {
+        return [
+            'pending' => $this->user->notification->count([
+                'hidden' => 0,
+                'seen' => 0,
+            ]),
+            'entities' => $this->mapEntity($entities),
+        ];
     }
 
     protected function mapEntity(int|array $entity): int|array

@@ -32,7 +32,7 @@ class NotificationController extends AbstractDashboardController
 
     protected function getPaginator(User $user, Document $document): Paginator
     {
-        $totalItems = $user->notification->count();
+        $totalItems = $user->notification->count(['hidden' => 0]);
         $currentPage = $_GET[self::PAGINATOR_KEY] ?? 1;
         $urlPattern = $document->getUrl() . sprintf("?%s=", self::PAGINATOR_KEY) . Paginator::NUM_PLACEHOLDER;
 
