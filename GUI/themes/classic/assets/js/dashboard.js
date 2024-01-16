@@ -24,7 +24,7 @@ new class {
 
 	notificationAPI() {
 		const notification = new Notification();
-		console.log(notification.markAsRead([3]));
+		console.log(notification.markAsRead([], false));
 	}
 	
 };

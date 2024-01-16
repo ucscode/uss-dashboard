@@ -13,13 +13,15 @@ use Uss\Component\Kernel\Resource\AccessibleProperties;
 
 final class DashboardExtension extends AbstractExtension implements GlobalsInterface, ExtensionInterface
 {
+    public const ACCESS_KEY = '__dashboard';
+
     public readonly array $immutable;
     protected AccessibleProperties $accessibleProperties;
     protected AccessibleMethods $accessibleMethods;
 
     public function getGlobals(): array
     {
-        return ['__dashboard' => $this];
+        return [self::ACCESS_KEY => $this];
     }
 
     public function __construct(private AbstractDashboard $dashboard)

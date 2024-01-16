@@ -1,5 +1,5 @@
 {% set notifications = user.notification.get({ "hidden": 0 }, 0, 4) %}
-{% set unseen = user.notification.count({ "viewed": 0, "hidden": 0 }) %}
+{% set unseen = user.notification.count({ "seen": 0, "hidden": 0 }) %}
 
 <div class="notification-box ml-15 small">
     <div class='d-sm-flex'>
@@ -22,7 +22,7 @@
                     <li data-id='{{ notification.id }}'>
                         <a 
                             href="{{ notification.redirect_url|default("javascript:void(0)") }}" 
-                            class='{{ notification.viewed is same as('0') ? "unviewed" : null }}'
+                            class='{{ notification.seen is same as('0') ? "unseen" : null }}'
                             data-viewed='1'
                         >
                             <div class="image">

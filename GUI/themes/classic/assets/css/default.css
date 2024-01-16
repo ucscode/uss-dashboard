@@ -196,11 +196,11 @@
 	color: var(--bs-highlight-bg);
 }
 
-.header .header-right .notification-box a.unviewed {
+.header .header-right .notification-box a.unseen {
 	background-color: var(--bs-highlight-bg);
 }
 
-.header .header-right .notification-box a.unviewed .content p {
+.header .header-right .notification-box a.unseen .content p {
 	font-weight: 500;
 }
 
@@ -221,7 +221,7 @@
 	max-width: calc(100% - 45px);
 }
 
-.single-notification .notification-anchor.unviewed {
+.single-notification .notification-anchor.unseen {
 	background-color: rgb(255 223 117 / 12%);
 }
 

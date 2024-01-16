@@ -11,6 +11,7 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Kernel\UssImmutable;
 
 final class DashboardRenderLogic implements EventInterface
 {
@@ -109,7 +110,7 @@ final class DashboardRenderLogic implements EventInterface
 
         $this->uss->jsCollection['dashboard'] = [
             'url' => $this->dashboard->urlGenerator()->getResult(),
-            'nonce' => $this->uss->nonce('__dashboard'),
+            'nonce' => $this->uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
             'loggedIn' => $this->isLoggedIn
         ];
 

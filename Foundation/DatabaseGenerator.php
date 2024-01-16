@@ -75,7 +75,7 @@ final class DatabaseGenerator
                 userid INT UNSIGNED NOT NULL,
                 period TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 message VARCHAR(5000),
-                viewed TINYINT NOT NULL DEFAULT 0,
+                seen TINYINT NOT NULL DEFAULT 0,
                 redirect_url VARCHAR(255),
                 avatar_url VARCHAR(255),
                 hidden TINYINT NOT NULL DEFAULT 0,

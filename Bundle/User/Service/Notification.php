@@ -48,7 +48,7 @@ class Notification
     /**
      * @method getNotification
      */
-    public function get(null|array|Condition $filter = null, int $offset = 0, int $limit = 20, string $order = 'DESC'): ?array 
+    public function get(null|array|Condition $filter = null, int $offset = 0, ?int $limit = 20, string $order = 'DESC'): ?array 
     {
         $data = [];
         
@@ -62,7 +62,7 @@ class Notification
                 ->from(self::TABLE_NAME)
                 ->where($filter)
                 ->orderBy("id", $this->uss->sanitize($order, true))
-                ->limit(abs($limit))
+                ->limit($limit !== null ? abs($limit) : $limit)
                 ->offset(abs($offset));
 
             $SQL = $squery->build();

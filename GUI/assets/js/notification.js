@@ -8,11 +8,14 @@ class Notification {
      * Mark a list of user dedicated notifications as read
      * 
      * @param {array} indexes 
+     * @param {bool} $read
      * @returns Promise
      */
-    markAsRead(indexes) {
+    markAsRead(indexes, read = true) {
+        this.#checkError(indexes);
         return this.#createAPICall('mark-as-read', {
-            indexes
+            indexes,
+            read: read ? 1 : 0
         });
     }
 
@@ -20,11 +23,14 @@ class Notification {
      * Mark a list of user dedicated notifications as hidden
      * 
      * @param {array} indexes 
+     * @param {bool} $hidden
      * @returns Promise
      */
-    markAsHidden(indexes) {
+    markAsHidden(indexes, hidden = true) {
+        this.#checkError(indexes);
         return this.#createAPICall('mark-as-hidden', {
-            indexes
+            indexes,
+            hidden: hidden ? 1 : 0
         });  
     }
 
@@ -61,72 +67,23 @@ class Notification {
             headers: {
                 'Context-Type': 'application/json'
             },
+            cache: "no-cache",
             body: JSON.stringify({
                 nonce: Uss.dashboard.nonce,
                 request,
                 data
             })
-        }).then(response => response.json());
-    }
-
-    jQueryNode(id) {
-        const dataset = id === '*' ? `[data-id]` : `[data-id='${id}']`;
-        return $(`#notification-list ${dataset}, #notification-dropdown ${dataset}`);
-    }
-
-    unview(id) {
-        this.jQueryNode(id).find('.unviewed').removeClass('unviewed');
-    }
-
-    remove(id) {
-        this.jQueryNode(id).fadeOut(300, function() {
-            $(this).remove();
-            const list = $('#notification-list');
-            if(list.length && !list.find('[data-id]').length) {
-                window.location.href = '';     
+        }).then(response => {
+            if(!response.ok) {
+                throw new Error(`HTTP Error ${response.status}`);
             }
+            return response.json()
         });
     }
 
-    count(num) {
-        const counter = $('[data-nx-count]');
-        if(!num) counter.remove();
-        else counter.text(num);
+    #checkError(indexes) {
+        if(!Array.isArray(indexes)) {
+            throw new Error("Parameter 1 must be of type Array");
+        }
     }
-
-    updateNotification(id, data, action) {
-        data.notificationNonce = __uss.dashboard.nonce;
-        data.id = id;
-        $.ajax({
-            url: __uss.dashboard.url + '/notifications',
-            method: 'POST',
-            data: data,
-            dataType: 'json',
-            success: result => action(true, result),
-            error: result => action(false, result)
-        });
-    }
-
-    create() {
-        const self = this;
-        const elements = '#notification-list, #notification-dropdown, #notification-widget';
-        const targets = 'a[data-viewed], a[data-hidden]';
-
-        $(elements).on('click', targets, function() {
-
-            const parentBlock = $(this).parents('[data-id]');
-            const id = parentBlock.attr('data-id');
-            const data = Object.assign({}, this.dataset);
-            
-            self.updateNotification(id, data, (success, result) => {
-                if(success) {
-                    if(data.viewed) self.unview(data.id);
-                    else if(data.hidden) self.remove(data.id);
-                    self.count(parseInt(result.message));
-                }
-            });
-            
-        });
-    }
-
 }

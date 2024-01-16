@@ -26,7 +26,7 @@
                         
                         <a 
                             href='{{ notification.redirect_url|default('javascript:void(0)') }}' 
-                            class='d-block w-100 rounded p-2 notification-anchor {{ notification.viewed is same as('0') ? 'unviewed' : null }}' data-viewed='1'
+                            class='d-block w-100 rounded p-2 notification-anchor {{ notification.seen is same as('0') ? 'unseen' : null }}' data-viewed='1'
                         >
                             <div class="notification">
                                 <div class="image ">
