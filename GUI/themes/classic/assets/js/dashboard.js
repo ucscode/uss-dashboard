@@ -4,27 +4,21 @@ new class {
 	
 	constructor() {
 		this.toggleSidebar();
-		this.notificationAPI();
+		(new Notification()).applyGlobalLogic();
 	}
 	
 	toggleSidebar() {
-		$('#menu-toggle').on("click", () => this.sidebar('toggleClass'));
-		$('.overlay').on("click", () => this.sidebar('removeClass'));
+		$('#menu-toggle').on("click", () => this.#sidebar('toggleClass'));
+		$('.overlay').on("click", () => this.#sidebar('removeClass'));
 		window.addEventListener('resize', () => {
-			if( document.body.clientWidth > 1200 ) this.sidebar('removeClass');
+			if( document.body.clientWidth > 1200 ) this.#sidebar('removeClass');
 		});
 	}
 	
-	sidebar(action) {
+	#sidebar(action) {
 		let list = [".sidebar-nav-wrapper", ".main-wrapper", ".overlay"];
 		for(let x of list) {
 			$(x)[action]('active');
 		};
 	}
-
-	notificationAPI() {
-		const notification = new Notification();
-		console.log(notification.markAsRead([], false));
-	}
-	
 };

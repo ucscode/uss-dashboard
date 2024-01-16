@@ -113,8 +113,6 @@ final class DashboardRenderLogic implements EventInterface
             'nonce' => $this->uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
             'loggedIn' => $this->isLoggedIn
         ];
-
-        $this->uss->twigContext['default_user_avatar'] = $this->uss->pathToUrl(DashboardImmutable::GUI_DIR . '/assets/images/user.png');
         
         Flash::instance()->dump();
 

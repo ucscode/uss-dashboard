@@ -196,11 +196,11 @@
 	color: var(--bs-highlight-bg);
 }
 
-.header .header-right .notification-box a.unseen {
-	background-color: var(--bs-highlight-bg);
+.header .header-right .notification-secondary a.unseen {
+	background-color: rgb(255 243 205 / 69%);
 }
 
-.header .header-right .notification-box a.unseen .content p {
+.header .header-right .notification-secondary a.unseen .content p {
 	font-weight: 500;
 }
 
@@ -222,7 +222,7 @@
 }
 
 .single-notification .notification-anchor.unseen {
-	background-color: rgb(255 223 117 / 12%);
+	background-color: rgb(255 223 117 / 34%);
 }
 
 .single-notification .notification-anchor:hover {

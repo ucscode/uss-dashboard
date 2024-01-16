@@ -108,9 +108,10 @@ class Notification
         {
             $filter = $this->deriveCondition( is_int($filter) ? ['id' => $filter] : $filter );
             $filter->and('userid', $this->user->getId());
-
+            
             $squery = (new SQuery())
-                ->delete(self::TABLE_NAME)
+                ->delete()
+                ->from(self::TABLE_NAME)
                 ->where($filter);
 
             $SQL = $squery->build();

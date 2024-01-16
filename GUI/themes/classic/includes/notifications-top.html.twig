@@ -1,44 +1,41 @@
 {% set notifications = user.notification.get({ "hidden": 0 }, 0, 4) %}
 {% set unseen = user.notification.count({ "seen": 0, "hidden": 0 }) %}
 
-<div class="notification-box ml-15 small">
+<div class="notification-secondary ml-15 small" id="notification-secondary"> <!-- Secondary Notification -->
     <div class='d-sm-flex'>
     
         <button class="dropdown-toggle" id="notification" data-bs-toggle="dropdown" aria-expanded="false" type="button">
             <i class="bi bi-bell-fill"></i>
-            {% if unseen > 0 %}
-                <span class='animate__animated animate__wobble animate__infinite' data-nx-count>
-                    {{ unseen }}
-                </span>
-            {% endif %}
+            <span class='animate__animated animate__wobble animate__infinite notification-badge {{ unseen > 0 ? null : 'd-none' }}'>
+                {{ unseen }}
+            </span>
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notification" id="notification-dropdown">
+        <ul class="notification-container dropdown-menu dropdown-menu-end"> <!-- Notification Container -->
             
             {% if notifications|length %}
 
                 {% for notification in notifications %}
 
-                    <li data-id='{{ notification.id }}'>
-                        <a 
-                            href="{{ notification.redirect_url|default("javascript:void(0)") }}" 
-                            class='{{ notification.seen is same as('0') ? "unseen" : null }}'
-                            data-viewed='1'
-                        >
+                    {% set notice_url = notification.redirect_url|default("javascript:void(0)") %}
+                    {% set notice_class = notification.seen is same as('0') ? "unseen" : null %}
+
+                    <li class="notification-item">
+                        <a href="{{ notice_url }}" class='notification-anchor {{ notice_class }}' data-item='{{ notification.id }}'>
                             <div class="image">
                                 <img src="{{ 
                                     notification.avatar_url|
                                     default(user.meta.get('user.avatar') ?? default_user_avatar) 
-                                }}" alt="" />
+                                }}" alt="avatar" data-bind="src:avatar_url"/>
                             </div> 
                             <div class="content">
-                                <p class='line-clamp clamp-3'>
+                                <p class='line-clamp clamp-3' data-html="message">
                                     {{ notification.message|striptags|slice(0, 200) }}
                                 </p>
-                                <span>{{ __uss.meths.relativeTime(notification.period) }}</span>
+                                <span data-html="period">{{ __uss.meths.relativeTime(notification.period) }}</span>
                             </div>
                         </a>
-                    </li>
+                    </li> <!-- /notification item -->
 
                 {% endfor %}
 
@@ -58,9 +55,9 @@
 
             {% endif %}
 
-        </ul>
+        </ul> <!-- /notification container -->
         
     </div>
-</div>
+</div> <!-- /secondary notification -->
 
 

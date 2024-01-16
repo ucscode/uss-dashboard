@@ -1785,7 +1785,7 @@ p {
   margin-bottom: 10px;
   font-size: 0.86rem;
 }
-.single-notification .action {
+.single-notification .notification-actions {
   display: inline-flex;
   justify-content: flex-end;
   padding-top: 10px;
@@ -1943,11 +1943,11 @@ p {
 .header .header-right .dropdown-box {
   position: relative;
 }
-.header .header-right .notification-box,
+.header .header-right .notification-secondary,
 .header .header-right .header-message-box {
   position: relative;
 }
-.header .header-right .notification-box .dropdown-menu.dropdown-menu-end {
+.header .header-right .notification-secondary .dropdown-menu.dropdown-menu-end {
   transform: translate3d(0px, 60px, 0px);
 }
 .header .header-right .header-message-box .dropdown-menu.dropdown-menu-end {

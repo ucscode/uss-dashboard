@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard;
 
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Foundation\DatabaseGenerator;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
@@ -21,13 +22,7 @@ new class () {
     {
         $uss = Uss::instance();
 
-        new DatabaseGenerator($uss);
-        new DashboardEnvironment($uss);
-
-        BlockManager::instance()->addBlock("dashboard_content", new Block(true));
-        BlockManager::instance()->addBlock("profile_content", new Block(true));
-        
-        $this->createSystemApplication();
+        $this->createSystemApplication($uss);
         $this->createUserApplication();
         $this->createAdminApplication();
 
@@ -38,8 +33,17 @@ new class () {
         );
     }
 
-    protected function createSystemApplication(): void
+    protected function createSystemApplication(Uss $uss): void
     {
+        new DatabaseGenerator($uss);
+        new DashboardEnvironment($uss);
+
+        $userAvatar = DashboardImmutable::GUI_DIR . '/assets/images/user.png';
+        $uss->twigContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
+        
+        BlockManager::instance()->addBlock("dashboard_content", new Block(true));
+        BlockManager::instance()->addBlock("profile_content", new Block(true));
+
         new NotificationApi();
     }
 

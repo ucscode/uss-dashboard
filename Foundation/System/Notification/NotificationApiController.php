@@ -44,55 +44,94 @@ class NotificationApiController implements RouteInterface
         switch($this->payload['request']) 
         {
             case 'mark-as-read':
-                $response = $this->markAsValue([
-                    'seen' => $data['read']
-                ], $data['indexes']);
-                $status = $response !== null;
-                $message = $status ? 
-                    "Notification successfully marked as %s" : 
-                    "Notification could not be marked as %s";
-                $message = sprintf($message, empty($data['read']) ? 'unread' : 'read');
+                [$status, $message, $response] = $this->markAsRead($data);
                 break;
 
-            case 'mark-as-hidden':
-                $response = $this->markAsValue([
-                    'hidden' => $data['hidden']
-                ], $data['indexes']);
-                $status = $response !== null;
-                $message = $status ?
-                    "Notification successfully marked as %s" :
-                    "Notification could not be marked as %s";
-                $message = sprintf($message, empty($data['hidden']) ? 'not hidden' : 'hidden');
+            case 'mark-as-hidden': 
+                [$status, $message, $response] = $this->markAsHidden($data);
                 break;
 
             case 'get':
-                $response = $this->user->notification->get($data, 0, null);
-                $status = !empty($response);
-                $message = $status ? "Notification items retrieved" : "No items found";
+                [$status, $message, $response] = $this->getEntity($data, $this->payload['count']);
                 break;
 
             case 'remove':
-                $response = $this->user->notification->get($data, 0, null);
-                $status = $this->user->notification->remove($data);
-                $message = $status ? 
-                    "Notification items successfully removed" : 
-                    "Notification items removal failed";
+                [$status, $message, $response] = $this->removeEntity($data, $this->payload['count']);
                 break;
             
             default:
-                $response = null;
+                $status = !!($response = null);
                 $message = "Invalid Notification Request";
         }
 
-        $this->uss->terminate(!!$response, $message, $response);
+        $this->uss->terminate($status, $message, $response);
     }
 
-    protected function markAsValue(array $query, array $indexes): ?array
+    protected function markAsRead(array $data): array
+    {
+        $response = $this->markEntityAs([
+            'seen' => $data['read']
+        ], $data['indexes']);
+        $status = $response !== null;
+        $message = $status ? 
+            "Notification successfully marked as %s" : 
+            "Notification could not be marked as %s";
+        $message = sprintf($message, empty($data['read']) ? 'unread' : 'read');
+        return [$status, $message, $response];
+    }
+
+    protected function markAsHidden(array $data): array
+    {
+        $response = $this->markEntityAs([
+            'hidden' => $data['hidden']
+        ], $data['indexes']);
+        $status = $response !== null;
+        $message = $status ?
+            "Notification successfully marked as %s" :
+            "Notification could not be marked as %s";
+        $message = sprintf($message, empty($data['hidden']) ? 'not hidden' : 'hidden');
+        return [$status, $message, $response];
+    }
+
+    protected function getEntity(array $data, int $count): array
+    {
+        $response = $this->user->notification->{$count ? "count" : "get"}($data, 0, null);
+        $status = !empty($response);
+        $message = $status ? "Notification items retrieved" : "No items found";
+        return [$status, $message, $this->mapEntity($response)];
+    }
+
+    protected function removeEntity(array $data, int $count): array
+    {
+        $response = $this->user->notification->{$count ? "count" : "get"}($data, 0, null);
+        $status = $this->user->notification->remove($data);
+        $message = $status ? 
+            "Notification items successfully removed" : 
+            "Notification items removal failed";
+        return [$status, $message, $this->mapEntity($response)];
+    }
+
+    protected function markEntityAs(array $query, array $indexes): ?array
     {
         $condition = new Condition();
         !empty($indexes) ? $condition->add("id", $indexes) : null;
         $status = $this->user->notification->update($query, $condition);
         $associates = $this->user->notification->get($condition, 0, null);
         return $status && !empty($associates) ? $associates : null;
+    }
+
+    protected function mapEntity(int|array $entity): int|array
+    {
+        if(is_array($entity)) {
+            return array_map(function($item) {
+                $item['period'] = $this->uss->relativeTime($item['period']);
+                unset($item['internal_note']);
+                if(empty($item['avatar_url'])) {
+                    $item['avatar_url'] = $this->uss->twigContext['default_user_avatar'];
+                }
+                return $item;
+            }, $entity);
+        };
+        return $entity;
     }
 }

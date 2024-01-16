@@ -4,98 +4,96 @@
     <div class="card">
         <div class="card-body">
             
-            <div class="row small">
-                <div class='col-sm-6 d-none d-sm-block'>
-                    <h6 class='my-0'>
-                        Notifications <span class="ms-2 badge bg-primary">{{ unseen }}</span>
-                    </h6>
+            <div class="notification-primary" id="notification-primary"> <!-- Primary Notification Container -->
+
+                <div class="row small">
+                    <div class='col-sm-6 d-none d-sm-block'>
+                        <h6 class='my-0'>Notifications</h6>
+                    </div>
+                    <div class='col-sm-6 text-end fw-light'>
+                        <i class="bi bi-check-circle me-1"></i> 
+                        <a href='#'>Mark all as read</a>
+                    </div>
                 </div>
-                <div class='col-sm-6 text-end fw-light'>
-                    <i class="bi bi-check-circle me-1"></i> 
-                    <a href='#'>Mark all as read</a>
-                </div>
-            </div>
 
-            <hr>
+                <div class="notification-container my-2 border-top"> <!-- Primary Notification Container -->
 
-            {% if notifications|length %}
+                    {% if notifications|length %}
 
-                {% for notification in notifications %}
+                        {% for notification in notifications %}
 
-                    <div class="single-notification border rounded p-1 my-2 small" data-id='{{ notification.id }}'>
-                        
-                        <a 
-                            href='{{ notification.redirect_url|default('javascript:void(0)') }}' 
-                            class='d-block w-100 rounded p-2 notification-anchor {{ notification.seen is same as('0') ? 'unseen' : null }}' data-viewed='1'
-                        >
-                            <div class="notification">
-                                <div class="image ">
-                                    <img src='{{ 
-                                        notification.avatar_url|
-                                        default(user.meta.get('user.avatar') ?? default_user_avatar) 
-                                    }}' class=''>
-                                </div>
-                                <div class="content">
-                                    <div class='notification-wrapper text-gray'>
-                                        {{ notification.message|raw }}
+                            {% set notice_url = notification.redirect_url|default('javascript:void(0)') %}
+                            {% set notice_class = notification.seen is same as('0') ? 'unseen' : null %}
+
+                            <div class="notification-item single-notification border rounded p-1 my-2 small">
+                                
+                                <a href='{{ notice_url }}' class='d-block w-100 rounded p-2 notification-anchor {{ notice_class }}' data-item='{{ notification.id }}'>
+                                    <div class="notification">
+                                        <div class="image ">
+                                            <img src='{{ 
+                                                notification.avatar_url|
+                                                default(user.meta.get('user.avatar') ?? default_user_avatar) 
+                                            }}' class=''>
+                                        </div>
+                                        <div class="content">
+                                            <div class='notification-wrapper text-gray'>
+                                                {{ notification.message|raw }}
+                                            </div>
+                                            <span class="small text-gray">
+                                                {{ __uss.meths.relativeTime(notification.period) }}
+                                                {% if notification.redirect_url %}
+                                                    <i class='bi bi-link-45deg ms-1'></i>
+                                                {% endif %}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <span class="small text-gray">
-                                        {{ __uss.meths.relativeTime(notification.period) }}
-                                        {% if notification.redirect_url %}
-                                            <i class='bi bi-link-45deg ms-1'></i>
-                                        {% endif %}
-                                    </span>
+                                </a>
+
+                                <div class="notification-actions">
+                                    <button class="btn btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li class="dropdown-item">                                                    
+                                            <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='mark-as-read'>
+                                                <i class='bi bi-check-circle me-1'></i> Mark as read
+                                            </a>
+                                        </li>
+                                        <li class="dropdown-item">
+                                            <a href="javascript:void(0)" class="text-gray text-sm d-block" data-action='mark-as-hidden'>
+                                                <i class='bi bi-trash me-1'></i> Remove
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </div>
-                        </a>
+                                
+                            </div> <!-- /notification item -->
 
-                        <div class="action">
+                        {% endfor %}
 
-                            <button class="btn btn-sm" id="moreAction" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots"></i>
-                            </button>
-                            
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
-                                <li class="dropdown-item">                                                    
-                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-viewed='1'>
-                                        <i class='bi bi-check-circle me-1'></i> Mark as read
-                                    </a>
-                                </li>
-                                <li class="dropdown-item">
-                                    <a href="javascript:void(0)" class="text-gray text-sm d-block" data-hidden='1'>
-                                        <i class='bi bi-trash me-1'></i> Remove
-                                    </a>
-                                </li>
-                            </ul>
-                            
-                        </div>
-                        
-                    </div>
+                        {{ paginator.element.html(true)|raw }}
 
-                {% endfor %}
+                    {% else %}
 
-                <hr>
-
-                {{ paginator.element.html(true)|raw }}
-
-            {% else %}
-
-                <div class='text-center py-5' id='notification-empty'>
-                    <div class='px-md-5'>
-                        <div class='row'>
-                            <div class='col-sm-8 m-auto col-lg-6'>
-                                {% set errorImage = __dashboard.meths.theme('/assets/images/notification-empty.webp', __uss.ENUM.URL) %}
-                                <img src='{{ errorImage }}' class='img-fluid'>
+                        <div class='text-center py-5'>
+                            <div class='px-md-5'>
+                                <div class='row'>
+                                    <div class='col-sm-8 m-auto col-lg-6'>
+                                        {% set errorImage = __dashboard.meths.theme('/assets/images/notification-empty.webp', __uss.ENUM.URL) %}
+                                        <img src='{{ errorImage }}' class='img-fluid'>
+                                    </div>
+                                </div>
+                                <h2 class='text-capitalize fw-light'>Whoopsy! </h2> 
+                                <h5 class='fw-light'>Nothing to display</h5>
                             </div>
                         </div>
-                        <h2 class='text-capitalize fw-light'>Whoopsy! </h2> 
-                        <h5 class='fw-light'>Nothing to display</h5>
-                    </div>
-                </div>
 
-            {% endif %}
+                    {% endif %}
 
+                </div> <!-- /notification container -->
+
+            </div> <!-- /primary notification -->
         </div>
-    </div>
+    </div> <!-- / Card -->
 </div>
 
