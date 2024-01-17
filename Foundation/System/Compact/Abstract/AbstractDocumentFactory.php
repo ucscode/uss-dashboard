@@ -3,11 +3,13 @@
 namespace Module\Dashboard\Foundation\System\Compact\Abstract;
 
 use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\RecoveryForm;
+use Uss\Component\Kernel\UssImmutable;
 
 abstract class AbstractDocumentFactory
 {
@@ -67,5 +69,34 @@ abstract class AbstractDocumentFactory
             ->setController(new RecoveryController())
             ->setCustom('app.form', new RecoveryForm())
         ;
+    }
+
+    public function createIndexDocument(): Document
+    {
+        $document = (new Document())
+            ->setName("index")
+            ->setRoute('/', $this->base)
+            ->setTemplate("/index.html.twig", $this->namespace)
+            ->setContext([
+                'app' => [
+                    'title' => UssImmutable::PROJECT_NAME,
+                    'website' => UssImmutable::PROJECT_WEBSITE,
+                    'documentation' => UssImmutable::PROJECT_WEBSITE . '/documentation',
+                    'version' => '5',
+                    'authorEmail' => UssImmutable::AUTHOR_EMAIL,
+                    'githubRepository' => DashboardImmutable::GITHUB_REPO,
+                ],
+            ])
+        ;
+
+        $indexMenuContext = [
+            'label' => 'dashboard',
+            'href' => $document->getUrl(),
+            'order' => 1,
+        ];
+
+        $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
+
+        return $document;
     }
 }

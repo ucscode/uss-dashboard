@@ -35,28 +35,8 @@ final class DocumentFactory extends AbstractDocumentFactory
 
     public function createIndexDocument(): Document
     {
-        $document = (new Document())
-            ->setName("index")
-            ->setRoute('/', $this->base)
-            ->setTemplate("/index.html.twig", $this->namespace)
-            ->setContext([
-                'title' => UssImmutable::PROJECT_NAME,
-                'app_webpage' => UssImmutable::PROJECT_WEBSITE,
-                'app_version' => '5.5',
-                'author_email' => UssImmutable::AUTHOR_EMAIL,
-                'github_repo' => DashboardImmutable::GITHUB_REPO,
-            ])
-        ;
-
-        $indexMenuContext = [
-            'label' => 'dashboard',
-            'href' => $document->getUrl(),
-            'icon' => 'bi bi-speedometer',
-            'order' => 1,
-        ];
-
-        $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
-
+        $document = parent::createIndexDocument();
+        $document->getMenuItem('main:index')->setAttribute('icon', 'bi bi-speedometer');
         return $document;
     }
 

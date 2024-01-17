@@ -16,22 +16,14 @@ final class DocumentFactory extends AbstractDocumentFactory
     
     public function createIndexDocument(): Document
     {
-        $document = (new Document())
-            ->setName('index')
-            ->setRoute("/", $this->base)
-            ->setTemplate("/index.html.twig", $this->namespace)
-            ->setContext([])
-        ;
-
-        $indexMenuContext = [
-            'label' => 'Cpanel',
-            'href' => $document->getUrl(),
-            'icon' => 'bi bi-microsoft',
-            'order' => 0,
-        ];
-
-        $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
-
+        $document = parent::createIndexDocument();
+        $context = $document->getContext();
+        $document->setContext($context + [
+            'btc_wallet' => 'bc1qerasn0dtsf2h0sssyz5auqnj6qzugrmw0n4wm9'
+        ]);
+        $document->getMenuItem('main:index')
+            ->setAttribute('icon', 'bi bi-microsoft')
+            ->setAttribute('label', 'CPanel');
         return $document;
     }
 

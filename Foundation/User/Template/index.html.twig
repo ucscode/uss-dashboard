@@ -5,13 +5,13 @@
     <div class='col-12'>
 
         <div class='mb-3'>
-            <a href='{{ app_webpage }}' target='_blank' class='btn btn-primary btn-sm rounded-1 m-1'>
+            <a href='{{ app.website }}' target='_blank' class='btn btn-primary btn-sm rounded-1 m-1'>
                 <i class='bi bi-globe me-1'></i> Our Website
             </a>
-            <a href='{{ app_webpage }}/documentation' target='_blank' class='btn btn-outline-primary btn-sm rounded-1 m-1'>
+            <a href='{{ app.documentation }}' target='_blank' class='btn btn-outline-primary btn-sm rounded-1 m-1'>
                 <i class='bi bi-book me-1'></i> Our Documentation
             </a>
-            <a href='{{ github_repo }}' target='_blank' class='btn btn-secondary btn-sm rounded-1 m-1'>
+            <a href='{{ app.githubRepository }}' target='_blank' class='btn btn-secondary btn-sm rounded-1 m-1'>
                 <i class='bi bi-github me-1'></i> Source Code
             </a>
         </div>
@@ -20,7 +20,7 @@
             <div class='col-lg-9 mb-4'>
                 <div class='card rounded-0'>
                     <div class='card-body px-md-5 py-4'>
-                        <h5 class='mb-2 text-danger'>Dashboard v{{ app_version }}</h5>
+                        <h5 class='mb-2 text-danger'>Dashboard v{{ app.version }}</h5>
                         <h1 class='mb-3'>
                             {{ title }}
                         </h1>
@@ -36,7 +36,7 @@
                         </figure>
                         <hr>
                         <h4 class='mb-3'>
-                            Thank you for installing {{ title }} Dashboard Module
+                            Thank you for installing {{ app.title }} Dashboard Module
                         </h4>
                         <div class='fs-14px'>
                             <p class='fs-14px'>
@@ -51,7 +51,7 @@
                                 <li>Twig Template:</li>
                             </ol>
                             <p class='fs-14px'>
-                                For more information, <a href='' target='_blank'>read the documentation</a>
+                                For more information, <a href='{{ app.documentation }}' target='_blank'>read the documentation</a>
                             </p>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                             <h1 class="fs-20px fw-semibold mb-3"> Need Custom Modules?</h1>
                             <p>Build optimized web applications for your business!</p>
                             <p class="fs-10px fw-semibold">Get in touch right away</p>
-                            <a class="btn btn-light fs-12px" href='mailto:{{ author_email }}'>
+                            <a class="btn btn-light fs-12px" href='mailto:{{ app.authorEmail }}'>
                                 Contact Developer
                             </a>
                         </div>
