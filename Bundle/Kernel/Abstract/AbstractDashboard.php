@@ -99,8 +99,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
      */
     public function getCurrentUser(): ?User
     {
-        $user = new User();
-        $user->acquireFromSession();
+        $user = (new User())->acquireFromSession();
         return $user->isAvailable() ? $user : null;
     }
 

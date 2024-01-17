@@ -1,19 +1,22 @@
-{% extends __dashboard.theme('/base.html.twig') %}
+{% extends __dashboard.meths.theme('/base.html.twig') %}
 
 {% block body_main %}
 
-     <div class="d-flex align-items-center justify-content-center vh-100">
-        <div class="text-center">
-
-            <h1 class="display-1 fw-bold">403</h1>
-
-            <p class="fs-3 mb-4"> 
-                <span class="text-danger">Opps!</span> Forbidden
-            </p>
-            <p class="lead mb-4">
-                You do not have sufficient permission to access this page
-            </p>
-            
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-center vh-100">
+            <div class="text-center">
+                <h1 class="display-1 fw-bold">403</h1>
+                <p class="fs-3 mb-4"> 
+                    <span class="text-danger">Opps!</span> Forbidden
+                </p>
+                <p class="lead mb-4">
+                    You do not have sufficient permission to access this page
+                </p>
+                <hr>
+                <a href='{{ __dashboard.meths.document('logout').url }}' class="btn btn-outline-primary">
+                    <i class="bi bi-power me-1"></i> Logout
+                </a>
+            </div>
         </div>
     </div>
 

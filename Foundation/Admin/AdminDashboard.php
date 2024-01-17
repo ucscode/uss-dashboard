@@ -4,8 +4,11 @@ namespace Module\Dashboard\Foundation\Admin;
 
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
+use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
+use Module\Dashboard\Foundation\Admin\Compact\DocumentFactory;
 use Uss\Component\Trait\SingletonTrait;
 use Ucscode\TreeNode\TreeNode;
+use Uss\Component\Event\Event;
 
 class AdminDashboard extends AbstractDashboard implements AdminDashboardInterface
 {
@@ -13,25 +16,28 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
 
     public readonly TreeNode $settingsBatch;
 
-    public function createApp(AppControl $appControl): void
+    public function __construct(AppControl $appControl)
     {
-        parent::createApp($appControl);
-
+        parent::__construct($appControl);
         $this->settingsBatch = new TreeNode('settingsNode');
+        $this->createAdminDocuments();
+        (new Event())->addListener('modules:loaded', fn () => new DashboardMenuFormation($this->settingsBatch), -10);
+    }
 
-        $factory = new AdminPageFactory($this);
+    protected function createAdminDocuments(): void
+    {
+        $factory = new DocumentFactory($this, '@Foundation/Admin/Template');
 
-        $factory->createLoginPage();
-        $factory->createLogoutPage();
-        $factory->createIndexPage();
-        $factory->createNotificationPage();
-        $factory->createUsersPage();
-        $factory->createSettingsPage();
-        $factory->createSettingsDefaultPage();
-        $factory->createSettingsEmailPage();
-        $factory->createSettingsUserPage();
-        $factory->createInfoPage();
-
-        (new Event())->addListener('dashboard:render', new SettingsBatchRegulator($this), -10);
+        $this->addDocument('login', $factory->createLoginDocument());
+        $this->addDocument('logout', $factory->createLogoutDocument());
+        $this->addDocument('index', $factory->createIndexDocument());
+        // $factory->createLogoutPage();
+        // $factory->createNotificationPage();
+        // $factory->createUsersPage();
+        // $factory->createSettingsPage();
+        // $factory->createSettingsDefaultPage();
+        // $factory->createSettingsEmailPage();
+        // $factory->createSettingsUserPage();
+        // $factory->createInfoPage();
     }
 }

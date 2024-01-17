@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\System\Notification;
+namespace Module\Dashboard\Foundation\System\Api\Notification;
 
 use Module\Dashboard\Bundle\User\User;
 use Ucscode\SQuery\Condition;

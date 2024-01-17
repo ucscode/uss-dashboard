@@ -29,7 +29,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      * Note: child class should override this method but still call it
      * parent::createProject($config);
      */
-    protected function createApp(AppControl $appControl): void
+    private function createApp(AppControl $appControl): void
     {
         $this->appControl = $appControl;
         AppFactory::registerApp($this);

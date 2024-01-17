@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\System\Notification;
+namespace Module\Dashboard\Foundation\System\Api\Notification;
 
 use Uss\Component\Route\Route;
 

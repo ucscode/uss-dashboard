@@ -4,7 +4,7 @@ namespace Module\Dashboard\Foundation\User\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
 use Module\Dashboard\Foundation\User\Controller\PasswordController;
@@ -18,15 +18,8 @@ use Module\Dashboard\Foundation\User\Form\Entity\Security\RegisterForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\PasswordForm;
 use Uss\Component\Kernel\UssImmutable;
 
-final class DocumentFactory
+final class DocumentFactory extends AbstractDocumentFactory
 {
-    protected string $base;
-
-    public function __construct(protected DashboardInterface $dashboard, protected string $namespace)
-    {
-        $this->base = $this->dashboard->appControl->getBase();
-    }
-
     public function createLoginDocument(): Document
     {
         return (new Document())

@@ -18,13 +18,7 @@ class LoginForm extends AbstractUserAccountForm
 
     public function buildForm(): void
     {
-        // $this->populateWithFakeUserInfo([
-        //     'user[access]' => 'annette.heller@hotmail.com',
-        //     'user[password]' => '5lPO$24rcC5Q',
-        // ]);
-
-        (new EmailResolver([]))->verifyAccountEmail();
-
+        $this->initializationEffect();
         $this->createAccessField();
         $this->createPasswordField();
         $submitField = $this->createSubmitButton();
@@ -132,5 +126,14 @@ class LoginForm extends AbstractUserAccountForm
 
         Flash::instance()->addToast("login", $toast);
         return null;
+    }
+
+    protected function initializationEffect(): void
+    {
+        // $this->populateWithFakeUserInfo([
+        //     'user[access]' => 'annette.heller@hotmail.com',
+        //     'user[password]' => '5lPO$24rcC5Q',
+        // ]);
+        (new EmailResolver([]))->verifyAccountEmail();
     }
 }

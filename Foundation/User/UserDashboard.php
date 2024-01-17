@@ -17,19 +17,13 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
 
     public readonly TreeNode $profileBatch;
 
-    public function createApp(AppControl $appControl): void
+    public function __construct(AppControl $appControl)
     {
+        parent::__construct($appControl);
         $this->profileBatch = new TreeNode('profileBatch');
-
-        parent::createApp($appControl);
         $this->createLocalDocuments();
         $this->createAjaxDocuments();
-
-        (new Event())->addListener(
-            'modules:loaded', 
-            fn () => new DashboardMenuFormation($this->profileBatch), 
-            -10
-        );
+        (new Event())->addListener('modules:loaded', fn () => new DashboardMenuFormation($this->profileBatch), -10);
     }
 
     protected function createLocalDocuments(): void
