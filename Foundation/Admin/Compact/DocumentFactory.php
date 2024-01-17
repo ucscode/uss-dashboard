@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 
@@ -35,37 +36,26 @@ final class DocumentFactory extends AbstractDocumentFactory
         return $document;
     }
 
-    // /**
-    //  * @method createNotificationPage
-    //  */
-    // public function createNotificationPage(): PageManager
-    // {
-    //     return $this->createPage(AdminDashboardInterface::PAGE_NOTIFICATIONS)
-    //         ->setController(UserNotificationController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/notifications.html.twig'));
-    // }
+    public function createUsersInventoryDocument(): Document
+    {
+        $document = (new Document())
+            ->setName('users:inventory')
+            ->setRoute("/users", $this->base)
+            ->setTemplate("/users/inventory.html.twig", $this->namespace)
+            ->setController(new UsersController())
+        ; 
 
-    // /**
-    //  * @method createUsersPage
-    //  */
-    // public function createUsersPage(): PageManager
-    // {
-    //     $userMenuItem = [
-    //         'label' => 'Users',
-    //         'icon' => 'bi bi-people-fill',
-    //         'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_USERS),
-    //         'order' => 1,
-    //     ];
+        $menuContext = [
+            'label' => "users",
+            'icon' => 'bi bi-people',
+            'href' => $document->getUrl(),
+            'order' => 1,
+        ];
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_USERS)
-    //         ->setController(AdminUserController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/users.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_USERS,
-    //             $userMenuItem,
-    //             $this->dashboard->menu
-    //         );
-    // }
+        $document->addMenuItem('main:users', $menuContext, $this->dashboard->menu);
+
+        return $document;
+    }
 
     // /**
     //  * @method createSettingsPage
