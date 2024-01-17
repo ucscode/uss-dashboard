@@ -7,7 +7,6 @@ use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
-use Module\Dashboard\Foundation\User\UserDashboard;
 
 class EmailResolver extends AbstractEmailResolver
 {
@@ -18,7 +17,7 @@ class EmailResolver extends AbstractEmailResolver
      */
     public function sendConfirmationEmail(User $user): bool
     {
-        $indexDocument = UserDashboard::instance()->getDocument('index');
+        $indexDocument = $this->dashboardInterface->getDocument('index');
 
         $this->properties['email:subject'] ??= 'Your Confirmation Link';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/register.email.twig';
@@ -67,7 +66,7 @@ class EmailResolver extends AbstractEmailResolver
      */
     public function sendRecoveryEmail(User $user): bool
     {
-        $recoveryDocument = UserDashboard::instance()->getDocument('recovery');
+        $recoveryDocument = $this->dashboardInterface->getDocument('recovery');
 
         $this->properties['email:subject'] ??= 'Reset Your Password';
         $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/recovery.email.twig';
@@ -133,7 +132,7 @@ class EmailResolver extends AbstractEmailResolver
      */
     public function sendProfileUpdateEmail(User $user, string $newEmail): bool
     {
-        $userProfileDocument = UserDashboard::instance()->getDocument('userProfile');
+        $userProfileDocument = $this->dashboardInterface->getDocument('userProfile');
 
         $this->properties['email:subject'] ??= 'Confirm Your new email';
         $this->properties['email:template'] ??= '@Foundation/User/Template/profile/mails/reconfirm.email.twig';

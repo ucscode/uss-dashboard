@@ -5,15 +5,11 @@ namespace Module\Dashboard\Foundation\User\Compact;
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
-use Module\Dashboard\Foundation\User\Controller\LogoutController;
-use Module\Dashboard\Foundation\User\Controller\NotificationController;
 use Module\Dashboard\Foundation\User\Controller\PasswordController;
 use Module\Dashboard\Foundation\User\Controller\ProfileController;
-use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\RegisterController;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\LoginForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\ProfileForm;
-use Module\Dashboard\Foundation\User\Form\Entity\Security\RecoveryForm;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\RegisterForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\PasswordForm;
 use Uss\Component\Kernel\UssImmutable;
@@ -22,13 +18,10 @@ final class DocumentFactory extends AbstractDocumentFactory
 {
     public function createLoginDocument(): Document
     {
-        return (new Document())
-            ->setName('login')
-            ->setTemplate('/security/login.html.twig', $this->namespace)
-            ->setCustom('app.form', new LoginForm())
-        ;
+        return parent::createLoginDocument()
+            ->setCustom("app.form", new LoginForm());
     }
-
+    
     public function createRegisterDocument(): Document
     {
         return (new Document())
@@ -38,38 +31,6 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setCustom('app.form', new RegisterForm())
             ->setController(new RegisterController())
         ;
-    }
-
-    public function createPasswordResetDocument(): Document
-    {
-        return (new Document())
-            ->setName('recovery')
-            ->setRoute('/reset-password', $this->base)
-            ->setTemplate("/security/recovery.html.twig", $this->namespace)
-            ->setController(new RecoveryController())
-            ->setCustom('app.form', new RecoveryForm())
-        ;
-    }
-
-    public function createLogoutDocument(): Document
-    {
-        $document = (new Document())
-            ->setName('logout')
-            ->setRoute("/logout", $this->base)
-            ->setController(new LogoutController())
-            ->setCustom('endpoint', $this->dashboard->urlGenerator())
-        ;
-
-        $logoutMenuContext = [
-            'label' => 'logout',
-            'href' => $document->getUrl(),
-            'icon' => 'bi bi-power',
-            'order' => 1024,
-        ];
-
-        $document->addMenuItem('user:logout', $logoutMenuContext, $this->dashboard->userMenu);
-
-        return $document;
     }
 
     public function createIndexDocument(): Document
@@ -97,16 +58,6 @@ final class DocumentFactory extends AbstractDocumentFactory
         $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
 
         return $document;
-    }
-
-    public function createNotificationDocument(): Document
-    {
-        return (new Document())
-             ->setName("notifications")
-             ->setRoute("/notifications", $this->base)
-             ->setController(new NotificationController())
-             ->setTemplate('/pages/notifications.html.twig', $this->dashboard->getTheme(''))
-        ;
     }
 
     /**

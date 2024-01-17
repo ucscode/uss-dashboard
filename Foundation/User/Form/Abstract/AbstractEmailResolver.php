@@ -6,19 +6,23 @@ use Uss\Component\Kernel\Uss;
 use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
+use Module\Dashboard\Foundation\User\UserDashboard;
 
 abstract class AbstractEmailResolver
 {
     protected bool $isLocalhost;
+    protected DashboardInterface $dashboardInterface;
 
-    public function __construct(protected array $properties)
+    public function __construct(protected array $properties, ?DashboardInterface $dashboardInterface = null)
     {
         $this->isLocalhost = in_array($_SERVER['SERVER_NAME'], [
             'localhost',
             '127.0.0.1',
             '::1'
         ]);
+        $this->dashboardInterface = $dashboardInterface ?? UserDashboard::instance();
     }
 
     protected function emailProcessor(User|string $recipent): bool

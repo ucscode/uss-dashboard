@@ -1,0 +1,17 @@
+{% set contentRightAnimationClass = '' %}
+{% set contentSubject = 'Password Reset' %}
+{% extends '@Foundation/Admin/Template/security/login.html.twig' %}
+
+{# borrow macro for user template #}
+{% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
+
+{% block contentMainAfter %}
+    <hr/>
+    {{ macros.callToAction(
+		{
+			question: 'Remembered Password?',
+			text: 'Back to login',
+			url: __dashboard.meths.document('index').url,
+		}
+	) }}
+{% endblock %}

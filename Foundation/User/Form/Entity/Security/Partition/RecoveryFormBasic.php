@@ -63,7 +63,10 @@ class RecoveryFormBasic extends AbstractRecoveryPartition
 
     protected function sendPasswordResetEmail(User $user): array
     {
-        $resolver = new EmailResolver($this->recoveryForm->getProperties());
+        $resolver = new EmailResolver(
+            $this->recoveryForm->getProperties(), 
+            $this->recoveryForm->getDashboardInterface()
+        );
         $sent = $resolver->sendRecoveryEmail($user);
         return [$sent, $resolver->getRecoveryEmailSummary($sent)];
     }

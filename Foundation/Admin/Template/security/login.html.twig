@@ -1,81 +1,28 @@
-{% extends __dashboard.meths.theme('base.html.twig') %}
+{% extends '@Foundation/Admin/Template/security/scheme/layout.html.twig' %}
 
+{# borrow macro for user template #}
 {% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
 
-{% block head_resource %}
-	{{ parent() }}
-	<style>
-		.admin-gui {
-			background-image: url("{{ __uss.meths.pathToUrl( __dashboard.immutable.ADMIN_DIR ~ '/assets/images/login-background.avif') }}");
-			background-repeat: no-repeat;
-			background-size: cover;
-			background-blend-mode: overlay;
-			color: ghostwhite;
+{% block contentMainBefore %}
+	<h4 class='fw-bold'>
+		<i class="bi bi-stars me-1 animate__animated animate__slow animate__fadeIn animate__delay-2s text-info"></i> 
+		<span class="d-inline-block animate__animated animate__slow animate__zoomInRight">
+			{{ contentSubject ?? 'Admin Login' }}
+		</span>
+	</h4><hr>
+{% endblock %}
+
+{% block contentMain %}
+	{{ form.export|raw }}
+{% endblock %}
+
+{% block contentMainAfter %}
+	<hr>
+	{{ macros.callToAction(
+		{
+			question: 'Forgot Password?',
+			text: 'Reset Password',
+			url: __dashboard.meths.document('recovery').url,
 		}
-	</style>
+	) }}
 {% endblock %}
-
-{% block body_main %}
-
-	<div class="px-sm-4 px-md-5 bg-dark admin-gui">
-		<div class="container-fluid">
-			<div class='row min-vh-100 align-items-center'>
-				<div class='col-lg-12 col-md-9 mx-auto py-5'>
-
-					<div class="row gx-lg-5">
-
-						<div class="col-lg-6 mb-4 mb-lg-0 text-center text-lg-start">
-							{% set logo = __uss.option('company:logo') ?? page_icon %}
-							{% if logo %}
-								<figure class='mb-1'><img src='{{ logo }}' height='60px'></figure>
-							{% endif %}
-							<h1 class="display-5 fw-bold ls-tight">{{ __uss.option('company:name') }}</h1>
-							<p class="line-clamp clamp-4">{{ __uss.option('company:description') }}</p>
-						</div>
-
-						<div class="col-lg-6 mb-5 mb-lg-0">
-							<div class="card rounded-1 animate__animated animate__slideInRight">
-								<div class="card-body p-4 p-sm-5">
-
-									<h4 class='fw-bold'>
-										<i class="bi bi-stars me-1 animate__animated animate__slow animate__fadeIn animate__delay-2s text-info"></i> 
-										<span class="d-inline-block animate__animated animate__slow animate__zoomInRight">Admin Login</span>
-									</h4><hr>
-
-									{{ form.export|raw }}
-									
-									<hr>
-
-									{{ macros.callToAction(
-										{
-											question: 'Forgot Password?',
-											text: 'Reset Password',
-											url: __dashboard.meths.document('recovery').url,
-										}
-									) }}
-
-								</div>
-							</div>
-						</div>
-
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-
-{% endblock %}
-
-{# {% block contentMain %}
-
-	{% block admin_intro %}
-		<div class='text-center mb-4'>
-			
-			<h4 class='fw-light'>Welcome Admin</h4>
-		</div>
-	{% endblock %}
-	
-    {{ form.getHTML(1)|raw }} 
-
-{% endblock %} #}

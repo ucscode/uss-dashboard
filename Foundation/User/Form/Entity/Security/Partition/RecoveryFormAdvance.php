@@ -73,7 +73,7 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
     public function resolveSubmission(?User $user): void
     {
         if($user !== null) {
-            $indexDocument = UserDashboard::instance()->getDocument("index");
+            $indexDocument = $this->recoveryForm->getDashboardInterface()->getDocument("index");
             header("location: " . $indexDocument->getUrl());
             exit;
         };

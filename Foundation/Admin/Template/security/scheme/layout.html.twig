@@ -1,0 +1,88 @@
+{% extends __dashboard.meths.theme('base.html.twig') %}
+
+{% block head_resource %}
+	{{ parent() }}
+	<style>
+		.admin-gui {
+			background-image: url("{{ __uss.meths.pathToUrl( __dashboard.immutable.ADMIN_DIR ~ '/assets/images/login-background.avif') }}");
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-blend-mode: overlay;
+			color: ghostwhite;
+		}
+	</style>
+{% endblock %}
+
+{% block body_main %}
+
+	<div class="px-sm-4 px-md-5 bg-dark admin-gui">
+		<div class="container-fluid">
+			<div class='row min-vh-100 align-items-center'>
+				<div class='col-lg-12 col-md-9 mx-auto py-5'>
+
+					<div class="{{ containerClass ?? 'row gx-lg-5' }}">
+
+                        {% block columnLeft %}
+
+                            <div class="{{ columnLeftClass ?? 'col-lg-6 mb-4 mb-lg-0 text-center text-lg-start' }}">
+
+                                {% block contentLeft %}
+
+                                    {% block contentLeftIcon %}
+                                        {% set logo = __uss.option('company:logo') ?? page_icon %}
+                                        {% if logo %}
+                                            <figure class='mb-1'><img src='{{ logo }}' height='60px'></figure>
+                                        {% endif %}
+                                    {% endblock %}
+
+                                    {% block contentLeftTitle %}
+                                        <h1 class="display-5 fw-bold ls-tight">{{ __uss.option('company:name') ?? page_title }}</h1>
+                                    {% endblock %}
+
+                                    {% block contentLeftDescription %}
+                                        <p class="line-clamp clamp-4">{{ __uss.option('company:description') ?? page_description }}</p>
+                                    {% endblock %}
+
+                                {% endblock %}
+
+                            </div>
+
+                        {% endblock %}
+
+                        {% block columnRight %}
+
+                            <div class="{{ columnRightClass ?? 'col-lg-6 mb-5 mb-lg-0' }}">
+
+                                {% block contentRight %}
+
+                                    <div class="
+                                        {{ contentRightClass ?? 'card rounded-1' }} 
+                                        {{ contentRightAnimationClass ?? 'animate__animated animate__slideInRight' }}">
+
+                                        <div class="{{ contentMainContainerClass ?? 'card-body p-4 p-sm-5' }}">
+
+                                            {% block contentMainBefore %}{% endblock %}
+
+                                            {% block contentMain %}
+                                                {# YOUR FORM ELEMENT HERE #}
+                                            {% endblock %}
+                                            
+                                            {% block contentMainAfter %}{% endblock %}
+                                        </div>
+                                        
+                                    </div>
+
+                                {% endblock %}
+
+						    </div>
+
+                        {% endblock %}
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

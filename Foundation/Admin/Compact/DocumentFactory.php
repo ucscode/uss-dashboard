@@ -5,37 +5,13 @@ namespace Module\Dashboard\Foundation\Admin\Compact;
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
-use Module\Dashboard\Foundation\User\Controller\LogoutController;
 
-class DocumentFactory extends AbstractDocumentFactory
+final class DocumentFactory extends AbstractDocumentFactory
 {
     public function createLoginDocument(): Document
     {
-        return (new Document())
-            ->setName("login")
-            ->setCustom("app.form", new LoginForm())
-            ->setTemplate('/security/login.html.twig', $this->namespace);
-    }
-
-    public function createLogoutDocument(): Document
-    {
-        $document = (new Document())
-            ->setName('logout')
-            ->setRoute("/logout", $this->base)
-            ->setController(new LogoutController())
-            ->setCustom('endpoint', $this->dashboard->urlGenerator())
-        ;
-
-        // $logoutMenuContext = [
-        //     'label' => 'logout',
-        //     'href' => $document->getUrl(),
-        //     'icon' => 'bi bi-power',
-        //     'order' => 1024,
-        // ];
-
-        // $document->addMenuItem('user:logout', $logoutMenuContext, $this->dashboard->userMenu);
-
-        return $document;
+        return parent::createLoginDocument()
+            ->setCustom('app.form', new LoginForm());
     }
     
     public function createIndexDocument(): Document
@@ -56,6 +32,14 @@ class DocumentFactory extends AbstractDocumentFactory
 
         $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
 
+        return $document;
+    }
+
+    public function createPasswordResetDocument(): Document
+    {
+        $document = parent::createPasswordResetDocument();
+        $document->getCustom('app.form')
+            ->setProperty('dashboardInterface', $this->dashboard);
         return $document;
     }
 

@@ -3,6 +3,8 @@
 namespace Module\Dashboard\Foundation\User\Form\Abstract;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Foundation\User\UserDashboard;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
@@ -279,6 +281,15 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
                         $context->label->setDOMHidden(true) : null
                 ) : null;
         }
+    }
+
+    public function getDashboardInterface(): DashboardInterface
+    {
+        $dashboardInterface = $this->getProperty('dashboardInterface');
+        if($dashboardInterface instanceof DashboardInterface) {
+            return $dashboardInterface;
+        }
+        return UserDashboard::instance();
     }
 
     protected function getFieldVariation(string $nodeName = Field::NODE_INPUT, string $nodeType = Field::TYPE_TEXT): array
