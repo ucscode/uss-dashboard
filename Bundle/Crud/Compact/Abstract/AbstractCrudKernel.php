@@ -46,18 +46,18 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this->widgetsDisabled;
     }
 
-    public function setAction(string $name, Action $action): self
+    public function setGlobalAction(string $name, Action $action): self
     {
         $this->actions[$name] = $action;
         return $this;
     }
 
-    public function getAction(string $name): Action
+    public function getGlobalAction(string $name): Action
     {
         return $this->actions[$name] ?? null;
     }
 
-    public function removeAction(string $name): self
+    public function removeGlobalAction(string $name): self
     {
         if(array_key_exists($name, $this->actions)) {
             unset($this->actions[$name]);
@@ -65,13 +65,13 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this;
     }
 
-    public function disableActions(bool $status = true): self
+    public function disableGlobalActions(bool $status = true): self
     {
         $this->actionsDisabled = $status;
         return $this;
     }
 
-    public function isActionsDisabled(): bool
+    public function isGlobalActionsDisabled(): bool
     {
         return $this->actionsDisabled;
     }

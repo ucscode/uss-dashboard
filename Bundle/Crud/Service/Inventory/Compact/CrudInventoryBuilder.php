@@ -32,13 +32,13 @@ class CrudInventoryBuilder
         $this->domTable = $this->crudInventory->getDOMTable();
         $this->sQuery = $this->crudInventory->getSQuery();
         $this->inlineActionsEnabled = 
-            $this->crudInventory->isInlineActionEnabled() && 
+            !$this->crudInventory->isInlineActionDisabled() && 
             !empty($this->crudInventory->getInlineActions());
     }
 
     protected function updateTableColumns(): void
     {
-        if(!$this->crudInventory->isActionsDisabled()) {
+        if(!$this->crudInventory->isGlobalActionsDisabled()) {
             $this->domTable->setColumn(
                 CrudInventoryMutationIterator::CHECKBOX_KEY,
                 (new TableCheckbox('multiple'))->getElement()->getHTML(true)

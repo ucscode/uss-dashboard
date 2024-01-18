@@ -10,7 +10,7 @@ use Ucscode\UssElement\UssElement;
 
 abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel
 {
-    protected bool $inlineActionEnabled = true;
+    protected bool $inlineActionDisabled = false;
     protected bool $inlineActionDropdownActive = true;
     protected array $inlineActions = [];
     protected DOMTable $domTable;

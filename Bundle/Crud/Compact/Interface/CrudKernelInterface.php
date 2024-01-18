@@ -14,11 +14,11 @@ interface CrudKernelInterface
     public function getWidgetsContainer(): UssElement;
     public function disableWidgets(bool $status): self;
     public function isWidgetsDisabled(): bool;
-    public function setAction(string $name, Action $action): self;
-    public function getAction(string $name): ?Action;
-    public function removeAction(string $name): self;
-    public function disableActions(bool $status): self;
-    public function isActionsDisabled(): bool;
+    public function setGlobalAction(string $name, Action $action): self;
+    public function getGlobalAction(string $name): ?Action;
+    public function removeGlobalAction(string $name): self;
+    public function disableGlobalActions(bool $status): self;
+    public function isGlobalActionsDisabled(): bool;
     public function getActions(): array;
     public function getActionsContainer(): UssElement;
     public function getEntitiesContainer(): UssElement;

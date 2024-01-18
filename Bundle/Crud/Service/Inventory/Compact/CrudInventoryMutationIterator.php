@@ -22,8 +22,8 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
     {
         $this->itemsMutationIterator = $crudInventory->getItemsMutationIterator();
         $this->inlineActions = $this->crudInventory->getInlineActions();
-        $this->inlineActionEnabled = $crudInventory->isInlineActionEnabled() && !empty($this->inlineActions);
-        $this->globalActionEnabled = !$crudInventory->isActionsDisabled();
+        $this->inlineActionEnabled = !$crudInventory->isInlineActionDisabled() && !empty($this->inlineActions);
+        $this->globalActionEnabled = !$crudInventory->isGlobalActionsDisabled();
         $this->isDropdown = $this->crudInventory->isInlineActionAsDropdown();
     }
 

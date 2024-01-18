@@ -16,6 +16,8 @@ class UsersController extends AbstractDashboardController
     public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
     {
         $inventory = new CrudInventory(UserInterface::USER_TABLE);
+        //$inventory->disableGlobalActions();
+        //$inventory->disableInlineAction();
         $document->setContext([
             'inventory' => $inventory,
         ]);

@@ -43,15 +43,15 @@ class CrudInventory extends AbstractCrudInventory
         return $this->inlineActions;
     }
 
-    public function enableInlineAction(bool $enabled): self
+    public function disableInlineAction(bool $disable = true): self
     {
-        $this->inlineActionEnabled = $enabled;
+        $this->inlineActionDisabled = $disable;
         return $this;
     }
 
-    public function isInlineActionEnabled(): bool
+    public function isInlineActionDisabled(): bool
     {
-        return $this->inlineActionEnabled;
+        return $this->inlineActionDisabled;
     }
 
     public function getSQuery(): SQuery
