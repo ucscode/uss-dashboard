@@ -9,6 +9,9 @@ class InlineViewAction implements InlineActionInterface
 {
     public function foreachItem(array $item): Action
     {
-        return new Action();
+        return (new Action())
+            ->addClass("btn-secondary btn-Node btnova btn_plot")
+            ->setContent("<i class='bi bi-eye'></i> View")
+        ;
     }
 }

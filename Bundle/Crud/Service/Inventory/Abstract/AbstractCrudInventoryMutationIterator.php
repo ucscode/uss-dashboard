@@ -31,14 +31,14 @@ abstract class AbstractCrudInventoryMutationIterator
         $button = new UssElement(UssElement::NODE_BUTTON);
         $ul = new UssElement(UssElement::NODE_UL);
 
-        $element->setAttribute('class', 'dropdown inline-action-container');
+        $element->setAttribute('class', 'dropdown position-static inline-action-container');
 
         $button
-            ->setAttribute('class', 'btn btn-outline-secondary btn-sm fw-bold')
+            ->setAttribute('class', 'btn btn-sm btn-dropdown')
             ->setAttribute('type', 'button')
             ->setAttribute('data-bs-toggle', 'dropdown')
             ->setAttribute('aria-expanded', false)
-            ->setContent("&horbar;");
+            ->setContent("<span>&horbar;<br>&horbar;<br/>&horbar;</span>");
 
         $ul->setAttribute('class', 'dropdown-menu');
 
@@ -57,9 +57,19 @@ abstract class AbstractCrudInventoryMutationIterator
 
     protected function insertDropdownInlineAction(UssElement $dropdownListContainer, Action $action): void
     {
+        $disregardedClasses = array_filter(
+            explode(" ", $action->getAttribute('class')),
+            fn ($className) => preg_match("/^(?:btn|(?:btn\-[a-z]+))$/", trim($className))
+        );
+        
+        $action
+            ->removeClass(implode(" ", $disregardedClasses))
+            ->addClass('dropdown-item small')
+        ;
+
         $li = new UssElement(UssElement::NODE_LI);
-        $action->removeClass('btn')->addClass('dropdown-item small');
         $li->appendChild($action->getElement());
+        
         $dropdownListContainer->appendChild($li);
     }
 

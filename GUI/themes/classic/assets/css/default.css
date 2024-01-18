@@ -380,6 +380,13 @@ fieldset:disabled textarea {
 	margin-top: 0;
 }
 
+.inline-action-container.dropdown .btn-dropdown
+{
+	line-height: 0.36;
+	padding: 0.4rem 0.5rem;
+	border-radius: 3px;
+}
+
 @media (min-width: 768px) {
 	
 }

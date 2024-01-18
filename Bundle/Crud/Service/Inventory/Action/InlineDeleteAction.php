@@ -11,6 +11,7 @@ class InlineDeleteAction implements InlineActionInterface
     {
         return (new Action())
             ->setContent("<i class='bi bi-trash'></i> Delete")
+            ->addClass("btn-danger")
         ;
     }
 }
