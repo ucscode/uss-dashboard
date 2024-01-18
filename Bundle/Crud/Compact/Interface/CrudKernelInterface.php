@@ -19,8 +19,8 @@ interface CrudKernelInterface
     public function removeGlobalAction(string $name): self;
     public function disableGlobalActions(bool $status): self;
     public function isGlobalActionsDisabled(): bool;
-    public function getActions(): array;
-    public function getActionsContainer(): UssElement;
+    public function getGlobalActions(): array;
+    public function getGlobalActionsContainer(): UssElement;
     public function getEntitiesContainer(): UssElement;
     public function getBaseContainer(): UssElement;
 }

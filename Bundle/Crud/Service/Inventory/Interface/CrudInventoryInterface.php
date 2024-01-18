@@ -6,6 +6,7 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\Form\Form;
 
 interface CrudInventoryInterface
 {
@@ -32,4 +33,5 @@ interface CrudInventoryInterface
     public function removeColumn(string $key): self;
     public function setItemsPerPage(int $chunks): self;
     public function setCurrentPage(int $page): self;
+    public function getGlobalActionForm(): Form;
 }

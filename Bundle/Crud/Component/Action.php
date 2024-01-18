@@ -40,7 +40,7 @@ class Action implements ActionInterface
         return $this->activeNode === $this->anchorNode;
     }
 
-    public function setContent(string|UssElement $content): self
+    public function setContent(null|string|UssElement $content): self
     {
         return $this->parseElements(function (UssElement $element) use ($content) {
             $content instanceof UssElement ?
@@ -49,7 +49,7 @@ class Action implements ActionInterface
         });
     }
 
-    public function getContent(): string|UssElement
+    public function getContent(): null|string|UssElement
     {
         return $this->activeNode->getContent();
     }

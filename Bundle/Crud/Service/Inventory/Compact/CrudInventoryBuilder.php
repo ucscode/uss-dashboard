@@ -4,9 +4,9 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Common\Paginator;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\TableCheckbox;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssElement\UssElement;
 use Uss\Component\Kernel\Uss;
 
 class CrudInventoryBuilder
@@ -41,7 +41,7 @@ class CrudInventoryBuilder
         if(!$this->crudInventory->isGlobalActionsDisabled()) {
             $this->domTable->setColumn(
                 CrudInventoryMutationIterator::CHECKBOX_KEY,
-                (new TableCheckbox('multiple'))->getElement()->getHTML(true)
+                (new TableCheckbox())->getElement()->getHTML(true)
             );
             $this->crudInventory->sortColumns(function($a, $b) {
                 $checkboxKey = CrudInventoryMutationIterator::CHECKBOX_KEY;

@@ -18,6 +18,7 @@ class UsersController extends AbstractDashboardController
         $inventory = new CrudInventory(UserInterface::USER_TABLE);
         //$inventory->disableGlobalActions();
         //$inventory->disableInlineAction();
+        $inventory->removeGlobalAction('inventory:delete');
         $document->setContext([
             'inventory' => $inventory,
         ]);

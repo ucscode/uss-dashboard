@@ -2,10 +2,12 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Component\Action;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\InventoryGlobalAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
@@ -33,6 +35,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
         if($condition) {
             $this->sQuery->where($condition);
         }
+        $this->globalActionForm = (new InventoryGlobalAction())->getForm();
     }
 
     protected function createInventoryResources(): void
@@ -41,6 +44,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
         $this->setInlineAction('inventory:edit', new InlineEditAction());
         $this->setInlineAction('inventory:delete', new InlineDeleteAction());
         $this->setInlineAction('inventory:view', new InlineViewAction());
+        $this->setGlobalAction('inventory:delete', (new Action())->setValue('delete'));
     }
 
     protected function designateInventoryComponents(): void
@@ -48,5 +52,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
         $this->paginatorContainer = $this->createElement(UssElement::NODE_DIV, 'paginator-container my-2');
         $this->baseContainer->appendChild($this->paginatorContainer);
         $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
+        $this->globalActionForm->export();
+        $this->actionsContainer->appendChild($this->globalActionForm->getElement());
     }
 }

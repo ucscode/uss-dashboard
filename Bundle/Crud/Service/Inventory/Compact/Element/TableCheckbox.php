@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
+namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element;
 
 use Ucscode\UssElement\UssElement;
 
@@ -8,12 +8,13 @@ class TableCheckbox
 {
     protected UssElement $checkboxContainer;
     protected UssElement $checkboxInput;
+    protected string $delegate;
 
-    public function __construct(protected string $delegate = 'single')
+    public function __construct(protected ?array $item = null)
     {
         $this->createCheckboxContainer();
         $this->createCheckboxInput();
-        $this->checkboxContainer->appendChild($this->checkboxInput);
+        $this->createComposition();
     }
 
     public function getElement(): UssElement
@@ -33,7 +34,21 @@ class TableCheckbox
         $this->checkboxInput
             ->setAttribute("class", "form-check-input")
             ->setAttribute('type', 'checkbox')
-            ->setAttribute('data-ui-checkbox', $this->delegate)
         ;
+    }
+
+    protected function createComposition(): void
+    {
+        $this->item === null ? $this->delegate = 'multiple' : $this->createAdvanceDelegate();
+        $this->checkboxInput->setAttribute('data-ui-checkbox', $this->delegate);
+        $this->checkboxContainer->appendChild($this->checkboxInput);
+    }
+
+    protected function createAdvanceDelegate(): void
+    {
+        $this->delegate = 'single';
+        $this->checkboxInput->setAttribute('form', InventoryGlobalAction::FORM_ID);
+        $this->checkboxInput->setAttribute('name', 'entity[]');
+        $this->checkboxInput->setAttribute('value', 'wait');
     }
 }

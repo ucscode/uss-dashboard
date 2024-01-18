@@ -2,15 +2,16 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventoryInheritance;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\Form\Form;
 
-class CrudInventory extends AbstractCrudInventory
+class CrudInventory extends AbstractCrudInventoryInheritance 
 {    
     public function build(): UssElement
     {
@@ -152,5 +153,10 @@ class CrudInventory extends AbstractCrudInventory
     {
         $this->domTable->setCurrentPage($page);
         return $this;
+    }
+
+    public function getGlobalActionForm(): Form
+    {
+        return $this->globalActionForm;
     }
 }

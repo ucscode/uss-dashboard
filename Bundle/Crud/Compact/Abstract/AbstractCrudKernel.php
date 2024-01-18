@@ -38,6 +38,7 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
     public function disableWidgets(bool $status = true): self
     {
         $this->widgetsDisabled = $status;
+        $this->widgetsContainer->setInvisible($status);
         return $this;
     }
 
@@ -52,7 +53,7 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this;
     }
 
-    public function getGlobalAction(string $name): Action
+    public function getGlobalAction(string $name): ?Action
     {
         return $this->actions[$name] ?? null;
     }
@@ -68,6 +69,7 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
     public function disableGlobalActions(bool $status = true): self
     {
         $this->actionsDisabled = $status;
+        $this->actionsContainer->setInvisible($status);
         return $this;
     }
 
@@ -76,7 +78,7 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this->actionsDisabled;
     }
 
-    public function getActions(): array
+    public function getGlobalActions(): array
     {
         return $this->actions;
     }
@@ -91,7 +93,7 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this->widgetsContainer;
     }
 
-    public function getActionsContainer(): UssElement
+    public function getGlobalActionsContainer(): UssElement
     {
         return $this->actionsContainer;
     }

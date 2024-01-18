@@ -10,8 +10,8 @@ interface ActionInterface
     public function setAsAnchorNode(): self;
     public function isButtonNode(): bool;
     public function isAnchorNode(): bool;
-    public function setContent(string|UssElement $content): self;
-    public function getContent(): string|UssElement;
+    public function setContent(null|string|UssElement $content): self;
+    public function getContent(): null|string|UssElement;
     public function setDisabled(bool $disabled): self;
     public function isDisabled(): bool;
     public function addClass(string $className): self;

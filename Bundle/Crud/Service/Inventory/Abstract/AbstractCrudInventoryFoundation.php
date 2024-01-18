@@ -7,6 +7,7 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\Form\Form;
 
 abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel
 {
@@ -17,4 +18,5 @@ abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel
     protected ?DOMTableIteratorInterface $itemsMutationIterator = null;
     protected SQuery $sQuery;
     protected UssElement $paginatorContainer;
+    protected Form $globalActionForm;
 }
