@@ -10,7 +10,7 @@ use Uss\Component\Kernel\Uss;
 
 class CrudInventoryBuilder
 {
-    protected const INDICATOR = 'page';
+    public const PAGE_INDICATOR = 'page';
     protected Uss $uss;
     protected DOMTable $domTable;
     protected Paginator $paginator;
@@ -33,7 +33,7 @@ class CrudInventoryBuilder
     protected function configureEntities(): void
     {
         if($this->crudInventory->isInlineActionEnabled()) {
-            $this->domTable->setColumn(CrudInventoryMutationIterator::ACTION_KEY);
+            $this->domTable->setColumn(CrudInventoryMutationIterator::ACTION_KEY, "");
         }
         $SQL = $this->sQuery->build();
 
@@ -42,8 +42,8 @@ class CrudInventoryBuilder
             new CrudInventoryMutationIterator($this->crudInventory)
         );
 
-        $element = $this->domTable->build();
-        $this->crudInventory->getEntitiesContainer()->appendChild($element);
+        $tableEntities = $this->domTable->build();
+        $this->crudInventory->getEntitiesContainer()->appendChild($tableEntities);
     }
 
     protected function buildPaginator(): void
@@ -64,7 +64,7 @@ class CrudInventoryBuilder
     {
         $url = parse_url($_SERVER['REQUEST_URI']);
         parse_str($url['query'] ?? '', $url['query']);
-        $url['query'][self::INDICATOR] = Paginator::NUM_PLACEHOLDER;
+        $url['query'][self::PAGE_INDICATOR] = Paginator::NUM_PLACEHOLDER;
         $query = [];
         foreach($url['query'] as $key => $value) {
             $key = urlencode($key);

@@ -17,8 +17,8 @@ interface CrudInventoryInterface
     public function isInlineActionEnabled(): bool;
     public function setInlineActionAsDropdown(bool $status): self;
     public function isInlineActionAsDropdown(): bool;
-    public function setItemsMutationIterator(DOMTableIteratorInterface $mutator): self;
-    public function getItemsMutationIterator(): DOMTableIteratorInterface;
+    public function setItemsMutationIterator(?DOMTableIteratorInterface $mutator): self;
+    public function getItemsMutationIterator(): ?DOMTableIteratorInterface;
     public function sortColumns(callable $sorter, bool $keySort = false): self;
     public function setTableBackgroundWhite(bool $status): self;
     public function setTableBordered(bool $status): self;
@@ -30,4 +30,6 @@ interface CrudInventoryInterface
     public function getColumns(): array;
     public function setColumn(string $key, ?string $displayText = null): self;
     public function removeColumn(string $key): self;
+    public function setItemsPerPage(int $chunks): self;
+    public function setCurrentPage(int $page): self;
 }

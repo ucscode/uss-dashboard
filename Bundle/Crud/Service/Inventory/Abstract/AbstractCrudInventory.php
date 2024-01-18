@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
@@ -26,8 +27,11 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
     {
         $this->domTable = new DOMTable($this->tableName);
         $this->domTable->setColumns($this->tableColumns);
+        $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
         $this->sQuery = (new SQuery())->select()->from($this->tableName);
-        $condition ? $this->sQuery->where($condition) : null;
+        if($condition) {
+            $this->sQuery->where($condition);
+        }
     }
 
     protected function createInventoryResources(): void

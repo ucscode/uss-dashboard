@@ -12,6 +12,12 @@ use Ucscode\UssElement\UssElement;
 
 class CrudInventory extends AbstractCrudInventory
 {    
+    public function build(): UssElement
+    {
+        $inventoryBuilder = new CrudInventoryBuilder($this);
+        return $this->baseContainer;
+    }
+
     public function setInlineAction(string $name, InlineActionInterface $action): self
     {
         $this->inlineActions[$name] = $action;
@@ -81,13 +87,13 @@ class CrudInventory extends AbstractCrudInventory
         return $this;
     }
 
-    public function setItemsMutationIterator(DOMTableIteratorInterface $itemsMutationIterator): self
+    public function setItemsMutationIterator(?DOMTableIteratorInterface $itemsMutationIterator): self
     {
         $this->itemsMutationIterator = $itemsMutationIterator;
         return $this;
     }
 
-    public function getItemsMutationIterator(): DOMTableIteratorInterface
+    public function getItemsMutationIterator(): ?DOMTableIteratorInterface
     {
         return $this->itemsMutationIterator;
     }
@@ -136,9 +142,15 @@ class CrudInventory extends AbstractCrudInventory
         return $this->inlineActionDropdownActive;
     }
 
-    public function build(): UssElement
+    public function setItemsPerPage(int $chunks): self
     {
-        $inventoryBuilder = new CrudInventoryBuilder($this);
-        return $this->baseContainer;
+        $this->domTable->setItemsPerPage($chunks);
+        return $this;
+    }
+
+    public function setCurrentPage(int $page): self
+    {
+        $this->domTable->setCurrentPage($page);
+        return $this;
     }
 }

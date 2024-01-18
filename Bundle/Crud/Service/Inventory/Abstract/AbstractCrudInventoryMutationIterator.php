@@ -61,7 +61,7 @@ abstract class AbstractCrudInventoryMutationIterator
             explode(" ", $action->getAttribute('class')),
             fn ($className) => preg_match("/^(?:btn|(?:btn\-[a-z]+))$/", trim($className))
         );
-        
+
         $action
             ->removeClass(implode(" ", $disregardedClasses))
             ->addClass('dropdown-item small')
@@ -77,7 +77,7 @@ abstract class AbstractCrudInventoryMutationIterator
     {
         $action->addClass("btn btn-sm");
         $span = new UssElement(UssElement::NODE_SPAN);
-        $span->setAttribute('class', 'action-button');
+        $span->setAttribute('class', 'action-button d-inline-block m-1');
         $span->appendChild($action->getElement());
         $inlineActionContainer->appendChild($span);
     }
