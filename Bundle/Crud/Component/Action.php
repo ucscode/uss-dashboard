@@ -2,7 +2,9 @@
 
 namespace Module\Dashboard\Bundle\Crud\Component;
 
-class Action
+use Module\Dashboard\Bundle\Crud\Compact\Interface\ActionInterface;
+
+class Action implements ActionInterface
 {
     
 }

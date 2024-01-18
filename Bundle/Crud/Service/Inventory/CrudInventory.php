@@ -3,11 +3,12 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
+use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
-use Uss\Component\Kernel\Uss;
 
 class CrudInventory extends AbstractCrudInventory
 {    
@@ -36,9 +37,25 @@ class CrudInventory extends AbstractCrudInventory
         return $this->inlineActions;
     }
 
+    public function enableInlineAction(bool $enabled): self
+    {
+        $this->inlineActionEnabled = $enabled;
+        return $this;
+    }
+
+    public function isInlineActionEnabled(): bool
+    {
+        return $this->inlineActionEnabled;
+    }
+
     public function getSQuery(): SQuery
     {
         return $this->sQuery;
+    }
+
+    public function getDOMTable(): DOMTable
+    {
+        return $this->domTable;
     }
 
     public function setColumns(array $columns): self
@@ -64,10 +81,15 @@ class CrudInventory extends AbstractCrudInventory
         return $this;
     }
 
-    public function mutateItems(DOMTableIteratorInterface $iteratorInterface): self
+    public function setItemsMutationIterator(DOMTableIteratorInterface $itemsMutationIterator): self
     {
-        $this->iteratorInterface = $iteratorInterface;
+        $this->itemsMutationIterator = $itemsMutationIterator;
         return $this;
+    }
+
+    public function getItemsMutationIterator(): DOMTableIteratorInterface
+    {
+        return $this->itemsMutationIterator;
     }
 
     public function sortColumns(callable $sorter, bool $keySort = false): self
@@ -98,12 +120,14 @@ class CrudInventory extends AbstractCrudInventory
         return $this;
     }
 
+    public function getPaginatorContainer(): UssElement
+    {
+        return $this->paginatorContainer;
+    }
+
     public function build(): UssElement
     {
-        $result = Uss::instance()->mysqli->query($this->sQuery->build());
-        $this->domTable->setData($result, $this->iteratorInterface);
-        $element = $this->domTable->build();
-        $this->entitiesContainer->appendChild($element);
+        $inventoryBuilder = new CrudInventoryBuilder($this);
         return $this->baseContainer;
     }
 }
