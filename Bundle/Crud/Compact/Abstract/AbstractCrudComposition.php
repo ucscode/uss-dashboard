@@ -14,6 +14,7 @@ abstract class AbstractCrudComposition implements CrudKernelInterface
     protected UssElement $entitiesContainer;
     protected array $widgets = [];
     protected array $actions = [];
+    protected bool $actionsDisabled = false;
     protected array $tableColumns;
 
     public function __construct(public readonly string $tableName) 

@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Compact\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
 use Ucscode\UssElement\UssElement;
 use Module\Dashboard\Bundle\Crud\Component\Action;
 
@@ -51,6 +52,17 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
             unset($this->actions[$name]);
         }
         return $this;
+    }
+
+    public function disableActions(bool $status = true): self
+    {
+        $this->actionsDisabled = $status;
+        return $this;
+    }
+
+    public function isActionsDisabled(): bool
+    {
+        return $this->actionsDisabled;
     }
 
     public function getActions(): array

@@ -15,6 +15,8 @@ interface CrudKernelInterface
     public function setAction(string $name, Action $action): self;
     public function getAction(string $name): ?Action;
     public function removeAction(string $name): self;
+    public function disableActions(bool $status): self;
+    public function isActionsDisabled(): bool;
     public function getActions(): array;
     public function getActionsContainer(): UssElement;
     public function getEntitiesContainer(): UssElement;
