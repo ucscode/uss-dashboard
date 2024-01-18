@@ -9,6 +9,8 @@ class InlineDeleteAction implements InlineActionInterface
 {
     public function foreachItem(array $item): Action
     {
-        return new Action();
+        return (new Action())
+            ->setContent("<i class='bi bi-trash'></i> Delete")
+        ;
     }
 }

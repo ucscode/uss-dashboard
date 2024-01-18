@@ -12,12 +12,16 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
     public const ACTION_KEY = 'action:inline';
 
     protected ?DOMTableIteratorInterface $itemsMutationIterator;
+    protected array $inlineActions;
     protected bool $inlineActionEnabled;
+    protected bool $isDropdown;
 
     public function __construct(protected CrudInventory $crudInventory)
     {
         $this->itemsMutationIterator = $crudInventory->getItemsMutationIterator();
-        $this->inlineActionEnabled = $crudInventory->isInlineActionEnabled();
+        $this->inlineActions = $this->crudInventory->getInlineActions();
+        $this->inlineActionEnabled = $crudInventory->isInlineActionEnabled() && !empty($this->inlineActions);
+        $this->isDropdown = $this->crudInventory->isInlineActionAsDropdown();
     }
 
     public function foreachItem(array $item): ?array
@@ -49,26 +53,22 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
 
     protected function applyInlineActions(array $item): array
     {
-        $inlineActions = $this->crudInventory->getInlineActions();
-        if(!empty($inlineActions)) {
-            $inlineActionContainer = (new UssElement(UssElement::NODE_DIV))->setAttribute('class', 'inline-action-container');
-            if($this->crudInventory->isInlineActionAsDropdown()) {
-                [$dropdownContainer, $dropdownListContainer] = $this->createDropdownElements();
-                foreach($inlineActions as $inlineActionInterface) {
-                    $action = $inlineActionInterface->foreachItem($item);
-                    $this->insertDropdownInlineAction($dropdownListContainer, $action);
-                }
-                $inlineActionContainer->appendChild($dropdownContainer);
-            } else {
-                $plainContainer = (new UssElement(UssElement::NODE_DIV))->setAttribute('class', 'plain');
-                foreach($inlineActions as $inlineActionInterface) {
-                    $action = $inlineActionInterface->foreachItem($item);
-                    $plainContainer->appendChild($action->getElement());
-                }
-                $inlineActionContainer->appendChild($plainContainer);
-            }
-            $item[self::ACTION_KEY] = $inlineActionContainer;
+        $inlineActionFrame = new UssElement(UssElement::NODE_DIV);
+        $inlineActionFrame->setAttribute('class', 'inline-action-frame');
+        $item[self::ACTION_KEY] = $inlineActionFrame;
+
+        [$inlineActionContainer, $dropdownListContainer] = $this->isDropdown ? 
+            $this->createDropdownElements() :
+            $this->createTraditionalElements();
+
+        foreach($this->inlineActions as $inlineActionInterface) {
+            $action = $inlineActionInterface->foreachItem($item);
+            $this->isDropdown ? 
+                $this->insertDropdownInlineAction($dropdownListContainer, $action) :
+                $this->insertButtonInlineAction($inlineActionContainer, $action);
         }
+
+        $inlineActionFrame->appendChild($inlineActionContainer);
         return $item;
     }
 }

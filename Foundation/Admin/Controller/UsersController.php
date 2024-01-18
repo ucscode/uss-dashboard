@@ -33,6 +33,7 @@ class UsersController extends AbstractDashboardController
         });
         $inventory->setTableBackgroundWhite();
         $inventory->setInlineActionAsDropdown(false);
+        $inventory->setInlineActionAsDropdown(true);
         $document->setContext([
             'inventory' => $inventory,
         ]);

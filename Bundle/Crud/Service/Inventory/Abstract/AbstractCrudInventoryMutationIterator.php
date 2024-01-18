@@ -31,14 +31,14 @@ abstract class AbstractCrudInventoryMutationIterator
         $button = new UssElement(UssElement::NODE_BUTTON);
         $ul = new UssElement(UssElement::NODE_UL);
 
-        $element->setAttribute('class', 'dropdown');
+        $element->setAttribute('class', 'dropdown inline-action-container');
 
         $button
-            ->setAttribute('class', 'btn btn-secondary dropdown-toggle')
+            ->setAttribute('class', 'btn btn-outline-secondary btn-sm fw-bold')
             ->setAttribute('type', 'button')
             ->setAttribute('data-bs-toggle', 'dropdown')
             ->setAttribute('aria-expanded', false)
-            ->setContent("?");
+            ->setContent("&horbar;");
 
         $ul->setAttribute('class', 'dropdown-menu');
 
@@ -48,11 +48,27 @@ abstract class AbstractCrudInventoryMutationIterator
         return [$element, $ul];
     }
 
+    protected function createTraditionalElements(): array
+    {
+        $inlineActionContainer = new UssElement(UssElement::NODE_DIV);
+        $inlineActionContainer->setAttribute('class', 'inline-action-container');
+        return [$inlineActionContainer, null];
+    }
+
     protected function insertDropdownInlineAction(UssElement $dropdownListContainer, Action $action): void
     {
         $li = new UssElement(UssElement::NODE_LI);
         $action->removeClass('btn')->addClass('dropdown-item small');
         $li->appendChild($action->getElement());
         $dropdownListContainer->appendChild($li);
+    }
+
+    protected function insertButtonInlineAction(UssElement $inlineActionContainer, Action $action): void
+    {
+        $action->addClass("btn btn-sm");
+        $span = new UssElement(UssElement::NODE_SPAN);
+        $span->setAttribute('class', 'action-button');
+        $span->appendChild($action->getElement());
+        $inlineActionContainer->appendChild($span);
     }
 }
