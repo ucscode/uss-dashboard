@@ -15,6 +15,8 @@ interface CrudInventoryInterface
     public function getInlineActions(): array;
     public function enableInlineAction(bool $enabled): self;
     public function isInlineActionEnabled(): bool;
+    public function setInlineActionAsDropdown(bool $status): self;
+    public function isInlineActionAsDropdown(): bool;
     public function setItemsMutationIterator(DOMTableIteratorInterface $mutator): self;
     public function getItemsMutationIterator(): DOMTableIteratorInterface;
     public function sortColumns(callable $sorter, bool $keySort = false): self;

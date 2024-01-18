@@ -9,6 +9,9 @@ class InlineEditAction implements InlineActionInterface
 {
     public function foreachItem(array $item): Action
     {
-        return new Action();
+        $action = new Action();
+        $action->addClass("btn btn-primary");
+        $action->setContent("<i class='bi bi-pen'></i> Edit");
+        return $action;
     }
 }

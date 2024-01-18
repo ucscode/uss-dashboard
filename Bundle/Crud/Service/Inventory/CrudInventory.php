@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
@@ -123,6 +124,17 @@ class CrudInventory extends AbstractCrudInventory
     public function getPaginatorContainer(): UssElement
     {
         return $this->paginatorContainer;
+    }
+
+    public function setInlineActionAsDropdown(bool $status = true): self
+    {
+        $this->inlineActionDropdownActive = $status;
+        return $this;
+    }
+
+    public function isInlineActionAsDropdown(): bool
+    {
+        return $this->inlineActionDropdownActive;
     }
 
     public function build(): UssElement

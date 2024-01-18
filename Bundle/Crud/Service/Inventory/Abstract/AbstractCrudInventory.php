@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
@@ -32,6 +33,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
     {
         $this->setWidget("inventory:search", (new SearchWidget)->getElement());
         $this->setInlineAction('inventory:edit', new InlineEditAction());
+        $this->setInlineAction('inventory:delete', new InlineDeleteAction());
     }
 
     protected function designateInventoryComponents(): void
