@@ -7,7 +7,7 @@ use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\InventoryGlobalAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\InventoryGlobalAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\Condition;
@@ -26,15 +26,22 @@ abstract class AbstractCrudInventory extends AbstractCrudInventory_Level2
 
     protected function configureInventory(?Condition $condition): void
     {
+        $this->globalActionForm = (new InventoryGlobalAction())->getForm();
+
         $this->domTable = new DOMTable($this->tableName);
         $this->domTable->setColumns($this->tableColumns);
         $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
-        $this->domTable->getTableElement()->setAttribute("data-ui-table", "crud");
+        $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
+        $this->domTable->getTableElement()
+            ->setAttribute(
+                'data-form-id', 
+                $this->globalActionForm->getElement()->getAttribute('id')
+            );
+
         $this->sQuery = (new SQuery())->select()->from($this->tableName);
         if($condition) {
             $this->sQuery->where($condition);
         }
-        $this->globalActionForm = (new InventoryGlobalAction())->getForm();
     }
 
     protected function createInventoryResources(): void
@@ -43,7 +50,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventory_Level2
         $this->setInlineAction('inventory:edit', new InlineEditAction());
         $this->setInlineAction('inventory:delete', new InlineDeleteAction());
         $this->setInlineAction('inventory:view', new InlineViewAction());
-        $this->setGlobalAction('inventory:delete', (new Action())->setValue('delete'));
+        $this->setGlobalAction('inventory:delete', $this->createGlobalDeleteAction());
     }
 
     protected function designateInventoryComponents(): void
@@ -53,5 +60,13 @@ abstract class AbstractCrudInventory extends AbstractCrudInventory_Level2
         $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
         $this->globalActionForm->export();
         $this->actionsContainer->appendChild($this->globalActionForm->getElement());
+    }
+
+    protected function createGlobalDeleteAction(): Action
+    {
+        $action = new Action();
+        $action->setValue('delete');
+        $action->setAttribute('data-ui-confirm', "You are about to delete {{items}} items");
+        return $action;
     }
 }

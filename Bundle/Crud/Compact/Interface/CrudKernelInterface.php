@@ -7,6 +7,8 @@ use Ucscode\UssElement\UssElement;
 
 interface CrudKernelInterface
 {
+    public function setPrimaryOffset(string $offset): self;
+    public function getPrimaryOffset(): string;
     public function setWidget(string $name, UssElement $widget): self;
     public function getWidget(string $name): ?UssElement;
     public function removeWidget(string $name): self;

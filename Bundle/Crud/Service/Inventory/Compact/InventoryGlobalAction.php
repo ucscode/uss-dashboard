@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element;
+namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
@@ -9,15 +9,20 @@ use Ucscode\UssForm\Form\Form;
 
 class InventoryGlobalAction
 {
-    public const FORM_ID = 'bucket-list';
-    public const FIELD_NAME = 'globalAction';
+    protected static $INDEX = 0;
+    public const FIELD_NAME = 'global-action';
 
     protected Form $form;
     protected Collection $collection;
 
     public function __construct()
     {
+        self::$INDEX += 1;
         $this->form = new Form();
+        $this->form->getElement()
+            ->setAttribute('id', 'crud-inventory-' . self::$INDEX)
+            ->setAttribute('data-ui-crud-form', 'inventory')
+        ;
         $this->collection = $this->form->getCollection(Form::DEFAULT_COLLECTION);
         $this->collection->addField(self::FIELD_NAME, $this->createSelectField());
     }
@@ -42,6 +47,7 @@ class InventoryGlobalAction
             ->setOption('', '-- select --')
             ->setAttribute('name', 'action')
             ->addClass('text-capitalize')
+            ->setAttribute('data-ui-bulk-select')
         ;
         return $field;
     }

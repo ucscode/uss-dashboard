@@ -1,7 +1,8 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element;
+namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\UssElement\UssElement;
 
 class TableCheckbox
@@ -10,7 +11,7 @@ class TableCheckbox
     protected UssElement $checkboxInput;
     protected string $delegate;
 
-    public function __construct(protected ?array $item = null)
+    public function __construct(protected ?array $item = null, protected ?CrudInventoryInterface $crudInventory = null)
     {
         $this->createCheckboxContainer();
         $this->createCheckboxInput();
@@ -46,9 +47,18 @@ class TableCheckbox
 
     protected function createAdvanceDelegate(): void
     {
+        $formId = $this->crudInventory
+            ?->getGlobalActionForm()
+            ->getElement()
+            ->getAttribute('id');
+        
+        $offset = $this->crudInventory->getPrimaryOffset();
+        $value = $this->item[$offset] ?? null;
+        $value instanceof UssElement ? $value = null : null;
+
         $this->delegate = 'single';
-        $this->checkboxInput->setAttribute('form', InventoryGlobalAction::FORM_ID);
+        $this->checkboxInput->setAttribute('form', $formId);
         $this->checkboxInput->setAttribute('name', 'entity[]');
-        $this->checkboxInput->setAttribute('value', 'wait');
+        $this->checkboxInput->setAttribute('value', $value);
     }
 }

@@ -4,9 +4,10 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Common\Paginator;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\TableCheckbox;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
+use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
 
 class CrudInventoryBuilder

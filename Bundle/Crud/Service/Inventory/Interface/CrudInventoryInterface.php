@@ -2,13 +2,14 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Interface;
 
+use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Form\Form;
 
-interface CrudInventoryInterface
+interface CrudInventoryInterface extends CrudKernelInterface
 {
     public function setInlineAction(string $name, InlineActionInterface $action): self;
     public function getInlineAction(string $name): ?InlineActionInterface;

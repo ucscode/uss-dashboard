@@ -3,7 +3,7 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventoryMutationIterator;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\TableCheckbox;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
@@ -79,7 +79,13 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
 
     protected function applyInlineCheckbox(array $item): array
     {
-        $item[self::CHECKBOX_KEY] = (new TableCheckbox($item))->getElement();
+        $formId = $this->crudInventory
+            ->getGlobalActionForm()
+            ->getElement()
+            ->getAttribute('id');
+
+        $item[self::CHECKBOX_KEY] = (new TableCheckbox($item, $this->crudInventory))->getElement();
+
         return $item;
     }
 }

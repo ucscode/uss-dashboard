@@ -15,6 +15,6 @@ abstract class AbstractCrudKernelFoundation implements CrudKernelInterface
     protected array $actions = [];
     protected bool $actionsDisabled = false;
     protected bool $widgetsDisabled = false;
+    protected string $primaryOffset = 'id';
     protected array $tableColumns;
-
 }

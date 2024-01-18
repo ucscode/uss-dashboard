@@ -109,7 +109,7 @@ new class {
     }
 
     enableTableCheckboxes() {
-        const selector = 'table[data-ui-table="crud"]';
+        const selector = 'table[data-ui-table="inventory"]';
         $(selector).each(function() {
             const table = this;
             const checkboxSelector = '[data-ui-checkbox]';
@@ -128,14 +128,15 @@ new class {
     }
 
     manageBulkActions() {
-        const selector = 'form[data-ui-crud-form="index"]';
+        const selector = 'form[data-ui-crud-form="inventory"]';
         $(selector).each(function() {
             const formElement = this;
+            const formId = this.getAttribute('id');
             const selectElement = $(formElement).find('select[data-ui-bulk-select]');
             if(selectElement.length) {
                 $(formElement).on('submit', function(e) {
                     e.preventDefault();
-                    const checkedCheckboxes = $(formElement).find('table[data-ui-table="crud"] [data-ui-checkbox="single"]:checked');
+                    const checkedCheckboxes = $(`table[data-ui-table="inventory"][data-form-id='${formId}'] [data-ui-checkbox="single"]:checked`);
                     if(checkedCheckboxes.length) {
                         const option = selectElement.find('option:selected').get(0);
                         let message = option.dataset.uiConfirm || `You are about to perform a bulk action on {{items}} items! <br> Are you sure you want to proceed?`;
@@ -145,9 +146,7 @@ new class {
                             message,
                             size,
                             callback: function(ok) {
-                                if(ok) {
-                                    formElement.submit();
-                                }
+                                if(ok) formElement.submit();
                             },
                             buttons: {
                                 confirm: {

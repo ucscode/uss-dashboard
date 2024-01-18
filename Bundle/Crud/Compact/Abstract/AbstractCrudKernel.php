@@ -101,4 +101,15 @@ abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
     {
         return $this->entitiesContainer;
     }
+
+    public function setPrimaryOffset(string $offset): self
+    {
+        $this->primaryOffset = $offset;
+        return $this;
+    }
+
+    public function getPrimaryOffset(): string
+    {
+        return $this->primaryOffset;
+    }
 }
