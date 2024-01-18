@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventoryInheritance;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Ucscode\DOMTable\DOMTable;
@@ -11,7 +11,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Form\Form;
 
-class CrudInventory extends AbstractCrudInventoryInheritance 
+class CrudInventory extends AbstractCrudInventory  
 {    
     public function build(): UssElement
     {

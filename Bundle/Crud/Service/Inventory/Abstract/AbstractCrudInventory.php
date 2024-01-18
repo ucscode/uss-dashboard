@@ -8,14 +8,13 @@ use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\InventoryGlobalAction;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation implements CrudInventoryInterface
+abstract class AbstractCrudInventory extends AbstractCrudInventory_Level2
 {
     public function __construct(string $tableName, ?Condition $condition = null)
     {

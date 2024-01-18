@@ -2,22 +2,11 @@
 
 namespace Module\Dashboard\Bundle\Crud\Compact\Abstract;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
 use Ucscode\UssElement\UssElement;
 use Uss\Component\Kernel\Uss;
 
-abstract class AbstractCrudComposition implements CrudKernelInterface
+abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
 {
-    protected UssElement $baseContainer;
-    protected UssElement $widgetsContainer;
-    protected UssElement $actionsContainer;
-    protected UssElement $entitiesContainer;
-    protected array $widgets = [];
-    protected array $actions = [];
-    protected bool $actionsDisabled = false;
-    protected bool $widgetsDisabled = false;
-    protected array $tableColumns;
-
     /**
      * @param string $tableName    The database tablename
      */

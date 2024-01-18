@@ -2,11 +2,10 @@
 
 namespace Module\Dashboard\Bundle\Crud\Compact\Abstract;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
 use Ucscode\UssElement\UssElement;
 use Module\Dashboard\Bundle\Crud\Component\Action;
 
-abstract class AbstractCrudKernel extends AbstractCrudComposition
+abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
 {
     public function setWidget(string $name, UssElement $widget): self
     {

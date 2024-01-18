@@ -2,14 +2,13 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
-use Module\Dashboard\Bundle\Crud\Compact\Abstract\AbstractCrudKernel;
 use Module\Dashboard\Bundle\Crud\Component\Action;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\Element\InventoryGlobalAction;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Gadget\Context\WidgetContext;
 
-abstract class AbstractCrudInventoryInheritance extends AbstractCrudInventory
+abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventoryFoundation
 {
     public function setGlobalAction(string $name, Action $action): self
     {

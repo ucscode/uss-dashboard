@@ -3,13 +3,14 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Compact\Abstract\AbstractCrudKernel;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Form\Form;
 
-abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel
+abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel implements CrudInventoryInterface
 {
     protected bool $inlineActionDisabled = false;
     protected bool $inlineActionDropdownActive = true;
