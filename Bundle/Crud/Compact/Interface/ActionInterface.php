@@ -20,4 +20,6 @@ interface ActionInterface
     public function setAttribute(string $name, ?string $value, bool $append): self;
     public function getAttribute(string $name): ?string;
     public function removeAttribute(string $name, ?string $value): self;
+    public function setValue(?string $value): self;
+    public function getValue(): ?string;
 }

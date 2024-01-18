@@ -9,11 +9,13 @@ use Ucscode\UssElement\UssElement;
 
 class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterator implements DOMTableIteratorInterface
 {
+    public const CHECKBOX_KEY = 'checkbox:inline';
     public const ACTION_KEY = 'action:inline';
 
     protected ?DOMTableIteratorInterface $itemsMutationIterator;
     protected array $inlineActions;
     protected bool $inlineActionEnabled;
+    protected bool $globalActionEnabled;
     protected bool $isDropdown;
 
     public function __construct(protected CrudInventory $crudInventory)
@@ -21,16 +23,18 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
         $this->itemsMutationIterator = $crudInventory->getItemsMutationIterator();
         $this->inlineActions = $this->crudInventory->getInlineActions();
         $this->inlineActionEnabled = $crudInventory->isInlineActionEnabled() && !empty($this->inlineActions);
+        $this->globalActionEnabled = !$crudInventory->isActionsDisabled();
         $this->isDropdown = $this->crudInventory->isInlineActionAsDropdown();
     }
 
     public function foreachItem(array $item): ?array
     {
-        $this->itemsMutationIterator ? $item = $this->itemsMutationIterator->foreachItem($item) : null;
+        $item = $this->itemsMutationIterator ? $this->itemsMutationIterator->foreachItem($item) : $item;
         if($item) {
             $item = $this->applySearchConcept($item);
-            if($item && $this->inlineActionEnabled) {
-                $item = $this->applyInlineActions($item);
+            if($item) {
+                $this->inlineActionEnabled ? $item = $this->applyInlineActions($item) : null;
+                $this->globalActionEnabled ? $item = $this->applyInlineCheckbox($item) : null;
             }
         }
         return $item;
@@ -69,6 +73,12 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
         }
 
         $inlineActionFrame->appendChild($inlineActionContainer);
+        return $item;
+    }
+
+    protected function applyInlineCheckbox(array $item): array
+    {
+        $item[self::CHECKBOX_KEY] = (new TableCheckbox())->getElement();
         return $item;
     }
 }

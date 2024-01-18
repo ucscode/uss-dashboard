@@ -28,6 +28,7 @@ abstract class AbstractCrudInventory extends AbstractCrudInventoryFoundation imp
         $this->domTable = new DOMTable($this->tableName);
         $this->domTable->setColumns($this->tableColumns);
         $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
+        $this->domTable->getTableElement()->setAttribute("data-ui-table", "crud");
         $this->sQuery = (new SQuery())->select()->from($this->tableName);
         if($condition) {
             $this->sQuery->where($condition);

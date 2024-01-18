@@ -15,8 +15,12 @@ abstract class AbstractCrudComposition implements CrudKernelInterface
     protected array $widgets = [];
     protected array $actions = [];
     protected bool $actionsDisabled = false;
+    protected bool $widgetsDisabled = false;
     protected array $tableColumns;
 
+    /**
+     * @param string $tableName    The database tablename
+     */
     public function __construct(public readonly string $tableName) 
     {
         $uss = Uss::instance();
@@ -31,9 +35,9 @@ abstract class AbstractCrudComposition implements CrudKernelInterface
     protected function createGraphicalResource(): void
     {
         $this->baseContainer = $this->createElement(UssElement::NODE_DIV, 'base-container');
-        $this->widgetsContainer = $this->createElement(UssElement::NODE_DIV, 'widgets-container row');
-        $this->actionsContainer = $this->createElement(UssElement::NODE_DIV, 'actions-container');
-        $this->entitiesContainer = $this->createElement(UssElement::NODE_DIV, 'entities-container');
+        $this->widgetsContainer = $this->createElement(UssElement::NODE_DIV, 'widgets-container row my-1');
+        $this->actionsContainer = $this->createElement(UssElement::NODE_DIV, 'actions-container my-1');
+        $this->entitiesContainer = $this->createElement(UssElement::NODE_DIV, 'entities-container my-1');
     }
 
     protected function orientGraphicalResource(): void

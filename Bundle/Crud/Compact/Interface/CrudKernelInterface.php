@@ -12,6 +12,8 @@ interface CrudKernelInterface
     public function removeWidget(string $name): self;
     public function getWidgets(): array;
     public function getWidgetsContainer(): UssElement;
+    public function disableWidgets(bool $status): self;
+    public function isWidgetsDisabled(): bool;
     public function setAction(string $name, Action $action): self;
     public function getAction(string $name): ?Action;
     public function removeAction(string $name): self;

@@ -35,6 +35,17 @@ abstract class AbstractCrudKernel extends AbstractCrudComposition
         return $this->widgets;
     }
 
+    public function disableWidgets(bool $status = true): self
+    {
+        $this->widgetsDisabled = $status;
+        return $this;
+    }
+
+    public function isWidgetsDisabled(): bool
+    {
+        return $this->widgetsDisabled;
+    }
+
     public function setAction(string $name, Action $action): self
     {
         $this->actions[$name] = $action;

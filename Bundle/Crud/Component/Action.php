@@ -10,6 +10,7 @@ class Action implements ActionInterface
     protected UssElement $anchorNode;
     protected UssElement $buttonNode;
     protected UssElement $activeNode;
+    protected ?string $value = null;
 
     public function __construct()
     {
@@ -112,6 +113,16 @@ class Action implements ActionInterface
                 $element->removeAttribute($name) :
                 $element->removeAttributeValue($name, $value);
         });
+    }
+
+    public function setValue(?string $value): self
+    {
+        return $this->parseElements(fn (UssElement $element) => $element->setAttribute("value", $value));
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->activeNode->getAttribute('value');
     }
 
     protected function parseElements(callable $func): self

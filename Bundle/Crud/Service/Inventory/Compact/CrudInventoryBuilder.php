@@ -6,6 +6,7 @@ use Module\Dashboard\Bundle\Common\Paginator;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
+use Ucscode\UssElement\UssElement;
 use Uss\Component\Kernel\Uss;
 
 class CrudInventoryBuilder
@@ -15,11 +16,13 @@ class CrudInventoryBuilder
     protected DOMTable $domTable;
     protected Paginator $paginator;
     protected SQuery $sQuery;
+    protected bool $inlineActionsEnabled;
 
     public function __construct(protected AbstractCrudInventory $crudInventory)
     {
         $this->initializeProperties();
-        $this->configureEntities();
+        $this->updateTableColumns();
+        $this->configureAndTraverseEntities();
         $this->buildPaginator();
     }
 
@@ -28,22 +31,44 @@ class CrudInventoryBuilder
         $this->uss = Uss::instance();
         $this->domTable = $this->crudInventory->getDOMTable();
         $this->sQuery = $this->crudInventory->getSQuery();
+        $this->inlineActionsEnabled = 
+            $this->crudInventory->isInlineActionEnabled() && 
+            !empty($this->crudInventory->getInlineActions());
     }
 
-    protected function configureEntities(): void
+    protected function updateTableColumns(): void
     {
-        if($this->crudInventory->isInlineActionEnabled()) {
+        if(!$this->crudInventory->isActionsDisabled()) {
+            $this->domTable->setColumn(
+                CrudInventoryMutationIterator::CHECKBOX_KEY,
+                (new TableCheckbox('multiple'))->getElement()->getHTML(true)
+            );
+            $this->crudInventory->sortColumns(function($a, $b) {
+                $checkboxKey = CrudInventoryMutationIterator::CHECKBOX_KEY;
+                return ($a === $checkboxKey) ? -1 : (($b === $checkboxKey) ? 1 : 0);
+            }, true);
+        }
+
+        if($this->inlineActionsEnabled) {
             $this->domTable->setColumn(CrudInventoryMutationIterator::ACTION_KEY, "");
         }
+    }
+
+    protected function configureAndTraverseEntities(): void
+    {
         $SQL = $this->sQuery->build();
+        $mysqlResult = $this->uss->mysqli->query($SQL);
 
         $this->domTable->setData(
-            $this->uss->mysqli->query($SQL), 
+            $mysqlResult, 
             new CrudInventoryMutationIterator($this->crudInventory)
         );
 
         $tableEntities = $this->domTable->build();
-        $this->crudInventory->getEntitiesContainer()->appendChild($tableEntities);
+
+        $this->crudInventory
+            ->getEntitiesContainer()
+            ->appendChild($tableEntities);
     }
 
     protected function buildPaginator(): void
