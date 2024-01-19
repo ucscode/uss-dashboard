@@ -16,7 +16,7 @@ class DocumentController implements RouteInterface
 
     public function onload(array $routeContext): void
     {
-        $this->enablePrimaryMenus();
+        $this->enableMatchingMenus();
 
         $controller = $this->document->getController();
         
@@ -42,14 +42,13 @@ class DocumentController implements RouteInterface
     /**
      * Primary menu are those that auto-active when the route for the document is matched
      */
-    protected function enablePrimaryMenus(): void
+    protected function enableMatchingMenus(): void
     {
-        foreach($this->document->getMenuItems() as $node) {
-            $autoFocus = $node->getAttribute('autoFocus') ?? true;
-            $activeState = $node->getAttribute('active');
-            if($autoFocus && $activeState === null) {
-                $node->setAttribute('active', true);
-            }
-        }
+        $menuItems = $this->document->getMenuItems();
+        array_walk($menuItems, function($node) {
+            $focused = $node->getAttribute('auto-focus') ?? true;
+            $activated = $node->getAttribute('active');
+            $node->setAttribute('active', $focused && $activated === null);
+        });
     }
 }

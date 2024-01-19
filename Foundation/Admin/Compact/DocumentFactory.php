@@ -3,10 +3,12 @@
 namespace Module\Dashboard\Foundation\Admin\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Foundation\Admin\Controller\UsersEditorController;
-use Module\Dashboard\Foundation\Admin\Controller\UsersInventoryController;
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
+use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
+use Ucscode\TreeNode\TreeNode;
+use Uss\Component\Kernel\Uss;
 
 final class DocumentFactory extends AbstractDocumentFactory
 {
@@ -43,43 +45,28 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setName('users:inventory')
             ->setRoute("/users", $this->base)
             ->setTemplate("/users/inventory.html.twig", $this->namespace)
-            ->setController(new UsersInventoryController())
+            ->setController(new UsersController())
         ; 
 
-        $menuContext = [
+        $inventoryMenuContext = new TreeNode('main:users', [
             'label' => "users",
             'icon' => 'bi bi-people',
             'href' => $document->getUrl(),
             'order' => 1,
-        ];
+            'auto-focus' => false,
+        ]);
 
-        $document->addMenuItem('main:users', $menuContext, $this->dashboard->menu);
-
-        return $document;
-    }
-
-    public function createUserCreatorDocument(): Document
-    {
-        $inventoryDocument = $this->dashboard->getDocument('users:inventory');
-
-        $document = (new Document())
-            ->setName('users:create')
-            //->setRoute($inventoryDocument->getRoute())
-            ->setTemplate($inventoryDocument->getTemplate())
-            ->setController(new UsersEditorController())
-        ;
-
-        $menuContext = [
+        $creatorMenuContext = [
             'label' => "Add new",
-            'href' => $document->getUrl(),
-            'order' => 0
+            'href' => Uss::instance()->replaceUrlQuery([
+                'channel' => CrudEnum::CREATE->value,
+            ], $document->getUrl()),
+            'order' => 0,
+            'auto-focus' => false,
         ];
 
-        $document->addMenuItem(
-            'main:users.create', 
-            $menuContext, 
-            $inventoryDocument->getMenuItem('main:users')
-        );
+        $document->addMenuItem('main:users', $inventoryMenuContext, $this->dashboard->menu);
+        $document->addMenuItem('main:users.create', $creatorMenuContext, $inventoryMenuContext);
 
         return $document;
     }
