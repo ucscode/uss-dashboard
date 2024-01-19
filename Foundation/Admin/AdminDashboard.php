@@ -34,6 +34,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         $this->addDocument('notifications', $factory->createNotificationDocument());
         $this->addDocument('recovery', $factory->createPasswordResetDocument());
         $this->addDocument('users:inventory', $factory->createUsersInventoryDocument());
+        $this->addDocument('users:create', $factory->createUserCreatorDocument());
 
         // $factory->createUsersPage();
         // $factory->createSettingsPage();

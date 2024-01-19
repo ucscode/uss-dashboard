@@ -29,7 +29,7 @@ new class () {
         (new Event())->addListener(
             'modules:loaded',
             fn () => Event::emit('dashboard:render'),
-            -9
+            1024
         );
     }
 

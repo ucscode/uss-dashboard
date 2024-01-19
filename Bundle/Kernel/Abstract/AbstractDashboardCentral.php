@@ -35,7 +35,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
         AppFactory::registerApp($this);
         $this->menu = new TreeNode('Main Menu');
         $this->userMenu = new TreeNode('User Menu');
-        (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -10);
+        (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -1024);
     }
 
     /**
@@ -43,9 +43,6 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      */
     private function createGUI(): void
     {
-        new DashboardMenuFormation($this->menu);
-        new DashboardMenuFormation($this->userMenu);
-
         foreach($this->getDocuments() as $document) {
             if($document->getRoute() !== null) {
                 new Route(
@@ -55,5 +52,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
                 );
             }
         }
+        new DashboardMenuFormation($this->menu);
+        new DashboardMenuFormation($this->userMenu);
     }
 }

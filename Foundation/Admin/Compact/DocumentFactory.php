@@ -3,7 +3,8 @@
 namespace Module\Dashboard\Foundation\Admin\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Foundation\Admin\Controller\UsersController;
+use Module\Dashboard\Foundation\Admin\Controller\UsersEditorController;
+use Module\Dashboard\Foundation\Admin\Controller\UsersInventoryController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 
@@ -42,7 +43,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setName('users:inventory')
             ->setRoute("/users", $this->base)
             ->setTemplate("/users/inventory.html.twig", $this->namespace)
-            ->setController(new UsersController())
+            ->setController(new UsersInventoryController())
         ; 
 
         $menuContext = [
@@ -53,6 +54,32 @@ final class DocumentFactory extends AbstractDocumentFactory
         ];
 
         $document->addMenuItem('main:users', $menuContext, $this->dashboard->menu);
+
+        return $document;
+    }
+
+    public function createUserCreatorDocument(): Document
+    {
+        $inventoryDocument = $this->dashboard->getDocument('users:inventory');
+
+        $document = (new Document())
+            ->setName('users:create')
+            //->setRoute($inventoryDocument->getRoute())
+            ->setTemplate($inventoryDocument->getTemplate())
+            ->setController(new UsersEditorController())
+        ;
+
+        $menuContext = [
+            'label' => "Add new",
+            'href' => $document->getUrl(),
+            'order' => 0
+        ];
+
+        $document->addMenuItem(
+            'main:users.create', 
+            $menuContext, 
+            $inventoryDocument->getMenuItem('main:users')
+        );
 
         return $document;
     }
