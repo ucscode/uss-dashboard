@@ -19,6 +19,9 @@ class UsersController extends AbstractDashboardController
         //$inventory->disableGlobalActions();
         //$inventory->disableInlineAction();
         // var_dump($_POST);
+        $inventory->setTableBackgroundWhite();
+        $inventory->removeColumn('password');
+        //$inventory->setInlineActionAsDropdown(false);
         $document->setContext([
             'inventory' => $inventory,
         ]);

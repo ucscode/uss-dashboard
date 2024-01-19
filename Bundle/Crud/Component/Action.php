@@ -64,7 +64,7 @@ class Action implements ActionInterface
         return $this->activeNode->hasAttribute('disabled');
     }
 
-    public function addClass(string $className): self
+    public function addClass(?string $className): self
     {
         $classNames = array_map('trim', explode(" ", $className));
         return $this->parseElements(function(UssElement $element) use ($classNames) {

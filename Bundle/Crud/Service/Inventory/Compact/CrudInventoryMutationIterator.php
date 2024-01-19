@@ -67,7 +67,7 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
             $this->createTraditionalElements();
 
         foreach($this->inlineActions as $inlineActionInterface) {
-            $action = $inlineActionInterface->foreachItem($item);
+            $action = $inlineActionInterface->foreachItem($item, $this->crudInventory);
             $this->isDropdown ? 
                 $this->insertDropdownInlineAction($dropdownListContainer, $action) :
                 $this->insertButtonInlineAction($inlineActionContainer, $action);
@@ -79,13 +79,8 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
 
     protected function applyInlineCheckbox(array $item): array
     {
-        $formId = $this->crudInventory
-            ->getGlobalActionForm()
-            ->getElement()
-            ->getAttribute('id');
-
-        $item[self::CHECKBOX_KEY] = (new TableCheckbox($item, $this->crudInventory))->getElement();
-
+        $checkbox = new TableCheckbox($item, $this->crudInventory);
+        $item[self::CHECKBOX_KEY] = $checkbox->getElement();
         return $item;
     }
 }

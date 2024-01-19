@@ -14,7 +14,7 @@ interface ActionInterface
     public function getContent(): null|string|UssElement;
     public function setDisabled(bool $disabled): self;
     public function isDisabled(): bool;
-    public function addClass(string $className): self;
+    public function addClass(?string $className): self;
     public function removeClass(string $className): self;
     public function getElement(): UssElement;
     public function setAttribute(string $name, ?string $value, bool $append): self;

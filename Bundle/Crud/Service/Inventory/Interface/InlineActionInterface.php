@@ -6,5 +6,5 @@ use Module\Dashboard\Bundle\Crud\Component\Action;
 
 interface InlineActionInterface
 {
-    public function foreachItem(array $item): Action;
+    public function foreachItem(array $item, CrudInventoryInterface $crudInventory): Action;
 }

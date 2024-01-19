@@ -387,6 +387,12 @@ fieldset:disabled textarea {
 	border-radius: 3px;
 }
 
+.actions-container {
+	--actions-border: 1px solid var(--bs-border-color);
+	border-top: var(--actions-border);
+	border-bottom: var(--actions-border);
+}
+
 @media (min-width: 768px) {
 	
 }
