@@ -13,6 +13,7 @@ class UpdateController extends AbstractUsersController
     protected function composeMicroApplication(): void
     {
         $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
+        $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
     }
 
     public function getComponent(): CrudKernelInterface

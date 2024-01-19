@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
+use Exception;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Uss\Component\Kernel\Uss;
@@ -23,5 +24,18 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
             ->build();
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
+    }
+
+    protected function immutationException(): void
+    {
+        if($this->mutated) {
+            throw new Exception(
+                sprintf(
+                    "Entity of %s instance is immutable",
+                    get_called_class()
+                )
+            );
+        }
+        $this->mutated = true;
     }
 }
