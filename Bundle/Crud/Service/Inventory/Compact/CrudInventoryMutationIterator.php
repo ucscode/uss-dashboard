@@ -10,18 +10,16 @@ use Ucscode\UssElement\UssElement;
 
 class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterator implements DOMTableIteratorInterface
 {
-    public const CHECKBOX_KEY = 'checkbox:inline';
     public const ACTION_KEY = 'action:inline';
 
-    protected ?DOMTableIteratorInterface $itemsMutationIterator;
     protected array $inlineActions;
     protected bool $inlineActionEnabled;
     protected bool $globalActionEnabled;
     protected bool $isDropdown;
+    protected array $item;
 
     public function __construct(protected CrudInventoryInterface $crudInventory)
     {
-        $this->itemsMutationIterator = $crudInventory->getItemsMutationIterator();
         $this->inlineActions = $this->crudInventory->getInlineActions();
         $this->inlineActionEnabled = !$crudInventory->isInlineActionDisabled() && !empty($this->inlineActions);
         $this->globalActionEnabled = !$crudInventory->isGlobalActionsDisabled();
@@ -30,15 +28,20 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
 
     public function foreachItem(array $item): ?array
     {
-        $item = $this->itemsMutationIterator ? $this->itemsMutationIterator->foreachItem($item) : $item;
-        if($item) {
-            $item = $this->applySearchConcept($item);
-            if($item) {
-                $this->inlineActionEnabled ? $item = $this->applyInlineActions($item) : null;
-                $this->globalActionEnabled ? $item = $this->applyInlineCheckbox($item) : null;
+        $this->item = $item;
+        
+        foreach($this->crudInventory->getEntityMutationIterators() as $iterator) {
+            $this->item = $iterator->foreachItem($this->item) ?? [];
+        }
+
+        if(!empty($this->item)) {
+            $this->item = $this->applySearchConcept($this->item);
+            if($this->item) {
+                $this->inlineActionEnabled ? $this->item = $this->applyInlineActions($this->item) : null;
             }
         }
-        return $item;
+
+        return $this->item;
     }
 
     protected function applySearchConcept(array $item): ?array
@@ -74,13 +77,6 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
         }
 
         $inlineActionFrame->appendChild($inlineActionContainer);
-        return $item;
-    }
-
-    protected function applyInlineCheckbox(array $item): array
-    {
-        $checkbox = new TableCheckbox($item, $this->crudInventory);
-        $item[self::CHECKBOX_KEY] = $checkbox->getElement();
         return $item;
     }
 }

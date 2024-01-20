@@ -19,7 +19,7 @@ abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel implem
     protected bool $inlineActionDisabled = false;
     protected bool $inlineActionDropdownActive = true;
     protected DOMTable $domTable;
-    protected ?DOMTableIteratorInterface $itemsMutationIterator = null;
+    protected array $entityMutationIterators = [];
     protected SQuery $sQuery;
     protected UssElement $paginatorContainer;
     protected Form $globalActionForm;

@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory_Level1;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryWidgetManager;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
@@ -53,15 +54,33 @@ class CrudInventory extends AbstractCrudInventory_Level1
         return $this;
     }
 
-    public function setItemsMutationIterator(?DOMTableIteratorInterface $itemsMutationIterator): self
+    public function addEntityMutationIterator(string $name, ?DOMTableIteratorInterface $entityIterator): self
     {
-        $this->itemsMutationIterator = $itemsMutationIterator;
+        $this->entityMutationIterators[$name] = $entityIterator;
         return $this;
     }
 
-    public function getItemsMutationIterator(): ?DOMTableIteratorInterface
+    public function getEntityMutationIterator(string $name): ?DOMTableIteratorInterface
     {
-        return $this->itemsMutationIterator;
+        return $this->entityMutationIterators[$name] ?? null;
+    }
+
+    public function removeEntityMutationIterator(string $name): self
+    {
+        if($this->hasEntityMutationIterator($name)) {
+            unset($this->entityMutationIterators[$name]);
+        }
+        return $this;
+    }
+
+    public function hasEntityMutationIterator(string $name): bool
+    {
+        return array_key_exists($name, $this->entityMutationIterators);
+    }
+
+    public function getEntityMutationIterators(): array
+    {
+        return $this->entityMutationIterators;
     }
 
     public function sortColumns(callable $sorter, bool $keySort = false): self

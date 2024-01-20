@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\InventoryGlobalAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction\GlobalActionsWidget;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\Condition;
@@ -47,6 +48,7 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
     protected function createInventoryResources(): void
     {
         $this->setWidget("inventory:search", new SearchWidget());
+        $this->setWidget("inventory:global-action", new GlobalActionsWidget());
         $this->setInlineAction('inventory:edit', new InlineEditAction());
         $this->setInlineAction('inventory:delete', new InlineDeleteAction());
         $this->setInlineAction('inventory:view', new InlineViewAction());

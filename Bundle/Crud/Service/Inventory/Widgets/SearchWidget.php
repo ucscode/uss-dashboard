@@ -32,8 +32,8 @@ class SearchWidget implements CrudWidgetInterface
     protected function getContext(): array
     {
         return [
+            'widgetContentClass' => 'col-lg-6',
             'widgetContent' => $this->form->export(),
-            'widgetContainerClass' => 'col-lg-6',
             'widgetName' => 'search',
         ];
     }

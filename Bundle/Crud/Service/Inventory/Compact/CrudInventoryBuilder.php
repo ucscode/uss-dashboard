@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Common\Paginator;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
@@ -31,6 +30,7 @@ class CrudInventoryBuilder
         $this->uss = Uss::instance();
         $this->domTable = $this->crudInventory->getDOMTable();
         $this->sQuery = $this->crudInventory->getSQuery();
+        
         $this->inlineActionsEnabled = 
             !$this->crudInventory->isInlineActionDisabled() && 
             !empty($this->crudInventory->getInlineActions());
@@ -38,17 +38,6 @@ class CrudInventoryBuilder
 
     protected function updateTableColumns(): void
     {
-        if(!$this->crudInventory->isGlobalActionsDisabled()) {
-            $this->domTable->setColumn(
-                CrudInventoryMutationIterator::CHECKBOX_KEY,
-                (new TableCheckbox())->getElement()->getHTML(true)
-            );
-            $this->crudInventory->sortColumns(function($a, $b) {
-                $checkboxKey = CrudInventoryMutationIterator::CHECKBOX_KEY;
-                return ($a === $checkboxKey) ? -1 : (($b === $checkboxKey) ? 1 : 0);
-            }, true);
-        }
-
         if($this->inlineActionsEnabled) {
             $this->domTable->setColumn(CrudInventoryMutationIterator::ACTION_KEY, "");
         }

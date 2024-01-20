@@ -12,8 +12,11 @@ interface CrudInventoryInterface extends CrudInventoryActionInterface, CrudKerne
 {
     public function getSQuery(): SQuery;
     public function getDOMTable(): DOMTable;
-    public function setItemsMutationIterator(?DOMTableIteratorInterface $mutator): self;
-    public function getItemsMutationIterator(): ?DOMTableIteratorInterface;
+    public function addEntityMutationIterator(string $name, ?DOMTableIteratorInterface $entityIterator): self;
+    public function getEntityMutationIterator(string $name): ?DOMTableIteratorInterface;
+    public function removeEntityMutationIterator(string $name): self;
+    public function hasEntityMutationIterator(string $name): bool;
+    public function getEntityMutationIterators(): array;
     public function setTableBackgroundWhite(bool $status): self;
     public function setTableBordered(bool $status): self;
     public function sortColumns(callable $sorter, bool $keySort = false): self;

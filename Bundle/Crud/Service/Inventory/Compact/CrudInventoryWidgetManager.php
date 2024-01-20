@@ -25,7 +25,9 @@ class CrudInventoryWidgetManager
             return $widgetInterface->createWidget($this->crudInventory);
         }, $this->crudInventory->getWidgets());
 
-        usort($widgetBlocks, fn ($a, $b) => $a->priority() <=> $b->priority());
+        usort($widgetBlocks, function(BlockTemplate $a, BlockTemplate $b) {
+            return $a->getPriority() <=> $b->getPriority();
+        });
 
         return $widgetBlocks;
     }
