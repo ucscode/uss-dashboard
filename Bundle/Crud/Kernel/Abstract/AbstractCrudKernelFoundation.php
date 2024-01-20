@@ -1,8 +1,8 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Compact\Abstract;
+namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Ucscode\UssElement\UssElement;
 
 abstract class AbstractCrudKernelFoundation implements CrudKernelInterface

@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Uss\Component\Kernel\Uss;

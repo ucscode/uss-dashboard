@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Compact\Abstract;
+namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
 use Ucscode\UssElement\UssElement;
 use Module\Dashboard\Bundle\Crud\Component\Action;

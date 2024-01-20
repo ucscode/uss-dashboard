@@ -3,7 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 
 abstract class AbstractUsersController
 {

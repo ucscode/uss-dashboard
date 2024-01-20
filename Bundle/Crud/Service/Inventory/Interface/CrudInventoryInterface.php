@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Interface;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;

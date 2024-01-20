@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Compact\Interface;
+namespace Module\Dashboard\Bundle\Crud\Kernel\Interface;
 
 use Ucscode\UssElement\UssElement;
 

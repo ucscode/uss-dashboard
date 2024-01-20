@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Ucscode\UssForm\Field\Field;
@@ -15,6 +15,11 @@ class CreateController extends AbstractUsersController
     {
         $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
         $this->configureCrudEditor();
+    }
+
+    public function getCrudKernel(): CrudKernelInterface
+    {
+        return $this->crudEditor;
     }
 
     protected function configureCrudEditor(): void
@@ -54,10 +59,5 @@ class CreateController extends AbstractUsersController
         // $primaryCollection->getElementContext()->fieldset->addClass('col-lg-6');
         // $collection->getElementContext()->fieldset->addClass('col-lg-6');
         
-    }
-
-    public function getCrudKernel(): CrudKernelInterface
-    {
-        return $this->crudEditor;
     }
 }
