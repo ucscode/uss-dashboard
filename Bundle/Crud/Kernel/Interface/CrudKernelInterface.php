@@ -13,8 +13,9 @@ interface CrudKernelInterface
     public function getEntitiesContainer(): UssElement;
     public function getBaseContainer(): UssElement;
     public function getWidgetsContainer(): UssElement;
-    public function setWidget(string $name, BlockTemplate $blockTemplate): self;
-    public function getWidget(string $name): ?BlockTemplate;
+    public function setWidget(string $name, CrudWidgetInterface $widgetInterface): self;
+    public function getWidget(string $name): ?CrudWidgetInterface;
+    public function hasWidget(string $name): bool;
     public function removeWidget(string $name): self;
     public function getWidgets(): array;
     public function disableWidgets(bool $status): self;

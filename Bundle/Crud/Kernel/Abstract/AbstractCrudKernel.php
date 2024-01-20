@@ -2,18 +2,18 @@
 
 namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
 use Ucscode\UssElement\UssElement;
-use Uss\Component\Block\BlockTemplate;
 
 abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
 {
-    public function setWidget(string $name, BlockTemplate $widget): self
+    public function setWidget(string $name, CrudWidgetInterface $widget): self
     {
         $this->widgets[$name] = $widget;
         return $this;
     }
 
-    public function getWidget(string $name): ?BlockTemplate
+    public function getWidget(string $name): ?CrudWidgetInterface
     {
         return $this->widgets[$name] ?? null;
     }
@@ -25,6 +25,11 @@ abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
             unset($this->widgets[$name]);
         }
         return $this;
+    }
+
+    public function hasWidget(string $name): bool
+    {
+        return !!$this->getWidget($name);
     }
 
     public function getWidgets(): array

@@ -46,7 +46,7 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
 
     protected function createInventoryResources(): void
     {
-        //$this->setWidget("inventory:search", (new SearchWidget)->getElement());
+        $this->setWidget("inventory:search", new SearchWidget());
         $this->setInlineAction('inventory:edit', new InlineEditAction());
         $this->setInlineAction('inventory:delete', new InlineDeleteAction());
         $this->setInlineAction('inventory:view', new InlineViewAction());

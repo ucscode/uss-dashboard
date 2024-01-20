@@ -2,19 +2,28 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets;
 
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Field\Foundation\ElementContext;
 use Ucscode\UssForm\Form\Form;
+use Uss\Component\Block\BlockTemplate;
 
-class SearchWidget
+class SearchWidget implements CrudWidgetInterface
 {
     protected UssElement $element;
     protected Form $form;
     protected Field $field;
     protected UssElement $submitButton;
     protected Collection $collection;
+
+    public function createWidget(CrudKernelInterface $crudKernel): BlockTemplate
+    {
+        $blockTemplate = new BlockTemplate('@Foundation/System/Template/search-widget.html.twig');
+        return $blockTemplate;
+    }
 
     public function __construct()
     {
