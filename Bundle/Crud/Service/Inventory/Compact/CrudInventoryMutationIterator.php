@@ -15,7 +15,7 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
     protected bool $inlineActionEnabled;
     protected bool $globalActionEnabled;
     protected bool $isDropdown;
-    protected array $item;
+    protected ?array $item;
 
     public function __construct(protected CrudInventoryInterface $crudInventory)
     {
