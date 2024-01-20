@@ -25,4 +25,5 @@ interface CrudKernelInterface
     public function getGlobalActionsContainer(): UssElement;
     public function getEntitiesContainer(): UssElement;
     public function getBaseContainer(): UssElement;
+    public function build(): UssElement;
 }

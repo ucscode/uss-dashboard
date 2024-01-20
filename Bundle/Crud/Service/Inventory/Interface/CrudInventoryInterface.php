@@ -27,7 +27,6 @@ interface CrudInventoryInterface extends CrudKernelInterface
     public function getSQuery(): SQuery;
     public function getDOMTable(): DOMTable;
     public function getPaginatorContainer(): UssElement;
-    public function build(): UssElement;
     public function setColumns(array $columns): self;
     public function getColumns(): array;
     public function setColumn(string $key, ?string $displayText = null): self;

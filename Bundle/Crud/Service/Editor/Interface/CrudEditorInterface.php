@@ -2,7 +2,10 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Interface;
 
-interface CrudEditorInterface
+use Ucscode\UssForm\Collection\Collection;
+use Ucscode\UssForm\Field\Field;
+
+interface CrudEditorInterface extends FormManagerInterface
 {
     public function setEntity(array $entity): self;
     public function setEntityByOffset(string $offsetValue): bool;
@@ -15,4 +18,5 @@ interface CrudEditorInterface
     public function setEntityValue(string $columnName, ?string $value): self;
     public function getEntityValue(string $columnName): ?string;
     public function removeEntityValue(string $columnName): self;
+    public function moveFieldToCollection(string|Field $field, string|Collection $collection): bool;
 }
