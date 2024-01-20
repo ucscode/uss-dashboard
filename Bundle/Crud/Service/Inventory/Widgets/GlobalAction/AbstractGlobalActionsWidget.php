@@ -2,11 +2,14 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction;
 
+use Module\Dashboard\Bundle\Crud\Component\Action;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\ActionInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Form;
+use Ucscode\UssForm\Resource\Interface\WidgetContextInterface;
 
 abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFoundation
 {
@@ -47,6 +50,20 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
         $fieldContext->label->setDOMHidden(true);
         $fieldContext->suffix->setValue($selectButton);
         $fieldContext->gadget->container->addClass('input-group-sm');
+
+        $widget = $fieldContext->gadget->widget;
+        $widget
+            ->setOption('', '-- select --')
+            ->addClass('text-capitalize')
+            ->setAttribute('data-ui-bulk-select')
+            ->setAttribute('name', 'action')
+        ;
+
+        $globalActions = $this->crudInventory->getGlobalActions();
+        array_walk($globalActions, fn (Action $action) => $this->addGlobalAction(
+            $fieldContext->gadget->widget,
+            $action
+        ));
     }
 
     protected function applyInlineCheckbox(): void
@@ -78,5 +95,18 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
             }
 
         );
+    }
+
+    protected function addGlobalAction(WidgetContextInterface $widget, Action $action): void
+    {
+        $value = $action->getValue() ?? $action->getContent();
+        $content = $action->getContent() ?? $action->getValue();
+
+        $widget->setOption($value, $content);
+        $optionElement = $widget->getOptionElement($value);
+
+        foreach($action->getElement()->getAttributes() as $offset => $attribute) {
+            $offset !== 'value' ? $optionElement->setAttribute($offset, $attribute) : null;
+        }
     }
 }

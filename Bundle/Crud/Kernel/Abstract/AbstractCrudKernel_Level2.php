@@ -46,13 +46,4 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
             );
         return $element;
     }
-
-    // protected function replaceElement(UssElement $parent, UssElement $node, ?UssElement $reference): void
-    // {
-    //     if($reference && $reference->getParentElement() === $parent) {
-    //         $parent->replaceChild($node, $reference);
-    //         return;
-    //     }
-    //     $parent->appendChild($node);
-    // }
 }

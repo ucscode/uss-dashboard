@@ -4,7 +4,6 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Module\Dashboard\Bundle\Crud\Component\Action;
-use Ucscode\UssElement\UssElement;
 
 abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventory_Level2
 {
@@ -58,24 +57,13 @@ abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventory_Level2
     public function setGlobalAction(string $name, Action $action): self
     {
         $this->globalActions[$name] = $action;
-        [$value, $content] = $this->formulateAction($action);
-        $widget = $this->obtainGlobalSelectField(true);
-        if($widget) {
-            $widget->setOption($value, $content);
-            $this->polyfillAttributes($widget, $value, $action);
-        }
         return $this;
     }
 
     public function removeGlobalAction(string $name): self
     {
-        $action = $this->getGlobalAction($name);
         if(array_key_exists($name, $this->globalActions)) {
             unset($this->globalActions[$name]);
-        }
-        if(!empty($action)) {
-            [$value, $content] = $this->formulateAction($action);
-            $this->obtainGlobalSelectField(true)?->removeOption($value);
         }
         return $this;
     }
@@ -88,7 +76,6 @@ abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventory_Level2
     public function disableGlobalActions(bool $status = true): self
     {
         $this->globalActionsDisabled = $status;
-        $this->globalActionsContainer->setInvisible($status);
         return $this;
     }
 
@@ -100,10 +87,5 @@ abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventory_Level2
     public function getGlobalActions(): array
     {
         return $this->globalActions;
-    }
-
-    public function getGlobalActionsContainer(): UssElement
-    {
-        return $this->globalActionsContainer;
     }
 }

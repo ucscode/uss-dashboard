@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Interface;
 
 use Module\Dashboard\Bundle\Crud\Component\Action;
-use Ucscode\UssElement\UssElement;
 
 interface CrudInventoryActionInterface
 {
@@ -21,5 +20,4 @@ interface CrudInventoryActionInterface
     public function disableGlobalActions(bool $status): self;
     public function isGlobalActionsDisabled(): bool;
     public function getGlobalActions(): array;
-    public function getGlobalActionsContainer(): UssElement;
 }

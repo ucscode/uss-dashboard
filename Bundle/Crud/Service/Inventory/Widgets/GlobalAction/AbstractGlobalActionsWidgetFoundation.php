@@ -17,6 +17,8 @@ class AbstractGlobalActionsWidgetFoundation
     {
         ++self::$index;
         $this->form = new Form();
-        $this->form->getElement()->setAttribute('id', 'global-action-' . self::$index);
+        $this->form->getElement()
+            ->setAttribute('id', 'global-action-' . self::$index)
+            ->setAttribute('data-ui-crud-form', 'inventory');
     }
 }

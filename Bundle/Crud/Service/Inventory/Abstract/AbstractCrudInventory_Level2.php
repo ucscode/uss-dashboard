@@ -27,19 +27,15 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
 
     protected function configureInventory(?Condition $condition): void
     {
-        $this->globalActionForm = (new InventoryGlobalAction())->getForm();
-
         $this->domTable = new DOMTable($this->tableName);
         $this->domTable->setColumns($this->tableColumns);
         $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
         $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
-        $this->domTable->getTableElement()
-            ->setAttribute(
-                'data-form-id', 
-                $this->globalActionForm->getElement()->getAttribute('id')
-            );
 
-        $this->sQuery = (new SQuery())->select()->from($this->tableName);
+        $this->sQuery = (new SQuery())
+            ->select()
+            ->from($this->tableName);
+            
         if($condition) {
             $this->sQuery->where($condition);
         }
@@ -57,13 +53,9 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
 
     protected function designateInventoryComponents(): void
     {
-        $this->globalActionsContainer = $this->createElement(UssElement::NODE_DIV, 'actions-container my-1');
         $this->paginatorContainer = $this->createElement(UssElement::NODE_DIV, 'paginator-container my-2');
         $this->baseContainer->appendChild($this->paginatorContainer);
-        $this->baseContainer->appendChild($this->globalActionsContainer);
         $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
-        $this->globalActionForm->export();
-        $this->globalActionsContainer->appendChild($this->globalActionForm->getElement());
     }
 
     protected function createGlobalDeleteAction(): Action
