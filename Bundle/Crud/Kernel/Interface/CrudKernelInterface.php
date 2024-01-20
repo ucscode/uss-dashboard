@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Kernel\Interface;
 
 use Ucscode\UssElement\UssElement;
-use Uss\Component\Block\BlockTemplate;
 
 interface CrudKernelInterface
 {
