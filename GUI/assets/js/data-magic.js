@@ -139,8 +139,8 @@ new class {
                     const checkedCheckboxes = $(`table[data-ui-table="inventory"][data-form-id='${formId}'] [data-ui-checkbox="single"]:checked`);
                     if(checkedCheckboxes.length) {
                         const option = selectElement.find('option:selected').get(0);
-                        let message = option.dataset.uiConfirm || `You are about to perform a bulk action on {{items}} items! <br> Are you sure you want to proceed?`;
-                        message = message.replace('{{items}}', checkedCheckboxes.length);
+                        let message = option.dataset.uiConfirm || `You are about to perform a bulk action on {items} items! <br> Are you sure you want to proceed?`;
+                        message = message.replace('{items}', checkedCheckboxes.length);
                         const size = option.dataset.uiSize || 'small';
                         bootbox.confirm({
                             message,

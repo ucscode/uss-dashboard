@@ -25,12 +25,14 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
     {
         $this->baseContainer = $this->createElement(UssElement::NODE_DIV, 'base-container');
         $this->widgetsContainer = $this->createElement(UssElement::NODE_DIV, 'widgets-container row my-1');
+        $this->dividerElement = $this->createElement(UssElement::NODE_DIV, 'widget-entity-boundary border-top');
         $this->entitiesContainer = $this->createElement(UssElement::NODE_DIV, 'entities-container my-1');
     }
 
     protected function orientGraphicalResource(): void
     {
         $this->baseContainer->appendChild($this->widgetsContainer);
+        $this->baseContainer->appendChild($this->dividerElement);
         $this->baseContainer->appendChild($this->entitiesContainer);
     }
 

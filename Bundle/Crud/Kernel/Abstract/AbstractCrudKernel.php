@@ -7,6 +7,14 @@ use Ucscode\UssElement\UssElement;
 
 abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
 {
+    public function build(): UssElement
+    {
+        if(empty($this->getWidgets())) {
+            $this->disableWidgets(true);
+        }
+        return $this->baseContainer;
+    }
+
     public function setWidget(string $name, CrudWidgetInterface $widget): self
     {
         $this->widgets[$name] = $widget;
@@ -41,6 +49,7 @@ abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
     {
         $this->widgetsDisabled = $status;
         $this->widgetsContainer->setInvisible($status);
+        $this->dividerElement->setInvisible($status);
         return $this;
     }
 

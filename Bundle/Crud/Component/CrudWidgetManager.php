@@ -1,17 +1,17 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
+namespace Module\Dashboard\Bundle\Crud\Component;
 
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Uss\Component\Block\BlockTemplate;
 use Uss\Component\Kernel\Uss;
 
-class CrudInventoryWidgetManager
+class CrudWidgetManager
 {
     protected Uss $uss;
 
-    public function __construct(protected CrudInventoryInterface $crudInventory)
+    public function __construct(protected CrudKernelInterface $crudInventory)
     {
         $this->uss = Uss::instance();
         $widgetBlocks = $this->getWidgetBlocks();

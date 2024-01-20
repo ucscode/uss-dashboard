@@ -10,6 +10,7 @@ abstract class AbstractCrudKernelFoundation implements CrudKernelInterface
     protected UssElement $baseContainer;
     protected UssElement $widgetsContainer;
     protected UssElement $entitiesContainer;
+    protected UssElement $dividerElement;
     protected array $widgets = [];
     protected bool $widgetsDisabled = false;
     protected string $primaryOffset = 'id';

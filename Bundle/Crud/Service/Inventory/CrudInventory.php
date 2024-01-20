@@ -2,20 +2,20 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory_Level1;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryWidgetManager;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\Form\Form;
 
 class CrudInventory extends AbstractCrudInventory_Level1
 {    
     public function build(): UssElement
     {
-        new CrudInventoryWidgetManager($this);
+        parent::build();
+        new CrudWidgetManager($this);
         new CrudInventoryBuilder($this);
         return $this->baseContainer;
     }
@@ -125,10 +125,5 @@ class CrudInventory extends AbstractCrudInventory_Level1
     {
         $this->domTable->setCurrentPage($page);
         return $this;
-    }
-
-    public function getGlobalActionForm(): Form
-    {
-        return $this->globalActionForm;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
@@ -16,6 +17,8 @@ class CrudEditor extends AbstractCrudEditor
 {
     public function build(): UssElement
     {
+        parent::build();
+        new CrudWidgetManager($this);
         $this->getForm()->export();
         return $this->baseContainer;
     }

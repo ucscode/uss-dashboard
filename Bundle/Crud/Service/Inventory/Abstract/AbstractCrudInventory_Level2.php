@@ -62,7 +62,7 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
     {
         $action = new Action();
         $action->setValue('delete');
-        $action->setAttribute('data-ui-confirm', "You are about to delete {{items}} items");
+        $action->setAttribute('data-ui-confirm', "You are about to delete {items} items");
         return $action;
     }
 }
