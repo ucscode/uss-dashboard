@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
@@ -146,5 +147,16 @@ class CrudEditor extends AbstractCrudEditor
             }
         }
         return false;
+    }
+
+    public function detachField(string|Field $field, bool $hide = true): self
+    {
+        $this->getFieldPedigree($field)?->field->getElementContext()->frame->setDOMHidden($hide);
+        return $this;
+    }
+
+    public function isFieldDetached(string|Field $field): bool
+    {
+        return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
     }
 }

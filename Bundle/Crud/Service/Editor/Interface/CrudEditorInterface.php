@@ -19,4 +19,6 @@ interface CrudEditorInterface extends FormManagerInterface
     public function getEntityValue(string $columnName): ?string;
     public function removeEntityValue(string $columnName): self;
     public function moveFieldToCollection(string|Field $field, string|Collection $collection): bool;
+    public function detachField(string|Field $field, bool $hide): self;
+    public function isFieldDetached(string|Field $field): bool;
 }

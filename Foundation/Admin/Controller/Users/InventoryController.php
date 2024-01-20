@@ -18,7 +18,7 @@ class InventoryController extends AbstractUsersController
         $this->regulateColumns();
     }
 
-    public function getComponent(): CrudKernelInterface
+    public function getCrudKernel(): CrudKernelInterface
     {
         return $this->crudInventory;
     }

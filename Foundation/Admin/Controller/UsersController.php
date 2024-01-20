@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
+use Module\Dashboard\Foundation\Admin\Controller\Users\CreateController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\InventoryController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\UpdateController;
 
@@ -17,11 +18,12 @@ class UsersController extends AbstractDashboardController
         $channel = trim($_GET['channel'] ?? '');
 
         $userController = match($channel) {
+            CrudEnum::CREATE->value => new CreateController($document),
             CrudEnum::UPDATE->value => new UpdateController($document),
             default => new InventoryController($document),
         };
 
-        $crudKernel = $userController->getComponent();
+        $crudKernel = $userController->getCrudKernel();
 
         $document->setContext([
             'crudKernel' => $crudKernel,

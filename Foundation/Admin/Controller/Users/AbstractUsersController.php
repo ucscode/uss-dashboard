@@ -7,7 +7,7 @@ use Module\Dashboard\Bundle\Crud\Compact\Interface\CrudKernelInterface;
 
 abstract class AbstractUsersController
 {
-    abstract public function getComponent(): CrudKernelInterface;
+    abstract public function getCrudKernel(): CrudKernelInterface;
     abstract protected function composeMicroApplication(): void;
 
     public function __construct(protected Document $document)
