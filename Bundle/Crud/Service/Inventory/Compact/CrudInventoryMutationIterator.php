@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventoryMutationIterator;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;

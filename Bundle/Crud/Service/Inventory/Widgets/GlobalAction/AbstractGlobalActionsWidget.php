@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction;
 
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
@@ -23,7 +22,7 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
             
             $domTable->setColumn(
                 self::CHECKBOX_KEY,
-                (new TableCheckbox())->getElement()->getHTML(true)
+                (new TableCheckbox())->container->getHTML(true)
             );
             
             $this->crudInventory->sortColumns(function($a, $b) {
@@ -52,21 +51,28 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
 
     protected function applyInlineCheckbox(): void
     {
+        $formId = $this->form->getElement()->getAttribute('id');
+
         $this->crudInventory->addEntityMutationIterator(
 
             self::CHECKBOX_KEY, 
 
-            new class($this->crudInventory, self::CHECKBOX_KEY) implements DOMTableIteratorInterface 
+            new class($this->crudInventory, self::CHECKBOX_KEY, $formId) implements DOMTableIteratorInterface 
             {
                 public function __construct(
                     protected CrudInventoryInterface $crudInventory, 
-                    protected string $checkboxKey
+                    protected string $checkboxKey,
+                    protected ?string $formId = null
                 ){}
 
                 public function foreachItem(array $item): ?array
                 {
-                    $checkbox = new TableCheckbox($item, $this->crudInventory);
-                    $item[$this->checkboxKey] = $checkbox->getElement();
+                    $offset = $this->crudInventory->getPrimaryOffset();
+                    $item[$offset] ??= '';
+                    $value = $item[$offset] instanceof UssElement ? '' : $item[$offset];
+
+                    $item[$this->checkboxKey] = (new TableCheckbox($value, $this->formId))->container;
+
                     return $item;
                 }
             }

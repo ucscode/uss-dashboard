@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Interface;
 
 use Module\Dashboard\Bundle\Crud\Component\Action;
-use Ucscode\UssForm\Form\Form;
 use Ucscode\UssElement\UssElement;
 
 interface CrudInventoryActionInterface
@@ -16,7 +15,6 @@ interface CrudInventoryActionInterface
     public function isInlineActionDisabled(): bool;
     public function setInlineActionAsDropdown(bool $status): self;
     public function isInlineActionAsDropdown(): bool;
-    public function getGlobalActionForm(): Form;
     public function setGlobalAction(string $name, Action $action): self;
     public function getGlobalAction(string $name): ?Action;
     public function removeGlobalAction(string $name): self;

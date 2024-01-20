@@ -4,7 +4,6 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction;
 
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
-use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Uss\Component\Block\BlockTemplate;
 
 class GlobalActionsWidget extends AbstractGlobalActionsWidget implements CrudWidgetInterface
