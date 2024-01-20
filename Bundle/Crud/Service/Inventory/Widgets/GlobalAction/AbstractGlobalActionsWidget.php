@@ -7,9 +7,12 @@ use Module\Dashboard\Bundle\Crud\Kernel\Interface\ActionInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
+use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Resource\Interface\WidgetContextInterface;
+use Uss\Component\Kernel\Uss;
+use Uss\Component\Kernel\UssImmutable;
 
 abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFoundation
 {
@@ -40,11 +43,12 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
         $collection = $this->form->getCollection(Form::DEFAULT_COLLECTION);
         $field = new Field(Field::NODE_SELECT);
         $collection->addField('global-action', $field);
+        $collection->addField('nonce', $this->createNonceField());
         
         $selectButton = new UssElement(UssElement::NODE_BUTTON);
         $selectButton->setAttribute('type', Field::TYPE_SUBMIT);
         $selectButton->setAttribute('class', 'btn btn-primary');
-        $selectButton->setContent("Apply");
+        $selectButton->setContent("<i class='bi bi-check2-circle'></i> Apply");
 
         $fieldContext = $field->getElementContext();
         $fieldContext->label->setDOMHidden(true);
@@ -95,6 +99,17 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
             }
 
         );
+    }
+
+    protected function createNonceField(): Field
+    {
+        $nonce = Uss::instance()->nonce(UssImmutable::SESSION_KEY);
+        $field = new Field(Field::NODE_INPUT, Field::TYPE_HIDDEN);
+        $field->getElementContext()->widget
+            ->setValue($nonce)
+            ->setRequired(false)
+        ;
+        return $field;
     }
 
     protected function addGlobalAction(WidgetContextInterface $widget, Action $action): void

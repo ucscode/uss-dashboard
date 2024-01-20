@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterf
 class AbstractGlobalActionsWidgetFoundation
 {
     public const CHECKBOX_KEY = 'checkbox:inline';
+    public const NONCE_KEY = 'nonce';
     
     protected static int $index = 0;
     protected Form $form;

@@ -26,6 +26,7 @@ class GlobalActionsWidget extends AbstractGlobalActionsWidget implements CrudWid
         return [
             'widgetName' => 'global-action',
             'widgetContent' => $this->form->export(),
+            'widgetContentClass' => 'col-lg-6 ms-auto',
         ];
     }
 }
