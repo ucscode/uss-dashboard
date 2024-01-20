@@ -3,59 +3,72 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Component\Action;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\InventoryGlobalAction;
-use Ucscode\UssForm\Field\Field;
-use Ucscode\UssForm\Form\Form;
-use Ucscode\UssForm\Gadget\Context\WidgetContext;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
+use Ucscode\DOMTable\DOMTable;
+use Ucscode\SQuery\Condition;
+use Ucscode\SQuery\SQuery;
+use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventoryFoundation
+abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
 {
-    public function setGlobalAction(string $name, Action $action): self
+    public function __construct(string $tableName, ?Condition $condition = null)
     {
-        parent::setGlobalAction($name, $action);
-        [$value, $content] = $this->formulateAction($action);
-        $widget = $this->obtainGlobalSelectField(true);
-        if($widget) {
-            $widget->setOption($value, $content);
-            $this->polyfillAttributes($widget, $value, $action);
+        parent::__construct($tableName);
+        $this->configureInventory($condition);
+        $this->createInventoryResources();
+        $this->designateInventoryComponents();
+    }
+
+    protected function configureInventory(?Condition $condition): void
+    {
+        $this->globalActionForm = (new InventoryGlobalAction())->getForm();
+
+        $this->domTable = new DOMTable($this->tableName);
+        $this->domTable->setColumns($this->tableColumns);
+        $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
+        $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
+        $this->domTable->getTableElement()
+            ->setAttribute(
+                'data-form-id', 
+                $this->globalActionForm->getElement()->getAttribute('id')
+            );
+
+        $this->sQuery = (new SQuery())->select()->from($this->tableName);
+        if($condition) {
+            $this->sQuery->where($condition);
         }
-        return $this;
     }
 
-    public function removeGlobalAction(string $name): self
+    protected function createInventoryResources(): void
     {
-        $action = $this->getGlobalAction($name);
-        parent::removeGlobalAction($name);
-        if(!empty($action)) {
-            [$value, $content] = $this->formulateAction($action);
-            $this->obtainGlobalSelectField(true)?->removeOption($value);
-        }
-        return $this;
+        //$this->setWidget("inventory:search", (new SearchWidget)->getElement());
+        $this->setInlineAction('inventory:edit', new InlineEditAction());
+        $this->setInlineAction('inventory:delete', new InlineDeleteAction());
+        $this->setInlineAction('inventory:view', new InlineViewAction());
+        $this->setGlobalAction('inventory:delete', $this->createGlobalDeleteAction());
     }
 
-    protected function formulateAction(Action $action): array
+    protected function designateInventoryComponents(): void
     {
-        $value = $action->getValue() ?? $action->getContent();
-        $content = $action->getContent() ?? $action->getValue();
-        return [$value, $content];
+        $this->globalActionsContainer = $this->createElement(UssElement::NODE_DIV, 'actions-container my-1');
+        $this->paginatorContainer = $this->createElement(UssElement::NODE_DIV, 'paginator-container my-2');
+        $this->baseContainer->appendChild($this->paginatorContainer);
+        $this->baseContainer->appendChild($this->globalActionsContainer);
+        $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
+        $this->globalActionForm->export();
+        $this->globalActionsContainer->appendChild($this->globalActionForm->getElement());
     }
 
-    protected function obtainGlobalSelectField(bool $getWidget = false): null|Field|WidgetContext
+    protected function createGlobalDeleteAction(): Action
     {
-        $collection = $this->getGlobalActionForm()->getCollection(Form::DEFAULT_COLLECTION);
-        $field = $collection->getField(InventoryGlobalAction::FIELD_NAME);
-        return $getWidget ? $field?->getElementContext()->widget : $field;
-    }
-
-    protected function polyfillAttributes(WidgetContext $widget, ?string $optionValue, Action $action): void
-    {
-        $optionElement = $widget->getOptionElement($optionValue);
-        if($optionElement) {
-            foreach($action->getElement()->getAttributes() as $key => $value) {
-                if(strtolower($key) != 'value') {
-                    $optionElement->setAttribute($key, $value);
-                }
-            }
-        }
+        $action = new Action();
+        $action->setValue('delete');
+        $action->setAttribute('data-ui-confirm', "You are about to delete {{items}} items");
+        return $action;
     }
 }

@@ -14,4 +14,13 @@ abstract class AbstractUsersController
     {
         $this->composeMicroApplication();
     }
+
+    protected function enableDocumentMenu(string $name, bool $enabled = true): void
+    {
+        foreach($this->document->getMenuItems() as $offset => $menuContext) {
+            $offset == $name ?
+                $menuContext->setAttribute('active', $enabled) :
+                $menuContext->setAttribute('active', false);
+        }
+    }
 }

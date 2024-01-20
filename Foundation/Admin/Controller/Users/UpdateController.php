@@ -7,6 +7,7 @@ class UpdateController extends CreateController
     protected function composeMicroApplication(): void
     {
         parent::composeMicroApplication();
+        $this->enableDocumentMenu('main:users');
         $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
     }
 }

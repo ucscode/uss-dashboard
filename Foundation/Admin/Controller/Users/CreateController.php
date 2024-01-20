@@ -13,6 +13,7 @@ class CreateController extends AbstractUsersController
 
     protected function composeMicroApplication(): void
     {
+        $this->enableDocumentMenu('main:users.create');
         $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
         $this->configureCrudEditor();
     }

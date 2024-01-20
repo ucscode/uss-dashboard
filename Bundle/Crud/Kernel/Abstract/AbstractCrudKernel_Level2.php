@@ -25,14 +25,12 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
     {
         $this->baseContainer = $this->createElement(UssElement::NODE_DIV, 'base-container');
         $this->widgetsContainer = $this->createElement(UssElement::NODE_DIV, 'widgets-container row my-1');
-        $this->actionsContainer = $this->createElement(UssElement::NODE_DIV, 'actions-container my-1');
         $this->entitiesContainer = $this->createElement(UssElement::NODE_DIV, 'entities-container my-1');
     }
 
     protected function orientGraphicalResource(): void
     {
         $this->baseContainer->appendChild($this->widgetsContainer);
-        $this->baseContainer->appendChild($this->actionsContainer);
         $this->baseContainer->appendChild($this->entitiesContainer);
     }
 
@@ -49,12 +47,12 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
         return $element;
     }
 
-    protected function replaceElement(UssElement $parent, UssElement $node, ?UssElement $reference): void
-    {
-        if($reference && $reference->getParentElement() === $parent) {
-            $parent->replaceChild($node, $reference);
-            return;
-        }
-        $parent->appendChild($node);
-    }
+    // protected function replaceElement(UssElement $parent, UssElement $node, ?UssElement $reference): void
+    // {
+    //     if($reference && $reference->getParentElement() === $parent) {
+    //         $parent->replaceChild($node, $reference);
+    //         return;
+    //     }
+    //     $parent->appendChild($node);
+    // }
 }

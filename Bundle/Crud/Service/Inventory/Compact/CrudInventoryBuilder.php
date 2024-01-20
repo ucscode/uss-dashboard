@@ -3,11 +3,10 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Common\Paginator;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
-use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
 
 class CrudInventoryBuilder
@@ -19,7 +18,7 @@ class CrudInventoryBuilder
     protected SQuery $sQuery;
     protected bool $inlineActionsEnabled;
 
-    public function __construct(protected AbstractCrudInventory $crudInventory)
+    public function __construct(protected CrudInventoryInterface $crudInventory)
     {
         $this->initializeProperties();
         $this->updateTableColumns();

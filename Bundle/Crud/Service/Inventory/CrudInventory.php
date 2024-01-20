@@ -2,57 +2,20 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory_Level1;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Form\Form;
 
-class CrudInventory extends AbstractCrudInventory  
+class CrudInventory extends AbstractCrudInventory_Level1
 {    
     public function build(): UssElement
     {
-        $inventoryBuilder = new CrudInventoryBuilder($this);
+        new CrudInventoryBuilder($this);
         return $this->baseContainer;
-    }
-
-    public function setInlineAction(string $name, InlineActionInterface $action): self
-    {
-        $this->inlineActions[$name] = $action;
-        return $this;
-    }
-
-    public function getInlineAction(string $name): ?InlineActionInterface
-    {
-        return $this->inlineActions[$name] ?? null;
-    }
-
-    public function removeInlineAction(string $name): self
-    {
-        $inlineAction = $this->getInlineAction($name);
-        if($inlineAction) {
-            unset($this->inlineActions[$name]);
-        }
-        return $this;
-    }
-
-    public function getInlineActions(): array
-    {
-        return $this->inlineActions;
-    }
-
-    public function disableInlineAction(bool $disable = true): self
-    {
-        $this->inlineActionDisabled = $disable;
-        return $this;
-    }
-
-    public function isInlineActionDisabled(): bool
-    {
-        return $this->inlineActionDisabled;
     }
 
     public function getSQuery(): SQuery
@@ -130,17 +93,6 @@ class CrudInventory extends AbstractCrudInventory
     public function getPaginatorContainer(): UssElement
     {
         return $this->paginatorContainer;
-    }
-
-    public function setInlineActionAsDropdown(bool $status = true): self
-    {
-        $this->inlineActionDropdownActive = $status;
-        return $this;
-    }
-
-    public function isInlineActionAsDropdown(): bool
-    {
-        return $this->inlineActionDropdownActive;
     }
 
     public function setItemsPerPage(int $chunks): self

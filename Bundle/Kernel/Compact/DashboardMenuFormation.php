@@ -21,6 +21,7 @@ class DashboardMenuFormation
             $func ? call_user_func($func, $node) : $this->localConcept($node);
             $this->updateAttributes($node);
             $this->applySortAlgorithm($node);
+            $this->activateAncestors($node);
         });
     }
 
@@ -76,5 +77,14 @@ class DashboardMenuFormation
             $orderB = $b->getAttribute('order') ?? 0;
             return (float)$orderA <=> (float)$orderB;
         });
+    }
+
+    protected function activateAncestors(TreeNode $node): void
+    {
+        if($node->getAttribute('active')) {
+            foreach($node->getParents() as $ancestor) {
+                $ancestor->setAttribute('active', true);
+            }
+        }
     }
 }

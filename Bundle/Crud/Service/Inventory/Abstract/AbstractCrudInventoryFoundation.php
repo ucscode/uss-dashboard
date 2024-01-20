@@ -12,9 +12,12 @@ use Ucscode\UssForm\Form\Form;
 
 abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel implements CrudInventoryInterface
 {
+    protected UssElement $globalActionsContainer;
+    protected array $globalActions = [];
+    protected array $inlineActions = [];
+    protected bool $globalActionsDisabled = false;
     protected bool $inlineActionDisabled = false;
     protected bool $inlineActionDropdownActive = true;
-    protected array $inlineActions = [];
     protected DOMTable $domTable;
     protected ?DOMTableIteratorInterface $itemsMutationIterator = null;
     protected SQuery $sQuery;

@@ -4,7 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Compact;
 
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventoryMutationIterator;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\TableCheckbox;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
 
@@ -19,7 +19,7 @@ class CrudInventoryMutationIterator extends AbstractCrudInventoryMutationIterato
     protected bool $globalActionEnabled;
     protected bool $isDropdown;
 
-    public function __construct(protected CrudInventory $crudInventory)
+    public function __construct(protected CrudInventoryInterface $crudInventory)
     {
         $this->itemsMutationIterator = $crudInventory->getItemsMutationIterator();
         $this->inlineActions = $this->crudInventory->getInlineActions();
