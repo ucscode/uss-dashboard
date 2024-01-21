@@ -20,6 +20,7 @@ class CreateController extends AbstractFieldConstructor
             'position-target' => FormManager::SUBMIT_KEY,
             'name' => 'notify-user',
             'label' => 'Send email to user after registration',
+            //'collection-target' => 'avatar',
         ]);
     }
 }

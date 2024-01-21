@@ -48,7 +48,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $context = $field->getElementContext();
         $context->label->setValue($info['label'] ?? null);
 
-        $collection = $this->form->getCollection(Form::DEFAULT_COLLECTION);
+        $collection = $this->form->getCollection($info['collection-target'] ?? Form::DEFAULT_COLLECTION);
         $collection->addField($info['name'] ?? rand(), $field);
         
         if($info['position'] instanceof Position && !empty($info['position-target'])) {
