@@ -51,6 +51,14 @@ abstract class AbstractFormManager implements FormManagerInterface
 
     protected function intersectPedigrees(array $context, FieldPedigree $recentPedigree, FieldPedigree $lastPedigree): void
     {
+        if(!empty($context['attributes']) && is_array($context['attributes'])) {
+            foreach($context['attributes'] as $name => $value) {
+                if(!in_array($name, $this->restrictedAttributes())) {
+                    $recentPedigree->widget->setAttribute($name, $value);
+                }
+            }
+        }
+
         if($recentPedigree->widget->isSelective()) {
             $context['options'] ??= ($lastPedigree->widget->getOptions() ?? []);
             $recentPedigree->widget->setOptions($context['options']);
@@ -61,9 +69,7 @@ abstract class AbstractFormManager implements FormManagerInterface
             $recentPedigree->widget->setChecked($context['checked']);
         }
 
-        $recentPedigree->widget->setValue(
-            $context['value'] ?? $lastPedigree->widget->getValue()
-        );
+        $recentPedigree->widget->setValue($context['value'] ?? $lastPedigree->widget->getValue());
 
         $recentPedigree->gadget->label->setValue(
             $context['label'] ?? $lastPedigree->gadget->label->getValue()
@@ -79,5 +85,16 @@ abstract class AbstractFormManager implements FormManagerInterface
                 $context[$offset] ?? $lastPedigree->gadget->widget->{$isser}()
             );
         }
+    }
+
+    protected function restrictedAttributes(): array
+    {
+        return [
+            'value',
+            'checked',
+            'required',
+            'disabled',
+            'readonly',
+        ];
     }
 }

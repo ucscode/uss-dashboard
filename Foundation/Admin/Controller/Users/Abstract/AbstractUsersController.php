@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\Admin\Controller\Users;
+namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
