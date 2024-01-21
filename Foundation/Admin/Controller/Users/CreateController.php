@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
 use Ucscode\UssForm\Field\Field;

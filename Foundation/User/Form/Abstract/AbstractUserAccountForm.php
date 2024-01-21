@@ -14,11 +14,6 @@ abstract class AbstractUserAccountForm extends AbstractDashboardForm
     protected ?\Faker\Generator $faker = null;
     private array $fixtures;
 
-    public function isSubmitted(): bool
-    {
-        return $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nonce'] ?? false);
-    }
-
     /**
      * For Testing Purpose Only
      */

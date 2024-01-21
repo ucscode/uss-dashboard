@@ -28,6 +28,11 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         $this->collection = $this->getCollection(self::DEFAULT_COLLECTION);
     }
 
+    public function isSubmitted(): bool
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nonce'] ?? false);
+    }
+
     final public function setProperty(string $name, mixed $property): self
     {
         $this->properties[$name] = $property;
