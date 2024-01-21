@@ -62,7 +62,7 @@ new class () {
             ->setBase("/admin")
             ->setThemeFolder('classic')
             ->setPermissions([
-                RoleImmutable::ROLE_SUPERADMIN,
+                RoleImmutable::ROLE_SUPER_ADMIN,
                 RoleImmutable::ROLE_ADMIN,
             ]);
         AdminDashboard::instance($appControl); // One-time Instantiation

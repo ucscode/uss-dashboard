@@ -41,7 +41,7 @@ class SearchWidget implements CrudWidgetInterface
     protected function prepareResources(): void
     {
         $this->form = new Form();
-        $this->form->getAttribute()->setMethod('get');
+        $this->form->attribute->setMethod('get');
         $searchButton = $this->createSearchButton();
         $this->createSearchInput($searchButton);
     }

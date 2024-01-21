@@ -2,7 +2,9 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-class UpdateController extends CreateController
+use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
+
+class UpdateController extends AbstractFieldConstructor
 {
     protected function composeMicroApplication(): void
     {

@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
+use Module\Dashboard\Bundle\Common\AppStore;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
@@ -32,10 +33,19 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     private function createApp(AppControl $appControl): void
     {
         $this->appControl = $appControl;
-        AppFactory::registerApp($this);
         $this->menu = new TreeNode('Main Menu');
         $this->userMenu = new TreeNode('User Menu');
+        $this->observeApplication();
         (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -1024);
+    }
+
+    private function observeApplication(): void
+    {
+        $appStore = AppStore::instance();
+        $appStore->add('app:instances', $this);
+        foreach($this->appControl->getPermissions() as $permission) {
+            $appStore->add('app:permissions', $permission);
+        }
     }
 
     /**

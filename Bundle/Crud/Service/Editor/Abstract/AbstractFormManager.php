@@ -51,7 +51,8 @@ abstract class AbstractFormManager implements FormManagerInterface
 
     protected function intersectPedigrees(array $context, FieldPedigree $recentPedigree, FieldPedigree $lastPedigree): void
     {
-        if(!empty($context['attributes']) && is_array($context['attributes'])) {
+        $context['attributes'] ??= [];
+        if(is_array($context['attributes'])) {
             foreach($context['attributes'] as $name => $value) {
                 if(!in_array($name, $this->restrictedAttributes())) {
                     $recentPedigree->widget->setAttribute($name, $value);

@@ -4,7 +4,7 @@ namespace Module\Dashboard\Bundle\Immutable;
 
 class RoleImmutable
 {
-    public const ROLE_SUPERADMIN = 'SUPERADMIN';
+    public const ROLE_SUPER_ADMIN = 'SUPER ADMIN';
     public const ROLE_ADMIN = 'ADMIN';
     public const ROLE_MANAGER = 'MANAGER';
     public const ROLE_EDITOR = 'EDITOR';
