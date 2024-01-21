@@ -6,12 +6,11 @@ use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
-use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
 
 class CrudEditor extends AbstractCrudEditor
@@ -30,7 +29,7 @@ class CrudEditor extends AbstractCrudEditor
             $this->immutationException();
             $this->entity = $entity;
             $this->getForm()->populate($entity);
-            $this->getFieldPedigree(FormManager::SUBMIT_KEY)?->widget->setButtonContent("Save Changes");
+            $this->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)?->widget->setButtonContent("Save Changes");
         }
         return $this;
     }

@@ -5,49 +5,14 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\FormManagerInterface;
-use Ucscode\UssForm\Collection\Collection;
-use Ucscode\UssForm\Field\Field;
-use Ucscode\UssForm\Form\Form;
-use Uss\Component\Kernel\Uss;
 
 abstract class AbstractFormManager implements FormManagerInterface
 {
-    public const SUBMIT_KEY = ':submit';
-    public const NONCE_KEY = '__nonce';
-
     protected CrudEditorForm $form;
-    protected Collection $collection;
     
-    public function __construct(protected string $tablename, array $tableColumns)
+    public function __construct(protected string $tableName, array $tableColumns)
     {
-        $this->form = new CrudEditorForm();
-        $this->collection = $this->form->getCollection(Form::DEFAULT_COLLECTION);
-        $this->generateFormFields($tableColumns);
-    }
-
-    protected function generateFormFields(array $tableColumns): void
-    {
-        foreach($tableColumns as $name => $label) {
-            $field = new Field();
-            $field->getElementContext()->label->setValue($label);
-            $this->collection->addField($name, $field);
-        }
-
-        $nonceValue = Uss::instance()->nonce($this->tablename);
-        $nonceField = new Field(Field::NODE_INPUT, Field::TYPE_HIDDEN);
-        $nonceField->getElementContext()->widget
-            ->setAttribute("name", self::NONCE_KEY)
-            ->setValue($nonceValue);
-
-        $this->collection->addField(self::NONCE_KEY, $nonceField);
-
-        $submitButton = new Field(Field::NODE_BUTTON, Field::TYPE_SUBMIT);
-        $submitButton->getElementContext()->widget
-            ->setButtonContent("Create New")
-            ->setRequired(false)
-            ->setFixed(true)
-        ;
-        $this->collection->addField(self::SUBMIT_KEY, $submitButton);
+        $this->form = new CrudEditorForm($tableName, $tableColumns);
     }
 
     protected function intersectPedigrees(array $context, FieldPedigree $recentPedigree, FieldPedigree $lastPedigree): void

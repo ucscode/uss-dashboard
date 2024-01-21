@@ -2,9 +2,9 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Compact;
 
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditorForm;
 
-class CrudEditorForm extends AbstractDashboardForm
+class CrudEditorForm extends AbstractCrudEditorForm
 {
     public function isSubmitted(): bool
     {

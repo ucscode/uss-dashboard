@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Resource\Facade\Position;
@@ -17,7 +18,7 @@ class CreateController extends AbstractFieldConstructor
         $this->generateField([
             'nodeType' => Field::TYPE_CHECKBOX,
             'position' => Position::BEFORE,
-            'position-target' => FormManager::SUBMIT_KEY,
+            'position-target' => CrudEditorFormInterface::SUBMIT_KEY,
             'name' => 'notify-user',
             'label' => 'Send email to user after registration',
             //'collection-target' => 'avatar',
