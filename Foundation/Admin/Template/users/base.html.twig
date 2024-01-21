@@ -1,0 +1,13 @@
+<div class="col-12">
+
+    {% if not channel in ['create', 'update'] %}
+
+        {{ crudKernel.build.html(true)|raw }}
+
+    {% else %}
+
+        {% include '@Foundation/Admin/Template/users/upsert.html.twig' %}
+        
+    {% endif %}
+
+</div>

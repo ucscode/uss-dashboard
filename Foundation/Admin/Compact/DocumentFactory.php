@@ -44,7 +44,7 @@ final class DocumentFactory extends AbstractDocumentFactory
         $document = (new Document())
             ->setName('users:inventory')
             ->setRoute("/users", $this->base)
-            ->setTemplate("/users/inventory.html.twig", $this->namespace)
+            ->setTemplate("/users/base.html.twig", $this->namespace)
             ->setController(new UsersController())
         ; 
 

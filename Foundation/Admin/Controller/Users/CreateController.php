@@ -6,6 +6,7 @@ use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Ucscode\UssForm\Field\Field;
+use Ucscode\UssForm\Form\Form;
 
 class CreateController extends AbstractUsersController
 {
@@ -21,6 +22,11 @@ class CreateController extends AbstractUsersController
     public function getCrudKernel(): CrudKernelInterface
     {
         return $this->crudEditor;
+    }
+
+    public function getForm(): ?Form
+    {
+        return $this->crudEditor->getForm();
     }
 
     protected function configureCrudEditor(): void

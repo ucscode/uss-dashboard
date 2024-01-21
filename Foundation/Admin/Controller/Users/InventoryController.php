@@ -5,6 +5,7 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
 
 class InventoryController extends AbstractUsersController
@@ -22,6 +23,11 @@ class InventoryController extends AbstractUsersController
     public function getCrudKernel(): CrudKernelInterface
     {
         return $this->crudInventory;
+    }
+
+    public function getForm(): ?Form
+    {
+        return null;
     }
 
     protected function regulateColumns(): void
