@@ -5,6 +5,7 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractUsersController;
 use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
@@ -18,7 +19,7 @@ class InventoryController extends AbstractUsersController
         $this->enableDocumentMenu('main:users');
         $this->crudInventory = new CrudInventory(UserInterface::USER_TABLE);
         $this->crudInventory->setTableBackgroundWhite();
-        $this->regulateColumns();
+        $this->removeSensitiveColumns();
     }
 
     public function getCrudKernel(): CrudKernelInterface
@@ -31,7 +32,12 @@ class InventoryController extends AbstractUsersController
         return null;
     }
 
-    protected function regulateColumns(): void
+    public function getClient(): ?User
+    {
+        return null;
+    }
+
+    protected function removeSensitiveColumns(): void
     {
         $uss = Uss::instance();
         $omitFields = ['id', 'password'];

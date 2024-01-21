@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\FormManagerInterface;
 use Ucscode\UssForm\Collection\Collection;
@@ -14,12 +15,12 @@ abstract class AbstractFormManager implements FormManagerInterface
     public const SUBMIT_KEY = ':submit';
     public const NONCE_KEY = '__nonce';
 
-    protected Form $form;
+    protected CrudEditorForm $form;
     protected Collection $collection;
     
     public function __construct(protected string $tablename, array $tableColumns)
     {
-        $this->form = new Form();
+        $this->form = new CrudEditorForm();
         $this->collection = $this->form->getCollection(Form::DEFAULT_COLLECTION);
         $this->generateFormFields($tableColumns);
     }

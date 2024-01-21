@@ -4,12 +4,14 @@ namespace Module\Dashboard\Foundation\Admin\Controller;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
+use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\CreateController;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Interface\UserControllerInterface;
 use Module\Dashboard\Foundation\Admin\Controller\Users\InventoryController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\UpdateController;
 use Uss\Component\Kernel\Uss;
@@ -26,19 +28,23 @@ class UsersController extends AbstractDashboardController
             default => new InventoryController($document),
         };
 
-        $crudKernel = $userController->getCrudKernel();
-        $entity = $crudKernel instanceof CrudEditor ? $crudKernel->getEntity() : [];
-        $client = new User($entity['id'] ?? null);
+        $updatedContext = $this->rewriteContext($channel, $userController, $document->getContext());
+        $document->setContext($updatedContext);
+    }
 
-        $context = [
+    protected function rewriteContext(string $channel, ?UserControllerInterface $userController, array $context): array
+    {
+        $client = $userController->getClient();
+        
+        $localContext = [
             'channel' => $channel,
-            'crudKernel' => $crudKernel,
+            'crudKernel' => $userController->getCrudKernel(),
             'form' => $userController->getForm(),
             'client' => $client,
-            'hint' => $this->getHints($client),
-        ] + $document->getContext();
-
-        $document->setContext($context);
+            'hint' => $client ? $this->getHints($client) : null,
+        ];
+        
+        return $localContext + $context;
     }
 
     protected function getHints(User $client): array

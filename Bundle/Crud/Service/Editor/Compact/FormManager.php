@@ -4,11 +4,10 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Compact;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractFormManager;
 use Ucscode\UssForm\Field\Field;
-use Ucscode\UssForm\Form\Form;
 
 class FormManager extends AbstractFormManager
 {
-    public function getForm(): Form
+    public function getForm(): CrudEditorForm
     {
         return $this->form;
     }

@@ -10,6 +10,5 @@ class UpdateController extends AbstractFieldConstructor
     {
         parent::composeMicroApplication();
         $this->enableDocumentMenu('main:users');
-        $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
     }
 }

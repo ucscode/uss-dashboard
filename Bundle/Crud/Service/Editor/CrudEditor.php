@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
 use Ucscode\SQuery\SQuery;
@@ -122,7 +123,7 @@ class CrudEditor extends AbstractCrudEditor
         return $this;
     }
 
-    public function getForm(): Form
+    public function getForm(): CrudEditorForm
     {
         return $this->formManager->getForm();
     }

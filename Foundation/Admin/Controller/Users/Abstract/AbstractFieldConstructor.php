@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
 use Module\Dashboard\Bundle\Common\AppStore;
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Ucscode\UssForm\Field\Field;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
@@ -11,11 +12,13 @@ use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Gadget\Gadget;
 use Ucscode\UssForm\Resource\Facade\Position;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\User\User;
 
 abstract class AbstractFieldConstructor extends AbstractUsersController
 {
     protected CrudEditor $crudEditor;
     protected Form $form;
+    protected User $client;
 
     public function getCrudKernel(): CrudKernelInterface
     {
@@ -27,11 +30,23 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         return $this->crudEditor->getForm();
     }
 
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
     protected function composeMicroApplication(): void
     {
         $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
         $this->form = $this->crudEditor->getForm();
         $this->form->attribute->setEnctype("multipart/form-data");
+
+        if(($_GET['channel'] ?? null) === CrudEnum::UPDATE->value) {
+            $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
+        };
+
+        $this->client = new User($this->crudEditor->getEntity()['id'] ?? null);
+
         $this->removeSensitiveFields();
         $this->configurePrimaryFields();
         $this->createAvatarCollections();
@@ -116,6 +131,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             ->setRequired(false)
             ->setAttribute('id', 'avatar-input')
             ->setAttribute('accept', 'jpg,png,gif,jpeg,webp')
+            ->setAttribute('data-ui-preview-uploaded-image-in', '#avatar-image')
         ;
     }
 
@@ -127,9 +143,16 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
 
         $permissions = AppStore::instance()->get('app:permissions');
         sort($permissions);
+
         $role = array_shift($permissions);
+        $clientRoles = $this->client->roles->getAll();
         
-        [$gadget, $input] = $this->configureRoleGadget($field, $field->getElementContext()->gadget, $role);
+        [$gadget, $input] = $this->configureRoleGadget(
+            $field, 
+            $field->getElementContext()->gadget, 
+            $role,
+            $clientRoles
+        );
 
         $field->addGadget($role . 'input', $input);
         $field->setGadgetPosition($input, Position::BEFORE, $gadget);
@@ -137,7 +160,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         foreach($permissions as $role) {
             $gadget = new Gadget(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
 
-            [$gadget, $input] = $this->configureRoleGadget($field, $gadget, $role);
+            [$gadget, $input] = $this->configureRoleGadget($field, $gadget, $role, $clientRoles);
             
             $field->addGadget($role . 'input', $input);
             $field->addGadget($role, $gadget);
@@ -146,11 +169,12 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $rolesCollection->addField('roles', $field);
     }
 
-    protected function configureRoleGadget(Field $field, Gadget $gadget, string $role): array
+    protected function configureRoleGadget(Field $field, Gadget $gadget, string $role, array $clientRoles): array
     {
         $name = sprintf('roles[%s]', $role);
         $gadget->widget
             ->setRequired(false)
+            ->setChecked(in_array($role, $clientRoles))
             ->setValue(1)
             ->setAttribute('name', $name)
         ;
@@ -158,7 +182,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $gadget->container
             ->addClass('form-check-inline')
         ;
-
+        
         $inputGadget = new Gadget(Field::NODE_INPUT, Field::TYPE_HIDDEN);
         $inputGadget->widget
             ->setRequired(false)

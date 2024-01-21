@@ -3,13 +3,10 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
-use Ucscode\UssForm\Form\Form;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Interface\UserControllerInterface;
 
-abstract class AbstractUsersController
+abstract class AbstractUsersController implements UserControllerInterface
 {
-    abstract public function getCrudKernel(): CrudKernelInterface;
-    abstract public function getForm(): ?Form;
     abstract protected function composeMicroApplication(): void;
 
     public function __construct(protected Document $document)
