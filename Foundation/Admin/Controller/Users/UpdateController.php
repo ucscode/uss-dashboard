@@ -10,6 +10,6 @@ class UpdateController extends AbstractFieldConstructor
     {
         parent::composeMicroApplication();
         $this->enableDocumentMenu('main:users');
-        $this->crudEditor->autoPersistEntity();
+        $this->crudEditor->processSubmitRequest();
     }
 }

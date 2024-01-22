@@ -21,6 +21,6 @@ class CreateController extends AbstractFieldConstructor
             'label' => 'Send email to user after registration',
             //'collection-target' => 'avatar',
         ]);
-        $this->crudEditor->autoPersistEntity();
+        $this->crudEditor->processSubmitRequest();
     }
 }

@@ -81,12 +81,10 @@ class CrudEditor extends AbstractCrudEditor
         if($this->isPersistable()) {
 
             $entity = array_filter(
-                $this->entity, 
+                $this->castEntity($this->entity), 
                 fn ($value, $key) => array_key_exists($key, $this->tableColumns), 
                 ARRAY_FILTER_USE_BOTH
             );
-
-            $entity = Uss::instance()->sanitize($entity, true);
             
             $sQuery = new SQuery();
 
@@ -164,7 +162,7 @@ class CrudEditor extends AbstractCrudEditor
         return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
     }
 
-    public function autoPersistEntity(): void
+    public function processSubmitRequest(): void
     {
         (new Event())->addListener(
             'dashboard:render', 
