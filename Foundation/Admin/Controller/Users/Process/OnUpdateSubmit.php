@@ -7,10 +7,8 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 
 class OnUpdateSubmit implements DashboardFormSubmitInterface
 {
-    public function onSubmit(array &$resource, AbstractDashboardForm $form): void
-    {
-        
-    }
+    public function onFilter(array &$resource, AbstractDashboardForm $form): void
+    {}
 
     public function onValidate(array &$resource, AbstractDashboardForm $form): void
     {

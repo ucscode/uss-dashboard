@@ -115,7 +115,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             $resource = $this->filterResource(); // Local resolver
             
             foreach($this->submitInterfaces as $submitter) {
-                $submitter->onSubmit($resource, $this);
+                $submitter->onFilter($resource, $this);
             }
             
             $resource = $this->validateResource($resource); // Local Resolver
