@@ -31,7 +31,7 @@ class CrudEditorForm extends AbstractCrudEditorForm
             ->setMessage("Invalid security token")
         ;
 
-        $this->flash->addToast('void-token', $toast);
+        $this->flash->addToast($toast, 'void-token');
         return null;
     }
 
@@ -45,9 +45,9 @@ class CrudEditorForm extends AbstractCrudEditorForm
                 $this->crudEditor->setEntityValue($key, $value);
             }
         }
-
+        
         $persist = $this->crudEditor->persistEntity();
-        $this->flash->addToast('persist', $this->getToast($persist));
+        $this->flash->addToast($this->getToast($persist), 'persist');
 
         return $validatedResource;
     }

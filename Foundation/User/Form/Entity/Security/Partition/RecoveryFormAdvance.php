@@ -64,7 +64,7 @@ class RecoveryFormAdvance extends AbstractRecoveryPartition
                 $modal->setMessage("Your password reset was successful. <br> Your account is now updated with the new password.");
             }
 
-            Flash::instance()->addModal("password-reset", $modal);
+            Flash::instance()->addModal($modal, "password-reset");
         }
 
         return $user;

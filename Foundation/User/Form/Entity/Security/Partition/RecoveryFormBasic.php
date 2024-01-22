@@ -50,7 +50,7 @@ class RecoveryFormBasic extends AbstractRecoveryPartition
                 $sent ? $modal->setTitle("Reset Password Sent") : null;
             }
 
-            Flash::instance()->addModal("password-reset", $modal);
+            Flash::instance()->addModal($modal, "password-reset");
         }
 
         return $user;

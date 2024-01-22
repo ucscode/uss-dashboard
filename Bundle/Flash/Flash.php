@@ -19,7 +19,7 @@ class Flash extends AbstractFlash
     use SingletonTrait;
 
     
-    public function addModal(string $name, Modal $modal): self
+    public function addModal(Modal $modal, ?string $name = null): self
     {
         $modalGUI = new ModalGUI();
         
@@ -35,13 +35,18 @@ class Flash extends AbstractFlash
             $delay = $modal->getDelay();
             $content = "<script>$(() => setTimeout(() => console.log(bootbox.dialog({$javascriptObject})), {$delay}));</script>";
             
+            $modalContext = [
+                'timestamp' => time(),
+                'content' => $content,
+            ];
+
             $this->flash->{$key} ??= [];
             $this->flash->{$key}['created'] ??= time();
             $this->flash->{$key}['modal'] ??= [];
-            $this->flash->{$key}['modal'][] = [
-                'timestamp' => time(),
-                'content' => $content
-            ];
+            
+            $name !== null ?
+                $this->flash->{$key}['modal'][$name] = $modalContext :
+                $this->flash->{$key}['modal'][] = $modalContext;
 
             $this->flash->save();
         }
@@ -49,7 +54,7 @@ class Flash extends AbstractFlash
         return $this;
     }
 
-    public function addToast(string $name, Toast $toast): self
+    public function addToast(Toast $toast, ?string $name = null): self
     {
         $toastGUI = new ToastGUI();
 
@@ -63,13 +68,18 @@ class Flash extends AbstractFlash
             $delay = $toast->getDelay();
             $content = "<script>$(() => setTimeout(() => console.log(Toastify({$javascriptObject}).showToast()), {$delay}));</script>";
             
-            $this->flash->{$key} ??= [];
-            $this->flash->{$key}['created'] ??= time();
-            $this->flash->{$key}['toast'] ??= [];
-            $this->flash->{$key}['toast'][] = [
+            $toastContext = [
                 'timestamp' => time(),
                 'content' => $content
             ];
+
+            $this->flash->{$key} ??= [];
+            $this->flash->{$key}['created'] ??= time();
+            $this->flash->{$key}['toast'] ??= [];
+
+            $name !== null ?
+                $this->flash->{$key}['toast'][$name] = $toastContext :
+                $this->flash->{$key}['toast'][] = $toastContext;
             
             $this->flash->save();
         }

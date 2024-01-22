@@ -78,7 +78,7 @@ class ProfileForm extends AbstractUserAccountForm
                     $modal->setTitle("Profile Update Error");
                     $modal->setMessage(str_replace("\n", "<br/>", $e->getMessage()));
 
-                    Flash::instance()->addModal("profile-error", $modal);
+                    Flash::instance()->addModal($modal, "profile-error");
 
                 }
 
@@ -133,7 +133,7 @@ class ProfileForm extends AbstractUserAccountForm
             $modal->setTitle($title);
             $modal->setMessage($message);
 
-            Flash::instance()->addModal("user-profile", $modal);
+            Flash::instance()->addModal($modal, "user-profile");
 
             return [
                 'resource' => $validatedResource,

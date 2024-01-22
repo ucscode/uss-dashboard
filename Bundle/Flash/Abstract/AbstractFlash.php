@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Bundle\Flash\Abstract;
 
-use DateTime;
 use Module\Dashboard\Bundle\Flash\Interface\FlashInterface;
 use Ucscode\LocalStorage\LocalStorage;
 use Uss\Component\Block\BlockManager;

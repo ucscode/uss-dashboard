@@ -124,7 +124,7 @@ class LoginForm extends AbstractUserAccountForm
             }
         }
 
-        Flash::instance()->addToast("login", $toast);
+        Flash::instance()->addToast($toast, "login");
         return null;
     }
 

@@ -109,7 +109,7 @@ abstract class AbstractEmailResolver
             }
         }
 
-        Flash::instance()->addToast("verify-email", $toast);
+        Flash::instance()->addToast($toast, "verify-email");
     }
 
     protected function getSystemContext(User $user): array

@@ -56,7 +56,7 @@ class PasswordForm extends AbstractUserAccountForm
             $modal = new Modal();
             $modal->setTitle($title);
             $modal->setMessage($message);
-            Flash::instance()->addModal("profile-password", $modal);
+            Flash::instance()->addModal($modal, "profile-password");
             return true;
         }
         return false;

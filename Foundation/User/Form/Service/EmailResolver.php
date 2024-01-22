@@ -118,7 +118,7 @@ class EmailResolver extends AbstractEmailResolver
                 $toast = new Toast();
                 $toast->setMessage($message);
                 $toast->setBackground(Toast::BG_DANGER);
-                Flash::instance()->addToast("reset-link", $toast);
+                Flash::instance()->addToast($toast, "reset-link");
             }
         }
 
@@ -180,7 +180,7 @@ class EmailResolver extends AbstractEmailResolver
                         };
                     };
                     $toast->setMessage($message);
-                    Flash::instance()->addToast("profile-email", $toast);
+                    Flash::instance()->addToast($toast, "profile-email");
                 }
             }
         };

@@ -145,7 +145,7 @@ class RegisterForm extends AbstractUserAccountForm
             $modal->setMessage($message['message']);
             $modal->setTitle($message['title']);
 
-            Flash::instance()->addModal("registeration", $modal);
+            Flash::instance()->addModal($modal, "registeration");
 
             if($user->isAvailable()) {
                 header("location: {$successRedirect}");
@@ -170,7 +170,7 @@ class RegisterForm extends AbstractUserAccountForm
                 $toast = new Toast();
                 $toast->setMessage(sprintf("Error: The %s already exists", $key));
                 $toast->setBackground(Toast::BG_DANGER);
-                Flash::instance()->addToast("user-available", $toast);
+                Flash::instance()->addToast($toast, "user-available");
                 return false;
             }
         }
