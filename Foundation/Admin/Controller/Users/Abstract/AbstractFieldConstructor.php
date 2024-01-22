@@ -219,11 +219,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
                     'password' => null
                 ]);
                 $entity = $this->crudEditor->getEntity();
-                if($this->client->isAvailable()) {
-                    
-                    return;
-                }
-                $this->client->allocate('id', $entity['id']);
+                $this->client = new User($entity['id']);
             }
         }
     }
