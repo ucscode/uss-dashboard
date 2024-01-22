@@ -7,7 +7,6 @@ use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\InventoryGlobalAction;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction\GlobalActionsWidget;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
 use Ucscode\DOMTable\DOMTable;
@@ -28,7 +27,7 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
     protected function configureInventory(?Condition $condition): void
     {
         $this->domTable = new DOMTable($this->tableName);
-        $this->domTable->setColumns($this->tableColumns);
+        $this->domTable->setColumns($this->tableColumnsLabelled);
         $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
         $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
 

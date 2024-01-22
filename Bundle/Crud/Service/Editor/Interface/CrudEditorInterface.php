@@ -21,4 +21,5 @@ interface CrudEditorInterface extends FormManagerInterface
     public function moveFieldToCollection(string|Field $field, string|Collection $collection): bool;
     public function detachField(string|Field $field, bool $hide): self;
     public function isFieldDetached(string|Field $field): bool;
+    public function autoPersistEntity(): void;
 }

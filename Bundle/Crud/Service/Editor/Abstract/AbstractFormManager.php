@@ -4,20 +4,23 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
+use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\FormManagerInterface;
+use Uss\Component\Event\Event;
 
 abstract class AbstractFormManager implements FormManagerInterface
 {
     protected CrudEditorForm $form;
     
-    public function __construct(protected string $tableName, array $tableColumns)
+    public function __construct(protected CrudEditor $crudEditor)
     {
-        $this->form = new CrudEditorForm($tableName, $tableColumns);
+        $this->form = new CrudEditorForm($this->crudEditor);
     }
 
     protected function intersectPedigrees(array $context, FieldPedigree $recentPedigree, FieldPedigree $lastPedigree): void
     {
         $context['attributes'] ??= [];
+
         if(is_array($context['attributes'])) {
             foreach($context['attributes'] as $name => $value) {
                 if(!in_array($name, $this->restrictedAttributes())) {

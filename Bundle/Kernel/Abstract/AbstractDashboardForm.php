@@ -108,7 +108,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         );
     }
 
-    final public function handleSubmission(): void
+    final public function handleSubmission(): self
     {
         if($this->isSubmitted()) {
 
@@ -143,6 +143,8 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             }
 
         };
+
+        return $this;
     }
 
     protected function filterResource(): array

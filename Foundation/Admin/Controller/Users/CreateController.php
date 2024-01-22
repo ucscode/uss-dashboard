@@ -13,7 +13,6 @@ class CreateController extends AbstractFieldConstructor
     {
         $this->enableDocumentMenu('main:users.create');
         parent::composeMicroApplication();
-
         $this->generateField([
             'nodeType' => Field::TYPE_CHECKBOX,
             'position' => Position::BEFORE,
@@ -22,5 +21,6 @@ class CreateController extends AbstractFieldConstructor
             'label' => 'Send email to user after registration',
             //'collection-target' => 'avatar',
         ]);
+        $this->crudEditor->autoPersistEntity();
     }
 }

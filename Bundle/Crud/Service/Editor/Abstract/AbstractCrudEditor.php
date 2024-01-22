@@ -25,17 +25,4 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
         $result = Uss::instance()->mysqli->query($SQL);
         return $result->fetch_assoc();
     }
-
-    protected function immutationException(): void
-    {
-        if($this->mutated) {
-            throw new Exception(
-                sprintf(
-                    "Entity of %s instance is immutable",
-                    get_called_class()
-                )
-            );
-        }
-        $this->mutated = true;
-    }
 }

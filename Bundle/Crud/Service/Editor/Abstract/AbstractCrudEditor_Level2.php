@@ -14,7 +14,7 @@ abstract class AbstractCrudEditor_Level2 extends AbstractCrudEditorFoundation
 
     protected function createFundamentalComponents(): void
     {
-        $this->formManager = new FormManager($this->tableName, $this->tableColumns);
+        $this->formManager = new FormManager($this);
         $this->entitiesContainer->appendChild(
             $this->formManager->getForm()->getElement()
         );

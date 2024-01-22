@@ -7,16 +7,9 @@ use Uss\Component\Kernel\Uss;
 
 abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
 {
-    /**
-     * @param string $tableName    The database tablename
-     */
-    public function __construct(public readonly string $tableName) 
+    public function __construct($tableName)
     {
-        $uss = Uss::instance();
-        $this->tableColumns = array_map(
-            fn ($value) => ucwords(str_replace("_", " ", $value)),
-            $uss->getTableColumns($this->tableName)
-        );
+        parent::__construct($tableName);
         $this->createGraphicalResource();
         $this->orientGraphicalResource();
     }

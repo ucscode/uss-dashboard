@@ -7,10 +7,12 @@ use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
+use mysqli_sql_exception;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
+use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 
 class CrudEditor extends AbstractCrudEditor
@@ -25,12 +27,9 @@ class CrudEditor extends AbstractCrudEditor
 
     public function setEntity(array $entity): self
     {
-        if(!empty($entity)) {
-            $this->immutationException();
-            $this->entity = $entity;
-            $this->getForm()->populate($entity);
-            $this->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)?->widget->setButtonContent("Save Changes");
-        }
+        $this->entity = $entity;
+        $this->getForm()->populate($entity);
+        $this->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)?->widget->setButtonContent("Save Changes");
         return $this;
     }
 
@@ -55,7 +54,7 @@ class CrudEditor extends AbstractCrudEditor
         $offset = $this->getPrimaryOffset();
         if($this->entity && !empty($offset)) {
             $value = $this->entity[$offset] ?? null;
-            return in_array($offset, array_keys($this->tableColumns)) && !empty($value);
+            return in_array($offset, array_keys($this->tableColumns));
         }
         return false;
     }
@@ -87,6 +86,8 @@ class CrudEditor extends AbstractCrudEditor
                 ARRAY_FILTER_USE_BOTH
             );
 
+            $entity = Uss::instance()->sanitize($entity, true);
+            
             $sQuery = new SQuery();
 
             $this->isEntityInDatabase() ?
@@ -97,7 +98,9 @@ class CrudEditor extends AbstractCrudEditor
                     ->insert($this->tableName, $entity);
             $SQL = $sQuery->build();
 
-            return Uss::instance()->mysqli->query($SQL);
+            try {
+                return Uss::instance()->mysqli->query($SQL);
+            } catch(mysqli_sql_exception $e) {}
         }
         return false;
     }
@@ -105,7 +108,6 @@ class CrudEditor extends AbstractCrudEditor
     public function setEntityValue(string $columnName, ?string $value): self
     {
         $this->entity[$columnName] = $value;
-        $this->mutated = true;
         return $this;
     }
 
@@ -160,5 +162,14 @@ class CrudEditor extends AbstractCrudEditor
     public function isFieldDetached(string|Field $field): bool
     {
         return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
+    }
+
+    public function autoPersistEntity(): void
+    {
+        (new Event())->addListener(
+            'dashboard:render', 
+            fn () => $this->getForm()->handleSubmission(), 
+            -1024
+        );
     }
 }

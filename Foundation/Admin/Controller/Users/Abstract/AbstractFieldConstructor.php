@@ -12,12 +12,13 @@ use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Gadget\Gadget;
 use Ucscode\UssForm\Resource\Facade\Position;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\User\User;
 
 abstract class AbstractFieldConstructor extends AbstractUsersController
 {
     protected CrudEditor $crudEditor;
-    protected Form $form;
+    protected CrudEditorForm $form;
     protected User $client;
 
     public function getCrudKernel(): CrudKernelInterface
