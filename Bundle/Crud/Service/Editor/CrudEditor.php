@@ -2,12 +2,16 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 
+use Closure;
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 use mysqli_sql_exception;
+use Ucscode\Promise\Promise;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
@@ -170,12 +174,11 @@ class CrudEditor extends AbstractCrudEditor
         return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
     }
 
-    public function processSubmitRequest(): void
+    public function processSubmitRequest(): Promise
     {
-        (new Event())->addListener(
-            'dashboard:render', 
-            fn () => $this->getForm()->handleSubmission(), 
-            -1024
-        );
+        return new Promise(function($resolved) {
+            $this->getForm()->handleSubmission();
+            $resolved();
+        });
     }
 }

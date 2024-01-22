@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Compact;
 
-use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditorForm;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Uss\Component\Kernel\Uss;
@@ -21,35 +20,30 @@ class CrudEditorForm extends AbstractCrudEditorForm
     {
         $nonce = $filteredResource[self::NONCE_KEY];
         unset($filteredResource[self::NONCE_KEY]);
-
-        if(Uss::instance()->nonce($this->nonceContext, $nonce)) {
-            return $filteredResource;
+        if(!Uss::instance()->nonce($this->nonceContext, $nonce)) {
+            $toast = (new Toast())
+                ->setBackground(Toast::BG_DANGER)
+                ->setMessage("Invalid security token");
+            $this->flash->addToast($toast, 'void-token');
+            return null;
         }
-
-        $toast = (new Toast())
-            ->setBackground(Toast::BG_DANGER)
-            ->setMessage("Invalid security token")
-        ;
-
-        $this->flash->addToast($toast, 'void-token');
-        return null;
+        return $filteredResource;
     }
 
     protected function persistResource(?array $validatedResource): mixed
     {
-        $channel = $this->crudEditor->hasEntity() ? CrudEnum::UPDATE : CrudEnum::CREATE;
-
-        foreach($validatedResource as $key => $value) {
-            if(is_scalar($value) || is_null($value)) {
-                $value = is_bool($value) ? ($value ? 1 : 0) : $value;
-                $this->crudEditor->setEntityValue($key, $value);
+        if($validatedResource) {
+            foreach($validatedResource as $key => $value) {
+                if(is_scalar($value) || is_null($value)) {
+                    $value = is_bool($value) ? ($value ? 1 : 0) : $value;
+                    $this->crudEditor->setEntityValue($key, $value);
+                }
             }
+            $persist = $this->crudEditor->persistEntity();
+            $this->flash->addToast($this->getToast($persist));
+            return $validatedResource;
         }
-        
-        $persist = $this->crudEditor->persistEntity();
-        $this->flash->addToast($this->getToast($persist), 'persist');
-
-        return $validatedResource;
+        return null;
     }
 
     protected function resolveSubmission(mixed $presistedResource): void

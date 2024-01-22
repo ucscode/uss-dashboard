@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnUpdateSubmit;
 
 class UpdateController extends AbstractFieldConstructor
 {
@@ -10,6 +11,7 @@ class UpdateController extends AbstractFieldConstructor
     {
         parent::composeMicroApplication();
         $this->enableDocumentMenu('main:users');
-        $this->crudEditor->processSubmitRequest();
+        $this->crudEditor->getForm()->addSubmitAction('user-update', new OnUpdateSubmit());
+        $this->crudEditor->processSubmitRequest()->then(fn () => $this->initializeClient());
     }
 }

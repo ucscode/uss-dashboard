@@ -112,28 +112,25 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         if($this->isSubmitted()) {
 
-            $filteredResource = $this->filterResource(); // Local resolver
+            $resource = $this->filterResource(); // Local resolver
+            
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onSubmit($resource, $this);
+            }
+            
+            $resource = $this->validateResource($resource); // Local Resolver
+            
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onValidate($resource, $this);
+            }
+            
+            $resource = $this->persistResource($resource); // Local Resolver
 
-            array_walk(
-                $this->submitInterfaces,
-                fn (DashboardFormSubmitInterface $submitter) => $submitter->onSubmit($filteredResource, $this)
-            );
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onPersist($resource, $this);
+            }
 
-            $validatedResource = $this->validateResource($filteredResource); // Local Resolver
-
-            array_walk(
-                $this->submitInterfaces,
-                fn (DashboardFormSubmitInterface $submitter) => $submitter->onValidateResource($validatedResource, $this)
-            );
-
-            $presistedResource = $this->persistResource($validatedResource); // Local Resolver
-
-            array_walk(
-                $this->submitInterfaces,
-                fn (DashboardFormSubmitInterface $submitter) => $submitter->onPersistResource($presistedResource, $this)
-            );
-
-            $this->resolveSubmission($presistedResource); // Local Resolver
+            $this->resolveSubmission($resource); // Local Resolver
 
             /**
              * Prevent resubmission of form when reload is clicked on the browser

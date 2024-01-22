@@ -14,6 +14,7 @@ use Ucscode\UssForm\Resource\Facade\Position;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\User\User;
+use Uss\Component\Kernel\Uss;
 
 abstract class AbstractFieldConstructor extends AbstractUsersController
 {
@@ -42,12 +43,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $this->form = $this->crudEditor->getForm();
         $this->form->attribute->setEnctype("multipart/form-data");
 
-        if(($_GET['channel'] ?? null) === CrudEnum::UPDATE->value) {
-            $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
-        };
-
-        $this->client = new User($this->crudEditor->getEntity()['id'] ?? null);
-
+        $this->initializeClient();
         $this->removeSensitiveFields();
         $this->configurePrimaryFields();
         $this->createAvatarCollections();
@@ -194,5 +190,19 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             ->addClass('d-none')
         ;
         return [$gadget, $inputGadget];
+    }
+
+    protected function initializeClient($resetEntity = true): void
+    {
+        
+        $clientId = (int)($_GET['entity'] ?? -1);
+        $this->client = new User($clientId);
+        
+        $resetable = 
+            $resetEntity && 
+            ($_GET['channel'] ?? null) === CrudEnum::UPDATE->value &&
+            $this->client->isAvailable();
+        
+        $resetable ? $this->crudEditor->setEntityByOffset($this->client->getId()) : null;
     }
 }

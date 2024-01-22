@@ -6,7 +6,7 @@ use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 
 interface DashboardFormSubmitInterface
 {
-    public function onSubmit(array $filteredResource, AbstractDashboardForm $form): void;
-    public function onValidateResource(array $validatedResource, AbstractDashboardForm $form): void;
-    public function onPersistResource(mixed $response, AbstractDashboardForm $form): void;
+    public function onSubmit(array &$resource, AbstractDashboardForm $form): void;
+    public function onValidate(array &$resource, AbstractDashboardForm $form): void;
+    public function onPersist(mixed &$response, AbstractDashboardForm $form): void;
 }
