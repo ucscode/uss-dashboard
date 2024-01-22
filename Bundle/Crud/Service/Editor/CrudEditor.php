@@ -80,12 +80,16 @@ class CrudEditor extends AbstractCrudEditor
     {
         if($this->isPersistable()) {
 
-            $entity = array_filter(
+            $this->entity = array_filter(
                 $this->castEntity($this->entity), 
                 fn ($value, $key) => array_key_exists($key, $this->tableColumns), 
                 ARRAY_FILTER_USE_BOTH
             );
             
+            $entity = array_map(function($value) {
+                return $value !== null ? Uss::instance()->sanitize($value, true) : $value;
+            }, $this->entity);
+
             $sQuery = new SQuery();
 
             $this->isEntityInDatabase() ?
@@ -97,7 +101,11 @@ class CrudEditor extends AbstractCrudEditor
             $SQL = $sQuery->build();
 
             try {
-                return Uss::instance()->mysqli->query($SQL);
+                $upsert = Uss::instance()->mysqli->query($SQL);
+                if($upsert) {
+                    $this->getForm()->populate($this->entity);
+                }
+                return $upsert;
             } catch(mysqli_sql_exception $e) {}
         }
         return false;

@@ -88,8 +88,6 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
             $value = (float)$value;
         }
         
-        $value = Uss::instance()->sanitize($value, true);
-        
         return $value;
     }
 }
