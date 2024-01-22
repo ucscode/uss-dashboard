@@ -63,12 +63,7 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
     {
         $mysqlDataTypeGroup = $this->mysqlDataTypeGroup();
 
-        $isCharacter = in_array($info['datatype'], [
-            ...$mysqlDataTypeGroup['text'],
-            ...$mysqlDataTypeGroup['char'],
-        ]);
-
-        if(empty($value) && !$isCharacter && $info['nullable']) {
+        if(empty($value) && $info['nullable']) {
             return null;
         }
 
