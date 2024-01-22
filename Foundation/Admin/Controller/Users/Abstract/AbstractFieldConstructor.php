@@ -14,7 +14,6 @@ use Ucscode\UssForm\Resource\Facade\Position;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\User\User;
-use Uss\Component\Kernel\Uss;
 
 abstract class AbstractFieldConstructor extends AbstractUsersController
 {
@@ -42,6 +41,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
         $this->form = $this->crudEditor->getForm();
         $this->form->attribute->setEnctype("multipart/form-data");
+        $this->client = new User();
 
         $this->initializeClient();
         $this->removeSensitiveFields();
@@ -68,6 +68,18 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         }
 
         return $field;
+    }
+
+    protected function iterateRolesGadget(callable $callback, $filter = false): void
+    {
+        $roleField = $this->form->getCollection('roles')->getField('roles');
+        $callback($roleField->getElementContext()->gadget);
+        foreach($roleField->getGadgets() as $gadget) {
+            if($filter && !$gadget->widget->hasAttribute('data-role')) {
+                continue;
+            }
+            $callback($gadget);
+        }
     }
 
     protected function removeSensitiveFields(): void
@@ -99,6 +111,11 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         $this->crudEditor
             ->configureField('password', [
                 'required' => false,
+                'value' => '',
+                'info' => '<span class="text-muted small">
+                    <i class="bi bi-info-circle"></i> 
+                    Leave blank to preseve current password
+                </span>',
             ]);
         
         $this->crudEditor
@@ -174,6 +191,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             ->setChecked(in_array($role, $clientRoles))
             ->setValue(1)
             ->setAttribute('name', $name)
+            ->setAttribute('data-role', $role)
         ;
         $gadget->label->setValue($role);
         $gadget->container
@@ -192,17 +210,21 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         return [$gadget, $inputGadget];
     }
 
-    protected function initializeClient($resetEntity = true): void
+    protected function initializeClient(): void
     {
-        
-        $clientId = (int)($_GET['entity'] ?? -1);
-        $this->client = new User($clientId);
-        
-        $resetable = 
-            $resetEntity && 
-            ($_GET['channel'] ?? null) === CrudEnum::UPDATE->value &&
-            $this->client->isAvailable();
-        
-        $resetable ? $this->crudEditor->setEntityByOffset($this->client->getId()) : null;
+        if(($_GET['channel'] ?? null) === CrudEnum::UPDATE->value) {
+            $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
+            if($this->crudEditor->hasEntity()) {
+                $this->crudEditor->getForm()->populate([
+                    'password' => null
+                ]);
+                $entity = $this->crudEditor->getEntity();
+                if($this->client->isAvailable()) {
+                    
+                    return;
+                }
+                $this->client->allocate('id', $entity['id']);
+            }
+        }
     }
 }

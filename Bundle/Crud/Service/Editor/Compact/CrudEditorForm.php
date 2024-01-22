@@ -41,15 +41,13 @@ class CrudEditorForm extends AbstractCrudEditorForm
             }
             $persist = $this->crudEditor->persistEntity();
             $this->flash->addToast($this->getToast($persist));
-            return $validatedResource;
+            return $this->crudEditor->getEntity(true);
         }
         return null;
     }
 
     protected function resolveSubmission(mixed $presistedResource): void
-    {
-        $this->setProperty('history.replaceState', false);
-    }
+    {}
 
     protected function getToast(bool $persist): Toast
     {

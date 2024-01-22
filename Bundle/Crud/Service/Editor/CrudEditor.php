@@ -2,21 +2,17 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 
-use Closure;
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 use mysqli_sql_exception;
 use Ucscode\Promise\Promise;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
-use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 
 class CrudEditor extends AbstractCrudEditor
@@ -43,9 +39,11 @@ class CrudEditor extends AbstractCrudEditor
         return $entity ? !!$this->setEntity($entity) : false;
     }
 
-    public function getEntity(): array
+    public function getEntity(bool $filtered = false): array
     {
-        return $this->entity;
+        return !$filtered ? $this->entity : array_filter($this->entity, function($value, $key) {
+            return in_array($key, array_keys($this->tableColumns));
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     public function hasEntity(): bool
@@ -172,13 +170,5 @@ class CrudEditor extends AbstractCrudEditor
     public function isFieldDetached(string|Field $field): bool
     {
         return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
-    }
-
-    public function processSubmitRequest(): Promise
-    {
-        return new Promise(function($resolved) {
-            $this->getForm()->handleSubmission();
-            $resolved();
-        });
     }
 }

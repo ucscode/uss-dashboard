@@ -4,6 +4,7 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnCreateSubmit;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Resource\Facade\Position;
 
@@ -23,7 +24,12 @@ class CreateController extends AbstractFieldConstructor
             //'collection-target' => 'avatar',
         ]);
 
-        $this->crudEditor->processSubmitRequest()
+        $this->crudEditor->getForm()->addSubmitAction(
+            'user:create',
+            new OnCreateSubmit($this->client)
+        );
+        
+        $this->crudEditor->getForm()->handleSubmission()
         ->then(function() {
             
         });

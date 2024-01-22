@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Kernel\Abstract;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormBuilderInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
+use Ucscode\Promise\Promise;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Form\Attribute;
 use Ucscode\UssForm\Form\Form;
@@ -108,40 +109,44 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         );
     }
 
-    final public function handleSubmission(): self
+    final public function handleSubmission(): Promise
     {
-        if($this->isSubmitted()) {
+        return new Promise(function($resolved) {
 
-            $resource = $this->filterResource(); // Local resolver
-            
-            foreach($this->submitInterfaces as $submitter) {
-                $submitter->onFilter($resource, $this);
-            }
-            
-            $resource = $this->validateResource($resource); // Local Resolver
-            
-            foreach($this->submitInterfaces as $submitter) {
-                $submitter->onValidate($resource, $this);
-            }
-            
-            $resource = $this->persistResource($resource); // Local Resolver
+            if($this->isSubmitted()) {
+                
+                $resource = $this->filterResource(); // Local resolver
+                
+                foreach($this->submitInterfaces as $submitter) {
+                    $submitter->onFilter($resource, $this);
+                }
+                
+                $resource = $this->validateResource($resource); // Local Resolver
+                
+                foreach($this->submitInterfaces as $submitter) {
+                    $submitter->onValidate($resource, $this);
+                }
+                
+                $resource = $this->persistResource($resource); // Local Resolver
 
-            foreach($this->submitInterfaces as $submitter) {
-                $submitter->onPersist($resource, $this);
-            }
+                foreach($this->submitInterfaces as $submitter) {
+                    $submitter->onPersist($resource, $this);
+                }
 
-            $this->resolveSubmission($resource); // Local Resolver
+                $this->resolveSubmission($resource); // Local Resolver
 
-            /**
-             * Prevent resubmission of form when reload is clicked on the browser
-             */
-            if(!empty($this->getProperty('history.replaceState') ?? true)) {
-                $this->replaceHistoryState();
-            }
+                /**
+                 * Prevent resubmission of form when reload is clicked on the browser
+                 */
+                if(!empty($this->getProperty('history.replaceState') ?? true)) {
+                    $this->replaceHistoryState();
+                }
 
-        };
+                $resolved($this);
 
-        return $this;
+            };
+
+        });
     }
 
     protected function filterResource(): array

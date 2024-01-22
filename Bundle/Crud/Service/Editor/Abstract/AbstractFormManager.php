@@ -6,7 +6,6 @@ use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\FormManagerInterface;
-use Uss\Component\Event\Event;
 
 abstract class AbstractFormManager implements FormManagerInterface
 {
@@ -38,11 +37,15 @@ abstract class AbstractFormManager implements FormManagerInterface
             $context['checked'] ??= (bool)($context['checked'] ?? $lastPedigree->widget->isChecked());
             $recentPedigree->widget->setChecked($context['checked']);
         }
-
+        
         $recentPedigree->widget->setValue($context['value'] ?? $lastPedigree->widget->getValue());
 
         $recentPedigree->gadget->label->setValue(
             $context['label'] ?? $lastPedigree->gadget->label->getValue()
+        );
+
+        $recentPedigree->field->getElementContext()->info->setValue(
+            $context['info'] ?? $lastPedigree->field->getElementContext()->info->getValue()
         );
 
         foreach(['required', 'disabled', 'readonly'] as $offset) {
