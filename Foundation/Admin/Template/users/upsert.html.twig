@@ -2,9 +2,11 @@
 
     <div class='col-lg-6 mb-2'>
         <div class="row">
+
             <div class="col-md-7 col-lg-12">
                 <div class="card p-3 mb-2">
                     <div class="row">
+
                         <div class="col-sm-4 col-md-3 col-lg-4 mb-3 text-center">
                             <div class="image mb-1 border p-1 rounded">
                                 <figure class='image-central m-auto' style='--image-central-width: 120px;'>
@@ -29,6 +31,7 @@
                                 </div>
                             {% endif %}
                         </div>
+
                         <div class="ml-3d col-sm-8 col-md-9 col-lg-8">
                             <div class='border rounded p-3'>
                                 <div class='border-bottom pb-1 mb-1'>
@@ -38,14 +41,19 @@
                                 <div class='border-bottom pb-1 mb-1'>
                                     <div class="p-2 rounded border small">{{ hint.roles|raw }}</div>
                                 </div>
+
                                 {% if client.isAvailable %}
+
                                     <div class='d-flex py-2 border-bottom mb-2'>
                                         <div class='upline-icon me-2 fs-26px'>
                                             <i class='bi bi-person-fill-up'></i> 
                                         </div>
                                         <div class='upline-info border-start ps-2 small'>
                                             <div class='small text-muted'>Invited By</div>
-                                            <a href='{{ hint.parent.href }}' target='{{ hint.parent.target }}'>
+                                            <a href='{{ hint.parent.href }}' data-ui-size='small' 
+                                                {% if client.parent %}
+                                                    data-ui-confirm="You will be redirected to <span class='text-info'>{{ client.parent(true).email }}</span> profile!"
+                                                {% endif %}>
                                                 {{ hint.parent.identity }}
                                             </a>
                                             <div class='small text-muted'>
@@ -53,6 +61,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="small">
                                         <table class='small w-100'>
                                             <tbody>
@@ -67,12 +76,16 @@
                                             </tbody>
                                         </table>
                                     </div>
+
                                 {% endif %}
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
+
             <div class="col-md-5 col-lg-12">
                 <div class="card">
                     <div class="card-body">
@@ -86,6 +99,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

@@ -75,7 +75,6 @@ class UsersController extends AbstractDashboardController
                     'channel' => CrudEnum::UPDATE->value
                 ]),
                 'code' => $parent ? $parent->getUsercode() : null,
-                'target' => $parent ? '_blank' : '_self',
             ],
         ];
         

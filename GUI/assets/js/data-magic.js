@@ -86,8 +86,9 @@ new class {
             const anchor = this;
             const message = this.dataset.uiConfirm;
             const size = this.dataset.uiSize || null;
+            const className = this.dataset.uiClass || (size == 'small' ? size : null);
             bootbox.confirm({
-                message,
+                message: `<div class='${className}'>${message}</div>`,
                 callback(ok) {
                     if(ok) {
                         const clone = anchor.cloneNode();
