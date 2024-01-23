@@ -54,9 +54,12 @@ abstract class AbstractFormManager implements FormManagerInterface
             $setter = "set{$offsetCase}";
             $isser = "is{$offsetCase}";
 
-            $recentPedigree->gadget->widget->{$setter}(
-                $context[$offset] ?? $lastPedigree->gadget->widget->{$isser}()
-            );
+            $checked = !!($context[$offset] ?? $lastPedigree->gadget->widget->{$isser}());
+            $recentPedigree->gadget->widget->{$setter}($checked);
+
+            if($offset === 'required' && $checked) {
+                $recentPedigree->gadget->label->addClass('--required');
+            }
         }
     }
 

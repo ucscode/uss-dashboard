@@ -21,7 +21,7 @@ class UpdateController extends AbstractFieldConstructor
             ->handleSubmission();
         
         $promise->then(function(CrudEditorForm $form) {
-            $persisted = $form->getProperty('entity.isPersisted');
+            $persisted = $form->getProperty(CrudEditorForm::PERSISTENCE_STATUS);
             if($persisted) {
                 $this->initializeClient();
                 $roles = $this->client->roles->getAll();

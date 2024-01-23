@@ -33,15 +33,18 @@ class CrudEditorForm extends AbstractCrudEditorForm
     protected function persistResource(?array $validatedResource): mixed
     {
         if($validatedResource) {
+
             foreach($validatedResource as $key => $value) {
                 if(is_scalar($value) || is_null($value)) {
                     $value = is_bool($value) ? ($value ? 1 : 0) : $value;
                     $this->crudEditor->setEntityValue($key, $value);
                 }
             }
-            if(!!$this->getProperty('entity.persist')) {
+
+            if(!!$this->getProperty(self::PERSISTENCE_ENABLED)) {
                 $persist = $this->crudEditor->persistEntity();
-                $this->setProperty('entity.isPersisted', true);
+                $this->setProperty(self::PERSISTENCE_STATUS, $persist);
+                !$persist ? $this->setProperty(self::PERSISTENCE_ERROR, Uss::instance()->mysqli->error) : null;
                 $this->flash->addToast($this->getToast($persist));
                 return $this->crudEditor->getEntity(true);
             }

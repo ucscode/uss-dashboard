@@ -12,6 +12,12 @@ use Uss\Component\Kernel\UssImmutable;
 
 abstract class AbstractCrudEditorForm extends AbstractDashboardForm implements CrudEditorFormInterface
 {
+    public const PERSISTENCE_INSERT_ID = 'entity.persist.insert_id';
+    public const PERSISTENCE_ENABLED = 'entity.persist.enabled';
+    public const PERSISTENCE_STATUS = 'entity.persist.status';
+    public const PERSISTENCE_ERROR = 'entity.persist.error';
+    public const PERSISTENCE_TYPE = 'entity.persist.type';
+
     protected string $nonceContext;
     protected Flash $flash;
 
@@ -21,8 +27,9 @@ abstract class AbstractCrudEditorForm extends AbstractDashboardForm implements C
         $this->nonceContext = UssImmutable::SECRET_KEY . $this->crudEditor->tableName;
         $this->generateFormFields();
         $this->flash = Flash::instance();
-        $this->setProperty('entity.persist', true);
-        $this->setProperty('entity.isPersisted', false);
+
+        $this->setProperty(self::PERSISTENCE_ENABLED, true);
+        $this->setProperty(self::PERSISTENCE_STATUS, false);
     }
 
     protected function generateFormFields(): void

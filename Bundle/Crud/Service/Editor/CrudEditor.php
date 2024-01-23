@@ -2,13 +2,12 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use mysqli_sql_exception;
-use Ucscode\Promise\Promise;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
@@ -65,10 +64,17 @@ class CrudEditor extends AbstractCrudEditor
     public function deleteEntity(): bool
     {
         if($this->isPersistable()) {
+
             $SQL = (new SQuery())->delete()
                 ->from($this->tableName)
                 ->where($this->getEntityCondition())
                 ->build();
+
+            $this->getForm()->setProperty(
+                CrudEditorForm::PERSISTENCE_TYPE, 
+                CrudEnum::DELETE
+            );
+
             return Uss::instance()->mysqli->query($SQL);
         };
         return false;
@@ -95,21 +101,59 @@ class CrudEditor extends AbstractCrudEditor
 
             $sQuery = new SQuery();
 
-            $this->isEntityInDatabase() ?
+            if($this->isEntityInDatabase()) {
+
                 $sQuery
                     ->update($this->tableName, $entity)
-                    ->where($this->getEntityCondition()) :
+                    ->where($this->getEntityCondition());
+
+                $this->getForm()->setProperty(
+                    CrudEditorForm::PERSISTENCE_TYPE, 
+                    CrudEnum::UPDATE
+                );
+                    
+            } else {
+
                 $sQuery
                     ->insert($this->tableName, $entity);
+
+                $this->getForm()->setProperty(
+                    CrudEditorForm::PERSISTENCE_TYPE, 
+                    CrudEnum::CREATE
+                );
+
+            }
+
             $SQL = $sQuery->build();
 
             try {
-                $upsert = Uss::instance()->mysqli->query($SQL);
+                
+                $mysqli = Uss::instance()->mysqli;
+                $upsert = $mysqli->query($SQL);
+
                 if($upsert) {
+
                     $this->getForm()->populate($this->entity);
+                    $persistenceType = $this->getForm()->getProperty(CrudEditorForm::PERSISTENCE_TYPE);
+
+                    $this->getForm()->setProperty(
+                        CrudEditorForm::PERSISTENCE_INSERT_ID,
+                        $persistenceType === CrudEnum::CREATE ? $mysqli->insert_id : null
+                    );
+
                 }
+
                 return $upsert;
-            } catch(mysqli_sql_exception $e) {}
+
+            } catch(mysqli_sql_exception $e) {
+
+                $this->getForm()->setProperty(
+                    CrudEditorForm::PERSISTENCE_ERROR,
+                    $e->getMessage()
+                );
+
+            }
+            
         }
         return false;
     }

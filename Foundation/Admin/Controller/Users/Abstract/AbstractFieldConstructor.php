@@ -96,11 +96,16 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
                 'required' => false,
             ]);
 
+        // Configure Password Field;
+
+        $required = ($_GET['channel'] ?? null) !== CrudEnum::UPDATE->value;
+        $info = $required ? null : 'Leave blank to preserve current password';
+
         $this->crudEditor
             ->configureField('password', [
-                'required' => false,
+                'required' => $required,
                 'value' => '',
-                'info' => $this->info('Leave blank to preserve current password'),
+                'info' => $this->info($info),
             ]);
         
         $this->crudEditor

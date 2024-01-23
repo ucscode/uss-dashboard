@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
@@ -50,7 +51,7 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
             }
         }
         
-        if(!$form->getProperty('entity.isPersisted')) {
+        if(!$form->getProperty(CrudEditorForm::PERSISTENCE_STATUS)) {
             $this->handlePersistionError();
         }
         
@@ -81,5 +82,16 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
 
             Flash::instance()->addToast($toast);
         }
+    }
+
+    protected function easyToast(string $message, ?string $background = null, int $delay = 0): Toast
+    {
+        $background ??= Toast::BG_DANGER;
+        $toast = (new Toast())
+            ->setBackground($background)
+            ->setMessage($message)
+            ->setDelay($delay);
+        Flash::instance()->addToast($toast);
+        return $toast;
     }
 }

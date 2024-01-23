@@ -4,8 +4,6 @@ namespace Module\Dashboard\Foundation\Admin\Controller;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
-use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
-use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;

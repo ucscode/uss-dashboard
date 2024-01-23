@@ -14,15 +14,7 @@ class CreateController extends AbstractFieldConstructor
     {
         $this->enableDocumentMenu('main:users.create');
         parent::composeMicroApplication();
-
-        $this->generateField([
-            'nodeType' => Field::TYPE_CHECKBOX,
-            'position' => Position::BEFORE,
-            'position-target' => CrudEditorFormInterface::SUBMIT_KEY,
-            'name' => 'notify-user',
-            'label' => 'Send email to user after registration',
-            //'collection-target' => 'avatar',
-        ]);
+        $this->generateNotificationCheckbox();
 
         $this->crudEditor->getForm()->addSubmitAction(
             'user:create',
@@ -33,5 +25,22 @@ class CreateController extends AbstractFieldConstructor
         ->then(function() {
             
         });
+    }
+
+    protected function generateNotificationCheckbox(): void
+    {
+        $field = $this->generateField([
+            'nodeType' => Field::TYPE_CHECKBOX,
+            'position' => Position::BEFORE,
+            'position-target' => CrudEditorFormInterface::SUBMIT_KEY,
+            'name' => 'notify_client',
+            'label' => 'Send email to user after registration',
+            //'collection-target' => 'avatar',
+        ]);
+
+        $context = $field->getElementContext();
+        $context->widget->setRequired(false);
+        $context->label->addClass('small');
+        $context->frame->addClass('border-bottom mb-2 pb-3');
     }
 }

@@ -3,8 +3,10 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Common\Password;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\UserControl;
 use Module\Dashboard\Foundation\User\Form\Service\PasswordResolver;
@@ -29,7 +31,7 @@ abstract class AbstractErrorManagement
 
         if($resolver['strength'] < $resolver['strengthLimit']) {
 
-            $form->setProperty('entity.persist', false);
+            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
             $field = $this->getFieldByPedigree('password');
             $context = $field->getElementContext();
 
@@ -47,31 +49,52 @@ abstract class AbstractErrorManagement
 
     protected function handleEmailError(string $email, AbstractDashboardForm $form): string
     {
+        $email = trim(strtolower($email));
+        $field = $this->getFieldByPedigree('email');
+        $context = $field->getElementContext();
+
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $form->setProperty('entity.persist', false);
-            $field = $this->getFieldByPedigree('email');
-            $field->getElementContext()->validation->setValue('* Invalid email address');
+            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $context->validation->setValue('* Invalid email address');
+            return $email;
         }
-        return strtolower($email);
+
+        $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $email, 'email');
+
+        if($client) {
+            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $context->validation->setValue('* Email already exists');
+        }
+
+        return $email;
     }
 
     protected function handleUsernameError(string $username, AbstractDashboardForm $form): ?string
     {
         if(!empty($username)) {
             
+            $username = trim(strtolower($username));
+            $field = $this->getFieldByPedigree('username');
+            $context = $field->getElementContext();
+
             if(!preg_match('/^\w+$/i', $username)) {
-
-                $form->setProperty('entity.persist', false);
-                $field = $this->getFieldByPedigree('username');
-                $context = $field->getElementContext();
-
+                $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
                 $context->validation->setValue('* Invalid Username');
                 $context->info
                     ->setValue('Username should only contain letters, numbers and underscore')
                     ->addClass('text-muted fs-12px')
                 ;
+                return $username;
             }
-            return strtolower($username);
+
+            $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $username, 'username');
+
+            if($client) {
+                $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+                $context->validation->setValue('* Username already exists');
+            }
+
+            return $username;
         }
         return null;
     }
@@ -89,7 +112,7 @@ abstract class AbstractErrorManagement
                 return $this->parent->getId();
             }
 
-            $form->setProperty('entity.persist', false);
+            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
 
             if(!$this->parent->isAvailable()) {
                 $context->validation->setValue('* Invalid or non-existing parent code');
