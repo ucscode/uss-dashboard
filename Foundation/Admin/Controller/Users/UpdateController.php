@@ -15,13 +15,17 @@ class UpdateController extends AbstractFieldConstructor
 
         $this->crudEditor->getForm()->addSubmitAction(
             'user:update', 
-            new OnUpdateSubmit($this->client)
+            new OnUpdateSubmit($this->client, $this->crudEditor)
         );
         
         $this->crudEditor->getForm()->handleSubmission()
         ->then(function() {
-            $this->initializeClient();
-            $this->updateSecondaryCollections();
+            $form = $this->crudEditor->getForm();
+            $persisted = $form->getProperty('entity.isPersisted');
+            if($persisted) {
+                $this->initializeClient();
+                $this->updateSecondaryCollections();
+            }
         });
     }
 

@@ -21,6 +21,8 @@ abstract class AbstractCrudEditorForm extends AbstractDashboardForm implements C
         $this->nonceContext = UssImmutable::SECRET_KEY . $this->crudEditor->tableName;
         $this->generateFormFields();
         $this->flash = Flash::instance();
+        $this->setProperty('entity.persist', true);
+        $this->setProperty('entity.isPersisted', false);
     }
 
     protected function generateFormFields(): void

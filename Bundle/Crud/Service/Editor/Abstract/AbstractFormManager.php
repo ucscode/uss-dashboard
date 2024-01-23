@@ -3,9 +3,9 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FieldPedigree;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\FormManagerInterface;
+use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 
 abstract class AbstractFormManager implements FormManagerInterface
 {

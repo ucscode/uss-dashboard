@@ -29,7 +29,8 @@ class CrudEditor extends AbstractCrudEditor
     {
         $this->entity = $entity;
         $this->getForm()->populate($entity);
-        $this->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)?->widget->setButtonContent("Save Changes");
+        $this->getForm()->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)
+            ?->widget->setButtonContent("Save Changes");
         return $this;
     }
 
@@ -142,14 +143,9 @@ class CrudEditor extends AbstractCrudEditor
         return $this->formManager->configureField($name, $array);
     }
 
-    public function getFieldPedigree(string|Field $context): ?FieldPedigree
-    {
-        return $this->formManager->getFieldPedigree($context);
-    }
-
     public function moveFieldToCollection(string|Field $field, string|Collection $collection): bool
     {
-        $fieldPedigree = $this->getFieldPedigree($field);
+        $fieldPedigree = $this->getForm()->getFieldPedigree($field);
         $field = $fieldPedigree?->field;
         if($field && $this->getForm()->hasCollection($collection)) {
             $collection instanceof Collection ? null : $collection = $this->getForm()->getCollection($collection);
@@ -163,12 +159,12 @@ class CrudEditor extends AbstractCrudEditor
 
     public function detachField(string|Field $field, bool $hide = true): self
     {
-        $this->getFieldPedigree($field)?->field->getElementContext()->frame->setDOMHidden($hide);
+        $this->getForm()->getFieldPedigree($field)?->field->getElementContext()->frame->setDOMHidden($hide);
         return $this;
     }
 
     public function isFieldDetached(string|Field $field): bool
     {
-        return !!$this->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
+        return !!$this->getForm()->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
     }
 }

@@ -39,9 +39,12 @@ class CrudEditorForm extends AbstractCrudEditorForm
                     $this->crudEditor->setEntityValue($key, $value);
                 }
             }
-            $persist = $this->crudEditor->persistEntity();
-            $this->flash->addToast($this->getToast($persist));
-            return $this->crudEditor->getEntity(true);
+            if(!!$this->getProperty('entity.persist')) {
+                $persist = $this->crudEditor->persistEntity();
+                $this->setProperty('entity.isPersisted', true);
+                $this->flash->addToast($this->getToast($persist));
+                return $this->crudEditor->getEntity(true);
+            }
         }
         return null;
     }

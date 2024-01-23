@@ -26,7 +26,7 @@ class CreateController extends AbstractFieldConstructor
 
         $this->crudEditor->getForm()->addSubmitAction(
             'user:create',
-            new OnCreateSubmit($this->client)
+            new OnCreateSubmit($this->client, $this->crudEditor)
         );
         
         $this->crudEditor->getForm()->handleSubmission()

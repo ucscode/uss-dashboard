@@ -4,14 +4,15 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 
-class OnUpdateSubmit extends OnUserFormSubmit
+class OnUpdateSubmit extends AbstractUserFormSubmit
 {
-    public function onValidate(array &$resource, AbstractDashboardForm $form): void
+    public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
-        if(empty($resource['password'])) {
-            unset($resource['password']);
-            return;
+        if($resource) {
+            if(empty($resource['password'])) {
+                unset($resource['password']);
+            }
+            parent::onValidate($resource, $form);
         }
-        parent::onValidate($resource, $form);
     }
 }

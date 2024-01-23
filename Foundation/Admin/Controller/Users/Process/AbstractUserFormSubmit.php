@@ -2,25 +2,17 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
-use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
-use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Bundle\Immutable\DeviceImmutable;
 use Uss\Component\Kernel\Uss;
 
-abstract class OnUserFormSubmit implements DashboardFormSubmitInterface
+abstract class AbstractUserFormSubmit extends AbstractOnSubmitManagement implements DashboardFormSubmitInterface
 {
-    protected array $roles;
-    protected string $avatar;
-
-    public function __construct(protected User $client)
-    {}
-
     public function onFilter(array &$resource, AbstractDashboardForm $form): void
     {
         $this->roles = array_keys(
@@ -30,20 +22,34 @@ abstract class OnUserFormSubmit implements DashboardFormSubmitInterface
             )
         );
         unset($resource['roles']);
+        $resource = array_map('trim', $resource);
     }
 
-    public function onValidate(array &$resource, AbstractDashboardForm $form): void
+    public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
-        $password = new Password($resource['password']);
-        $resource['password'] = $password->getHash();
+        if($resource !== null) {
+            $resource['email'] = $this->handleEmailError($resource['email'], $form);
+            $resource['username'] = $this->handleUsernameError($resource['username'], $form);
+            $resource['parent'] = $this->handleParentError($resource['parent'], $form);
+            !array_key_exists('password', $resource) ? null :
+                $resource['password'] = $this->handlePasswordError($resource['password'], $form);
+        }
     }
 
     public function onPersist(mixed &$response, AbstractDashboardForm $form): void
     {
-        if($this->client->isAvailable()) {
-            $this->client->roles->set($this->roles);
-            $this->updateAvatar($_FILES['avatar']);
+        if($response) {
+            if($this->client->isAvailable()) {
+                $this->client->roles->set($this->roles);
+                $this->updateAvatar($_FILES['avatar']);
+            }
         }
+        
+        if($this->parent && $this->parent->isAvailable() && !$form->getProperty('entity.isPersisted')) {
+            $this->crudEditor->setEntityValue('parent', $this->parent->getUsercode());
+        }
+        
+        $form->populate($this->crudEditor->getEntity());
         $form->setProperty('history.replaceState', false);
     }
 
@@ -71,6 +77,5 @@ abstract class OnUserFormSubmit implements DashboardFormSubmitInterface
 
             Flash::instance()->addToast($toast);
         }
-        var_dump($file, $uploader);
     }
 }
