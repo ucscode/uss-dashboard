@@ -11,10 +11,11 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 use Module\Dashboard\Bundle\Immutable\DeviceImmutable;
 use Uss\Component\Kernel\Uss;
 
-abstract class AbstractUserFormSubmit extends AbstractOnSubmitManagement implements DashboardFormSubmitInterface
+abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements DashboardFormSubmitInterface
 {
     public function onFilter(array &$resource, AbstractDashboardForm $form): void
     {
+        $this->postContext = $resource;
         $this->roles = array_keys(
             array_filter(
                 $resource['roles'],
@@ -45,11 +46,10 @@ abstract class AbstractUserFormSubmit extends AbstractOnSubmitManagement impleme
             }
         }
         
-        if($this->parent && $this->parent->isAvailable() && !$form->getProperty('entity.isPersisted')) {
-            $this->crudEditor->setEntityValue('parent', $this->parent->getUsercode());
+        if(!$form->getProperty('entity.isPersisted')) {
+            $this->handlePersistionError();
         }
         
-        $form->populate($this->crudEditor->getEntity());
         $form->setProperty('history.replaceState', false);
     }
 

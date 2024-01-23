@@ -112,7 +112,7 @@ class User extends AbstractUserRepository
                 "Allocation is only possible if user does not already exist"
             );
         };
-
+        
         if($user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key)) {
             $this->user = $user;
         }

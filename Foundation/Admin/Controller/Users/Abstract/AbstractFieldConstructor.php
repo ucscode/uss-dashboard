@@ -215,12 +215,13 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         if(($_GET['channel'] ?? null) === CrudEnum::UPDATE->value) {
             $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
             if($this->crudEditor->hasEntity()) {
-                $this->crudEditor->getForm()->populate([
-                    'password' => null
-                ]);
                 $entity = $this->crudEditor->getEntity();
                 $this->client = new User($entity['id']);
             }
         }
+        $this->crudEditor->getForm()->populate([
+            'password' => null,
+            'parent' => null,
+        ]);
     }
 }

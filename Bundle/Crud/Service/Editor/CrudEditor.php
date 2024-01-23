@@ -117,6 +117,7 @@ class CrudEditor extends AbstractCrudEditor
     public function setEntityValue(string $columnName, ?string $value): self
     {
         $this->entity[$columnName] = $value;
+        $this->getForm()->populate([$columnName => $value]);
         return $this;
     }
 

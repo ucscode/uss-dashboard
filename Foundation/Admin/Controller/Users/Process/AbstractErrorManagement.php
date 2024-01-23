@@ -10,11 +10,12 @@ use Module\Dashboard\Foundation\User\Form\Service\PasswordResolver;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
 
-abstract class AbstractOnSubmitManagement
+abstract class AbstractErrorManagement
 {
     protected array $roles;
     protected string $avatar;
     protected ?User $parent = null;
+    protected array $postContext = [];
 
     public function __construct(protected User $client, protected CrudEditor $crudEditor)
     {}
@@ -56,10 +57,13 @@ abstract class AbstractOnSubmitManagement
     protected function handleUsernameError(string $username, AbstractDashboardForm $form): ?string
     {
         if(!empty($username)) {
+            
             if(!preg_match('/^\w+$/i', $username)) {
+
                 $form->setProperty('entity.persist', false);
                 $field = $this->getFieldByPedigree('username');
                 $context = $field->getElementContext();
+
                 $context->validation->setValue('* Invalid Username');
                 $context->info
                     ->setValue('Username should only contain letters, numbers and underscore')
@@ -74,22 +78,41 @@ abstract class AbstractOnSubmitManagement
     protected function handleParentError(string $parentCode, AbstractDashboardForm $form): ?string
     {
         if(!empty($parentCode)) {
+            
             $field = $this->getFieldByPedigree('parent');
             $context = $field->getElementContext();
+
             $this->parent = (new User())->allocate("usercode", $parentCode);
+
             if($this->parent->isAvailable() && $this->parent->getId() != $this->client->getId()) {
                 return $this->parent->getId();
             }
+
             $form->setProperty('entity.persist', false);
+
             if(!$this->parent->isAvailable()) {
                 $context->validation->setValue('* Invalid or non-existing parent code');
             }
+
             if($this->parent->getId() === $this->client->getId()) {
-                $context->validation->setValue('* A user cannot be parent of themself');
+                $context->validation->setValue('* Cannot assign a user as the parent of the same user');
             }
+
             return $parentCode;
         }
         return null;
+    }
+
+    protected function handlePersistionError(): void
+    {
+        if($this->parent && $this->parent->isAvailable()) {
+            $this->crudEditor->setEntityValue('parent', $this->parent->getUsercode());
+        }
+        foreach($this->postContext as $key => $value) {
+            if(is_scalar($value)) {
+                $this->crudEditor->setEntityValue($key, $value);
+            }
+        }
     }
 
     protected function getFieldByPedigree(string $fieldName): ?Field
