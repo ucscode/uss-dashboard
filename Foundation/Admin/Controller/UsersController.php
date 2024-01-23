@@ -52,17 +52,31 @@ class UsersController extends AbstractDashboardController
         $uss = Uss::instance();
         $roles = $client->roles->getAll();
 
-        $rolesContext = !empty($roles) ? implode(' ', array_map(function($role) {
-            return sprintf("<span class='%s'>%s</span>", 'badge text-bg-secondary', $role);
-        }, $roles)) : 
-            "<span class='text-danger small'>
+        if(!empty($roles)) {
+            $rolesContent = implode(' ', array_map(function($role) {
+                return sprintf("<span class='%s'>%s</span>", 'badge text-bg-secondary', $role);
+            }, $roles));
+        } else {
+            $rolesContent = "<span class='text-danger small'>
                 <i class='bi bi-x-lg me-1'></i>No Role Assigned
             </span>";
+        }
+
+        $parent = $client->getParent(true);
 
         $hints = [
             'clientUsername' => $client->getUsername() ?? ($client->isAvailable() ? '* Anonymous' : '* Newbie'),
             'shapes' => str_repeat('&clubs; ', 4),
-            'roles' => $rolesContext
+            'roles' => $rolesContent,
+            'parent' => [
+                'identity' => $parent ? $parent->getEmail() : 'No One',
+                'href' => !$parent ? 'javascript:void(0)' : $uss->replaceUrlQuery([
+                    'entity' => $parent->getId(),
+                    'channel' => CrudEnum::UPDATE->value
+                ]),
+                'code' => $parent ? $parent->getUsercode() : null,
+                'target' => $parent ? '_blank' : '_self',
+            ],
         ];
         
         return $hints;

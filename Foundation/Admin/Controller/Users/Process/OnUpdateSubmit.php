@@ -9,9 +9,15 @@ class OnUpdateSubmit extends AbstractUserFormSubmit
     public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
         if($resource) {
+            
             if(empty($resource['password'])) {
                 unset($resource['password']);
             }
+            
+            if(empty($resource['parent'])) {
+                unset($resource['parent']);
+            }
+
             parent::onValidate($resource, $form);
         }
     }

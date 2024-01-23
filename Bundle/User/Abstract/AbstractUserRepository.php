@@ -184,7 +184,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
         $parent = $this->user['parent'] ?? null;
         if($parent && $getUserInstance) {
             $parent = new User($parent);
-            if(!$parent->getId()) {
+            if(!$parent->isAvailable()) {
                 $parent = null;
             }
         };

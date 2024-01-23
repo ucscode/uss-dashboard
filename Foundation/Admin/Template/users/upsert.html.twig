@@ -45,7 +45,12 @@
                                         </div>
                                         <div class='upline-info border-start ps-2 small'>
                                             <div class='small text-muted'>Invited By</div>
-                                            <a href='#' target='_blank'>No One</a>
+                                            <a href='{{ hint.parent.href }}' target='{{ hint.parent.target }}'>
+                                                {{ hint.parent.identity }}
+                                            </a>
+                                            <div class='small text-muted'>
+                                                <i class='small'>{{ hint.parent.code }}</i>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="small">

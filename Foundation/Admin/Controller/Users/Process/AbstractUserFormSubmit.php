@@ -29,9 +29,13 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
     public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
         if($resource !== null) {
+            
             $resource['email'] = $this->handleEmailError($resource['email'], $form);
             $resource['username'] = $this->handleUsernameError($resource['username'], $form);
-            $resource['parent'] = $this->handleParentError($resource['parent'], $form);
+
+            !array_key_exists('parent', $resource) ? null :
+                $resource['parent'] = $this->handleParentError($resource['parent'], $form);
+
             !array_key_exists('password', $resource) ? null :
                 $resource['password'] = $this->handlePasswordError($resource['password'], $form);
         }

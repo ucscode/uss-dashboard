@@ -6,7 +6,6 @@ use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnUpdateSubmit;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\UserControl;
-use Ucscode\UssForm\Gadget\Gadget;
 
 class UpdateController extends AbstractFieldConstructor
 {

@@ -100,10 +100,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             ->configureField('password', [
                 'required' => false,
                 'value' => '',
-                'info' => '<span class="text-muted small">
-                    <i class="bi bi-info-circle"></i> 
-                    Leave blank to preseve current password
-                </span>',
+                'info' => $this->info('Leave blank to preserve current password'),
             ]);
         
         $this->crudEditor
@@ -111,12 +108,16 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
                 'nodeType' => Field::TYPE_DATETIME_LOCAL,
             ]);
         
+        $parentEmail = $this->client->getParent(true)?->getEmail();
+        $info = $parentEmail ? sprintf('Current parent is %s', $parentEmail) : null;
+
         $this->crudEditor
             ->configureField('parent', [
                 'required' => false,
                 'attributes' => [
                     'placeholder' => 'Parent Referral Code',
                 ],
+                'info' => $this->info($info),
             ]);
     }
 
@@ -211,5 +212,19 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             'password' => null,
             'parent' => null,
         ]);
+    }
+
+    private function info(?string $info): ?string
+    {
+        if(!is_null($info)) {
+            return sprintf(
+                '<span class="text-muted small">
+                    <i class="bi bi-info-circle"></i> 
+                    %s
+                </span>',
+                $info
+            );
+        }
+        return $info;
     }
 }
