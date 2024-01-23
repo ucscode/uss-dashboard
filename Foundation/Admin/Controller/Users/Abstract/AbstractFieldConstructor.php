@@ -70,18 +70,6 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         return $field;
     }
 
-    protected function iterateRolesGadget(callable $callback, $filter = false): void
-    {
-        $roleField = $this->form->getCollection('roles')->getField('roles');
-        $callback($roleField->getElementContext()->gadget);
-        foreach($roleField->getGadgets() as $gadget) {
-            if($filter && !$gadget->widget->hasAttribute('data-role')) {
-                continue;
-            }
-            $callback($gadget);
-        }
-    }
-
     protected function removeSensitiveFields(): void
     {
         $needless = [

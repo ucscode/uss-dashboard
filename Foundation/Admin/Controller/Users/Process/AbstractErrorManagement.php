@@ -6,6 +6,7 @@ use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\User\User;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\UserControl;
 use Module\Dashboard\Foundation\User\Form\Service\PasswordResolver;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
@@ -113,6 +114,7 @@ abstract class AbstractErrorManagement
                 $this->crudEditor->setEntityValue($key, $value);
             }
         }
+        (new UserControl($this->crudEditor))->autoCheckRolesCheckbox($this->roles);
     }
 
     protected function getFieldByPedigree(string $fieldName): ?Field
