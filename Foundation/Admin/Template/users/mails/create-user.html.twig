@@ -1,0 +1,19 @@
+{% extends '@Mail/classic/base.html.twig' %}
+
+{% block message_content %}
+
+    <p>
+        Welcome to {{ __uss.option('company:name') }}! Your account has been successfully created. You can now log in using the following details:
+    </p>
+
+    <ul>
+        <li><strong>Username:</strong> {$user->getUsername()}</li>
+        <li><strong>Email:</strong> {$user->getEmail()}</li>
+        <!-- Add any other relevant details here -->
+    </ul>
+
+    <p>
+        Thank you for joining YourApp. If you have any questions or need assistance, feel free to contact our support team.
+    </p>
+
+{% endblock %}

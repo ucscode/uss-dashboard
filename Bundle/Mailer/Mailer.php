@@ -2,10 +2,11 @@
 
 namespace Module\Dashboard\Bundle\Mailer;
 
+use Module\Dashboard\Bundle\Mailer\Abstract\AbstractMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class Mailer extends AbstractMailer implements MailerInterface
+class Mailer extends AbstractMailer
 {
     public function getPHPMailer(): PHPMailer
     {

@@ -34,7 +34,6 @@ abstract class AbstractCrudEditorForm extends AbstractDashboardForm implements C
 
     protected function generateFormFields(): void
     {
-        
         foreach($this->crudEditor->tableColumnsLabelled as $name => $label) {
             $field = new Field();
             $field->getElementContext()->label->setValue($label);

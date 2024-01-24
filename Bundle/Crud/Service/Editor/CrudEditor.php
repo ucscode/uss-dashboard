@@ -69,13 +69,11 @@ class CrudEditor extends AbstractCrudEditor
                 ->from($this->tableName)
                 ->where($this->getEntityCondition())
                 ->build();
-
-            $this->getForm()->setProperty(
-                CrudEditorForm::PERSISTENCE_TYPE, 
-                CrudEnum::DELETE
-            );
-
-            return Uss::instance()->mysqli->query($SQL);
+            
+            if(Uss::instance()->mysqli->query($SQL)) {
+                $this->lastPersistenceType = CrudEnum::DELETE;
+                return true;
+            }
         };
         return false;
     }
@@ -102,57 +100,29 @@ class CrudEditor extends AbstractCrudEditor
             $sQuery = new SQuery();
 
             if($this->isEntityInDatabase()) {
-
+                $objective = CrudEnum::UPDATE;
                 $sQuery
                     ->update($this->tableName, $entity)
                     ->where($this->getEntityCondition());
-
-                $this->getForm()->setProperty(
-                    CrudEditorForm::PERSISTENCE_TYPE, 
-                    CrudEnum::UPDATE
-                );
-                    
             } else {
-
-                $sQuery
-                    ->insert($this->tableName, $entity);
-
-                $this->getForm()->setProperty(
-                    CrudEditorForm::PERSISTENCE_TYPE, 
-                    CrudEnum::CREATE
-                );
-
+                $objective = CrudEnum::CREATE;
+                $sQuery->insert($this->tableName, $entity);
             }
 
             $SQL = $sQuery->build();
 
             try {
                 
-                $mysqli = Uss::instance()->mysqli;
-                $upsert = $mysqli->query($SQL);
+                $upsert = Uss::instance()->mysqli->query($SQL);
 
                 if($upsert) {
-
+                    $this->lastPersistenceType = $objective;
                     $this->getForm()->populate($this->entity);
-                    $persistenceType = $this->getForm()->getProperty(CrudEditorForm::PERSISTENCE_TYPE);
-
-                    $this->getForm()->setProperty(
-                        CrudEditorForm::PERSISTENCE_INSERT_ID,
-                        $persistenceType === CrudEnum::CREATE ? $mysqli->insert_id : null
-                    );
-
                 }
 
                 return $upsert;
 
-            } catch(mysqli_sql_exception $e) {
-
-                $this->getForm()->setProperty(
-                    CrudEditorForm::PERSISTENCE_ERROR,
-                    $e->getMessage()
-                );
-
-            }
+            } catch(mysqli_sql_exception $e) {}
             
         }
         return false;
@@ -211,5 +181,10 @@ class CrudEditor extends AbstractCrudEditor
     public function isFieldDetached(string|Field $field): bool
     {
         return !!$this->getForm()->getFieldPedigree($field)?->field->getElementContext()->frame->isDOMHidden();
+    }
+
+    public function getLastPersistenceType(): ?CrudEnum
+    {
+        return $this->lastPersistenceType;
     }
 }

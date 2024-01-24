@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Compact;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditorForm;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
 use Uss\Component\Kernel\Uss;
@@ -42,11 +43,20 @@ class CrudEditorForm extends AbstractCrudEditorForm
             }
 
             if(!!$this->getProperty(self::PERSISTENCE_ENABLED)) {
-                $persist = $this->crudEditor->persistEntity();
+
+                $persist = true; //$this->crudEditor->persistEntity();
+                $objective = $this->crudEditor->getLastPersistenceType();
+                $error = !$persist ? Uss::instance()->mysqli->error : null;
+                $lastInsertId = $objective === CrudEnum::CREATE ? Uss::instance()->mysqli->insert_id : null;
+
                 $this->setProperty(self::PERSISTENCE_STATUS, $persist);
-                !$persist ? $this->setProperty(self::PERSISTENCE_ERROR, Uss::instance()->mysqli->error) : null;
+                $this->setProperty(self::PERSISTENCE_TYPE, $objective);
+                $this->setProperty(self::PERSISTENCE_ERROR, $error);
+                $this->setProperty(self::PERSISTENCE_INSERT_ID, $lastInsertId);
+
                 $this->flash->addToast($this->getToast($persist));
                 return $this->crudEditor->getEntity(true);
+
             }
         }
         return null;

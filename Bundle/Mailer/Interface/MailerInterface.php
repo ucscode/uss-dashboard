@@ -16,4 +16,5 @@ interface MailerInterface
     public function setSubject(?string $subject): self;
     public function setBody(?string $body): self;
     public function addAttachment($path, $name = '', $encoding = PHPMailer::ENCODING_BASE64, $type = '', $disposition = 'attachment'): self;
+    public function getRenderContent(): string;
 }

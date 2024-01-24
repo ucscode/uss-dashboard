@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Interface;
 
-use Ucscode\Promise\Promise;
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 
@@ -19,6 +19,7 @@ interface CrudEditorInterface extends FormManagerInterface
     public function setEntityValue(string $columnName, ?string $value): self;
     public function getEntityValue(string $columnName): ?string;
     public function removeEntityValue(string $columnName): self;
+    public function getLastPersistenceType(): ?CrudEnum;
     public function moveFieldToCollection(string|Field $field, string|Collection $collection): bool;
     public function detachField(string|Field $field, bool $hide): self;
     public function isFieldDetached(string|Field $field): bool;

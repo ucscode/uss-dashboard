@@ -1,87 +1,40 @@
 <?php
 
-namespace Module\Dashboard\Bundle\Mailer;
+namespace Module\Dashboard\Bundle\Mailer\Abstract;
 
-use Exception;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use Uss\Component\Kernel\Abstract\AbstractUss;
+use Uss\Component\Kernel\Extension\Extension;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Kernel\UssImmutable;
 
-abstract class AbstractMailer extends AbstractUss
+abstract class AbstractMailerFoundation extends AbstractUss
 {
     protected bool $isLocalhost;
-    protected ?string $template = '@Mail/classic/base.html.twig';
     protected array $context = [];
+    protected ?string $template = null;
     protected PHPMailer $PHPMailer;
     protected ?PHPMailerException $PHPMailerException = null;
+    protected Extension $borrowedExtension;
 
     public function __construct()
     {
         parent::__construct();
 
         new DashboardEnvironment($this);
-
+        $this->borrowedExtension = new Extension($this);
+        $this->twigEnvironment->addGlobal(UssImmutable::NAMESPACE, $this->borrowedExtension);
+        
         $this->PHPMailer = new PHPMailer(true);
         $this->PHPMailer->isHTML(true);
 
-        $this->checkEnvironment();
+        $this->isLocalhost = in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1', '::1'], true);
+
         $this->configurePHPMailer();
         $this->configureSMTP();
-    }
-
-    /**
-     * @ THE PROBLEM HERE MUST BE RESOLVED
-     */
-    public function getTemplateOutput(): string
-    {
-        $this->extension->configureRenderContext();
-        $this->context += Uss::instance()->twigContext;
-        return $this->twigEnvironment->render($this->template, $this->context);
-    }
-
-    public function sendMail(): bool
-    {
-        if(empty(trim($this->PHPMailer->Subject))) {
-            throw new Exception("No `subject` has been defined for sending email");
-        }
-
-        if(empty(trim($this->PHPMailer->Body) && !empty($this->template))) {
-            $this->PHPMailer->Body = $this->getTemplateOutput();
-        }
-
-        if(empty($this->PHPMailer->Body)) {
-            throw new Exception("No `template` or `body` has been defined for sending email");
-        }
-
-        if(empty($this->PHPMailer->getToAddresses())) {
-            throw new Exception("No email address has been added for sending email");
-        }
-
-        try {
-
-            // (new Event())->addListener("modules:loaded", ...);
-
-            return $this->PHPMailer->send();
-
-        } catch(Exception $PHPMailerException) {
-
-            $this->PHPMailerException = $PHPMailerException;
-
-            return false;
-
-        }
-    }
-
-    protected function checkEnvironment(): void
-    {
-        $this->isLocalhost = in_array(
-            $_SERVER['SERVER_NAME'],
-            ['localhost', '127.0.0.1', '::1'],
-            true
-        );
     }
 
     protected function configurePHPMailer(): self
@@ -108,7 +61,7 @@ abstract class AbstractMailer extends AbstractUss
     protected function configureSMTP(): self
     {
         $memory = Uss::instance()->options;
-        $smtpEnabled = $memory->get('smtp:state') != "default";
+        $smtpEnabled = $memory->get('smtp:state') !== "default";
 
         if($smtpEnabled) {
             $this->PHPMailer->isSMTP(true);
