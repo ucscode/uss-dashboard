@@ -6,7 +6,6 @@ use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractCrudEditor;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use mysqli_sql_exception;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;

@@ -2,11 +2,14 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnCreateSubmit;
+use Module\Dashboard\Foundation\User\UserDashboard;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Resource\Facade\Position;
+use Uss\Component\Kernel\Uss;
 
 class CreateController extends AbstractFieldConstructor
 {
@@ -16,7 +19,12 @@ class CreateController extends AbstractFieldConstructor
         parent::composeMicroApplication();
         $this->generateNotificationCheckbox();
 
-        $submitAction = new OnCreateSubmit($this->client, $this->crudEditor);
+        $this->crudEditor->getForm()->setProperty(
+            'crud:create.email.loginUrl',
+            UserDashboard::instance()->getDocument('index')?->getUrl()
+        );
+
+        $submitAction = new OnCreateSubmit($this->client, $this->crudEditor, $this->dashboard);
 
         $promise = $this->crudEditor->getForm()
             ->addSubmitAction('user:create', $submitAction)
@@ -24,7 +32,12 @@ class CreateController extends AbstractFieldConstructor
 
         $promise->then(function(CrudEditorForm $form) {
             if($form->getPersistenceStatus()) {
-                var_dump($form->getPersistenceLastInsertId());
+                $redirectUrl = Uss::instance()->replaceUrlQuery([
+                    'entity' => $form->getPersistenceLastInsertId(),
+                    'channel' => CrudEnum::UPDATE->value,
+                ]);
+                header("location: {$redirectUrl}");
+                die;
             }
         });
     }

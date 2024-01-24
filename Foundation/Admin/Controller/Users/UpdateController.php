@@ -14,7 +14,7 @@ class UpdateController extends AbstractFieldConstructor
         parent::composeMicroApplication();
         $this->enableDocumentMenu('main:users');
 
-        $submitAction = new OnUpdateSubmit($this->client, $this->crudEditor);
+        $submitAction = new OnUpdateSubmit($this->client, $this->crudEditor, $this->dashboard);
 
         $promise = $this->crudEditor->getForm()
             ->addSubmitAction('user:update', $submitAction)

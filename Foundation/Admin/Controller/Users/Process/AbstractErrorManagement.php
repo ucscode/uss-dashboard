@@ -5,6 +5,7 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\UserControl;
@@ -19,8 +20,11 @@ abstract class AbstractErrorManagement
     protected ?User $parent = null;
     protected array $postContext = [];
 
-    public function __construct(protected User $client, protected CrudEditor $crudEditor)
-    {}
+    public function __construct(
+        protected User $client, 
+        protected CrudEditor $crudEditor, 
+        protected DashboardInterface $dashboard
+    ){}
 
     protected function handlePasswordError(string $password, AbstractDashboardForm $form): ?string
     {

@@ -21,9 +21,9 @@ class UsersController extends AbstractDashboardController
         $channel = trim($_GET['channel'] ?? '');
 
         $userController = match($channel) {
-            CrudEnum::CREATE->value => new CreateController($document),
-            CrudEnum::UPDATE->value => new UpdateController($document),
-            default => new InventoryController($document),
+            CrudEnum::CREATE->value => new CreateController($document, $dashboard),
+            CrudEnum::UPDATE->value => new UpdateController($document, $dashboard),
+            default => new InventoryController($document, $dashboard),
         };
 
         $updatedContext = $this->rewriteContext($channel, $userController, $document->getContext());

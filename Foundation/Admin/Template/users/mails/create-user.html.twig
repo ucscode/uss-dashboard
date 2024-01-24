@@ -1,11 +1,9 @@
 {% extends '@Mail/classic/base.html.twig' %}
 
 {% block message_content %}
-
-    <p>Welcome to {{ companyName }}!</p>
     
     <p>
-        Your account has been successfully created. You can now log in using the following details:
+        An account has been successfully created for you in {{ companyName }}. You can now log in using the following details:
     </p>
 
     <ul>
@@ -14,8 +12,18 @@
     </ul>
 
     <p>
-        For enhanced account security, it is recommended to change your password after logging in
-    </p>
+        Click the link below to access the login panel:
+    </p> <br>
+
+    <p>
+        <a href="{{ redirectUrl }}" style="{{ button_style }}">
+            Login Now
+        </a>
+    </p> <br/>
+
+    <p>
+        For enhanced account security, it is recommended to change your password after logging in.
+    </p> <br>
 
     <p>
         Thank you for joining {{ companyName }}. If you have any questions or need assistance, feel free to contact our support team.

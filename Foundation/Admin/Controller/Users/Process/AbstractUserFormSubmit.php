@@ -42,16 +42,16 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
     }
 
     public function onPersist(mixed &$response, AbstractDashboardForm $form): void
-    {
+    {        
+        if(!$form->getPersistenceStatus()) {
+            $this->handlePersistionError();
+        }
+        
         if($response) {
             if($this->client->isAvailable()) {
                 $this->client->roles->set($this->roles);
                 $this->updateAvatar($_FILES['avatar']);
             }
-        }
-        
-        if(!$form->getPersistenceStatus()) {
-            $this->handlePersistionError();
         }
         
         $form->setProperty('history.replaceState', false);
