@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
@@ -51,7 +50,7 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
             }
         }
         
-        if(!$form->getProperty(CrudEditorForm::PERSISTENCE_STATUS)) {
+        if(!$form->getPersistenceStatus()) {
             $this->handlePersistionError();
         }
         

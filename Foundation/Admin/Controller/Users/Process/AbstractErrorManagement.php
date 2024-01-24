@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Common\Password;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
@@ -31,7 +30,7 @@ abstract class AbstractErrorManagement
 
         if($resolver['strength'] < $resolver['strengthLimit']) {
 
-            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $form->setPersistenceEnabled(false);
             $field = $this->getFieldByPedigree('password');
             $context = $field->getElementContext();
 
@@ -54,7 +53,7 @@ abstract class AbstractErrorManagement
         $context = $field->getElementContext();
 
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $form->setPersistenceEnabled(false);
             $context->validation->setValue('* Invalid email address');
             return $email;
         }
@@ -62,7 +61,7 @@ abstract class AbstractErrorManagement
         $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $email, 'email');
 
         if($client) {
-            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $form->setPersistenceEnabled(false);
             $context->validation->setValue('* Email already exists');
         }
 
@@ -78,7 +77,7 @@ abstract class AbstractErrorManagement
             $context = $field->getElementContext();
 
             if(!preg_match('/^\w+$/i', $username)) {
-                $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+                $form->setPersistenceEnabled(false);
                 $context->validation->setValue('* Invalid Username');
                 $context->info
                     ->setValue('Username should only contain letters, numbers and underscore')
@@ -90,7 +89,7 @@ abstract class AbstractErrorManagement
             $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $username, 'username');
 
             if($client) {
-                $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+                $form->setPersistenceEnabled(false);
                 $context->validation->setValue('* Username already exists');
             }
 
@@ -112,7 +111,7 @@ abstract class AbstractErrorManagement
                 return $this->parent->getId();
             }
 
-            $form->setProperty(CrudEditorForm::PERSISTENCE_ENABLED, false);
+            $form->setPersistenceEnabled(false);
 
             if(!$this->parent->isAvailable()) {
                 $context->validation->setValue('* Invalid or non-existing parent code');

@@ -2,18 +2,23 @@
 
 {% block message_content %}
 
+    <p>Welcome to {{ companyName }}!</p>
+    
     <p>
-        Welcome to {{ __uss.option('company:name') }}! Your account has been successfully created. You can now log in using the following details:
+        Your account has been successfully created. You can now log in using the following details:
     </p>
 
     <ul>
-        <li><strong>Username:</strong> {$user->getUsername()}</li>
-        <li><strong>Email:</strong> {$user->getEmail()}</li>
-        <!-- Add any other relevant details here -->
+        <li><strong>Email:</strong> {{ loginEmail }}</li>
+        <li><strong>Password:</strong> {{ loginPassword }}</li>
     </ul>
 
     <p>
-        Thank you for joining YourApp. If you have any questions or need assistance, feel free to contact our support team.
+        For enhanced account security, it is recommended to change your password after logging in
+    </p>
+
+    <p>
+        Thank you for joining {{ companyName }}. If you have any questions or need assistance, feel free to contact our support team.
     </p>
 
 {% endblock %}

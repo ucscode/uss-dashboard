@@ -34,8 +34,6 @@ abstract class AbstractMailer extends AbstractMailerFoundation
 
         try {
 
-            // (new Event())->addListener("modules:loaded", ...);
-
             return $this->PHPMailer->send();
 
         } catch(Exception $PHPMailerException) {

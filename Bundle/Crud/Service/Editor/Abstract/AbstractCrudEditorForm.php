@@ -3,33 +3,19 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
 use Module\Dashboard\Bundle\Flash\Flash;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 
-abstract class AbstractCrudEditorForm extends AbstractDashboardForm implements CrudEditorFormInterface
+abstract class AbstractCrudEditorForm extends AbstractCrudEditorFormFoundation
 {
-    public const PERSISTENCE_INSERT_ID = 'entity.persist.insert_id';
-    public const PERSISTENCE_ENABLED = 'entity.persist.enabled';
-    public const PERSISTENCE_STATUS = 'entity.persist.status';
-    public const PERSISTENCE_ERROR = 'entity.persist.error';
-    public const PERSISTENCE_TYPE = 'entity.persist.type';
-
-    protected string $nonceContext;
-    protected Flash $flash;
-
     public function __construct(protected CrudEditor $crudEditor)
     {
         parent::__construct();
         $this->nonceContext = UssImmutable::SECRET_KEY . $this->crudEditor->tableName;
         $this->generateFormFields();
         $this->flash = Flash::instance();
-
-        $this->setProperty(self::PERSISTENCE_ENABLED, true);
-        $this->setProperty(self::PERSISTENCE_STATUS, false);
     }
 
     protected function generateFormFields(): void

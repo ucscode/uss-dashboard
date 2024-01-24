@@ -28,7 +28,7 @@ class CrudEditor extends AbstractCrudEditor
     {
         $this->entity = $entity;
         $this->getForm()->populate($entity);
-        $this->getForm()->getFieldPedigree(CrudEditorFormInterface::SUBMIT_KEY)
+        $this->getForm()->getFieldPedigree(CrudEditorForm::SUBMIT_KEY)
             ?->widget->setButtonContent("Save Changes");
         return $this;
     }

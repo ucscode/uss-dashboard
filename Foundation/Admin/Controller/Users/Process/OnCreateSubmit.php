@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Mailer\Mailer;
 use Uss\Component\Kernel\Uss;
@@ -17,10 +16,10 @@ class OnCreateSubmit extends AbstractUserFormSubmit
 
     public function onPersist(mixed &$response, AbstractDashboardForm $form): void
     {
-        $persisted = $form->getProperty(CrudEditorForm::PERSISTENCE_STATUS);
-        if($persisted) {
+        $persisted = $form->getPersistenceStatus();
+        if($persisted && $response) {
             if($this->postContext['notify_client'] ?? false) {
-                $this->sendUserCreationEmail($this->postContext['email']);
+                $this->sendUserCreationEmail($response['email']);
             }
         }
         parent::onPersist($response, $form);
@@ -30,10 +29,15 @@ class OnCreateSubmit extends AbstractUserFormSubmit
     {
         $template = '@Foundation/Admin/Template/users/mails/create-user.html.twig';
         $mailer = new Mailer();
-        $mailer->setTemplate($template);
+        $mailer->setTemplate($template, [
+            'companyName' => Uss::instance()->options->get('company:name'),
+            'loginEmail' => $email,
+            'loginPassword' => $this->postContext['password'],
+        ]);
         $mailer->setSubject('New Account Created');
         $mailer->addAddress($email);
-        echo $mailer->getRenderContent($template);
-        exit;
+        if(!$mailer->sendMail()) {
+            $this->easyToast("Notification email not sent", null, 1000);
+        }
     }
 }

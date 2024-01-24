@@ -25,8 +25,8 @@ abstract class AbstractMailerFoundation extends AbstractUss
         parent::__construct();
 
         new DashboardEnvironment($this);
-        $this->borrowedExtension = new Extension($this);
-        $this->twigEnvironment->addGlobal(UssImmutable::NAMESPACE, $this->borrowedExtension);
+        $this->borrowedExtension = new Extension(Uss::instance());
+        $this->twigEnvironment->addExtension($this->borrowedExtension);
         
         $this->PHPMailer = new PHPMailer(true);
         $this->PHPMailer->isHTML(true);

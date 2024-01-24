@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorFormInterface;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnCreateSubmit;
 use Ucscode\UssForm\Field\Field;
@@ -16,14 +16,16 @@ class CreateController extends AbstractFieldConstructor
         parent::composeMicroApplication();
         $this->generateNotificationCheckbox();
 
-        $this->crudEditor->getForm()->addSubmitAction(
-            'user:create',
-            new OnCreateSubmit($this->client, $this->crudEditor)
-        );
-        
-        $this->crudEditor->getForm()->handleSubmission()
-        ->then(function() {
-            
+        $submitAction = new OnCreateSubmit($this->client, $this->crudEditor);
+
+        $promise = $this->crudEditor->getForm()
+            ->addSubmitAction('user:create', $submitAction)
+            ->handleSubmission();
+
+        $promise->then(function(CrudEditorForm $form) {
+            if($form->getPersistenceStatus()) {
+                var_dump($form->getPersistenceLastInsertId());
+            }
         });
     }
 
@@ -32,7 +34,7 @@ class CreateController extends AbstractFieldConstructor
         $field = $this->generateField([
             'nodeType' => Field::TYPE_CHECKBOX,
             'position' => Position::BEFORE,
-            'position-target' => CrudEditorFormInterface::SUBMIT_KEY,
+            'position-target' => CrudEditorForm::SUBMIT_KEY,
             'name' => 'notify_client',
             'label' => 'Send email to user after registration',
             //'collection-target' => 'avatar',

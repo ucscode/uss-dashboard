@@ -9,6 +9,37 @@ use Uss\Component\Kernel\Uss;
 
 class CrudEditorForm extends AbstractCrudEditorForm
 {   
+    public function setPersistenceEnabled(bool $enabled): self
+    {
+        $this->persistenceEnabled = $enabled;
+        return $this;
+    }
+
+    public function isPersistenceEnabled(): bool
+    {
+        return $this->persistenceEnabled;
+    }
+
+    public function getPersistenceStatus(): bool
+    {
+        return $this->persistenceStatus;
+    }
+
+    public function getPersistenceType(): ?CrudEnum
+    {
+        return $this->persistenceType;
+    }
+
+    public function getPersistenceLastInsertId(): int|string|null
+    {
+        return $this->persistenceLastInsertId;
+    }
+
+    public function getPersistenceError(): ?string
+    {
+        return $this->persistenceError;
+    }
+
     public function isSubmitted(): bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST[self::NONCE_KEY]);
@@ -42,19 +73,16 @@ class CrudEditorForm extends AbstractCrudEditorForm
                 }
             }
 
-            if(!!$this->getProperty(self::PERSISTENCE_ENABLED)) {
+            if($this->persistenceEnabled) {
 
-                $persist = true; //$this->crudEditor->persistEntity();
-                $objective = $this->crudEditor->getLastPersistenceType();
-                $error = !$persist ? Uss::instance()->mysqli->error : null;
-                $lastInsertId = $objective === CrudEnum::CREATE ? Uss::instance()->mysqli->insert_id : null;
+                $this->persistenceStatus = $this->crudEditor->persistEntity();
+                $this->persistenceType = $this->crudEditor->getLastPersistenceType();
+                $this->persistenceError = !$this->persistenceStatus ? Uss::instance()->mysqli->error : null;
+                $this->persistenceLastInsertId = 
+                    $this->persistenceType === CrudEnum::CREATE ? 
+                    Uss::instance()->mysqli->insert_id : null;
 
-                $this->setProperty(self::PERSISTENCE_STATUS, $persist);
-                $this->setProperty(self::PERSISTENCE_TYPE, $objective);
-                $this->setProperty(self::PERSISTENCE_ERROR, $error);
-                $this->setProperty(self::PERSISTENCE_INSERT_ID, $lastInsertId);
-
-                $this->flash->addToast($this->getToast($persist));
+                $this->flash->addToast($this->getToast());
                 return $this->crudEditor->getEntity(true);
 
             }
@@ -65,11 +93,11 @@ class CrudEditorForm extends AbstractCrudEditorForm
     protected function resolveSubmission(mixed $presistedResource): void
     {}
 
-    protected function getToast(bool $persist): Toast
+    protected function getToast(): Toast
     {
         return (new Toast())
-            ->setBackground($persist ? Toast::BG_SUCCESS : Toast::BG_DANGER)
-            ->setMessage($persist ? 'The request was success' : 'The request failed')
+            ->setBackground($this->persistenceStatus ? Toast::BG_SUCCESS : Toast::BG_DANGER)
+            ->setMessage($this->persistenceStatus ? 'The request was success' : 'The request failed')
         ;
     }
 }
