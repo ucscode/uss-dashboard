@@ -8,7 +8,7 @@ use Ucscode\UssElement\UssElement;
 
 class DashboardMenuFormation
 {
-    public function __construct(protected TreeNode $menu, ?callable $func = null, protected ?TreeNode $parentTarget = null)
+    public function __construct(protected TreeNode $menu, protected ?TreeNode $parentTarget = null, ?callable $func = null)
     {
         $this->beginProcess($func);
     }
