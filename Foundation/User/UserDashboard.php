@@ -22,11 +22,21 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     public function __construct(AppControlInterface $appControl)
     {
         parent::__construct($appControl);
+
         $this->profileBatch = new TreeNode('profileBatch');
+
         $this->createLocalDocuments();
         $this->createAjaxDocuments();
+
         new ThemeLoader($this);
-        (new Event())->addListener('modules:loaded', fn () => new DashboardMenuFormation($this->profileBatch), -10);
+        
+        (new Event())->addListener('modules:loaded', function() {
+            new DashboardMenuFormation(
+                $this->profileBatch,
+                null,
+                $this->getDocument('user.profile')?->getMenuItem('main:profile')
+            );
+        }, -10);
     }
 
     protected function createLocalDocuments(): void
@@ -46,7 +56,6 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
     protected function createAjaxDocuments(): void
     {
        $ajaxFactory = new AjaxDocumentFactory($this);
-       
        $this->addDocument('ajax:verify-email', $ajaxFactory->createResendRegisterEmailDocument());
     }
 }

@@ -8,7 +8,7 @@ use Ucscode\UssElement\UssElement;
 
 class DashboardMenuFormation
 {
-    public function __construct(protected TreeNode $menu, ?callable $func = null)
+    public function __construct(protected TreeNode $menu, ?callable $func = null, protected ?TreeNode $parentTarget = null)
     {
         $this->beginProcess($func);
     }
@@ -16,9 +16,11 @@ class DashboardMenuFormation
     protected function beginProcess(?callable $func): void
     {
         $this->applySortAlgorithm($this->menu);
+
         $this->menu->traverseChildren(function(TreeNode $node) use ($func) {
             $this->verifyLabel($node);
-            $func ? call_user_func($func, $node) : $this->localConcept($node);
+            $func ? call_user_func($func, $node) : null;
+            $this->localConcept($node);
             $this->updateAttributes($node);
             $this->applySortAlgorithm($node);
             $this->activateAncestors($node);
@@ -39,12 +41,12 @@ class DashboardMenuFormation
         $anchor = $node->getAttribute('href');
         $children = $node->getChildren();
 
-        if(!empty($children) && !is_null($anchor)) {
+        if(!empty($children) && !is_null($anchor) && !$node->getAttribute('mitosis')) {
 
             $icon = new UssElement(UssElement::NODE_I);
             $icon->setAttribute('class', 'bi bi-pin-angle ms-1 menu-pin');
             $label = $node->getAttribute('label') . $icon->getHTML();
-
+            
             $node->addChild($node->name, [
                 'label' => $label,
                 'href' => $anchor,
@@ -53,6 +55,15 @@ class DashboardMenuFormation
                 'active' => $node->getAttribute('active'),
                 'target' => $node->getAttribute('target') ?? '_self',
             ]);
+
+            $node->setAttribute('mitosis', $node->name);
+        }
+
+        if($node->getAttribute('active') && $this->parentTarget) {
+            $this->parentTarget?->setAttribute('active', true);
+            if($mitosis = $this->parentTarget->getAttribute('mitosis')) {
+                $this->parentTarget->getChild($mitosis)->setAttribute('active', true);
+            }
         }
     }
 

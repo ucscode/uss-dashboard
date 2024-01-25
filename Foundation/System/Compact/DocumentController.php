@@ -25,7 +25,7 @@ class DocumentController implements RouteInterface
                 'document' => $this->document
             ]);
         }
-        
+
         $template = new BlockTemplate(
             $this->document->getTemplate(),
             $this->document->getContext()
@@ -48,11 +48,10 @@ class DocumentController implements RouteInterface
      */
     protected function enableMatchingMenus(): void
     {
-        $menuItems = $this->document->getMenuItems();
-        array_walk($menuItems, function($node) {
+        foreach($this->document->getMenuItems() as $node) {
             $focused = $node->getAttribute('auto-focus') ?? true;
             $activated = $node->getAttribute('active');
             $node->setAttribute('active', $focused && $activated === null);
-        });
+        };
     }
 }

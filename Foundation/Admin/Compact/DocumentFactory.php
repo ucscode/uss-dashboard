@@ -11,6 +11,7 @@ use Module\Dashboard\Foundation\Admin\Controller\Settings\UsersSettingsControlle
 use Module\Dashboard\Foundation\Admin\Controller\SettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
+use Module\Dashboard\Foundation\Admin\Form\Settings\SystemSettingsForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Kernel\Uss;
@@ -105,7 +106,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setController(new SystemSettingsController())
             ->setTemplate('/settings/system.html.twig', $this->namespace)
             ->setRoute('/settings/system', $this->base)
-            ->setCustom('app.form', null)
+            ->setCustom('app.form', new SystemSettingsForm())
         ;
 
         $systemSettingsMenuContext = [

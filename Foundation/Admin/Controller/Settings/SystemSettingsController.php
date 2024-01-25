@@ -9,8 +9,7 @@ class SystemSettingsController extends AbstractDashboardController
     public function onload(array $context): void
     {
         parent::onload($context);
-        
-        $this->form->handleSubmission()
-        ->then(fn () => $this->form->build());
+        $this->form->handleSubmission();
+        $this->form->build();
     }
 }

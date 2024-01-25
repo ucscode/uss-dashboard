@@ -21,10 +21,20 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     public function __construct(AppControlInterface $appControl)
     {
         parent::__construct($appControl);
+
         $this->settingsBatch = new TreeNode('settingsNode');
+
         $this->createAdminDocuments();
+
         new ThemeLoader($this);
-        (new Event())->addListener('modules:loaded', fn () => new DashboardMenuFormation($this->settingsBatch), -10);
+
+        (new Event())->addListener('modules:loaded', function() {
+            new DashboardMenuFormation(
+                $this->settingsBatch,
+                null, 
+                $this->getDocument('settings')?->getMenuItem('main:settings')
+            );
+        }, -10);
     }
 
     protected function createAdminDocuments(): void

@@ -368,10 +368,6 @@ fieldset:disabled textarea {
     right: -6px;
 }
 
-.profile-base .profile-base-nav .nav-link {
-	border-radius: 2px;
-}
-
 .form-switch .form-check-input {
     width: 44px;
     height: 24px;

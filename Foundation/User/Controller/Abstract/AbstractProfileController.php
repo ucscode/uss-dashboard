@@ -17,6 +17,7 @@ abstract class AbstractProfileController extends AbstractDashboardController
             ->addTemplate("resource", new BlockTemplate($this->document->getTemplate()));
 
         $layout = '@Foundation/User/Template/profile/layout.html.twig';
+        
         $this->document->setTemplate($layout);
     }
 }

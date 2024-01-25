@@ -132,7 +132,7 @@ class EmailResolver extends AbstractEmailResolver
      */
     public function sendProfileUpdateEmail(User $user, string $newEmail): bool
     {
-        $userProfileDocument = $this->dashboardInterface->getDocument('userProfile');
+        $userProfileDocument = $this->dashboardInterface->getDocument('user.profile');
 
         $this->properties['email:subject'] ??= 'Confirm Your new email';
         $this->properties['email:template'] ??= '@Foundation/User/Template/profile/mails/reconfirm.email.twig';
