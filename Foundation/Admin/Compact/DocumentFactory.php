@@ -4,8 +4,10 @@ namespace Module\Dashboard\Foundation\Admin\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
+use Module\Dashboard\Foundation\Admin\Controller\SystemInfoController;
 use Module\Dashboard\Foundation\Admin\Controller\Settings\EmailSettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\Settings\SystemSettingsController;
+use Module\Dashboard\Foundation\Admin\Controller\Settings\UsersSettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\SettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
@@ -128,64 +130,57 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setCustom('app.form', null)
         ;
         
-        $emailItem = [
+        $emailSettingsMenuContext = [
             'label' => 'Email',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-envelope-at',
-            'order' => 2,
+            'order' => 1,
         ];
+
+        $document->addMenuItem('settings:email', $emailSettingsMenuContext, $this->dashboard->settingsBatch);
 
         return $document;
     }
 
-    // /**
-    //  * @method createSettingsUserPage
-    //  */
-    // public function createSettingsUserPage(): PageManager
-    // {
-    //     $userItem = [
-    //         'label' => 'Users',
-    //         'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS_USERS),
-    //         'icon' => 'bi bi-people',
-    //         'order' => 3,
-    //     ];
+    public function createUsersSettingsDocument(): Document
+    {
+        $document = (new Document())
+            ->setController(new UsersSettingsController())
+            ->setTemplate('/settings/user.html.twig', $this->namespace)
+            ->setRoute('/settings/users', $this->base)
+            ->setCustom('app.form', null)
+        ;
 
-    //     $userForm = new AdminSettingsUserForm(
-    //         AdminDashboardInterface::PAGE_SETTINGS_USERS
-    //     );
+        $usersSettingsMenuContext = [
+            'label' => 'Users',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-people',
+            'order' => 3,
+        ];
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS_USERS)
-    //         ->setController(AdminSettingsUserController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/user.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_SETTINGS_USERS,
-    //             $userItem,
-    //             $this->dashboard->settingsBatch
-    //         )
-    //         ->setForm($userForm);
-    // }
+        $document->addMenuItem('settings:users', $usersSettingsMenuContext, $this->dashboard->settingsBatch);
 
-    // /**
-    //  * @method createInfoPage
-    //  */
-    // public function createInfoPage(): PageManager
-    // {
-    //     $infoItem = [
-    //         "label" => "information",
-    //         "href" => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_INFO)
-    //     ];
+        return $document;
+    }
 
-    //     $parentItem = $this->dashboard->pageRepository->getPageManager(
-    //         AdminDashboardInterface::PAGE_SETTINGS
-    //     )->getMenuItem(AdminDashboardInterface::PAGE_SETTINGS, true);
+    public function createSystemInfoDocument(): Document
+    {
+        $document = (new Document())
+            ->setController(new SystemInfoController())
+            ->setTemplate('/info.html.twig', $this->namespace)
+            ->setRoute('/system-info', $this->base)
+        ;
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_INFO)
-    //         ->setController(AdminInfoController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/info.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_INFO,
-    //             $infoItem,
-    //             $parentItem
-    //         );
-    // }
+        $infoMenuContext = [
+            "label" => "System Info",
+            "href" => $document->getUrl(),
+            "order" => 1,
+        ];
+
+        $parentMenu = $this->settingsDocument->getMenuItem('main:settings');
+
+        $document->addMenuItem('main:settings.systemInfo', $infoMenuContext, $parentMenu);
+
+        return $document;
+    }
 }

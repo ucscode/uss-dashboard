@@ -36,8 +36,8 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         $this->addDocument('logout', $factory->createLogoutDocument());
         $this->addDocument('index', $factory->createIndexDocument());
         $this->addDocument('notifications', $factory->createNotificationDocument());
-        $this->addDocument('userProfile', $factory->createUserProfileDocument());
-        $this->addDocument('userProfilePassword', $factory->createUserProfilePasswordDocument());
+        $this->addDocument('user.profile', $factory->createUserProfileDocument());
+        $this->addDocument('user.profile.password', $factory->createUserProfilePasswordDocument());
     }
 
     protected function createAjaxDocuments(): void

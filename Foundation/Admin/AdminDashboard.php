@@ -37,7 +37,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         $this->addDocument('settings', $factory->createSettingsDocument());
         $this->addDocument('settings.system', $factory->createSystemSettingsDocument());
         $this->addDocument('settings.email', $factory->createEmailSettingsDocument());
-        // $factory->createSettingsUserPage();
-        // $factory->createInfoPage();
+        $this->addDocument('settings.users', $factory->createUsersSettingsDocument());
+        $this->addDocument('systemInfo', $factory->createSystemInfoDocument());
     }
 }

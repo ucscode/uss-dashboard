@@ -12,7 +12,6 @@ use Module\Dashboard\Foundation\User\Form\Entity\Security\LoginForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\ProfileForm;
 use Module\Dashboard\Foundation\User\Form\Entity\Security\RegisterForm;
 use Module\Dashboard\Foundation\User\Form\Entity\System\PasswordForm;
-use Uss\Component\Kernel\UssImmutable;
 
 final class DocumentFactory extends AbstractDocumentFactory
 {
@@ -91,7 +90,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'href' => $document->getUrl(),
             'icon' => 'bi bi-unlock',
             'order' => 1,
-            // 'autoFocus' => false,
+            // 'auto-focus' => false,
         ];
 
         $document->addMenuItem('profile:password', $passwordMenuContext, $this->dashboard->profileBatch);
