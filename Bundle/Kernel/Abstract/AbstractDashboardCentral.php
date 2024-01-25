@@ -6,7 +6,7 @@ use Module\Dashboard\Bundle\Common\AppStore;
 use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Foundation\DocumentController;
+use Module\Dashboard\Foundation\System\Compact\DocumentController;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Event\Event;
 use Uss\Component\Route\Route;

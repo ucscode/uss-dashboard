@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation;
+namespace Module\Dashboard\Foundation\System\Compact;
 
 use Uss\Component\Database;
 use Uss\Component\Kernel\Uss;

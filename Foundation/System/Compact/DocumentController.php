@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation;
+namespace Module\Dashboard\Foundation\System\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;

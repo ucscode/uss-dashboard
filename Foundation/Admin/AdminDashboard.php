@@ -6,6 +6,7 @@ use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Foundation\Admin\Compact\DocumentFactory;
+use Module\Dashboard\Foundation\Admin\Compact\Interface\AdminDashboardInterface;
 use Uss\Component\Trait\SingletonTrait;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Event\Event;

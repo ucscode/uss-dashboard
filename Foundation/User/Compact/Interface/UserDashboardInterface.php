@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Dashboard\Foundation\User;
+namespace Module\Dashboard\Foundation\User\Compact\Interface;
 
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 
