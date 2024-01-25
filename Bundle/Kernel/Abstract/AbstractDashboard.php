@@ -26,6 +26,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     public function addDocument(string $name, Document $document): DashboardInterface
     {
         $this->documents[$name] = $document;
+        $document->setName($document->getName() ?? $name);
         return $this;
     }
 

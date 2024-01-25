@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Foundation\User\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Module\Dashboard\Foundation\User\Controller\PasswordController;
 use Module\Dashboard\Foundation\User\Controller\ProfileController;
@@ -61,12 +60,12 @@ final class DocumentFactory extends AbstractDocumentFactory
         $document
             ->addMenuItem(
                 'main:profile', 
-                $profileMenuContext + ['order' => 1], 
+                $profileMenuContext + ['order' => 2], 
                 $this->dashboard->menu
             )
             ->addMenuItem(
                 'profile:primary', 
-                $profileMenuContext + ['order' => 0], 
+                $profileMenuContext + ['order' => 1], 
                 $this->dashboard->profileBatch
             );
 
@@ -89,7 +88,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'label' => 'password',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-unlock',
-            'order' => 1,
+            'order' => 2,
             // 'auto-focus' => false,
         ];
 

@@ -49,7 +49,6 @@ final class DocumentFactory extends AbstractDocumentFactory
     public function createUsersDocument(): Document
     {
         $document = (new Document())
-            ->setName('users:inventory')
             ->setRoute("/users", $this->base)
             ->setTemplate("/users/base.html.twig", $this->namespace)
             ->setController(new UsersController())
@@ -59,7 +58,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'label' => "users",
             'icon' => 'bi bi-people',
             'href' => $document->getUrl(),
-            'order' => 1,
+            'order' => 2,
             'auto-focus' => false,
         ]);
 
@@ -68,7 +67,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'href' => Uss::instance()->replaceUrlQuery([
                 'channel' => CrudEnum::CREATE->value,
             ], $document->getUrl()),
-            'order' => 0,
+            'order' => 1,
             'auto-focus' => false,
         ];
 
@@ -90,7 +89,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'label' => 'settings',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-wrench',
-            'order' => 2,
+            'order' => 3,
         ];
 
         $document->addMenuItem('main:settings', $settingsMenuContext, $this->dashboard->menu);
@@ -113,7 +112,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'label' => 'System',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-gear',
-            'order' => 0,
+            'order' => 1,
         ];
 
         $document->addMenuItem('settings:system', $systemSettingsMenuContext, $this->dashboard->settingsBatch);
@@ -134,7 +133,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             'label' => 'Email',
             'href' => $document->getUrl(),
             'icon' => 'bi bi-envelope-at',
-            'order' => 1,
+            'order' => 2,
         ];
 
         $document->addMenuItem('settings:email', $emailSettingsMenuContext, $this->dashboard->settingsBatch);
@@ -167,7 +166,7 @@ final class DocumentFactory extends AbstractDocumentFactory
     {
         $document = (new Document())
             ->setController(new SystemInfoController())
-            ->setTemplate('/info.html.twig', $this->namespace)
+            ->setTemplate('/system-info.html.twig', $this->namespace)
             ->setRoute('/system-info', $this->base)
         ;
 
@@ -176,10 +175,12 @@ final class DocumentFactory extends AbstractDocumentFactory
             "href" => $document->getUrl(),
             "order" => 1,
         ];
-
-        $parentMenu = $this->settingsDocument->getMenuItem('main:settings');
-
-        $document->addMenuItem('main:settings.systemInfo', $infoMenuContext, $parentMenu);
+        
+        $document->addMenuItem(
+            'main:settings.systemInfo', 
+            $infoMenuContext,
+            $this->settingsDocument->getMenuItem('main:settings')
+        );
 
         return $document;
     }

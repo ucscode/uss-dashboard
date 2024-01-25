@@ -92,7 +92,7 @@ abstract class AbstractDocumentFactory
         $indexMenuContext = [
             'label' => 'dashboard',
             'href' => $document->getUrl(),
-            'order' => 0,
+            'order' => 1,
         ];
 
         $document->addMenuItem('main:index', $indexMenuContext, $this->dashboard->menu);
