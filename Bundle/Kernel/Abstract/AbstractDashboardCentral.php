@@ -3,10 +3,9 @@
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Common\AppStore;
+use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Bundle\Kernel\Service\AppControl;
-use Module\Dashboard\Bundle\Kernel\Service\AppFactory;
 use Module\Dashboard\Foundation\DocumentController;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Event\Event;
@@ -14,13 +13,13 @@ use Uss\Component\Route\Route;
 
 abstract class AbstractDashboardCentral implements DashboardInterface
 {
-    public readonly AppControl $appControl;
+    public readonly AppControlInterface $appControl;
     public readonly TreeNode $menu;
     public readonly TreeNode $userMenu;
     protected bool $firewallEnabled = true;
     protected array $documents = [];
 
-    public function __construct(AppControl $appControl)
+    public function __construct(AppControlInterface $appControl)
     {
         $this->createApp($appControl);
     }
@@ -30,7 +29,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      * Note: child class should override this method but still call it
      * parent::createProject($config);
      */
-    private function createApp(AppControl $appControl): void
+    private function createApp(AppControlInterface $appControl): void
     {
         $this->appControl = $appControl;
         $this->menu = new TreeNode('Main Menu');
@@ -44,7 +43,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
         $appStore = AppStore::instance();
         $appStore->add('app:instances', $this);
         foreach($this->appControl->getPermissions() as $permission) {
-            $appStore->add('app:permissions', $permission);
+            is_scalar($permission) ? $appStore->add('app:permissions', $permission) : null;
         }
     }
 

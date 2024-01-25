@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin;
 
-use Module\Dashboard\Bundle\Kernel\Service\AppControl;
+use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Foundation\Admin\Compact\DocumentFactory;
@@ -16,7 +16,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
 
     public readonly TreeNode $settingsBatch;
 
-    public function __construct(AppControl $appControl)
+    public function __construct(AppControlInterface $appControl)
     {
         parent::__construct($appControl);
         $this->settingsBatch = new TreeNode('settingsNode');
@@ -33,12 +33,10 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         $this->addDocument('index', $factory->createIndexDocument());
         $this->addDocument('notifications', $factory->createNotificationDocument());
         $this->addDocument('recovery', $factory->createPasswordResetDocument());
-        $this->addDocument('users:inventory', $factory->createUsersInventoryDocument());
-
-        // $factory->createUsersPage();
-        // $factory->createSettingsPage();
-        // $factory->createSettingsDefaultPage();
-        // $factory->createSettingsEmailPage();
+        $this->addDocument('users', $factory->createUsersDocument());
+        $this->addDocument('settings', $factory->createSettingsDocument());
+        $this->addDocument('settings.system', $factory->createSystemSettingsDocument());
+        $this->addDocument('settings.email', $factory->createEmailSettingsDocument());
         // $factory->createSettingsUserPage();
         // $factory->createInfoPage();
     }

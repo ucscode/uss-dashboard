@@ -21,7 +21,7 @@ new class () {
     public function __construct()
     {
         $uss = Uss::instance();
-
+        
         $this->createSystemApplication($uss);
         $this->createUserApplication();
         $this->createAdminApplication();

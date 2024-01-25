@@ -1,50 +1,41 @@
-{% extends _theme ~ '/base.html.twig' %}
+<div class="container-fluid">
 
-{% block dashboard_content %}
+    <h4 class='fw-normal'>
+        <i class="bi bi-wrench me-1"></i> Settings
+    </h4><hr>
 
-    <div class="container-fluid">
+    <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4'>
 
-        <h4 class='fw-normal'>
-            {% block settings_title %}
-                <i class="bi bi-wrench me-1"></i> Settings
-            {% endblock %}
-        </h4>
+        {% for item in (__dashboard.props.settingsBatch.children ?? []) %}
 
-        <hr>
-
-        {% block settings_content %}
-
-            <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4'>
-
-                {% for item in (settingsBatch.children ?? []) %}
-
-                    <div class="col mb-3">
-                        <div class="card h-100">
-                            <a class="card-body d-block" href='{{ item.getAttr('href') }}'>
-                                <div class='d-flex align-items-start'>
-                                    <h3 class='left my-0 me-3 p-2 border rounded text-center'>
-                                        <i class="{{ item.getAttr('icon') }}"></i>
-                                    </h3>
-                                    <div class='right flex-grow-1'>
-                                        <h4 class='fw-light mb-0 line-clamp clamp-2'>{{ item.getAttr('label') }}</h4>
-                                        <p class='text-muted text-hover-warning m-0'><small>Settings</small></p>
-                                    </div>
+            <div class="col mb-3">
+                <div class="card h-100 rounded-1">
+                    <div class="card-body d-block">
+                        <div class='d-flex align-items-start mb-'>
+                            <h5 class='left my-0 me-2 p-1 px-3 border rounded-end-4 text-center text-bg-secondary'>
+                                <i class="{{ item.getAttribute('icon') }}"></i>
+                            </h5>
+                            <a href='{{ item.getAttribute('href') }}' class="d-block right flex-grow-1 text-hover-warning">
+                                <div class=''>
+                                    <h5 class='mb-0 line-clamp clamp-2'>{{ item.getAttribute('label') }}</h5>
+                                    <p class='text-muted m-0'><small>Settings</small></p>
                                 </div>
                             </a>
-                            <div class="card-footer">
-                                <a href="{{ item.getAttr('href') }}">
-                                    <i class="bi bi-folder-symlink me-1"></i> Open Settings
-                                </a>
-                            </div>
+                        </div>
+                        <div class="border p-2 text-secondary small d-none">
+                            Lorem ipsum de more
                         </div>
                     </div>
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ item.getAttribute('href') }}" class="btn btn-outline-primary btn-sm w-100">
+                            Configure Now
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-                {% endfor %}
+        {% endfor %}
 
-            </div> <!-- /rows -->
+    </div> <!-- /rows -->
 
-        {% endblock %} {# /settings_content #}
-
-    </div>
-
-{% endblock %}
+</div>

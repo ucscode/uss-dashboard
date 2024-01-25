@@ -4,6 +4,9 @@ namespace Module\Dashboard\Foundation\Admin\Compact;
 
 use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
+use Module\Dashboard\Foundation\Admin\Controller\Settings\EmailSettingsController;
+use Module\Dashboard\Foundation\Admin\Controller\Settings\SystemSettingsController;
+use Module\Dashboard\Foundation\Admin\Controller\SettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
@@ -12,6 +15,8 @@ use Uss\Component\Kernel\Uss;
 
 final class DocumentFactory extends AbstractDocumentFactory
 {
+    protected Document $settingsDocument;
+    
     public function createLoginDocument(): Document
     {
         return parent::createLoginDocument()
@@ -39,7 +44,7 @@ final class DocumentFactory extends AbstractDocumentFactory
         return $document;
     }
 
-    public function createUsersInventoryDocument(): Document
+    public function createUsersDocument(): Document
     {
         $document = (new Document())
             ->setName('users:inventory')
@@ -71,84 +76,67 @@ final class DocumentFactory extends AbstractDocumentFactory
         return $document;
     }
 
-    // /**
-    //  * @method createSettingsPage
-    //  */
-    // public function createSettingsPage(): PageManager
-    // {
-    //     $settingsMenuItem = [
-    //         'label' => 'settings',
-    //         'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS),
-    //         'icon' => 'bi bi-wrench',
-    //         'order' => 2,
-    //     ];
+    public function createSettingsDocument(): Document
+    {
+        $document = (new Document())
+            ->setController(new SettingsController())
+            ->setTemplate('/settings/index.html.twig', $this->namespace)
+            ->setRoute('/settings', $this->base)
+        ;
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS)
-    //         ->setController(AdminSettingsController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/index.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_SETTINGS,
-    //             $settingsMenuItem,
-    //             $this->dashboard->menu
-    //         );
-    // }
+        $settingsMenuContext = [
+            'label' => 'settings',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-wrench',
+            'order' => 2,
+        ];
 
-    // /**
-    //  * @method createSettingsDefaultPage
-    //  */
-    // public function createSettingsDefaultPage(): PageManager
-    // {
-    //     $defaultItem = [
-    //         'label' => 'Default',
-    //         'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS_DEFAULT),
-    //         'icon' => 'bi bi-gear',
-    //         'order' => 1,
-    //     ];
+        $document->addMenuItem('main:settings', $settingsMenuContext, $this->dashboard->menu);
 
-    //     $defaultForm = new AdminSettingsDefaultForm(
-    //         AdminDashboardInterface::PAGE_SETTINGS_DEFAULT,
-    //         null,
-    //         'POST',
-    //         'multipart/form-data'
-    //     );
+        $this->settingsDocument = $document;
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS_DEFAULT)
-    //         ->setController(AdminSettingsDefaultController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/default.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_SETTINGS_DEFAULT,
-    //             $defaultItem,
-    //             $this->dashboard->settingsBatch
-    //         )
-    //         ->setForm($defaultForm);
-    // }
+        return $document;
+    }
 
-    // /**
-    //  * @method createSettingsEmailPage
-    //  */
-    // public function createSettingsEmailPage(): PageManager
-    // {
-    //     $emailItem = [
-    //         'label' => 'Email',
-    //         'href' => $this->dashboard->urlGenerator('/' . AdminDashboardInterface::PAGE_SETTINGS_EMAIL),
-    //         'icon' => 'bi bi-envelope-at',
-    //         'order' => 2,
-    //     ];
+    public function createSystemSettingsDocument(): Document
+    {
+        $document = (new Document())
+            ->setController(new SystemSettingsController())
+            ->setTemplate('/settings/system.html.twig', $this->namespace)
+            ->setRoute('/settings/system', $this->base)
+            ->setCustom('app.form', null)
+        ;
 
-    //     $emailForm = new AdminSettingsEmailForm(
-    //         AdminDashboardInterface::PAGE_SETTINGS_EMAIL
-    //     );
+        $systemSettingsMenuContext = [
+            'label' => 'System',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-gear',
+            'order' => 0,
+        ];
 
-    //     return $this->createPage(AdminDashboardInterface::PAGE_SETTINGS_EMAIL)
-    //         ->setController(AdminSettingsEmailController::class)
-    //         ->setTemplate($this->dashboard->useTheme('/pages/admin/settings/email.html.twig'))
-    //         ->addMenuItem(
-    //             AdminDashboardInterface::PAGE_SETTINGS_EMAIL,
-    //             $emailItem,
-    //             $this->dashboard->settingsBatch
-    //         )
-    //         ->setForm($emailForm);
-    // }
+        $document->addMenuItem('settings:system', $systemSettingsMenuContext, $this->dashboard->settingsBatch);
+
+        return $document;
+    }
+
+    public function createEmailSettingsDocument(): Document
+    {
+        $document = (new Document())
+            ->setController(new EmailSettingsController())
+            ->setTemplate('/settings/email.html.twig', $this->namespace)
+            ->setRoute('/settings/email', $this->base)
+            ->setCustom('app.form', null)
+        ;
+        
+        $emailItem = [
+            'label' => 'Email',
+            'href' => $document->getUrl(),
+            'icon' => 'bi bi-envelope-at',
+            'order' => 2,
+        ];
+
+        return $document;
+    }
 
     // /**
     //  * @method createSettingsUserPage

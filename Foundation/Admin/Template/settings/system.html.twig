@@ -1,9 +1,3 @@
-{% extends _theme ~ '/pages/admin/settings/index.html.twig' %}
-
-{% block settings_title %}
-    <i class="bi bi-gear me-1"></i> Default Settings
-{% endblock %}
-
 {% block settings_content %}
 
     {{ form.open|raw }}
@@ -20,11 +14,11 @@
 
                 {% block image_fragment %}
                     {% set iconField = form.getField('company[icon]') %}
-                    {% include _theme ~ '/pages/admin/settings/fragments/image.html.twig' %}
+                    {# {% include _theme ~ '/pages/admin/settings/fragments/image.html.twig' %} #}
                 {% endblock %}
 
                 {% block input_fragment %}
-                    {% include _theme ~ '/pages/admin/settings/fragments/input.html.twig' %}
+                    {# {% include _theme ~ '/pages/admin/settings/fragments/input.html.twig' %} #}
                 {% endblock %}
 
             </div>
@@ -35,7 +29,7 @@
 {% endblock %}
 
 {% block body_js %}
-    {{ parent() }}
+    {# {{ parent() }}  #}
     <script>
         $(function() {
             $("#reset-logo").click(function() {

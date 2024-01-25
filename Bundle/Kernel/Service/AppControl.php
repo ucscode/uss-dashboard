@@ -2,9 +2,10 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Service;
 
+use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Uss\Component\Kernel\Uss;
 
-final class AppControl
+class AppControl implements AppControlInterface
 {
     protected string $base;
     protected string $themeFolder;

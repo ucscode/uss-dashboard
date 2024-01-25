@@ -2,9 +2,9 @@
 
 namespace Module\Dashboard\Foundation\User;
 
+use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
-use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Foundation\User\Compact\AjaxDocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\DocumentFactory;
 use Ucscode\TreeNode\TreeNode;
@@ -17,7 +17,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
 
     public readonly TreeNode $profileBatch;
 
-    public function __construct(AppControl $appControl)
+    public function __construct(AppControlInterface $appControl)
     {
         parent::__construct($appControl);
         $this->profileBatch = new TreeNode('profileBatch');

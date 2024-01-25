@@ -25,7 +25,7 @@ class UsersController extends AbstractDashboardController
             CrudEnum::UPDATE->value => new UpdateController($document, $dashboard),
             default => new InventoryController($document, $dashboard),
         };
-
+        
         $updatedContext = $this->rewriteContext($channel, $userController, $document->getContext());
         $document->setContext($updatedContext);
     }

@@ -1,13 +1,13 @@
 <div class="col-12">
 
-    {% if not channel in ['create', 'update'] %}
+    {% if channel in ['create', 'update'] %}
 
-        {{ crudKernel.build.html(true)|raw }}
+        {% include '@Foundation/Admin/Template/users/upsert.html.twig' %}
 
     {% else %}
 
-        {% include '@Foundation/Admin/Template/users/upsert.html.twig' %}
-        
+        {{ crudKernel.build.html(true)|raw }}
+
     {% endif %}
 
 </div>
