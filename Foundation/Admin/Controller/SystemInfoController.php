@@ -14,9 +14,9 @@ use Uss\Component\Manager\CountryManager;
 
 class SystemInfoController extends AbstractDashboardController
 {
-    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
-    {  
-        
+    public function onload(array $context): void
+    {
+        parent::onload($context);
     }
 
     public function getInfo(): array

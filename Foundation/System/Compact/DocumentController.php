@@ -11,8 +11,7 @@ use Uss\Component\Route\RouteInterface;
 class DocumentController implements RouteInterface
 {
     public function __construct(protected DashboardInterface $dashboard, protected Document $document)
-    {
-    }
+    {}
 
     public function onload(array $routeContext): void
     {
@@ -22,21 +21,26 @@ class DocumentController implements RouteInterface
         
         if($controller) {
             $controller->onload($routeContext + [
-                'dashboardInterface' => $this->dashboard,
-                'dashboardDocument' => $this->document
+                'dashboard' => $this->dashboard,
+                'document' => $this->document
             ]);
         }
         
-        $context = $this->document->getContext();
-        $template = new BlockTemplate($this->document->getTemplate(), $context);
-        $currentTheme = $this->dashboard->appControl->getThemeFolder();
-        $baseTemplate = "@Theme/{$currentTheme}/base.html.twig";
+        $template = new BlockTemplate(
+            $this->document->getTemplate(),
+            $this->document->getContext()
+        );
 
         BlockManager::instance()
             ->getBlock('dashboard_content')
-            ->addTemplate("native_element", $template);
+            ->addTemplate("document_content", $template);
 
-        $this->dashboard->render($baseTemplate, []);
+        $baseTemplate = sprintf(
+            "@Theme/%s/base.html.twig",
+            $this->dashboard->appControl->getThemeFolder()
+        );
+
+        $this->dashboard->render($baseTemplate);
     }
 
     /**

@@ -15,6 +15,8 @@ use Uss\Component\Kernel\Resource\Enumerator;
 
 abstract class AbstractDashboard extends AbstractDashboardCentral
 {
+    private bool $rendered = false;
+
     public function __construct(AppControlInterface $appControl)
     {
         parent::__construct($appControl);
@@ -89,10 +91,18 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
      */
     public function render(string $template, array $options = []): void
     {
-        (new Event())->addListener(
-            'dashboard:render',
-            new DashboardRenderLogic($this, $template, $options)
-        );
+        if(!$this->rendered) {
+            (new Event())->addListener(
+                'dashboard:render',
+                new DashboardRenderLogic($this, $template, $options)
+            );
+            $this->rendered = true;
+        }
+    }
+
+    public function isRendered(): bool
+    {
+        return $this->rendered;
     }
 
     /**

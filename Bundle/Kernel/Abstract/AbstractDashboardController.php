@@ -9,18 +9,19 @@ use Uss\Component\Route\RouteInterface;
 
 class AbstractDashboardController implements RouteInterface
 {
+    protected DashboardInterface $dashboard;
+    protected Document $document;
+    protected ?DashboardFormInterface $form;
+
     /**
-     * Composes the application by handling the $form and updating the $dashboard or $document components.
-     * Example of actions to execute within this method:
+     * To use this, call the `parent::onload($context)`, then make your update to the references. Example:
      * 
-     * - $document->setTemplate("your updated template")
-     * - $document->setContext(["value" => "Your custom context"])
-     * - $dashboard->yourUniqueAction()
-     * - $form->handleSubmission() etc
+     * - $this->document->setTemplate("your updated template")
+     * - $this->document->setContext(["value" => "Your custom context"])
+     * - $this->form->handleSubmission() etc
      * 
      * The global dashboard controller will internally handle the remaining processes.
-     * 
-     * If you intend to enforce your own render logic, you can use the `$dashboard->render()` method within this method!
+     * If you intend to enforce your own render logic, you can use the `$this->dashboard->render()` method!
      *
      * @param DashboardInterface          $dashboard      The dashboard component to be updated.
      * @param Document                    $document       The document component to be updated.
@@ -28,23 +29,13 @@ class AbstractDashboardController implements RouteInterface
      *
      * @return void
      */
-    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
-    {
-        // Your code here
-    }
-
     public function onload(array $context): void
     {
-        $this->GUIBuilder(
-            $context['dashboardInterface'], 
-            $context['dashboardDocument'],
-            $context['dashboardDocument']?->getCustom('app.form')
-        );
-    }
-
-    protected function GUIBuilder(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
-    {
-        $document->setContext($document->getContext() + ['form' => $form]);
-        $this->composeApplication($dashboard, $document, $form);
+        $this->dashboard = $context['dashboard'];
+        $this->document = $context['document'];
+        $this->form = $this->document?->getCustom('app.form');
+        $this->document->setContext($this->document->getContext() + [
+            'form' => $this->form
+        ]);
     }
 }

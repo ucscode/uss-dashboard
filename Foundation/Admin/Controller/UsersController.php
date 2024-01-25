@@ -2,11 +2,8 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller;
 
-use Module\Dashboard\Bundle\Common\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\CreateController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Interface\UserControllerInterface;
@@ -16,18 +13,20 @@ use Uss\Component\Kernel\Uss;
 
 class UsersController extends AbstractDashboardController
 {
-    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function onload(array $context): void
     {
+        parent::onload($context);
+
         $channel = trim($_GET['channel'] ?? '');
 
         $userController = match($channel) {
-            CrudEnum::CREATE->value => new CreateController($document, $dashboard),
-            CrudEnum::UPDATE->value => new UpdateController($document, $dashboard),
-            default => new InventoryController($document, $dashboard),
+            CrudEnum::CREATE->value => new CreateController($this->document, $this->dashboard),
+            CrudEnum::UPDATE->value => new UpdateController($this->document, $this->dashboard),
+            default => new InventoryController($this->document, $this->dashboard),
         };
         
-        $updatedContext = $this->rewriteContext($channel, $userController, $document->getContext());
-        $document->setContext($updatedContext);
+        $updatedContext = $this->rewriteContext($channel, $userController, $this->document->getContext());
+        $this->document->setContext($updatedContext);
     }
 
     protected function rewriteContext(string $channel, ?UserControllerInterface $userController, array $context): array

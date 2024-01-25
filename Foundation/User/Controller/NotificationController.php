@@ -14,16 +14,18 @@ class NotificationController extends AbstractDashboardController
     public const PAGINATOR_KEY = 'index';
     public const ITEMS_PER_PAGE = 10;
 
-    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function onload(array $context): void
     {
+        parent::onload($context);
+
         $user = (new User())->acquireFromSession();
-        $paginator = $this->getPaginator($user, $document);
+        $paginator = $this->getPaginator($user, $this->document);
         $offset = ($paginator->getCurrentPage() - 1) * self::ITEMS_PER_PAGE;
 
         $notifications = $user->notification->get(['hidden' => 0,], $offset, self::ITEMS_PER_PAGE);
         $unseen = $user->notification->count(["seen" => 0, 'hidden' => 0]);
 
-        $document->setContext([
+        $this->document->setContext([
             'notifications' => $notifications,
             'unseen' => $unseen,
             'paginator' => $paginator,

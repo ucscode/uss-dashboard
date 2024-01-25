@@ -9,8 +9,8 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 
 class UsersSettingsController extends AbstractDashboardController
 {
-    public function composeApplication(DashboardInterface $dashboard, Document $document, ?DashboardFormInterface $form): void
+    public function onload(array $context): void
     {
-        
+        parent::onload($context);
     }
 }
