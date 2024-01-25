@@ -2,8 +2,8 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Compact;
 
-use Exception;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardThemeInterface;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
@@ -17,9 +17,10 @@ class ThemeLoader
     protected string $namespace;
     protected string $className;
 
-    public function __construct(protected array $documents, string $themeFolder)
+    public function __construct(protected DashboardInterface $dashboard)
     {
-        $this->themeFolder = Uss::instance()->filterContext($themeFolder);
+        $this->themeFolder = $this->dashboard->appControl->getThemeFolder();
+        $this->themeFolder = Uss::instance()->filterContext($this->themeFolder);
 
         $this->themeFile = sprintf(
             DashboardImmutable::THEMES_DIR . "/%s/%s.php", 
@@ -50,21 +51,16 @@ class ThemeLoader
 
     protected function instantiateClass(): void
     {
-        try {
-            require_once $this->themeFile;
+        require_once $this->themeFile;
+        
+        if(class_exists($this->className)) {
+            $implementations = class_implements($this->className);
+            $themeInterface = DashboardThemeInterface::class;
 
-            if(class_exists($this->className)) {
-
-                $implementations = class_implements($this->className);
-                $themeInterface = DashboardThemeInterface::class;
-
-                if(in_array($themeInterface, $implementations)) {
-                    $themeInstance = new $this->className();
-                    $themeInstance->loadDocuments($this->documents);
-                }
+            if(in_array($themeInterface, $implementations)) {
+                $themeInstance = new $this->className();
+                $themeInstance->onload($this->dashboard);
             }
-        } catch(Exception $e) {
-
         }
     }
 }

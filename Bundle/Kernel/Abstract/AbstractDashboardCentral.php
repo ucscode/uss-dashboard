@@ -53,10 +53,9 @@ abstract class AbstractDashboardCentral implements DashboardInterface
      */
     private function createGUI(): void
     {
-        $documents = $this->getDocuments();
-        new ThemeLoader($documents, $this->appControl->getThemeFolder());
+        new ThemeLoader($this);
 
-        foreach($documents as $document) {
+        foreach($this->getDocuments() as $document) {
             if($document->getRoute() !== null) {
                 new Route(
                     $document->getRoute(),
