@@ -1,12 +1,12 @@
 <div class="col-lg-5 col-md-6">
     <div class="card px-4">
         <div class='px-lg-4'>
-
+            
             {{ form.element.openingTag|raw }}
 
                 <div class="card-body">
                     <div class="row text-center text-sm-start align-items-center">
-                        <div class="mb-1 col-sm-4">
+                        <div class="mb-2 col-sm-4">
                             <img src="{{ __uss.option('company:logo') }}" class="mw-100" height="52px" alt="user-avatar" id="company-logo">
                         </div>
                         <div class="button-wrapper small col-sm-8">
@@ -14,7 +14,9 @@
                                 {{ form.collection('avatar').field('logo').elementContext.widget.export|raw }}
                                 {{ form.collection('avatar').field('logo-btn').elementContext.widget.export|raw }}
                             </div>
-                            <div class="small text-muted mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
+                            <div class="small text-muted mt-1">
+                                Allowed JPG, GIF or PNG. <br> Max size of 800K
+                            </div>
                         </div>
                     </div>
                 </div>

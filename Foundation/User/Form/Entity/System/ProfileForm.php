@@ -7,6 +7,7 @@ use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\Immutable\DeviceImmutable;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\User\Form\Abstract\AbstractUserAccountForm;
 use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
@@ -210,12 +211,7 @@ class ProfileForm extends AbstractUserAccountForm
         }
 
         $uploader = (new FileUploader($file))
-            ->setMimeTypes([
-                'image/png',
-                'image/jpeg',
-                'image/jpg',
-                'image/webp',
-            ])
+            ->setMimeTypes(DeviceImmutable::IMAGE_MIME_TYPES)
             ->setUploadDirectory(DashboardImmutable::ASSETS_DIR . "/images/profile")
             ->setFilenamePrefix($this->user->getId() . "-")
             ->setMaxFileSize(1000 * 1024) // 1000 KB

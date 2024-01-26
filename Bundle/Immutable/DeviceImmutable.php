@@ -9,7 +9,7 @@ class DeviceImmutable
         'image/jpeg',
         'image/png',
         'image/gif',
-        'image/jpeg',
-        'image/avif'
+        'image/avif',
+        'image/webp',
     ];
 } 

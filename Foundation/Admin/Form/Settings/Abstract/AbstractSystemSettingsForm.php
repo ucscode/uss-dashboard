@@ -18,9 +18,7 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
 
         $this->createField([
             'name' => 'company[name]',
-            'attributes' => [
-                'value' => $uss->options->get('company:name'),
-            ]
+            'value' => $uss->options->get('company:name'),
         ]);
 
         $this->createField([
@@ -28,17 +26,15 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
             'name' => 'company[description]',
             'attributes' => [
                 'rows' => 5,
-                'value' => $uss->options->get('company:description'),
             ],
             'required' => false,
+            'value' => $uss->options->get('company:description'),
         ]);
 
         $this->createField([
             'name' => 'nonce',
             'nodeType' => 'hidden',
-            'attributes' => [
-                'value' => $uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
-            ],
+            'value' => $uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
         ]);
 
         $this->createField([
@@ -66,7 +62,6 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
                 'data-ui-preview-uploaded-image-in' => '#company-logo',
             ],
             'required' => false,
-            'fixed' => true,
         ], $this->avatarCollection);
         
         $this->createField([
@@ -93,6 +88,7 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
         }
         $widgetContext->setFixed($context['fixed'] ?? false);
         $widgetContext->setRequired($context['required'] ?? true);
+        $widgetContext->setValue($context['value'] ?? null);
         if($widgetContext->isButton()) {
             $widgetContext->setButtonContent($context['content'] ?? 'Submit');
         }

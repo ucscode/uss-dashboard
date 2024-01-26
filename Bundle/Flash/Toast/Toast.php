@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Bundle\Flash\Toast;
 
 use Module\Dashboard\Bundle\Flash\Abstract\AbstractFlashConcept;
+use Module\Dashboard\Bundle\Flash\Interface\FlashConceptInterface;
 use Module\Dashboard\Bundle\Flash\Interface\ToastInterface;
 
 class Toast extends AbstractFlashConcept implements ToastInterface

@@ -111,17 +111,18 @@ class CrudEditor extends AbstractCrudEditor
             $SQL = $sQuery->build();
 
             try {
-                
                 $upsert = Uss::instance()->mysqli->query($SQL);
 
                 if($upsert) {
                     $this->lastPersistenceType = $objective;
                     $this->getForm()->populate($this->entity);
                 }
-
+                
                 return $upsert;
 
-            } catch(mysqli_sql_exception $e) {}
+            } catch(mysqli_sql_exception $e) {
+                //
+            }
             
         }
         return false;

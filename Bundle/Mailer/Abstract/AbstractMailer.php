@@ -37,7 +37,7 @@ abstract class AbstractMailer extends AbstractMailerFoundation
             return $this->PHPMailer->send();
 
         } catch(Exception $PHPMailerException) {
-
+            
             $this->PHPMailerException = $PHPMailerException;
 
             return false;
