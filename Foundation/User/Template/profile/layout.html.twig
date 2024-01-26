@@ -33,13 +33,13 @@
 
         <hr class="mt-2 mb-4">
 
-        {% block profile_content %}
-            <div class="row">
-                <!-- [block.start]:profile_content -->
+        <div class="row">
+            {% block profile_content %}
+                <!-- [profile]:content -->
                 {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
-                <!-- [block.end]:profile_content -->
-            </div>
-        {% endblock %}
+                <!-- [/profile]:content -->
+            {% endblock %}
+        </div>
 
     </div>
     

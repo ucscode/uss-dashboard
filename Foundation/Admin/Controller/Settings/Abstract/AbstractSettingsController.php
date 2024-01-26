@@ -9,7 +9,7 @@ abstract class AbstractSettingsController extends AbstractDashboardController
     public function onload(array $context): void
     {
         parent::onload($context);
-        $layout = '@Foundation\Admin\Template\settings\fragment\layout.html.twig';
+        $layout = '@Foundation\Admin\Template\settings\layout.html.twig';
         $this->document->setThemeBaseLayout($layout);
     }
 }

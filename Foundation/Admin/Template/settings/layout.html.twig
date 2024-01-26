@@ -9,7 +9,11 @@
         </h4><hr>
 
         <div class="row">
-            {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+            {% block settings_content %}
+                <!-- [settings]:content -->
+                {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+                <!-- [/settings]:content -->
+            {% endblock %}
         </div>
 
     </div>
