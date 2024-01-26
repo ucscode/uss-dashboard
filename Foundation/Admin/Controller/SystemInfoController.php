@@ -3,10 +3,10 @@
 namespace Module\Dashboard\Foundation\Admin\Controller;
 
 use DateTime;
-use Module\Dashboard\Bundle\Document\Document;
+use Module\Dashboard\Bundle\Common\Paginator;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
+use Ucscode\DOMTable\DOMTable;
+use Ucscode\UssElement\UssElement;
 use Uss\Component\Database;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
@@ -14,9 +14,42 @@ use Uss\Component\Manager\CountryManager;
 
 class SystemInfoController extends AbstractDashboardController
 {
+    protected DOMTable $domTable;
+
     public function onload(array $context): void
     {
         parent::onload($context);
+
+        $tableWrapper = $this->createSystemInfoTable();
+
+        $paginator = new Paginator(
+            $this->domTable->gettotalItems(),
+            $this->domTable->getItemsPerPage(),
+            $this->domTable->getCurrentPage(),
+            '?page=' . Paginator::NUM_PLACEHOLDER
+        );
+
+        $this->document->setContext([
+            'tableWrapper' => $tableWrapper,
+            'paginator' => $paginator,
+        ]);
+    }
+
+    protected function createSystemInfoTable(): UssElement
+    {
+        $this->domTable = new DOMTable('system-info');
+        $this->domTable->setColumns(['name', 'entry']);
+        $data = [];
+        foreach($this->getInfo() as $key => $value) {
+            $data[] = [
+                'name' => $key,
+                'entry' => $value,
+            ];
+        }
+        $this->domTable->setCurrentPage($_GET['page'] ?? 1);
+        $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped');
+        $this->domTable->setData($data);
+        return $this->domTable->build();
     }
 
     public function getInfo(): array
@@ -52,11 +85,22 @@ class SystemInfoController extends AbstractDashboardController
             'Database Name' => Database::NAME,
             'Database Table Prefix' => Database::PREFIX,
             'Author Name' => UssImmutable::AUTHOR,
-            'Author Website' => UssImmutable::AUTHOR_WEBSITE,
-            'Author Email' => UssImmutable::AUTHOR_EMAIL,
+            'Author Website' => $this->printUrl(UssImmutable::AUTHOR_WEBSITE),
+            'Author Email' => $this->printUrl(UssImmutable::AUTHOR_EMAIL, null, 'mailto:'),
             'Project Name' => UssImmutable::PROJECT_NAME,
-            'Project Repository' => UssImmutable::GITHUB_REPO,
-            'Project Website' => UssImmutable::PROJECT_WEBSITE,
+            'Project Repository' => $this->printUrl(UssImmutable::GITHUB_REPO),
+            'Project Website' => $this->printUrl(UssImmutable::PROJECT_WEBSITE),
         ];
+    }
+
+    protected function printUrl(string $url, ?string $display = null, string $urlPrefix = ''): string
+    {
+        $display ??= $url;
+        return sprintf(
+            "<a href='%s%s' target='_blank'>%s</a>",
+            $urlPrefix,
+            $url,
+            $display
+        );
     }
 }

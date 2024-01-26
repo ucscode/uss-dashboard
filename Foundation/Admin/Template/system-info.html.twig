@@ -1,42 +1,16 @@
-{% block settings_content %}
-
-    {{ form.open|raw }}
-        <fieldset>
-
-            <div class="text-end mb-3">
-                <button class="btn btn-primary btn-sm fw-bold" type="submit">
-                    <i class="bi bi-check2-circle me-1"></i> Save Changes
-                </button>
-                {{ form.getField(form.hashKey).widgetElement.HTML|raw }}
-            </div>
-
-            <div class="row">
-
-                {% block image_fragment %}
-                    {% set iconField = form.getField('company[icon]') %}
-                    {# {% include _theme ~ '/pages/admin/settings/fragments/image.html.twig' %} #}
-                {% endblock %}
-
-                {% block input_fragment %}
-                    {# {% include _theme ~ '/pages/admin/settings/fragments/input.html.twig' %} #}
-                {% endblock %}
-
-            </div>
-            
-        </fieldset>
-    {{ form.close|raw }}
-
-{% endblock %}
-
-{% block body_js %}
-    {# {{ parent() }}  #}
-    <script>
-        $(function() {
-            $("#reset-logo").click(function() {
-                const img = $("#company-icon-img");
-                img.attr("src", img.attr("data-image"));
-                $("#company-icon-widget").val('');
-            });
-        });
-    </script>
-{% endblock %}
+<div class="{{ column_1 ?? 'col-lg-12' }}">
+    <h4 class="fw-normal">
+        <i class="bi bi-info"></i> System Info
+    </h4>
+    <hr>
+    <p class='small text-bg-secondary rounded-2 p-2 px-3'>
+        Information related to the technical aspects of this web application.
+    </p>
+    <hr>
+    <div class="card">
+        <div class="card-body">
+            {{ tableWrapper.html|raw }}
+            {{ paginator.element.html|raw }}
+        </div>
+    </div>
+</div>
