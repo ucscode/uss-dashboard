@@ -11,6 +11,7 @@ use Module\Dashboard\Foundation\Admin\Controller\Settings\UsersSettingsControlle
 use Module\Dashboard\Foundation\Admin\Controller\SettingsController;
 use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
+use Module\Dashboard\Foundation\Admin\Form\Settings\EmailSettingsForm;
 use Module\Dashboard\Foundation\Admin\Form\Settings\SystemSettingsForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Ucscode\TreeNode\TreeNode;
@@ -127,7 +128,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setController(new EmailSettingsController())
             ->setTemplate('/settings/email.html.twig', $this->namespace)
             ->setRoute('/settings/email', $this->base)
-            ->setCustom('app.form', null)
+            ->setCustom('app.form', new EmailSettingsForm())
         ;
         
         $emailSettingsMenuContext = [

@@ -61,7 +61,7 @@ abstract class AbstractMailerFoundation extends AbstractUss
     protected function configureSMTP(): self
     {
         $memory = Uss::instance()->options;
-        $smtpEnabled = $memory->get('smtp:state') !== "default";
+        $smtpEnabled = !empty($memory->get('smtp:enabled'));
 
         if($smtpEnabled) {
             $this->PHPMailer->isSMTP(true);

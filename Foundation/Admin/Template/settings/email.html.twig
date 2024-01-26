@@ -1,17 +1,46 @@
-<div class='col-6'>
+<div class='col-12'>
 
-    {{ form.open|raw }}
+    {% set enableSMTPField = form.collection('smtp').removeField('smtp[enabled]') %}
+    {% set submitButton = form.collection('smtp').removeField('submit') %}
 
-        <div class="row">
-            {% block form_content %}
-            <div class="col-md-8 col-lg-7">
-                {{ form.stackContainer.getHTML(true)|raw }}
+    {{ form.element.openingTag|raw }}
+
+        <div class='col-lg-6 mb-3'>
+            <div class="card sticky-lg-top" style="top: 5px;">
+                <div class="card-body">
+                    <div class='p-3'>
+                        {{ form.collection.elementContext.export|raw }}
+                    </div>
+                </div>
             </div>
-            {% endblock %}
+        </div>
+        <div class='col-lg-6'>
+            <div class='card'>
+                <div class='card-body'>
+                    <div class='p-3'>
+                        {{ enableSMTPField.elementContext.export|raw }}
+                        <hr>
+                        {{ form.collection('smtp').elementContext.export|raw }}
+                        <hr>
+                        {{ submitButton.elementContext.export|raw }}
+                    </div>
+                </div>
+            </div>
         </div>
 
-    {{ form.close()|raw }}
+    {{ form.element.closingTag|raw }}
 
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            $(function() {
+                const field = {
+                    item: $('#smtp-enable-checker').on('change', (e) => field.disabled(!e.target.checked)),
+                    disabled: (status) => $('#collection-smtp').prop('disabled', status)
+                }
+                field.disabled(!field.item.prop('disabled')); 
+            });
+        });
+    </script>
 </div>
 
 {# {% block body_js %}

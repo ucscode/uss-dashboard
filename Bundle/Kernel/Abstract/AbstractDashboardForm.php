@@ -7,8 +7,10 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormSubmitInterface;
 use Ucscode\Promise\Promise;
 use Ucscode\UssForm\Collection\Collection;
+use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Attribute;
 use Ucscode\UssForm\Form\Form;
+use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 use Uss\Component\Block\BlockManager;
 
 abstract class AbstractDashboardForm extends Form implements DashboardFormInterface
@@ -27,6 +29,8 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     {
         parent::__construct($attribute);
         $this->collection = $this->getCollection(self::DEFAULT_COLLECTION);
+        $classBase = basename(str_replace("\\", "/", get_called_class()));
+        $this->element->setAttribute('id', strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $classBase)));
     }
 
     public function isSubmitted(): bool
@@ -170,5 +174,61 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                 "history.state", 
                 "<script>window.history.replaceState && window.history.replaceState(null,null,window.location.href);</script>"
             );
+    }
+
+    protected function generateField(string $key, array $context, ?Collection $collection = null): FieldPedigree
+    {
+        $field = new Field($context['nodeName'] ?? Field::NODE_INPUT, $context['nodeType'] ?? Field::TYPE_TEXT);
+        $fieldContext = $field->getElementContext();
+
+        $fieldContext->setFixed($context['fixed'] ?? false);
+        
+        $collection ??= $this->collection;
+        $collection->addField($key, $field);
+
+        $pedigree = $this->getFieldPedigree($field);
+
+        foreach(($context['widget-attributes'] ?? []) as $key => $value) {
+            $fieldContext->widget->setAttribute($key, $value);
+        }
+        
+        $pedigree->widget
+            ->setValue($context['value'] ?? null)
+            ->setRequired($context['required'] ?? true)
+            ->setDisabled($context['disabled'] ?? false)
+            ->setReadonly($context['readonly'] ?? false)
+            ->setChecked($context['checked'] ?? false)
+        ;
+
+        if($pedigree->widget->isSelective()) {
+            $pedigree->widget->setOptions($context['options'] ?? []);
+        }
+
+        $fieldContext->frame->addClass($context['class'] ?? null);
+
+        $fieldContext->info
+            ->setValue($context['info'] ?? null)
+            ->addClass($context['info-class'] ?? null);
+
+        $fieldContext->validation
+            ->setValue($context['validation'] ?? null)
+            ->addClass($context['validation-class'] ?? null);
+
+        if(!empty($context['label'])) {
+            $pedigree->gadget->label->setValue($context['label']);
+        }
+        
+        if(!empty($context['lineBreak'])) {
+            $fieldContext->lineBreak
+                ->setDOMHidden(false)
+                ->addClass($context['lineBreak-class'] ?? 'border-bottom')
+            ;
+        }
+
+        if($fieldContext->widget->isButton()) {
+            $fieldContext->widget->setButtonContent($context['content'] ?? 'Submit');
+        }
+
+        return $pedigree;
     }
 }
