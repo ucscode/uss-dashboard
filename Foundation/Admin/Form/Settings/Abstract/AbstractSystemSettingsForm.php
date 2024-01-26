@@ -22,6 +22,11 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
         ]);
 
         $this->createField([
+            'name' => 'company[slogan]',
+            'value' => $uss->options->get('company:slogan'),
+        ]);
+
+        $this->createField([
             'nodeName' => Field::NODE_TEXTAREA,
             'name' => 'company[description]',
             'attributes' => [

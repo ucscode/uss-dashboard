@@ -42,7 +42,6 @@ new class () {
         $uss->twigContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
         
         BlockManager::instance()->addBlock("dashboard_content", new Block(true));
-        BlockManager::instance()->addBlock("profile_content", new Block(true));
 
         new NotificationApi();
     }
@@ -53,6 +52,7 @@ new class () {
             ->setBase('/dashboard')
             ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
+
         UserDashboard::instance($appControl); // One-time Instantiation
     }
 
@@ -65,6 +65,7 @@ new class () {
                 RoleImmutable::ROLE_SUPER_ADMIN,
                 RoleImmutable::ROLE_ADMIN,
             ]);
+            
         AdminDashboard::instance($appControl); // One-time Instantiation
     }
 };

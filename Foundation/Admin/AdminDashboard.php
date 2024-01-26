@@ -10,6 +10,8 @@ use Module\Dashboard\Foundation\Admin\Compact\DocumentFactory;
 use Module\Dashboard\Foundation\Admin\Compact\Interface\AdminDashboardInterface;
 use Uss\Component\Trait\SingletonTrait;
 use Ucscode\TreeNode\TreeNode;
+use Uss\Component\Block\Block;
+use Uss\Component\Block\BlockManager;
 use Uss\Component\Event\Event;
 
 class AdminDashboard extends AbstractDashboard implements AdminDashboardInterface
@@ -22,7 +24,8 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
     {
         parent::__construct($appControl);
 
-        $this->settingsBatch = new TreeNode('settingsNode');
+        $this->settingsBatch = new TreeNode('settingsBatch');
+        BlockManager::instance()->addBlock("settings_content", new Block(true));
 
         $this->createAdminDocuments();
 

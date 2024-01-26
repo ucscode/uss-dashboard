@@ -1,21 +1,6 @@
-{% extends _theme ~ '/pages/admin/settings/index.html.twig' %}
-
-{% block settings_title %}
-    <i class="bi bi-envelope me-1"></i> Email Settings
-{% endblock %}
-
-{% block settings_content %}
+<div class='col-6'>
 
     {{ form.open|raw }}
-
-        {% block form_submitter %}
-            <div class='text-end mb-3'>
-                <button class="btn btn-primary btn-sm" type="submit"> 
-                    <i class='bi bi-check2-circle me-1'></i> Save Changes
-                </button>
-                {{ form.getField(form.hashKey).widgetElement.HTML|raw }}
-            </div>
-        {% endblock %}
 
         <div class="row">
             {% block form_content %}
@@ -27,13 +12,13 @@
 
     {{ form.close()|raw }}
 
-{% endblock %}
+</div>
 
-{% block body_js %}
+{# {% block body_js %}
     {{ parent() }}
     <script>
         $("#smtp-state input").on("change", function() {
             $("[data-fieldstack='SMTP']").attr("disabled", this.value === 'default');
         });
     </script>
-{% endblock %}
+{% endblock %} #}

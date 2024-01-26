@@ -10,6 +10,8 @@ use Module\Dashboard\Foundation\User\Compact\AjaxDocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\DocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\Interface\UserDashboardInterface;
 use Ucscode\TreeNode\TreeNode;
+use Uss\Component\Block\Block;
+use Uss\Component\Block\BlockManager;
 use Uss\Component\Trait\SingletonTrait;
 use Uss\Component\Event\Event;
 
@@ -24,6 +26,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         parent::__construct($appControl);
 
         $this->profileBatch = new TreeNode('profileBatch');
+        BlockManager::instance()->addBlock("profile_content", new Block(true));
 
         $this->createLocalDocuments();
         $this->createAjaxDocuments();

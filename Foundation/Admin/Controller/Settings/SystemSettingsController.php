@@ -5,9 +5,9 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Settings;
 use Exception;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Modal\Modal;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
+use Module\Dashboard\Foundation\Admin\Controller\Settings\Abstract\AbstractSettingsController;
 
-class SystemSettingsController extends AbstractDashboardController
+class SystemSettingsController extends AbstractSettingsController
 {
     public function onload(array $context): void
     {

@@ -90,6 +90,7 @@ final class DatabaseGenerator
         $configuration = [
             'company:logo' => $this->uss->twigContext['page_icon'],
             'company:name' => $this->uss->twigContext['page_title'],
+            'company:slogan' => $this->uss->twigContext['page_slogan'],
             'company:description' => $this->uss->twigContext['page_description'],
             'company:email' => 'admin@example.com',
             'company:email-alt' => null,

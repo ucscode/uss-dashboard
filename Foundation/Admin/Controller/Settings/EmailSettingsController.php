@@ -2,12 +2,9 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Settings;
 
-use Module\Dashboard\Bundle\Common\Document;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
+use Module\Dashboard\Foundation\Admin\Controller\Settings\Abstract\AbstractSettingsController;
 
-class EmailSettingsController extends AbstractDashboardController
+class EmailSettingsController extends AbstractSettingsController
 {
     public function onload(array $context): void
     {
