@@ -1,4 +1,4 @@
-<div class='col-12'>
+<div class='{{ column_1 ?? 'col-12' }}'>
 
     {% set enableSMTPField = form.collection('smtp').removeField('smtp[enabled]') %}
     {% set submitButton = form.collection('smtp').removeField('submit') %}
@@ -37,7 +37,7 @@
                     item: $('#smtp-enable-checker').on('change', (e) => field.disabled(!e.target.checked)),
                     disabled: (status) => $('#collection-smtp').prop('disabled', status)
                 }
-                field.disabled(!field.item.prop('disabled')); 
+                field.disabled(!field.item.prop('checked')); 
             });
         });
     </script>

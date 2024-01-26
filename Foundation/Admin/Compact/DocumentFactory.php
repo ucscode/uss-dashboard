@@ -13,6 +13,7 @@ use Module\Dashboard\Foundation\Admin\Controller\UsersController;
 use Module\Dashboard\Foundation\Admin\Form\LoginForm;
 use Module\Dashboard\Foundation\Admin\Form\Settings\EmailSettingsForm;
 use Module\Dashboard\Foundation\Admin\Form\Settings\SystemSettingsForm;
+use Module\Dashboard\Foundation\Admin\Form\Settings\UsersSettingsForm;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Kernel\Uss;
@@ -149,7 +150,7 @@ final class DocumentFactory extends AbstractDocumentFactory
             ->setController(new UsersSettingsController())
             ->setTemplate('/settings/user.html.twig', $this->namespace)
             ->setRoute('/settings/users', $this->base)
-            ->setCustom('app.form', null)
+            ->setCustom('app.form', new UsersSettingsForm())
         ;
 
         $usersSettingsMenuContext = [

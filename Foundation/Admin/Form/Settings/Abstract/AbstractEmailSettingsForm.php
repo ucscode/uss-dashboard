@@ -15,6 +15,12 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
     protected Uss $uss;
     protected Collection $smtpCollection;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->uss = Uss::instance();
+    }
+
     public function createEmailCollectionFields(): void
     {   
         $this->collection->getElementContext()->fieldset
@@ -40,8 +46,8 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
 
     protected function createSMTPCollectionFields(): void
     {
-        $smtpEnabled = $this->uss->options->get("smpt:enabled") == 1;
-
+        $smtpEnabled = !empty($this->uss->options->get("smtp:enabled"));
+        
         $this->smtpCollection = new Collection();
         $this->addCollection('smtp', $this->smtpCollection);
         
@@ -75,7 +81,7 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
         $this->generateField('smtp[server]', [
             'info' => 'Mail server responsible for sending outgoing emails',
             'widget-attributes' => [
-                'placeholder' => 'smtp.example.com'
+                'placeholder' => 'smtp.example.com',
             ],
             'label' => 'SMTP Server',
             'value' => $this->uss->options->get('smtp:server'),
@@ -85,7 +91,7 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
             'label' => "SMTP Username",
             'info' => "The unique identifier for accessing the SMTP server",
             'widget-attributes' => [
-                "placeholder", "user@example.com"
+                "placeholder" => "user@example.com",
             ],
             'value' => $this->uss->options->get("smtp:username"),
         ], $this->smtpCollection);
@@ -133,10 +139,12 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
         ]);
 
         $this->generateField('submit', [
-            'fixed' => true,
             'nodeName' => Field::NODE_BUTTON,
             'nodeType' => Field::TYPE_SUBMIT,
             'content' => 'Save Changes',
+            'widget-attributes' => [
+                'data-anonymous' => '',
+            ]
         ], $this->smtpCollection);
     }
 }

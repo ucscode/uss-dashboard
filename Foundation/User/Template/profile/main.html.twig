@@ -2,7 +2,7 @@
 
 {% block profile_content %} #}
     
-    <div class="col-12">
+    <div class="{{ column_1 ?? 'col-12' }}">
         <form {{ __uss.meths.arrayToHtmlAttrs(form.attribute.fetchAll(true))|raw }}>
             <div class="row">
 

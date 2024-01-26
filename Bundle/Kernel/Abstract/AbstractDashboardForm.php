@@ -10,6 +10,8 @@ use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Attribute;
 use Ucscode\UssForm\Form\Form;
+use Ucscode\UssForm\Gadget\Gadget;
+use Ucscode\UssForm\Resource\Facade\Position;
 use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 use Uss\Component\Block\BlockManager;
 
@@ -197,11 +199,21 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             ->setRequired($context['required'] ?? true)
             ->setDisabled($context['disabled'] ?? false)
             ->setReadonly($context['readonly'] ?? false)
-            ->setChecked($context['checked'] ?? false)
         ;
 
         if($pedigree->widget->isSelective()) {
             $pedigree->widget->setOptions($context['options'] ?? []);
+        }
+
+        if($pedigree->widget->isCheckable()) {
+            $pedigree->widget->setChecked($context['checked'] ?? false);
+            if(array_key_exists('value.alt', $context)) {
+                $gadget = new Gadget(Field::NODE_INPUT, Field::TYPE_HIDDEN);
+                $gadget->widget->setValue($context['value.alt']);
+                $gadget->container->addClass('d-none');
+                $field->addGadget($key, $gadget);
+                $field->setGadgetPosition($gadget, Position::BEFORE, $pedigree->gadget);
+            }
         }
 
         $fieldContext->frame->addClass($context['class'] ?? null);

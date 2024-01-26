@@ -1,5 +1,5 @@
 
-<div class="col-12">
+<div class="{{ column_1 ?? 'col-12' }}">
     <div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4'>
 
         {% for item in (__dashboard.props.settingsBatch.children ?? []) %}

@@ -9,6 +9,7 @@ class EmailSettingsController extends AbstractSettingsController
     public function onload(array $context): void
     {
         parent::onload($context);
+        $this->form->handleSubmission();
         $this->form->build();
     }
 }
