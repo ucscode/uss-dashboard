@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Common\Password;
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
@@ -19,12 +20,15 @@ abstract class AbstractErrorManagement
     protected string $avatar;
     protected ?User $parent = null;
     protected array $postContext = [];
+    protected CrudEnum $channel;
 
     public function __construct(
         protected User $client, 
         protected CrudEditor $crudEditor, 
         protected DashboardInterface $dashboard
-    ){}
+    ){
+        $this->channel = $_GET['channel'] === CrudEnum::UPDATE->value ? CrudEnum::UPDATE : CrudEnum::CREATE;
+    }
 
     protected function handlePasswordError(string $password, AbstractDashboardForm $form): ?string
     {
@@ -61,10 +65,8 @@ abstract class AbstractErrorManagement
             $context->validation->setValue('* Invalid email address');
             return $email;
         }
-
-        $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $email, 'email');
-
-        if($client) {
+        
+        if(!$this->isUniqueClient('email', $email)) {
             $form->setPersistenceEnabled(false);
             $context->validation->setValue('* Email already exists');
         }
@@ -90,9 +92,7 @@ abstract class AbstractErrorManagement
                 return $username;
             }
 
-            $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $username, 'username');
-
-            if($client) {
+            if(!$this->isUniqueClient('username', $username)) {
                 $form->setPersistenceEnabled(false);
                 $context->validation->setValue('* Username already exists');
             }
@@ -146,5 +146,21 @@ abstract class AbstractErrorManagement
     protected function getFieldByPedigree(string $fieldName): ?Field
     {
         return $this->crudEditor->getForm()->getFieldPedigree($fieldName)?->field;
+    }
+
+    protected function isUniqueClient(string $key, string $value): bool
+    {
+        // Get the other existing client
+        $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $value, $key);
+        $caller = 'get' . ucfirst($key);
+        if($client) {
+            $notUnique = $this->channel === CrudEnum::CREATE ||
+                (
+                    $this->channel === CrudEnum::UPDATE && 
+                    $client[$key] !== $this->client->{$caller}()
+                );
+            return !$notUnique;
+        }
+        return true;
     }
 }
