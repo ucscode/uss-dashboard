@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Document\Abstract;
 
+use Module\Dashboard\Bundle\Exception\DashboardException;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Route\RouteInterface;
 
@@ -45,7 +46,7 @@ abstract class AbstractDocument
         $method = array_values(array_map(fn ($value) => strtoupper(trim($value)), $method));
 
         foreach(array_diff($method, $methods) as $method) {
-            throw new \Exception(
+            throw new DashboardException(
                 sprintf("Invalid Request Method '%s' provided in argument 2 of %s('method', ...) ", $method, $caller)
             );
         };
@@ -54,7 +55,7 @@ abstract class AbstractDocument
     protected function discernMenuItem(array|TreeNode $menu, ?TreeNode $parentMenu): void
     {
         if ($parentMenu === $menu) {
-            throw new \Exception(
+            throw new DashboardException(
                 sprintf(
                     '%1$s (%2$s in #argument 2) cannot be equivalent to (%2$s in #argument 3)',
                     __METHOD__,

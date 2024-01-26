@@ -19,11 +19,6 @@ class DocumentController implements RouteInterface
 
         $controller = $this->document->getController();
         
-        $baseTemplate = sprintf(
-            "@Theme/%s/base.html.twig",
-            $this->dashboard->appControl->getThemeFolder()
-        );
-        
         if($controller) {
             $controller->onload($routeContext + [
                 'dashboard' => $this->dashboard,
@@ -39,6 +34,10 @@ class DocumentController implements RouteInterface
         BlockManager::instance()
             ->getBlock('dashboard_content')
             ->addTemplate("document_content", $template);
+
+        $baseTemplate = 
+            $this->document->getThemeBaseLayout() ?? 
+            $this->dashboard->getTheme('base.html.twig');
 
         $this->dashboard->render($baseTemplate);
     }

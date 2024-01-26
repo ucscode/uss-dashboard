@@ -1,11 +1,17 @@
-<div class="container-fluid">
+{% extends __dashboard.meths.theme('/base.html.twig') %}
 
-    <h4 class='fw-normal'>
-        <i class="bi bi-wrench me-1"></i> Settings
-    </h4><hr>
+{% block dashboard_content %}
 
-    <div class="row">
-        {{ __uss.renderBlockElements('settings_content', _context)|raw }}
+    <div class="container-fluid">
+
+        <h4 class='fw-normal'>
+            <i class="bi bi-wrench me-1"></i> Settings
+        </h4><hr>
+
+        <div class="row">
+            {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+        </div>
+
     </div>
-
-</div>
+    
+{% endblock %}
