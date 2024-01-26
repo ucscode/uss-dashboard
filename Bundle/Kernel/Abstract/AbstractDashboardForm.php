@@ -26,6 +26,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     private array $properties = [];
     private array $submitInterfaces = [];
     private array $builderInterfaces = [];
+    protected ?bool $replaceState = true;
 
     public function __construct(Attribute $attribute = new Attribute())
     {
@@ -109,10 +110,9 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
     final public function build(): void
     {
         $this->buildForm();
-        array_walk(
-            $this->builderInterfaces,
-            fn (DashboardFormBuilderInterface $exporter) => $exporter->onBuild($this)
-        );
+        foreach($this->builderInterfaces as $builderInterface) {
+            $builderInterface->onBuild($this);
+        }
     }
 
     final public function handleSubmission(): Promise
@@ -141,18 +141,20 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
 
                 $this->resolveSubmission($resource); // Local Resolver
 
-                /**
-                 * Prevent resubmission of form when reload is clicked on the browser
-                 */
-                if(!empty($this->getProperty('history.replaceState') ?? true)) {
-                    $this->replaceHistoryState();
-                }
+                // Prevent resubmission of form when the browser is reloaded
+                $this->replaceState ? $this->implementReplaceStateJavascript() : null;
 
                 $resolved($this);
 
             };
 
         });
+    }
+
+    public function replaceHistoryState(bool $replace = true): self
+    {
+        $this->replaceState = !is_null($this->replaceState) && $replace;
+        return $this;
     }
 
     protected function filterResource(): array
@@ -166,16 +168,6 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
                 return json_last_error() === JSON_ERROR_NONE ? $jsonValue : ['input' => $input];
             }),
         };
-    }
-
-    protected function replaceHistoryState(): void
-    {
-        BlockManager::instance()
-            ->getBlock("body_javascript")
-            ->addContent(
-                "history.state", 
-                "<script>window.history.replaceState && window.history.replaceState(null,null,window.location.href);</script>"
-            );
     }
 
     protected function generateField(string $key, array $context, ?Collection $collection = null): FieldPedigree
@@ -193,6 +185,10 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         foreach(($context['widget-attributes'] ?? []) as $key => $value) {
             $fieldContext->widget->setAttribute($key, $value);
         }
+
+        if($pedigree->widget->isSelective()) {
+            $pedigree->widget->setOptions($context['options'] ?? []);
+        }
         
         $pedigree->widget
             ->setValue($context['value'] ?? null)
@@ -200,10 +196,6 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             ->setDisabled($context['disabled'] ?? false)
             ->setReadonly($context['readonly'] ?? false)
         ;
-
-        if($pedigree->widget->isSelective()) {
-            $pedigree->widget->setOptions($context['options'] ?? []);
-        }
 
         if($pedigree->widget->isCheckable()) {
             $pedigree->widget->setChecked($context['checked'] ?? false);
@@ -241,6 +233,25 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
             $fieldContext->widget->setButtonContent($context['content'] ?? 'Submit');
         }
 
+        if(!empty($context['suffix'])) {
+            $fieldContext->suffix->setValue($context['suffix']);
+        }
+
+        if(!empty($context['prefix'])) {
+            $fieldContext->suffix->setValue($context['prefix']);
+        }
+
         return $pedigree;
+    }
+
+    protected function implementReplaceStateJavascript(): void
+    {
+        $this->replaceState = null;
+        $caller = 'window.history.replaceState';
+        $href = 'window.location.href';
+        $stateReplacement = sprintf('<script>%1$s && %1$s(null,null,%2$s);</script>', $caller, $href);
+        BlockManager::instance()
+            ->getBlock("body_javascript")
+            ->addContent("history.state", $stateReplacement);
     }
 }

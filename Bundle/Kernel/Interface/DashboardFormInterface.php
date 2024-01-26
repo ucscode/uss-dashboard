@@ -15,4 +15,5 @@ interface DashboardFormInterface
     public function removeSubmitAction(string $name): self;
     public function handleSubmission(): Promise;
     public function isSubmitted(): bool;
+    public function replaceHistoryState(bool $replace): self;
 }

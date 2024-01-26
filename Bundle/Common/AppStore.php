@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Common;
 
+use Uss\Component\Kernel\Uss;
 use Uss\Component\Trait\SingletonTrait;
 
 class AppStore
@@ -39,5 +40,12 @@ class AppStore
             unset($this->storage[$name]);
         }
         return $this;
+    }
+
+    public function __debugInfo()
+    {
+        return Uss::instance()->array_map_recursive(function($item) {
+            return is_object($item) ? sprintf('object(%s) {}', $item::class) : $item;
+        }, $this->storage);
     }
 }
