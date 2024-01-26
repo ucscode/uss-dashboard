@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\User\Compact;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Foundation\System\Compact\Abstract\AbstractDocumentFactory;
 use Module\Dashboard\Foundation\User\Controller\PasswordController;
 use Module\Dashboard\Foundation\User\Controller\ProfileController;

@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardRenderLogic;

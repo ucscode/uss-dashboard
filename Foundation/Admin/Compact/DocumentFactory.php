@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Compact;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Foundation\Admin\Controller\SystemInfoController;
 use Module\Dashboard\Foundation\Admin\Controller\Settings\EmailSettingsController;

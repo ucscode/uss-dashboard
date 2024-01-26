@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\System\Compact;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Interface\DocumentInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Uss\Component\Block\BlockManager;
 use Uss\Component\Block\BlockTemplate;
@@ -10,7 +10,7 @@ use Uss\Component\Route\RouteInterface;
 
 class DocumentController implements RouteInterface
 {
-    public function __construct(protected DashboardInterface $dashboard, protected Document $document)
+    public function __construct(protected DashboardInterface $dashboard, protected DocumentInterface $document)
     {}
 
     public function onload(array $routeContext): void
@@ -18,6 +18,11 @@ class DocumentController implements RouteInterface
         $this->enableMatchingMenus();
 
         $controller = $this->document->getController();
+        
+        $baseTemplate = sprintf(
+            "@Theme/%s/base.html.twig",
+            $this->dashboard->appControl->getThemeFolder()
+        );
         
         if($controller) {
             $controller->onload($routeContext + [
@@ -34,11 +39,6 @@ class DocumentController implements RouteInterface
         BlockManager::instance()
             ->getBlock('dashboard_content')
             ->addTemplate("document_content", $template);
-
-        $baseTemplate = sprintf(
-            "@Theme/%s/base.html.twig",
-            $this->dashboard->appControl->getThemeFolder()
-        );
 
         $this->dashboard->render($baseTemplate);
     }

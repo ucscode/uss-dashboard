@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Uss\Component\Route\RouteInterface;

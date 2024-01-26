@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\User\Compact;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\User\Controller\Ajax\ReconfirmRegisterEmail;
 

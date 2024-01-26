@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Interface;
 
-use Module\Dashboard\Bundle\Common\Document;
+use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Kernel\Resource\Enumerator;
 use Uss\Component\Manager\UrlGenerator;
