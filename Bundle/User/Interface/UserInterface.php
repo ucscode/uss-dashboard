@@ -15,4 +15,5 @@ interface UserInterface
     public function delete(): ?bool;
     public function verifyPassword(string $password): bool;
     public function getRawInfo(): array;
+    public function isLonely(): bool;
 }

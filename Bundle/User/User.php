@@ -138,4 +138,25 @@ class User extends AbstractUserRepository
         };
         return null;
     }
+
+    /**
+     * @method isLonely
+     * 
+     * Check if current user is the only available user in database
+     */
+    public function isLonely(): bool
+    {
+        if($this->isAvailable()) {
+            $SQL = (new SQuery())
+                ->select("COUNT(id) AS totalUsers")
+                ->from(self::USER_TABLE)
+                ->build();
+            $result = Uss::instance()->mysqli->query($SQL);
+            $assoc = $result->fetch_assoc();
+            if($assoc) {
+                return (int)$assoc['totalUsers'] === 1;
+            }
+        }
+        return false;
+    }
 }

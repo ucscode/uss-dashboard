@@ -192,42 +192,69 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     }
 
     /**
+     * @method hasParent
+     */
+    public function hasParent(): bool
+    {
+        return $this->getParent() !== null;
+    }
+
+    /**
      * @method getChildren
      */
-    public function getChildren(?callable $filter = null): array
+    public function getChildren(?Condition $filter = null): array
     {
         $children = [];
 
-        $squery = (new SQuery())
-            ->select('*')
-            ->from(self::USER_TABLE)
-            ->where(
-                (new Condition())
-                    ->add('parent', $this->getId() ?? -1)
-            );
+        if($this->isAvailable()) {
+            $filter ??= new Condition();
+            $filter->add('parent', $this->getId());
 
-        if(is_callable($filter)) {
-            $squery = call_user_func($filter, $squery);
-            if(!($squery instanceof SQuery)) {
-                throw new Exception(
-                    sprintf(
-                        "%s Argument must return an instance of SQuery",
-                        __METHOD__
-                    )
-                );
-            }
+            $squery = (new SQuery())
+                ->select('*')
+                ->from(self::USER_TABLE)
+                ->where($filter);
+
+            $SQL = $squery->build();
+            $result = Uss::instance()->mysqli->query($SQL);
+
+            if($result->num_rows) {
+                while($child = $result->fetch_assoc()) {
+                    $children[] = new User($child['id']);
+                }
+            };
         }
 
-        $SQL = $squery->build();
-        $result = Uss::instance()->mysqli->query($SQL);
-
-        if($result->num_rows) {
-            while($child = $result->fetch_assoc()) {
-                $children[] = new User($child['id']);
-            }
-        };
-
         return $children;
+    }
+
+    /**
+     * @method childrenCount
+     */
+    public function childrenCount(): int
+    {
+        if($this->isAvailable()) {
+            $filter = (new Condition())->add('parent', $this->getId());
+            $SQL = (new SQuery())
+                ->select("COUNT(id) as children")
+                ->from(self::USER_TABLE)
+                ->where($filter)
+                ->build();
+            $result = Uss::instance()->mysqli->query($SQL);
+            $assoc = $result->fetch_assoc();
+            if($assoc !== null) {
+                return $assoc['children'];
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @method hasChildren
+     */
+    public function hasChildren(): bool
+    {
+        return !empty($this->childrenCount());
     }
 
     /**
