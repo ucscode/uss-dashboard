@@ -48,7 +48,7 @@ class DocumentController implements RouteInterface
 
         $template = $this->document->getTemplate();
         
-        if($template && $template !== $baseLayout) {
+        if($template !== $baseLayout) {
             $blockTemplate = new BlockTemplate($template, $this->document->getContext());
             $contentBlock = BlockManager::instance()->getBlock('dashboard_content');
             $contentBlock->addTemplate("document_content", $blockTemplate);
