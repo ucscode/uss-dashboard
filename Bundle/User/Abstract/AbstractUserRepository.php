@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\User\Abstract;
 
 use DateTime;
-use Exception;
 use InvalidArgumentException;
 use Module\Dashboard\Bundle\Common\Password;
 use Ucscode\SQuery\Condition;

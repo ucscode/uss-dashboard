@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\User\Abstract;
 
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
-use Module\Dashboard\Bundle\User\Service\Mailer;
 use Module\Dashboard\Bundle\User\Service\Meta;
 use Module\Dashboard\Bundle\User\Service\Notification;
 use Module\Dashboard\Bundle\User\Service\Roles;
