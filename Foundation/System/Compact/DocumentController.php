@@ -15,10 +15,8 @@ class DocumentController implements RouteInterface
 
     public function onload(array $routeContext): void
     {
-        $this->enableMatchingMenus();
-
         $controller = $this->document->getController();
-        
+
         if($controller) {
             $controller->onload($routeContext + [
                 'dashboard' => $this->dashboard,
@@ -26,25 +24,13 @@ class DocumentController implements RouteInterface
             ]);
         }
 
-        $template = new BlockTemplate(
-            $this->document->getTemplate(),
-            $this->document->getContext()
-        );
+        $this->enableMatchingMenus();
 
-        BlockManager::instance()
-            ->getBlock('dashboard_content')
-            ->addTemplate("document_content", $template);
-
-        $baseTemplate = 
-            $this->document->getThemeBaseLayout() ?? 
-            $this->dashboard->getTheme('base.html.twig');
-
-        $this->dashboard->render($baseTemplate);
+        if(!$this->dashboard->isRendered()) {
+            $this->renderTemplateContext();
+        }
     }
-
-    /**
-     * Primary menu are those that auto-active when the route for the document is matched
-     */
+    
     protected function enableMatchingMenus(): void
     {
         foreach($this->document->getMenuItems() as $node) {
@@ -52,5 +38,22 @@ class DocumentController implements RouteInterface
             $activated = $node->getAttribute('active');
             $node->setAttribute('active', $focused && $activated === null);
         };
+    }
+
+    protected function renderTemplateContext(): void
+    {
+        $baseLayout = 
+            $this->document->getThemeBaseLayout() ?? 
+            $this->dashboard->getTheme('base.html.twig');
+
+        $template = $this->document->getTemplate();
+        
+        if($template !== $baseLayout) {
+            $blockTemplate = new BlockTemplate($template, $this->document->getContext());
+            $contentBlock = BlockManager::instance()->getBlock('dashboard_content');
+            $contentBlock->addTemplate("document_content", $blockTemplate);
+        }
+
+        $this->dashboard->render($baseLayout);
     }
 }
