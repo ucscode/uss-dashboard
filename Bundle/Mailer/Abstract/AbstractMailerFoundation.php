@@ -2,37 +2,23 @@
 
 namespace Module\Dashboard\Bundle\Mailer\Abstract;
 
-use Module\Dashboard\Bundle\Kernel\Compact\DashboardEnvironment;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractSandbox;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
-use Uss\Component\Kernel\Abstract\AbstractUss;
-use Uss\Component\Kernel\Extension\Extension;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Kernel\UssImmutable;
 
-abstract class AbstractMailerFoundation extends AbstractUss
+abstract class AbstractMailerFoundation extends AbstractSandbox
 {
-    protected bool $isLocalhost;
     protected array $context = [];
     protected ?string $template = null;
     protected PHPMailer $PHPMailer;
     protected ?PHPMailerException $PHPMailerException = null;
-    protected Extension $borrowedExtension;
 
     public function __construct()
-    {
-        parent::__construct();
-
-        new DashboardEnvironment($this);
-        $this->borrowedExtension = new Extension(Uss::instance());
-        $this->twigEnvironment->addExtension($this->borrowedExtension);
-        
+    {        
         $this->PHPMailer = new PHPMailer(true);
         $this->PHPMailer->isHTML(true);
-
-        $this->isLocalhost = in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1', '::1'], true);
-
         $this->configurePHPMailer();
         $this->configureSMTP();
     }

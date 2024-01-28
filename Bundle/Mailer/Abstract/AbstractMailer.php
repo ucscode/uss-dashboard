@@ -3,17 +3,9 @@
 namespace Module\Dashboard\Bundle\Mailer\Abstract;
 
 use Exception;
-use Uss\Component\Kernel\Uss;
 
 abstract class AbstractMailer extends AbstractMailerFoundation
 {
-    public function getRenderContent(): string
-    {
-        $this->borrowedExtension->configureRenderContext();
-        $this->context += Uss::instance()->twigContext;
-        return $this->twigEnvironment->render($this->template, $this->context);
-    }
-
     public function sendMail(): bool
     {
         if(empty(trim($this->PHPMailer->Subject))) {
@@ -21,7 +13,7 @@ abstract class AbstractMailer extends AbstractMailerFoundation
         }
 
         if(empty(trim($this->PHPMailer->Body) && !empty($this->template))) {
-            $this->PHPMailer->Body = $this->getRenderContent();
+            $this->PHPMailer->Body = $this->render($this->template, $this->context);
         }
 
         if(empty($this->PHPMailer->Body)) {

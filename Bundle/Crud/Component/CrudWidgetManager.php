@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Component;
 
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractSandbox;
 use Uss\Component\Block\BlockTemplate;
 use Uss\Component\Kernel\Uss;
 
@@ -35,18 +36,14 @@ class CrudWidgetManager
     protected function getWidgetHTMLContext(array $widgetBlocks): array
     {
         $filteredBlocks = array_filter(
-            $widgetBlocks, 
+            $widgetBlocks,
             fn (BlockTemplate $blockTemplate) => !$blockTemplate->isRendered()
         );
         
         return array_map(function(BlockTemplate $blockTemplate) {
-            $html = $this->uss->twigEnvironment
-                ->resolveTemplate($blockTemplate->getTemplate())
-                ->render(
-                    $blockTemplate->getContext() + $this->uss->twigContext
-                );
+            $sandbox = new class extends AbstractSandbox {};
             $blockTemplate->fulfilled();
-            return $html;
+            return $sandbox->render($blockTemplate->getTemplate(), $blockTemplate->getContext());
         }, $filteredBlocks);
     }
 

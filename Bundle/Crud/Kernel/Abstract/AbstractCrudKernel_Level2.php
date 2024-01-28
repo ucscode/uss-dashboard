@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
 use Ucscode\UssElement\UssElement;
-use Uss\Component\Kernel\Uss;
 
 abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
 {
