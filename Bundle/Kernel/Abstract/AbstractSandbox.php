@@ -9,7 +9,7 @@ use Uss\Component\Kernel\Uss;
 
 abstract class AbstractSandbox extends AbstractUss
 {
-    protected bool $isLocalhost;
+    public readonly bool $isLocalhost;
     protected Extension $borrowedExtension;
 
     public function __construct()
