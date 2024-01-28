@@ -18,31 +18,24 @@ use Uss\Component\Kernel\Uss;
 define('USS_DASHBOARD_DIR', __DIR__);
 
 new class () {
+    protected Uss $uss;
+
     public function __construct()
     {
-        $uss = Uss::instance();
-        
-        $this->createSystemApplication($uss);
+        $this->uss = Uss::instance();
+        $this->createSystemApplication($this->uss);
         $this->createUserApplication();
         $this->createAdminApplication();
-
-        (new Event())->addListener(
-            'modules:loaded',
-            fn () => Event::emit('dashboard:render'),
-            1024
-        );
+        (new Event())->addListener('modules:loaded', fn () => Event::emit('dashboard:render'), 1024);
     }
 
     protected function createSystemApplication(Uss $uss): void
     {
         new DatabaseGenerator($uss);
         new DashboardEnvironment($uss);
-
+        BlockManager::instance()->addBlock("dashboard_content", new Block(true));
         $userAvatar = DashboardImmutable::GUI_DIR . '/assets/images/user.png';
         $uss->twigContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
-        
-        BlockManager::instance()->addBlock("dashboard_content", new Block(true));
-
         new NotificationApi();
     }
 
