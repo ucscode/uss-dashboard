@@ -34,9 +34,11 @@ class DocumentController implements RouteInterface
     protected function enableMatchingMenus(): void
     {
         foreach($this->document->getMenuItems() as $node) {
-            $focused = $node->getAttribute('auto-focus') ?? true;
+            $autoFocus = $node->getAttribute('auto-focus') ?? true;
             $activated = $node->getAttribute('active');
-            $node->setAttribute('active', $focused && $activated === null);
+            if($autoFocus && $activated === null) {
+                $node->setAttribute('active', true);
+            }
         };
     }
 
