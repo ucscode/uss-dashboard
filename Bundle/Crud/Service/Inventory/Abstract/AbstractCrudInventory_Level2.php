@@ -46,7 +46,7 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
         $this->setWidget("inventory:global-action", new GlobalActionsWidget());
         $this->setInlineAction('inventory:edit', new InlineEditAction());
         $this->setInlineAction('inventory:delete', new InlineDeleteAction());
-        $this->setInlineAction('inventory:view', new InlineViewAction());
+        // $this->setInlineAction('inventory:view', new InlineViewAction());
         $this->setGlobalAction('inventory:delete', $this->createGlobalDeleteAction());
     }
 
