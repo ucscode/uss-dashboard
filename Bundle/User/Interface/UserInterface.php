@@ -10,7 +10,4 @@ interface UserInterface extends UserConstInterface
     public function verifyPassword(string $password): bool;
     public function getRawInfo(): array;
     public function isLonely(): bool;
-    public function addComponent(string $name, UserComponentInterface $component): self;
-    public function getComponent(string $name): ?UserComponentInterface;
-    public function getComponents(): array;
 }

@@ -3,8 +3,6 @@
 namespace Module\Dashboard\Bundle\User;
 
 use Module\Dashboard\Bundle\User\Abstract\AbstractUserRepository;
-use Module\Dashboard\Bundle\User\Interface\UserComponentInterface;
-use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
 use Ucscode\SQuery\Condition;
@@ -160,30 +158,5 @@ class User extends AbstractUserRepository
             }
         }
         return false;
-    }
-
-    /**
-     * @method addComponent
-     */
-    public function addComponent(string $name, UserComponentInterface $component): self
-    {
-        $this->components[$name] = $component;
-        return $this;
-    }
-
-    /**
-     * @method getComponent
-     */
-    public function getComponent(string $name): ?UserComponentInterface
-    {
-        return $this->components[$name] ?? null;
-    }
-
-    /**
-     * @method getComponents
-     */
-    public function getComponents(): array
-    {
-        return $this->components;
     }
 }
