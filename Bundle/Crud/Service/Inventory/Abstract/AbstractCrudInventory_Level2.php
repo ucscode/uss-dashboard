@@ -33,7 +33,8 @@ abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
 
         $this->sQuery = (new SQuery())
             ->select()
-            ->from($this->tableName);
+            ->from($this->tableName)
+            ->orderBy($this->primaryOffset, 'DESC');
             
         if($condition) {
             $this->sQuery->where($condition);
