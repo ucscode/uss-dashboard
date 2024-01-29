@@ -12,10 +12,13 @@ use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserFoundation implements UserInterface
 {
-    protected array $user;
     public readonly Meta $meta;
     public readonly Roles $roles;
     public readonly Notification $notification;
+    
+    protected array $user;
+    protected array $components = [];
+
     private static ?Pairs $usermeta = null;
 
     public function __construct(?int $id = null)

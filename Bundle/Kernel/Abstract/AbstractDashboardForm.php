@@ -159,6 +159,17 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         return $this;
     }
 
+    public function implementReplaceStateJavascript(): void
+    {
+        $this->replaceState = null;
+        $caller = 'window.history.replaceState';
+        $href = 'window.location.href';
+        $stateReplacement = sprintf('<script>%1$s && %1$s(null,null,%2$s);</script>', $caller, $href);
+        BlockManager::instance()
+            ->getBlock("body_javascript")
+            ->addContent("history.state", $stateReplacement);
+    }
+
     protected function filterResource(): array
     {
         return match($_SERVER['REQUEST_METHOD']) {
@@ -244,16 +255,5 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         }
 
         return $pedigree;
-    }
-
-    protected function implementReplaceStateJavascript(): void
-    {
-        $this->replaceState = null;
-        $caller = 'window.history.replaceState';
-        $href = 'window.location.href';
-        $stateReplacement = sprintf('<script>%1$s && %1$s(null,null,%2$s);</script>', $caller, $href);
-        BlockManager::instance()
-            ->getBlock("body_javascript")
-            ->addContent("history.state", $stateReplacement);
     }
 }

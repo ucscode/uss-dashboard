@@ -68,7 +68,7 @@ class Notification
             $SQL = $squery->build();
             $result = $this->uss->mysqli->query($SQL);
 
-            $data = $this->uss->mysqliResultToArray($result);
+            $data = $result->fetch_all(MYSQLI_ASSOC);
         };
 
         return $data;

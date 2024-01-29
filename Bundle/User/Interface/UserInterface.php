@@ -2,18 +2,15 @@
 
 namespace Module\Dashboard\Bundle\User\Interface;
 
-use Uss\Component\Database;
-
-interface UserInterface
+interface UserInterface extends UserConstInterface
 {
-    public const USER_TABLE = Database::PREFIX . "users";
-    public const META_TABLE = Database::PREFIX . "usermeta";
-    public const SESSION_KEY = 'user:session';
-
     public function isAvailable(): bool;
     public function persist(): bool;
     public function delete(): ?bool;
     public function verifyPassword(string $password): bool;
     public function getRawInfo(): array;
     public function isLonely(): bool;
+    public function addComponent(string $name, UserComponentInterface $component): self;
+    public function getComponent(string $name): ?UserComponentInterface;
+    public function getComponents(): array;
 }
