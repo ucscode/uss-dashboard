@@ -27,7 +27,7 @@ abstract class AbstractErrorManagement
         protected CrudEditor $crudEditor, 
         protected DashboardInterface $dashboard
     ){
-        $this->channel = $_GET['channel'] === CrudEnum::UPDATE->value ? CrudEnum::UPDATE : CrudEnum::CREATE;
+        $this->channel = $crudEditor->getChannel() === CrudEnum::UPDATE ? CrudEnum::UPDATE : CrudEnum::CREATE;
     }
 
     protected function handlePasswordError(string $password, AbstractDashboardForm $form): ?string

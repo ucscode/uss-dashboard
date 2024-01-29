@@ -98,7 +98,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
 
         // Configure Password Field;
 
-        $required = ($_GET['channel'] ?? null) !== CrudEnum::UPDATE->value;
+        $required = $this->crudEditor->getChannel() === CrudEnum::CREATE;
         $info = $required ? null : 'Leave blank to preserve current password';
 
         $this->crudEditor
@@ -206,7 +206,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
 
     protected function initializeClient(): void
     {
-        if(($_GET['channel'] ?? null) === CrudEnum::UPDATE->value) {
+        if($this->crudEditor->getChannel() === CrudEnum::UPDATE) {
             $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
             if($this->crudEditor->hasEntity()) {
                 $entity = $this->crudEditor->getEntity();

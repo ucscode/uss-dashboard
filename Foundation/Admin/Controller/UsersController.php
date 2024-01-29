@@ -17,25 +17,24 @@ class UsersController extends AbstractDashboardController
     {
         parent::onload($context);
 
-        $channel = trim($_GET['channel'] ?? '');
-
-        $userController = match($channel) {
+        $userController = match($_GET['channel'] ?? '') {
             CrudEnum::CREATE->value => new CreateController($this->document, $this->dashboard),
             CrudEnum::UPDATE->value => new UpdateController($this->document, $this->dashboard),
             default => new InventoryController($this->document, $this->dashboard),
         };
         
-        $updatedContext = $this->rewriteContext($channel, $userController, $this->document->getContext());
+        $updatedContext = $this->updateContext($userController, $this->document->getContext());
         $this->document->setContext($updatedContext);
     }
 
-    protected function rewriteContext(string $channel, ?UserControllerInterface $userController, array $context): array
+    protected function updateContext(?UserControllerInterface $userController, array $context): array
     {
         $client = $userController->getClient();
+        $crudKernel = $userController->getCrudKernel();
         
         $localContext = [
-            'channel' => $channel,
-            'crudKernel' => $userController->getCrudKernel(),
+            'crudKernel' => $crudKernel,
+            'channel' => $crudKernel->getChannel()->value,
             'form' => $userController->getForm(),
             'client' => $client,
             'hint' => $client ? $this->getHints($client) : null,
