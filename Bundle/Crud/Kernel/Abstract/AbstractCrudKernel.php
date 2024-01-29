@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
 use Ucscode\UssElement\UssElement;
 
@@ -82,5 +83,15 @@ abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
     public function getPrimaryOffset(): string
     {
         return $this->primaryOffset;
+    }
+
+    public function getChannel(): CrudEnum
+    {
+        return match($_GET['channel'] ?? null) {
+            CrudEnum::CREATE->value => CrudEnum::CREATE,
+            CrudEnum::DELETE->value => CrudEnum::DELETE,
+            CrudEnum::UPDATE->value => CrudEnum::UPDATE,
+            default => CrudEnum::READ
+        };
     }
 }

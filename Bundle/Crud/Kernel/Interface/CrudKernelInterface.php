@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Crud\Kernel\Interface;
 
+use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Ucscode\UssElement\UssElement;
 
 interface CrudKernelInterface
@@ -19,4 +20,5 @@ interface CrudKernelInterface
     public function getWidgets(): array;
     public function disableWidgets(bool $status): self;
     public function isWidgetsDisabled(): bool;
+    public function getChannel(): CrudEnum;
 }

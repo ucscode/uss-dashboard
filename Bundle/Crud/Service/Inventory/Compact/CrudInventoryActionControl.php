@@ -12,28 +12,16 @@ use Uss\Component\Kernel\UssImmutable;
 
 class CrudInventoryActionControl
 {
-    protected CrudEnum $channel;
     protected bool $nonceApproved = false;
     protected ?int $entityId = null;
 
     public function __construct(protected CrudInventoryInterface $crudInventory)
     {
-        $this->getChannel();
         $this->getNonceApproval();
         $this->getEntityId();
-        if($this->channel === CrudEnum::DELETE) {
+        if($this->crudInventory->getChannel() === CrudEnum::DELETE) {
             $this->deleteEntityOnRequest();
         }
-    }
-
-    protected function getChannel(): void
-    {
-        $this->channel = match($_GET['channel'] ?? null) {
-            CrudEnum::CREATE->value => CrudEnum::CREATE,
-            CrudEnum::DELETE->value => CrudEnum::DELETE,
-            CrudEnum::UPDATE->value => CrudEnum::UPDATE,
-            default => CrudEnum::READ
-        };
     }
 
     protected function getNonceApproval(): void
