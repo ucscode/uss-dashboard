@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory_Level1;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryActionControl;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
@@ -14,6 +15,7 @@ class CrudInventory extends AbstractCrudInventory_Level1
 {    
     public function build(): UssElement
     {
+        new CrudInventoryActionControl($this);
         parent::build();
         new CrudWidgetManager($this);
         new CrudInventoryBuilder($this);

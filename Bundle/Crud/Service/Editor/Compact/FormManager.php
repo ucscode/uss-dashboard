@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Compact;
 
 use Module\Dashboard\Bundle\Crud\Service\Editor\Abstract\AbstractFormManager;
 use Ucscode\UssForm\Field\Field;
+use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 
 class FormManager extends AbstractFormManager
 {
@@ -12,7 +13,7 @@ class FormManager extends AbstractFormManager
         return $this->form;
     }
 
-    public function configureField(string $name, array $context): ?Field
+    public function configureField(string $name, array $context): ?FieldPedigree
     {
         $lastPedigree = $this->form->getFieldPedigree($name);
         if($lastPedigree) {
@@ -23,7 +24,7 @@ class FormManager extends AbstractFormManager
             $lastPedigree->collection->addField($name, $field);
             $recentPedigree = $this->form->getFieldPedigree($name);
             $this->intersectPedigrees($context, $recentPedigree, $lastPedigree);
-            return $recentPedigree->field;
+            return $recentPedigree;
         }
         return null;
     }

@@ -11,6 +11,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
+use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 use Uss\Component\Kernel\Uss;
 
 class CrudEditor extends AbstractCrudEditor
@@ -153,7 +154,7 @@ class CrudEditor extends AbstractCrudEditor
         return $this->formManager->getForm();
     }
 
-    public function configureField(string $name, array $array): ?Field
+    public function configureField(string $name, array $array): ?FieldPedigree
     {
         return $this->formManager->configureField($name, $array);
     }
