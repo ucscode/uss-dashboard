@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Bundle\User\Abstract;
 
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\Service\Href;
 use Module\Dashboard\Bundle\User\Service\Meta;
 use Module\Dashboard\Bundle\User\Service\Notification;
 use Module\Dashboard\Bundle\User\Service\Roles;
@@ -16,6 +17,7 @@ abstract class AbstractUserFoundation implements UserInterface
     public readonly Meta $meta;
     public readonly Roles $roles;
     public readonly Notification $notification;
+    public readonly Href $href;
     private static ?Pairs $usermeta = null;
 
     public function __construct(?int $id = null)
@@ -24,6 +26,7 @@ abstract class AbstractUserFoundation implements UserInterface
         $this->meta = new Meta($this, self::$usermeta);
         $this->roles = new Roles($this);
         $this->notification = new Notification($this);
+        $this->href = new Href($this);
         $this->user = $this->acquireUser($id) ?? [];
     }
 
