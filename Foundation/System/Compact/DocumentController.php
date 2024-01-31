@@ -44,18 +44,23 @@ class DocumentController implements RouteInterface
 
     protected function renderTemplateContext(): void
     {
-        $baseLayout = 
-            $this->document->getThemeBaseLayout() ?? 
-            $this->dashboard->getTheme('base.html.twig');
-
-        $template = $this->document->getTemplate();
+        $hasThemeIntegration = $this->document->hasThemeIntegration();
         
-        if($template !== $baseLayout) {
-            $blockTemplate = new BlockTemplate($template, $this->document->getContext());
+        $template = $this->document->getTemplate();
+        $context = $this->document->getContext();
+
+        $baseLayout = !$hasThemeIntegration?
+            $template : (
+                $this->document->getThemeBaseLayout() ?? 
+                $this->dashboard->getTheme('base.html.twig')
+            );
+        
+        if($hasThemeIntegration && $template !== $baseLayout) {
+            $blockTemplate = new BlockTemplate($template, $context);
             $contentBlock = BlockManager::instance()->getBlock('dashboard_content');
             $contentBlock->addTemplate("document_content", $blockTemplate);
         }
 
-        $this->dashboard->render($baseLayout);
+        $this->dashboard->render($baseLayout, $hasThemeIntegration ? [] : $context);
     }
 }

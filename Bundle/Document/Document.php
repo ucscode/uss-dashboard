@@ -135,4 +135,15 @@ class Document extends AbstractDocument implements DocumentInterface
     {
         return $this->menuItems;
     }
+
+    public function setThemeIntegration(bool $themeIntegration): self
+    {
+        $this->themeIntegration = $themeIntegration;
+        return $this;
+    }
+
+    public function hasThemeIntegration(): bool
+    {
+        return $this->themeIntegration;
+    }
 }

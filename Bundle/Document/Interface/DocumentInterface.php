@@ -17,6 +17,9 @@ interface DocumentInterface
     public function setTemplate(?string $template, ?string $prefix = null): self;
     public function getTemplate(): ?string;
 
+    public function setThemeIntegration(bool $inline): self;
+    public function hasThemeIntegration(): bool;
+
     public function setThemeBaseLayout(string $layout): self;
     public function getThemeBaseLayout(): ?string;
 
@@ -36,5 +39,4 @@ interface DocumentInterface
     public function getMenuItem(string $name): ?TreeNode;
     public function removeMenuItem(string $name): self;
     public function getMenuItems(): array;
-
 }

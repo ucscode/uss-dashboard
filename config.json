@@ -1,9 +1,9 @@
 {
     "name": "uss-dashboard",
-    "version": "3.0.0 dev",
+    "version": "5.55.10",
     "meta": {
         "title": "Uss Dashboard",
-        "description": "The number one most powerful user management system in 2023 and beyond",
+        "description": "A professional dashboard system built on user synthetics Foundation",
         "image": "screenshot.png",
         "language": "en",
         "keywords": ["dashboard", "UMS", "Uss", "CMS", "Content Management"]
@@ -14,11 +14,11 @@
     "author": {
         "name": "Uchenna Ajah",
         "email": "uche23mail@gmail.com",
-        "url": "https://ucscode.me"
+        "url": "http://ucscode.com"
     },
     "support": {
-        "url": "https://uss.ucscode.com",
-        "docs": "https://uss.ucscode.me/docs"
+        "url": "#",
+        "documentation": "#"
     },
     "license": "MIT",
     "dependencies": []

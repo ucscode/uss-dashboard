@@ -8,6 +8,7 @@ use Uss\Component\Route\RouteInterface;
 
 abstract class AbstractDocument
 {
+    protected bool $themeIntegration = true;
     protected ?string $name = null;
     protected ?string $route = null;
     protected ?string $template = null;
