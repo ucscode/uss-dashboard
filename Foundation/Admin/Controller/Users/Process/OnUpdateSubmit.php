@@ -3,6 +3,7 @@
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
+use Module\Dashboard\Bundle\User\User;
 
 class OnUpdateSubmit extends AbstractUserFormSubmit
 {
@@ -19,6 +20,13 @@ class OnUpdateSubmit extends AbstractUserFormSubmit
             }
 
             parent::onValidate($resource, $form);
+        }
+    }
+
+    public function onPersist(mixed &$response, AbstractDashboardForm $form): void
+    {
+        if(!empty($this->postContext['password'])) {
+            $this->client = (new User($response['id']))->saveToSession();
         }
     }
 }

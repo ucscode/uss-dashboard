@@ -10,11 +10,11 @@ use Ucscode\SQuery\Condition;
 class User extends AbstractUserRepository
 {
     /**
-     * This signifies that user exists and has been populated into the current instance
+     * The user exists in database and has been populated into the current instance
      */
     public function isAvailable(): bool
     {
-        return !!$this->getId();
+        return !empty($this->acquireUser($this->getId()));
     }
 
     /**
@@ -76,8 +76,10 @@ class User extends AbstractUserRepository
 
         if(!$this->isAvailable()) {
 
-            $squery = (new SQuery())->insert(self::USER_TABLE, $this->user);
-            $SQL = $squery->build();
+            $SQL = (new SQuery())
+                ->insert(self::TABLE_USER, $this->user)
+                ->build();
+
             $upsert = $uss->mysqli->query($SQL);
 
             if($upsert) {
@@ -87,14 +89,14 @@ class User extends AbstractUserRepository
 
         } else {
 
-            $squery = (new SQuery())
-                ->update(self::USER_TABLE, $this->user)
-                ->where(
-                    (new Condition())
-                        ->add('id', $this->getId())
-                );
+            $condition = (new Condition())->add('id', $this->getId());
 
-            $SQL = $squery->build();
+            $SQL = (new SQuery())
+                ->update(self::TABLE_USER, $this->user)
+                ->where($condition)
+                ->build()
+            ;
+
             $upsert = $uss->mysqli->query($SQL);
 
         }
@@ -108,12 +110,11 @@ class User extends AbstractUserRepository
     public function allocate(string $key, string $value): self
     {
         if($this->isAvailable()) {
-            throw new \Exception(
-                "Allocation is only possible if user does not already exist"
-            );
+            $allocationError = "Allocation is only possible if user does not already exist";
+            throw new \Exception($allocationError);
         };
         
-        if($user = Uss::instance()->fetchItem(self::USER_TABLE, $value, $key)) {
+        if($user = Uss::instance()->fetchItem(self::TABLE_USER, $value, $key)) {
             $this->user = $user;
         }
 
@@ -125,15 +126,15 @@ class User extends AbstractUserRepository
      */
     public function delete(): ?bool
     {
-        if($this->getId()) {
-            $squery = (new SQuery())
+        if($this->isAvailable()) {
+            $condition = (new Condition())->add('id', $this->getId());
+
+            $SQL = (new SQuery())
                 ->delete()
-                ->from(self::USER_TABLE)
-                ->where(
-                    (new Condition())
-                        ->add('id', $this->getId())
-                );
-            $SQL = $squery->build();
+                ->from(self::TABLE_USER)
+                ->where($condition)
+                ->build();
+
             return Uss::instance()->mysqli->query($SQL);
         };
         return null;
@@ -149,13 +150,13 @@ class User extends AbstractUserRepository
         if($this->isAvailable()) {
             $SQL = (new SQuery())
                 ->select("COUNT(id) AS totalUsers")
-                ->from(self::USER_TABLE)
+                ->from(self::TABLE_USER)
                 ->build();
+
             $result = Uss::instance()->mysqli->query($SQL);
             $assoc = $result->fetch_assoc();
-            if($assoc) {
-                return (int)$assoc['totalUsers'] === 1;
-            }
+            
+            return $assoc && (int)$assoc['totalUsers'] === 1;
         }
         return false;
     }

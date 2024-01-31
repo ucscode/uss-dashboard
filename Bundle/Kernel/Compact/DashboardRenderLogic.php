@@ -5,7 +5,6 @@ namespace Module\Dashboard\Bundle\Kernel\Compact;
 use Exception;
 use Module\Dashboard\Bundle\Extension\DashboardExtension;
 use Module\Dashboard\Bundle\Flash\Flash;
-use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;

@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\Common\Password;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
+use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Kernel\Uss;
 
@@ -144,7 +145,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setLastSeen
      */
-    public function setLastSeen(DateTime $dateTime): ?self
+    public function setLastSeen(DateTime $dateTime): self
     {
         $lastSeen = $dateTime->format('Y-m-d H:i:s');
         $this->user['last_seen'] = $lastSeen;
@@ -166,7 +167,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method setParent
      */
-    public function setParent(User|int|null $parent): self
+    public function setParent(UserInterface|int|null $parent): self
     {
         if($parent instanceof User) {
             $parent = $parent->getId();
@@ -178,7 +179,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getParent
      */
-    public function getParent(bool $getUserInstance = false): User|int|null
+    public function getParent(bool $getUserInstance = false): UserInterface|int|null
     {
         $parent = $this->user['parent'] ?? null;
         if($parent && $getUserInstance) {
@@ -211,7 +212,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
 
             $squery = (new SQuery())
                 ->select('*')
-                ->from(self::USER_TABLE)
+                ->from(self::TABLE_USER)
                 ->where($filter);
 
             $SQL = $squery->build();
@@ -236,7 +237,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
             $filter = (new Condition())->add('parent', $this->getId());
             $SQL = (new SQuery())
                 ->select("COUNT(id) as children")
-                ->from(self::USER_TABLE)
+                ->from(self::TABLE_USER)
                 ->where($filter)
                 ->build();
             $result = Uss::instance()->mysqli->query($SQL);
@@ -259,7 +260,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     /**
      * @method getAvatar
      */
-    public function getAvatar(): ?string
+    public function getAvatar(): string
     {
         $default = Uss::instance()->pathToUrl(DashboardImmutable::ASSETS_DIR . "/images/user.png");
         $avatar = $this->meta->get('user.avatar');

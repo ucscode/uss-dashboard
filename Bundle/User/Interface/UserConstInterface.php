@@ -7,6 +7,6 @@ use Uss\Component\Database;
 interface UserConstInterface
 {
     public const SESSION_KEY = 'user:session';
-    public const USER_TABLE = Database::PREFIX . "users";
-    public const META_TABLE = Database::PREFIX . "usermeta";
+    public const TABLE_USER = Database::PREFIX . "users";
+    public const TABLE_META = Database::PREFIX . "usermeta";
 }

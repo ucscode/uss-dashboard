@@ -43,7 +43,7 @@ class LoginForm extends AbstractUserAccountForm
         if($validatedResource !== null) {
             $uss = Uss::instance();
             $column = strpos($validatedResource['access'], '@') !== false ? 'email' : 'username';
-            $userItem = $uss->fetchItem(UserInterface::USER_TABLE, $uss->sanitize($validatedResource['access'], true), $column);
+            $userItem = $uss->fetchItem(UserInterface::TABLE_USER, $uss->sanitize($validatedResource['access'], true), $column);
             return $this->getUserInstance($userItem, $column, $validatedResource['password']);
         }
         return null;

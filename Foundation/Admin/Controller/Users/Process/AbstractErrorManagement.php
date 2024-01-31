@@ -151,7 +151,7 @@ abstract class AbstractErrorManagement
     protected function isUniqueClient(string $key, string $value): bool
     {
         // Get the other existing client
-        $client = Uss::instance()->fetchItem(UserInterface::USER_TABLE, $value, $key);
+        $client = Uss::instance()->fetchItem(UserInterface::TABLE_USER, $value, $key);
         $caller = 'get' . ucfirst($key);
         if($client) {
             $notUnique = $this->channel === CrudEnum::CREATE ||

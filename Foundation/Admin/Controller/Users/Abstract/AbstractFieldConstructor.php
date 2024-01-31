@@ -38,7 +38,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
 
     protected function composeMicroApplication(): void
     {
-        $this->crudEditor = new CrudEditor(UserInterface::USER_TABLE);
+        $this->crudEditor = new CrudEditor(UserInterface::TABLE_USER);
         $this->form = $this->crudEditor->getForm();
         $this->form->attribute->setEnctype("multipart/form-data");
         $this->client = new User();

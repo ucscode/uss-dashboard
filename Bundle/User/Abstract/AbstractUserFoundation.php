@@ -13,17 +13,17 @@ use Uss\Component\Kernel\Uss;
 
 abstract class AbstractUserFoundation implements UserInterface
 {
-    protected array $user;
     public readonly Meta $meta;
     public readonly Roles $roles;
     public readonly Notification $notification;
     public readonly Href $href;
-    private static ?Pairs $usermeta = null;
+    protected array $user;
+    private ?Pairs $pairsInstance = null;
 
     public function __construct(?int $id = null)
     {
-        $this->syncOnce();
-        $this->meta = new Meta($this, self::$usermeta);
+        $this->configureUser();
+        $this->meta = new Meta($this, $this->pairsInstance);
         $this->roles = new Roles($this);
         $this->notification = new Notification($this);
         $this->href = new Href($this);
@@ -36,29 +36,38 @@ abstract class AbstractUserFoundation implements UserInterface
     public function __debugInfo()
     {
         return [
-            'user' => $this->user,
-            'meta' => $this->meta->getAll()
+            'user:protected' => $this->user,
+            'meta' => $this->objectize($this->meta::class),
+            'roles' => $this->objectize($this->roles::class),
+            'notification' => $this->objectize($this->notification::class),
+            'href' => $this->objectize($this->href::class),
         ];
     }
 
     /**
      * @method acquireUser
      */
-    protected function acquireUser(?int $id): ?array
+    protected function acquireUser(?int $id, ?string $column = null): array|string|null
     {
-        return $id ? Uss::instance()->fetchItem(self::USER_TABLE, abs($id)) : null;
+        $user = !is_null($id) ? Uss::instance()->fetchItem(self::TABLE_USER, abs($id)) : null;
+        return $user && $column ? ($user[$column] ?? null) : $user;
     }
 
     /**
      * @method init
      */
-    protected function syncOnce(): void
+    private function configureUser(): void
     {
-        if(!self::$usermeta) {
-            self::$usermeta = new Pairs(Uss::instance()->mysqli, self::META_TABLE);
-            $constraint = (new ForeignConstraint(self::USER_TABLE))
-                ->describePrimaryKeyUnsigned(true);
-            self::$usermeta->setForeignConstraint($constraint);
+        if(!$this->pairsInstance) {
+            $constraint = new ForeignConstraint(self::TABLE_USER);
+            $constraint->describePrimaryKeyUnsigned(true);
+            $this->pairsInstance = new Pairs(Uss::instance()->mysqli, self::TABLE_META);
+            $this->pairsInstance->setForeignConstraint($constraint);
         }
+    }
+
+    private function objectize(string $className): string
+    {
+        return sprintf("object(%s) {}", $className);
     }
 }

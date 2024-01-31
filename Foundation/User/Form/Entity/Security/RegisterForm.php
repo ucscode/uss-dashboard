@@ -161,7 +161,7 @@ class RegisterForm extends AbstractUserAccountForm
 
             $squery = (new SQuery())
                 ->select('id')
-                ->from(UserInterface::USER_TABLE)
+                ->from(UserInterface::TABLE_USER)
                 ->where($condition);
 
             $result = Uss::instance()->mysqli->query($squery->build());

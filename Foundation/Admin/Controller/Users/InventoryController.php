@@ -18,7 +18,7 @@ class InventoryController extends AbstractUsersController
     protected function composeMicroApplication(): void
     {
         $this->enableDocumentMenu('main:users');
-        $this->crudInventory = new CrudInventory(UserInterface::USER_TABLE);
+        $this->crudInventory = new CrudInventory(UserInterface::TABLE_USER);
         $this->crudInventory->setTableBackgroundWhite();
         $this->crudInventory->setColumn('roles');
         $this->crudInventory->addEntityMutationIterator('primary', new EntityMutator());
