@@ -87,7 +87,7 @@ class RegisterForm extends AbstractUserAccountForm
             $user->setEmail($resource['email']);
             $user->setPassword($resource['password'], true);
             $user->setUsercode(Uss::instance()->keygen(7));
-            $user->setParent($resource['parent'] ?? null);
+            $user->setParentByReferralLink();
 
             $user->persist();
             $user->roles->add($defaultUserRole);
@@ -148,6 +148,7 @@ class RegisterForm extends AbstractUserAccountForm
             Flash::instance()->addModal($modal, "registeration");
 
             if($user->isAvailable()) {
+                $user->destroySession();
                 header("location: {$successRedirect}");
                 exit;
             }

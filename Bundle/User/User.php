@@ -3,6 +3,8 @@
 namespace Module\Dashboard\Bundle\User;
 
 use Module\Dashboard\Bundle\User\Abstract\AbstractUserRepository;
+use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Module\Dashboard\Bundle\User\Service\Href;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
 use Ucscode\SQuery\Condition;
@@ -157,6 +159,25 @@ class User extends AbstractUserRepository
             $assoc = $result->fetch_assoc();
             
             return $assoc && (int)$assoc['totalUsers'] === 1;
+        }
+        return false;
+    }
+
+    /**
+     * @method getParentByReferralLink
+     */
+    public function setParentByReferralLink(): bool
+    {
+        $parentCode = $_GET[Href::REFERRAL_LINK_OFFSET] ?? null;
+        if(!empty($parentCode)) {
+            $parent = new Self();
+            $parent->allocate('usercode', $parentCode);
+            $approved = 
+                $parent->isAvailable() && 
+                $this->getId() !== $parent->getId() && 
+                $this->getUsercode() !== $parent->getUsercode()
+            ;
+            return $approved ? !!$this->setParent($parent) : false;
         }
         return false;
     }

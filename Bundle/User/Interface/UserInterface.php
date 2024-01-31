@@ -13,4 +13,5 @@ interface UserInterface extends UserConstInterface, UserRepositoryInterface
     public function acquireFromSession(): self;
     public function destroySession(): self;
     public function allocate(string $key, string $value): self;
+    public function setParentByReferralLink(): bool;
 }
