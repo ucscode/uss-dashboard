@@ -17,6 +17,7 @@ abstract class AbstractUserFoundation implements UserInterface
     public readonly Roles $roles;
     public readonly Notification $notification;
     public readonly Href $href;
+
     protected array $user;
     private ?Pairs $pairsInstance = null;
 

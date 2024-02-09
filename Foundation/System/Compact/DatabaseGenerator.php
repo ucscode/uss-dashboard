@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Foundation\System\Compact;
 
-use Uss\Component\Database;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
@@ -20,7 +19,7 @@ final class DatabaseGenerator
 
     private function checkDatabaseEnabled(): void
     {
-        if(!Database::ENABLED) {
+        if(!filter_var($_ENV['DB_ENABLED'], FILTER_VALIDATE_BOOLEAN)) {
             $message = [
                 "subject" => "(Dashboard) Database Connection Disabled",
                 "message" => "Please enable the database connection to activate GUI",
@@ -39,7 +38,7 @@ final class DatabaseGenerator
 
         foreach($databaseTables as $SQL) {
             try {
-                $SQL = str_replace('%{prefix}', Database::PREFIX, $SQL);
+                $SQL = str_replace('%{prefix}', $_ENV['DB_PREFIX'], $SQL);
                 $result = $this->uss->mysqli->query($SQL);
                 if(!$result) {
                     throw new Exception($this->uss->mysqli->error);
@@ -47,7 +46,7 @@ final class DatabaseGenerator
             } catch(Exception $e) {
                 $this->uss->render('@Uss/error.html.twig', [
                     "subject" => "(Dashboard) Database Setup Error",
-                    "message" => UssImmutable::DEBUG ? $e->getMessage() : 'MYSQL Error Number: ' . $this->uss->mysqli->errno
+                    "message" => filter_var($_ENV['APP_DEBUG'], FILTER_VALIDATE_BOOLEAN) ? $e->getMessage() : 'MYSQL Error Number: ' . $this->uss->mysqli->errno
                 ]);
                 exit();
             };

@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\User\Interface;
 
-interface UserInterface extends UserConstInterface, UserRepositoryInterface
+interface UserInterface extends UserRepositoryInterface, UserConstInterface
 {
     public function isAvailable(): bool;
     public function persist(): bool;

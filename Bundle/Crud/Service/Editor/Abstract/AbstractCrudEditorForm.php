@@ -6,14 +6,13 @@ use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Kernel\UssImmutable;
 
 abstract class AbstractCrudEditorForm extends AbstractCrudEditorFormFoundation
 {
     public function __construct(protected CrudEditor $crudEditor)
     {
         parent::__construct();
-        $this->nonceContext = UssImmutable::SECRET_KEY . $this->crudEditor->tableName;
+        $this->nonceContext = $_ENV['APP_SECRET'] . $this->crudEditor->tableName;
         $this->generateFormFields();
         $this->flash = Flash::instance();
     }

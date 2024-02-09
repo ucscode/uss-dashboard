@@ -7,7 +7,6 @@ use Module\Dashboard\Bundle\Common\Paginator;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
-use Uss\Component\Database;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 use Uss\Component\Manager\CountryManager;
@@ -79,11 +78,11 @@ class SystemInfoController extends AbstractDashboardController
             'PHP OS' => PHP_OS,
             'PHP Version' => PHP_VERSION,
             'MYSQLI Version' => $uss->mysqli->server_info,
-            'Database Host' => Database::HOST,
-            'Database Username' => Database::USERNAME,
+            'Database Host' => $_ENV['DB_HOST'],
+            'Database Username' => $_ENV['DB_USERNAME'],
             'Database Password' => str_repeat('*', 6),
-            'Database Name' => Database::NAME,
-            'Database Table Prefix' => Database::PREFIX,
+            'Database Name' => $_ENV['DB_NAME'],
+            'Database Table Prefix' => $_ENV['DB_PREFIX'],
             'Author Name' => UssImmutable::AUTHOR,
             'Author Website' => $this->printUrl(UssImmutable::AUTHOR_WEBSITE),
             'Author Email' => $this->printUrl(UssImmutable::AUTHOR_EMAIL, null, 'mailto:'),

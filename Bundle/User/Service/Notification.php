@@ -6,11 +6,10 @@ use Module\Dashboard\Bundle\User\User;
 use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Database;
 
 class Notification
 {
-    const TABLE_NAME = Database::PREFIX . "notifications";
+    const TABLE_NAME = ENV_DB_PREFIX . "notifications";
     protected Uss $uss;
 
     public function __construct(protected User $user)
