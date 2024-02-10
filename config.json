@@ -22,8 +22,9 @@
         "documentation": "#"
     },
     "autoload": {
-        "Module\\Dashboard\\": "uss-dashboard/"
+        "psr-4": {
+            "Module\\Dashboard\\": "uss-dashboard/"
+        }
     },
-    "composer-merge": true,
     "dependencies": []
 }
