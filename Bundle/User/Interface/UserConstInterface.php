@@ -2,7 +2,6 @@
 
 namespace Module\Dashboard\Bundle\User\Interface;
 
-use Uss\Component\Database;
 
 interface UserConstInterface
 {

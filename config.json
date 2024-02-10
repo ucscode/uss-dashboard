@@ -1,6 +1,7 @@
 {
     "name": "uss-dashboard",
     "version": "5.55.10",
+    "license": "MIT",
     "meta": {
         "title": "Uss Dashboard",
         "description": "A professional dashboard system built on user synthetics Foundation",
@@ -20,6 +21,8 @@
         "url": "#",
         "documentation": "#"
     },
-    "license": "MIT",
+    "autoload": {
+        "Module\\Dashboard\\": "uss-dashboard/"
+    },
     "dependencies": []
 }

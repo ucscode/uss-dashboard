@@ -15,18 +15,23 @@ use Uss\Component\Block\BlockManager;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 
-define('USS_DASHBOARD_DIR', __DIR__);
-
 new class () {
     protected Uss $uss;
 
     public function __construct()
     {
         $this->uss = Uss::instance();
+        $this->defineAppConstants();
         $this->createSystemApplication($this->uss);
         $this->createUserApplication();
         $this->createAdminApplication();
         (new Event())->addListener('modules:loaded', fn () => Event::emit('dashboard:render'), 1024);
+    }
+
+    protected function defineAppConstants(): void
+    {
+        define('USS_DASHBOARD_DIR', __DIR__);
+        defined('ENV_DB_PREFIX') ?: define('ENV_DB_PREFIX', $_ENV['DB_PREFIX'] ?? '');
     }
 
     protected function createSystemApplication(Uss $uss): void
