@@ -24,5 +24,6 @@
     "autoload": {
         "Module\\Dashboard\\": "uss-dashboard/"
     },
+    "composer-merge": true,
     "dependencies": []
 }
