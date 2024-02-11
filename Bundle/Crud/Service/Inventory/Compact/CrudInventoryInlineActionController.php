@@ -12,7 +12,7 @@ use Uss\Component\Kernel\UssImmutable;
 
 class CrudInventoryInlineActionController
 {
-    protected bool $nonceApproved = false; // From $_GET request
+    protected bool $nonceApproved = false; // capture from $_GET request
     protected ?int $entityId = null;
 
     public function __construct(protected CrudInventoryInterface $crudInventory)
@@ -45,7 +45,7 @@ class CrudInventoryInlineActionController
     protected function deleteEntityOnRequest(): void
     {
         $crudEditor = new CrudEditor($this->crudInventory->tableName);
-        $crudEditor->setEntityByOffset($this->entityId);
+        $crudEditor->setEntityPropertiesByOffset($this->entityId);
         if($crudEditor->isEntityInDatabase()) {
             if($this->nonceApproved) {
                 $crudEditor->deleteEntity();

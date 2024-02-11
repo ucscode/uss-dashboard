@@ -10,23 +10,21 @@ class OnUpdateSubmit extends AbstractUserFormSubmit
     public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
         if($resource) {
-            
             if(empty($resource['password'])) {
                 unset($resource['password']);
             }
-            
             if(empty($resource['parent'])) {
                 unset($resource['parent']);
             }
-
             parent::onValidate($resource, $form);
         }
     }
 
     public function onPersist(mixed &$response, AbstractDashboardForm $form): void
     {
-        if(!empty($this->postContext['password'])) {
+        if(!empty($this->postContext['password']) && $response) {
             $this->client = (new User($response['id']))->saveToSession();
         }
+        parent::onPersist($response, $form);
     }
 }

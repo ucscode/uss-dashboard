@@ -4,22 +4,29 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
 use Module\Dashboard\Bundle\Common\AppStore;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
-use Ucscode\UssForm\Field\Field;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
-use Module\Dashboard\Bundle\User\Interface\UserInterface;
+use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Gadget\Gadget;
 use Ucscode\UssForm\Resource\Facade\Position;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\User\User;
+use Module\Dashboard\Bundle\User\Interface\UserConstInterface;
 
-abstract class AbstractFieldConstructor extends AbstractUsersController
+abstract class AbstractUserEditorRepository extends AbstractUsersController
 {
     protected CrudEditor $crudEditor;
     protected CrudEditorForm $form;
     protected User $client;
+
+    public function __construct(array $context)
+    {
+        parent::__construct($context);
+        $this->updateProperties();
+        $this->configureGUI();
+    }
 
     public function getCrudKernel(): CrudKernelInterface
     {
@@ -36,13 +43,16 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         return $this->client;
     }
 
-    protected function composeMicroApplication(): void
+    protected function updateProperties(): void
     {
-        $this->crudEditor = new CrudEditor(UserInterface::TABLE_USER);
+        $this->crudEditor = new CrudEditor(UserConstInterface::TABLE_USER);
         $this->form = $this->crudEditor->getForm();
-        $this->form->attribute->setEnctype("multipart/form-data");
         $this->client = new User();
+        $this->form->attribute->setEnctype("multipart/form-data");
+    }
 
+    protected function configureGUI(): void
+    {
         $this->initializeClient();
         $this->removeSensitiveFields();
         $this->configurePrimaryFields();
@@ -79,7 +89,8 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
         ];
 
         foreach($needless as $key) {
-            $this->form->getCollection(Form::DEFAULT_COLLECTION)
+            $this->form
+                ->getCollection(Form::DEFAULT_COLLECTION)
                 ->removeField($key);
         }
     }
@@ -207,8 +218,8 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
     protected function initializeClient(): void
     {
         if($this->crudEditor->getChannel() === CrudEnum::UPDATE) {
-            $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
-            if($this->crudEditor->hasEntity()) {
+            $this->crudEditor->setEntityPropertiesByOffset($_GET['entity'] ?? '');
+            if($this->crudEditor->hasEntityProperties()) {
                 $entity = $this->crudEditor->getEntity();
                 $this->client = new User($entity->get('id'));
             }

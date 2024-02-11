@@ -17,6 +17,7 @@ abstract class AbstractMailerFoundation extends AbstractSandbox
 
     public function __construct()
     {        
+        parent::__construct();
         $this->PHPMailer = new PHPMailer(true);
         $this->PHPMailer->isHTML(true);
         $this->configurePHPMailer();

@@ -2,33 +2,31 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 
-use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
-use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractFieldConstructor;
+use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractUserEditorRepository;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Process\OnUpdateSubmit;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\UserControl;
 
-class UpdateController extends AbstractFieldConstructor
+class UpdateController extends AbstractUserEditorRepository
 {
-    protected function composeMicroApplication(): void
+    public function __construct(array $context)
     {
-        parent::composeMicroApplication();
+        parent::__construct($context);
         $this->enableDocumentMenu('main:users');
+        $this->processUpdateRequest();
+    }
 
+    protected function processUpdateRequest(): void
+    {
         $submitAction = new OnUpdateSubmit($this->client, $this->crudEditor, $this->dashboard);
         
-        $promise = $this->crudEditor
-            ->getForm()
+        $this->form
             ->addSubmitAction('user:update', $submitAction)
             ->handleSubmission();
-        
-        $promise->then(function(CrudEditorForm $form) {
-            $persisted = $form->getPersistenceStatus();
-            if($persisted) {
-                $this->initializeClient();
-                $roles = $this->client->roles->getAll();
-                (new UserControl($this->crudEditor))->autoCheckRolesCheckbox($roles);
-                return;
-            }
-        });
+
+        if($this->form->isSubmitted() && $this->form->isPersisted()) {
+            $this->initializeClient();
+            $roles = $this->client->roles->getAll();
+            (new UserControl($this->crudEditor))->autoCheckRolesCheckbox($roles);
+        }
     }
 }

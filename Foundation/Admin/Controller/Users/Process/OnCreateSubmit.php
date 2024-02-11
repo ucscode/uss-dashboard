@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Mailer\Mailer;
 use Module\Dashboard\Bundle\User\User;
@@ -15,16 +16,17 @@ class OnCreateSubmit extends AbstractUserFormSubmit
         parent::onValidate($resource, $form);
     }
 
-    public function onPersist(mixed &$response, AbstractDashboardForm $form): void
+    public function onPersist(mixed &$response, AbstractDashboardForm|CrudEditorForm $form): void
     {
-        $persisted = $form->getPersistenceStatus();
-        if($persisted && $response) {
+        if($form->isPersisted() && $response) {
             $this->client = new User($form->getPersistenceLastInsertId());
             if($this->postContext['notify_client'] ?? false) {
                 $this->sendUserCreationEmail($form->getProperty('crud:create.email.loginUrl'));
             }
         }
         parent::onPersist($response, $form);
+        $form->replaceHistoryState(false);
+        
     }
 
     protected function sendUserCreationEmail(?string $redirectUrl): void

@@ -4,23 +4,35 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
 use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Interface\UserControllerInterface;
+use Ucscode\UssForm\Form\Form;
 
 abstract class AbstractUsersController implements UserControllerInterface
 {
-    abstract protected function composeMicroApplication(): void;
+    protected Document $document;
+    protected DashboardInterface $dashboard;
 
-    public function __construct(protected Document $document, protected DashboardInterface $dashboard)
+    public function __construct(array $context)
     {
-        $this->composeMicroApplication();
+        $this->document = $context['document'];
+        $this->dashboard = $context['dashboard'];
     }
 
     protected function enableDocumentMenu(string $name, bool $enabled = true): void
     {
         foreach($this->document->getMenuItems() as $offset => $menuContext) {
-            $offset == $name ?
-                $menuContext->setAttribute('active', $enabled) :
-                $menuContext->setAttribute('active', false);
+            $menuContext->setAttribute('active', $offset == $name ? $enabled : false);
         }
+    }
+
+    public function getClient(): ?User
+    {
+        return null;
+    }
+
+    public function getForm(): ?Form
+    {
+        return null;
     }
 }

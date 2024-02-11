@@ -9,7 +9,7 @@ use Uss\Component\Kernel\Uss;
 
 class CrudEditorForm extends AbstractCrudEditorForm
 {   
-    public function setPersistenceEnabled(bool $enabled): self
+    public function enablePersistence(bool $enabled): self
     {
         $this->persistenceEnabled = $enabled;
         return $this;
@@ -20,7 +20,7 @@ class CrudEditorForm extends AbstractCrudEditorForm
         return $this->persistenceEnabled;
     }
 
-    public function getPersistenceStatus(): bool
+    public function isPersisted(): bool
     {
         return $this->persistenceStatus;
     }
@@ -65,22 +65,20 @@ class CrudEditorForm extends AbstractCrudEditorForm
     protected function persistResource(?array $validatedResource): mixed
     {
         if($validatedResource) {
-
+            
             foreach($validatedResource as $key => $value) {
                 if(is_scalar($value) || is_null($value)) {
                     $value = is_bool($value) ? ($value ? 1 : 0) : $value;
-                    $this->crudEditor->setEntityValue($key, $value);
+                    $this->crudEditor->getEntity()->set($key, $value);
                 }
             }
-
+            
             if($this->persistenceEnabled) {
 
                 $this->persistenceStatus = $this->crudEditor->persistEntity();
                 $this->persistenceType = $this->crudEditor->getLastPersistenceType();
                 $this->persistenceError = !$this->persistenceStatus ? Uss::instance()->mysqli->error : null;
-                $this->persistenceLastInsertId = 
-                    $this->persistenceType === CrudEnum::CREATE ? 
-                    Uss::instance()->mysqli->insert_id : null;
+                $this->persistenceType !== CrudEnum::CREATE ?: $this->persistenceLastInsertId = Uss::instance()->mysqli->insert_id;
 
                 $this->flash->addToast($this->getToast());
                 return $this->crudEditor->getEntity(true);
@@ -96,7 +94,7 @@ class CrudEditorForm extends AbstractCrudEditorForm
     protected function getToast(): Toast
     {
         return (new Toast())
-            ->setBackground($this->persistenceStatus ? Toast::BG_SUCCESS : Toast::BG_DANGER)
+            ->setBackground($this->isPersisted() ? Toast::BG_SUCCESS : Toast::BG_DANGER)
             ->setMessage($this->persistenceStatus ? 'The request was success' : 'The request failed')
         ;
     }

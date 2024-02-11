@@ -117,40 +117,31 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         }
     }
 
-    final public function handleSubmission(): Promise
+    final public function handleSubmission(): self
     {
-        return new Promise(function($resolved) {
+        if($this->isSubmitted()) {
+            $resource = $this->filterResource(); // Local resolver
 
-            if($this->isSubmitted()) {
-                
-                $resource = $this->filterResource(); // Local resolver
-                
-                foreach($this->submitInterfaces as $submitter) {
-                    $submitter->onFilter($resource, $this);
-                }
-                
-                $resource = $this->validateResource($resource); // Local Resolver
-                
-                foreach($this->submitInterfaces as $submitter) {
-                    $submitter->onValidate($resource, $this);
-                }
-                
-                $resource = $this->persistResource($resource); // Local Resolver
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onFilter($resource, $this);
+            }
+            
+            $resource = $this->validateResource($resource); // Local Resolver
 
-                foreach($this->submitInterfaces as $submitter) {
-                    $submitter->onPersist($resource, $this);
-                }
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onValidate($resource, $this);
+            }
+            
+            $resource = $this->persistResource($resource); // Local Resolver
+            
+            foreach($this->submitInterfaces as $submitter) {
+                $submitter->onPersist($resource, $this);
+            }
 
-                $this->resolveSubmission($resource); // Local Resolver
-
-                // Prevent resubmission of form when the browser is reloaded
-                $this->replaceState ? $this->implementReplaceStateJavascript() : null;
-
-                $resolved($this);
-
-            };
-
-        });
+            $this->resolveSubmission($resource); // Local Resolver
+            !$this->replaceState ?: $this->implementReplaceStateJavascript();
+        };
+        return $this;
     }
 
     public function replaceHistoryState(bool $replace = true): self

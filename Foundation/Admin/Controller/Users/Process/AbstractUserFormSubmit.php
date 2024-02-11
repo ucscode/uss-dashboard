@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\FileUploader\FileUploader;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Flash\Toast\Toast;
@@ -17,10 +18,7 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
     {
         $this->postContext = $resource;
         $this->roles = array_keys(
-            array_filter(
-                $resource['roles'],
-                fn ($value) => !empty($value)
-            )
+            array_filter($resource['roles'], fn ($value) => !empty($value))
         );
         unset($resource['roles']);
         $resource = array_map('trim', $resource);
@@ -29,23 +27,16 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
     public function onValidate(?array &$resource, AbstractDashboardForm $form): void
     {
         if($resource !== null) {
-            
             $resource['email'] = $this->handleEmailError($resource['email'], $form);
             $resource['username'] = $this->handleUsernameError($resource['username'], $form);
-
-            !array_key_exists('parent', $resource) ? null :
-                $resource['parent'] = $this->handleParentError($resource['parent'], $form);
-
-            !array_key_exists('password', $resource) ? null :
-                $resource['password'] = $this->handlePasswordError($resource['password'], $form);
+            !array_key_exists('password', $resource) ?: $resource['password'] = $this->handlePasswordError($resource['password'], $form);
+            !array_key_exists('parent', $resource) ?: $resource['parent'] = $this->handleParentError($resource['parent'], $form);
         }
     }
 
-    public function onPersist(mixed &$response, AbstractDashboardForm $form): void
+    public function onPersist(mixed &$response, AbstractDashboardForm|CrudEditorForm $form): void
     {        
-        if(!$form->getPersistenceStatus()) {
-            $this->handlePersistionError();
-        }
+        $form->isPersisted() ?: $this->handlePersistionError();
         
         if($response) {
             if($this->client->isAvailable()) {
@@ -53,8 +44,6 @@ abstract class AbstractUserFormSubmit extends AbstractErrorManagement implements
                 $this->updateAvatar($_FILES['avatar']);
             }
         }
-        
-        $form->setProperty('history.replaceState', false);
     }
 
     protected function updateAvatar(array $file): void

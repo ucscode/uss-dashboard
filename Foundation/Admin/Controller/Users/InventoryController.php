@@ -5,24 +5,19 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\CrudInventory;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
-use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Abstract\AbstractUsersController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\Tool\EntityMutator;
-use Ucscode\UssForm\Form\Form;
 use Uss\Component\Kernel\Uss;
 
 class InventoryController extends AbstractUsersController
 {
     protected CrudInventory $crudInventory;
 
-    protected function composeMicroApplication(): void
+    public function __construct(array $context)
     {
+        parent::__construct($context);
         $this->enableDocumentMenu('main:users');
-        $this->crudInventory = new CrudInventory(UserInterface::TABLE_USER);
-        $this->crudInventory->setTableBackgroundWhite();
-        $this->crudInventory->setColumn('roles');
-        $this->crudInventory->addEntityMutationIterator('primary', new EntityMutator());
-        $this->removeSensitiveColumns();
+        $this->configureProperties();
     }
 
     public function getCrudKernel(): CrudKernelInterface
@@ -30,23 +25,20 @@ class InventoryController extends AbstractUsersController
         return $this->crudInventory;
     }
 
-    public function getForm(): ?Form
+    protected function configureProperties(): void
     {
-        return null;
-    }
-
-    public function getClient(): ?User
-    {
-        return null;
+        $this->crudInventory = new CrudInventory(UserInterface::TABLE_USER);
+        $this->crudInventory->setTableBackgroundWhite();
+        $this->crudInventory->setColumn('roles');
+        $this->crudInventory->addEntityMutationIterator('primary', new EntityMutator());
+        $this->removeSensitiveColumns();
     }
 
     protected function removeSensitiveColumns(): void
     {
         $uss = Uss::instance();
         $omitFields = ['id', 'password'];
-        if(empty($uss->options->get('user:collect-username'))) {
-            $omitFields[] = 'username';
-        };
+        !empty($uss->options->get('user:collect-username')) ?: $omitFields[] = 'username';
         foreach($omitFields as $column) {
             $this->crudInventory->removeColumn($column);
         }

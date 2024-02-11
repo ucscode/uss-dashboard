@@ -4,8 +4,8 @@ namespace Module\Dashboard\Foundation\Admin\Controller\Users\Process;
 
 use Module\Dashboard\Bundle\Common\Password;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
+use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
@@ -22,15 +22,59 @@ abstract class AbstractErrorManagement
     protected array $postContext = [];
     protected CrudEnum $channel;
 
-    public function __construct(
-        protected User $client, 
-        protected CrudEditor $crudEditor, 
-        protected DashboardInterface $dashboard
-    ){
+    public function __construct(protected User $client, protected CrudEditor $crudEditor, protected DashboardInterface $dashboard)
+    {
         $this->channel = $crudEditor->getChannel() === CrudEnum::UPDATE ? CrudEnum::UPDATE : CrudEnum::CREATE;
     }
 
-    protected function handlePasswordError(string $password, AbstractDashboardForm $form): ?string
+    protected function handleEmailError(string $email, CrudEditorForm $form): string
+    {
+        $email = trim(strtolower($email));
+        $field = $this->getFieldByPedigree('email');
+        $context = $field->getElementContext();
+
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $form->enablePersistence(false);
+            $context->validation->setValue('* Invalid email address');
+            return $email;
+        }
+        
+        if(!$this->isUniqueClient('email', $email)) {
+            $form->enablePersistence(false);
+            $context->validation->setValue('* Email already exists');
+        }
+
+        return $email;
+    }
+
+    protected function handleUsernameError(string $username, CrudEditorForm $form): ?string
+    {
+        if(!empty($username)) {
+            $username = trim(strtolower($username));
+            $field = $this->getFieldByPedigree('username');
+            $context = $field->getElementContext();
+
+            if(!preg_match('/^\w+$/i', $username)) {
+                $form->enablePersistence(false);
+                $context->validation->setValue('* Invalid Username');
+                $context->info
+                    ->setValue('Username should only contain letters, numbers and underscore')
+                    ->addClass('text-muted fs-12px')
+                ;
+                return $username;
+            }
+
+            if(!$this->isUniqueClient('username', $username)) {
+                $form->enablePersistence(false);
+                $context->validation->setValue('* Username already exists');
+            }
+
+            return $username;
+        }
+        return null;
+    }
+
+    protected function handlePasswordError(string $password, CrudEditorForm $form): ?string
     {
         $password = new Password($password);
         $resolver = (new PasswordResolver())->resolve($password->getInput());
@@ -38,7 +82,7 @@ abstract class AbstractErrorManagement
 
         if($resolver['strength'] < $resolver['strengthLimit']) {
 
-            $form->setPersistenceEnabled(false);
+            $form->enablePersistence(false);
             $field = $this->getFieldByPedigree('password');
             $context = $field->getElementContext();
 
@@ -54,55 +98,7 @@ abstract class AbstractErrorManagement
         return $password->getHash();
     }
 
-    protected function handleEmailError(string $email, AbstractDashboardForm $form): string
-    {
-        $email = trim(strtolower($email));
-        $field = $this->getFieldByPedigree('email');
-        $context = $field->getElementContext();
-
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $form->setPersistenceEnabled(false);
-            $context->validation->setValue('* Invalid email address');
-            return $email;
-        }
-        
-        if(!$this->isUniqueClient('email', $email)) {
-            $form->setPersistenceEnabled(false);
-            $context->validation->setValue('* Email already exists');
-        }
-
-        return $email;
-    }
-
-    protected function handleUsernameError(string $username, AbstractDashboardForm $form): ?string
-    {
-        if(!empty($username)) {
-            
-            $username = trim(strtolower($username));
-            $field = $this->getFieldByPedigree('username');
-            $context = $field->getElementContext();
-
-            if(!preg_match('/^\w+$/i', $username)) {
-                $form->setPersistenceEnabled(false);
-                $context->validation->setValue('* Invalid Username');
-                $context->info
-                    ->setValue('Username should only contain letters, numbers and underscore')
-                    ->addClass('text-muted fs-12px')
-                ;
-                return $username;
-            }
-
-            if(!$this->isUniqueClient('username', $username)) {
-                $form->setPersistenceEnabled(false);
-                $context->validation->setValue('* Username already exists');
-            }
-
-            return $username;
-        }
-        return null;
-    }
-
-    protected function handleParentError(string $parentCode, AbstractDashboardForm $form): ?string
+    protected function handleParentError(string $parentCode, CrudEditorForm $form): ?string
     {
         if(!empty($parentCode)) {
             
@@ -115,13 +111,13 @@ abstract class AbstractErrorManagement
                 return $this->parent->getId();
             }
 
-            $form->setPersistenceEnabled(false);
-
+            $form->enablePersistence(false);
+            
             if(!$this->parent->isAvailable()) {
                 $context->validation->setValue('* Invalid or non-existing parent code');
             }
 
-            if($this->parent->getId() === $this->client->getId()) {
+            if($this->client->isAvailable() && $this->parent->getId() === $this->client->getId()) {
                 $context->validation->setValue('* Cannot assign a user as the parent of the same user');
             }
 
@@ -132,14 +128,7 @@ abstract class AbstractErrorManagement
 
     protected function handlePersistionError(): void
     {
-        if($this->parent && $this->parent->isAvailable()) {
-            $this->crudEditor->setEntityValue('parent', $this->parent->getUsercode());
-        }
-        foreach($this->postContext as $key => $value) {
-            if(is_scalar($value)) {
-                $this->crudEditor->setEntityValue($key, $value);
-            }
-        }
+        $this->crudEditor->getForm()->populate($this->postContext);
         (new UserControl($this->crudEditor))->autoCheckRolesCheckbox($this->roles);
     }
 
