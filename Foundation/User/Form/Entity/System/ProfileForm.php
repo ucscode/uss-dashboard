@@ -234,7 +234,7 @@ class ProfileForm extends AbstractUserAccountForm
         $metaOutcome = array_combine($keys, $values);
 
         $this->populate([
-            'user' => $this->user->getRawInfo(),
+            'user' => $this->user->getEntity()->getAll(),
             'meta' => $metaOutcome
         ]);
 

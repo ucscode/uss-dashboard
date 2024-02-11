@@ -13,12 +13,13 @@ class SystemSettingsController extends AbstractSettingsController
     {
         parent::onload($context);
 
-        $this->form->handleSubmission()
-        ->catch(function(Exception $e) {
+        try {
+            $this->form->handleSubmission();
+        }catch(Exception $e) {
             $modal = (new Modal())
                 ->setMessage(str_replace("\n", "<br>", $e->getMessage()));
             Flash::instance()->addModal($modal);
-        });
+        };
 
         $this->form->build();
     }
