@@ -4,7 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Inventory;
 
 use Module\Dashboard\Bundle\Crud\Component\CrudWidgetManager;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract\AbstractCrudInventory_Level2;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryActionControl;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryInlineActionController;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
 use Ucscode\UssElement\UssElement;
 
@@ -14,7 +14,7 @@ class CrudInventory extends AbstractCrudInventory_Level2
 {    
     public function build(): UssElement
     {
-        new CrudInventoryActionControl($this);
+        new CrudInventoryInlineActionController($this);
         parent::build();
         new CrudWidgetManager($this);
         new CrudInventoryBuilder($this);
@@ -32,7 +32,7 @@ class CrudInventory extends AbstractCrudInventory_Level2
             $method = $status ? "addAttributeValue" : "removeAttributeValue";
             $element->{$method}('class', $className);
         }
-        
+
         return $this;
     }
 

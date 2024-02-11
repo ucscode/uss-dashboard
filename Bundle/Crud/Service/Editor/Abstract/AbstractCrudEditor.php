@@ -16,7 +16,7 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
         return (new Condition())->add($offsetKey, $offsetValue);
     }
 
-    protected function fetchEntity(?string $offsetValue = null): ?array
+    protected function fetchEntityProperties(?string $offsetValue = null): ?array
     {
         $SQL = (new SQuery())->select()
             ->from($this->tableName)

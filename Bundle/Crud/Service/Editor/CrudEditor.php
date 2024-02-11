@@ -29,15 +29,16 @@ class CrudEditor extends AbstractCrudEditor
     {
         $this->entity = is_array($entity) ? new Entity($this->tableName, $entity) : $entity;
         $this->getForm()->populate($this->entity->getAll());
-        $this->getForm()->getFieldPedigree(CrudEditorForm::SUBMIT_KEY)
+        $this->getForm()
+            ->getFieldPedigree(CrudEditorForm::SUBMIT_KEY)
             ?->widget->setButtonContent("Save Changes");
         return $this;
     }
 
     public function setEntityByOffset(string $offsetValue): bool
     {
-        $entity = $this->fetchEntity($offsetValue);
-        return $entity ? !!$this->setEntity($entity) : false;
+        $entityProperties = $this->fetchEntityProperties($offsetValue);
+        return $entityProperties ? !!$this->setEntity($entityProperties) : false;
     }
 
     public function getEntity(): Entity
@@ -79,7 +80,7 @@ class CrudEditor extends AbstractCrudEditor
 
     public function isEntityInDatabase(): bool
     {
-        return !!$this->fetchEntity();
+        return !!$this->fetchEntityProperties();
     }
 
     public function persistEntity(): bool
