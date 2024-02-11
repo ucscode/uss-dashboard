@@ -6,13 +6,11 @@ use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
 use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudKernel extends AbstractCrudKernel_Level2
+abstract class AbstractCrudKernel extends AbstractCrudKernel_Level1
 {
     public function build(): UssElement
     {
-        if(empty($this->getWidgets())) {
-            $this->disableWidgets(true);
-        }
+        !empty($this->getWidgets()) ?: $this->disableWidgets(true);
         return $this->baseContainer;
     }
 

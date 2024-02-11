@@ -12,7 +12,7 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
     protected function getEntityCondition(?string $offsetValue = null): Condition
     {
         $offsetKey = $this->getPrimaryOffset();
-        $offsetValue ??= ($this->entity ? ($this->entity[$offsetKey] ?? '') : '');
+        $offsetValue ??= ($this->entity ? ($this->entity->get($offsetKey) ?? '') : '');
         return (new Condition())->add($offsetKey, $offsetValue);
     }
 
@@ -26,16 +26,15 @@ abstract class AbstractCrudEditor extends AbstractCrudEditor_Level2
         return $result->fetch_assoc();
     }
 
-    protected function castEntity(array $entity): array
+    protected function filterCastedEntity(): array
     {
+        $entityProperties = $this->getEntity()->getAll();
+        $castedEntity = [];
         foreach($this->tableColumns as $key => $dataset) {
-            $value = $entity[$key] ?? null;
-            if(!is_null($value)) {
-                $value = $this->refactorEntityValue(trim($value), $dataset);
-                $entity[$key] = $value;
-            }
+            $value = $entityProperties[$key] ?? null;
+            is_null($value) ?: $castedEntity[$key] = $this->refactorEntityValue(trim($value), $dataset);
         };
-        return $entity;
+        return $castedEntity;
     }
 
     protected function mysqlDataTypeGroup(): array

@@ -2,12 +2,14 @@
 
 namespace Module\Dashboard\Bundle\User\Interface;
 
+use Uss\Component\Manager\Entity;
+
 interface UserInterface extends UserRepositoryInterface, UserConstInterface
 {
     public function isAvailable(): bool;
     public function persist(): bool;
     public function delete(): ?bool;
-    public function getRawInfo(): array;
+    public function getEntity(): Entity;
     public function isLonely(): bool;
     public function saveToSession(): self;
     public function acquireFromSession(): self;

@@ -2,67 +2,193 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Module\Dashboard\Bundle\Crud\Component\Action;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction\GlobalActionsWidget;
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
-use Ucscode\DOMTable\DOMTable;
-use Ucscode\SQuery\Condition;
 use Ucscode\SQuery\SQuery;
+use Ucscode\DOMTable\DOMTable;
+use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level3
+# This is a repository to manage the CrudInventory Properties;
+
+abstract class AbstractCrudInventory_Level2 extends AbstractCrudInventory_Level1
 {
-    public function __construct(string $tableName, ?Condition $condition = null)
+    public function getSQuery(): SQuery
     {
-        parent::__construct($tableName);
-        $this->configureInventory($condition);
-        $this->createInventoryResources();
-        $this->designateInventoryComponents();
+        return $this->sQuery;
     }
 
-    protected function configureInventory(?Condition $condition): void
+    public function getDOMTable(): DOMTable
     {
-        $this->domTable = new DOMTable($this->tableName);
-        $this->domTable->setColumns($this->tableColumnsLabelled);
-        $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
-        $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
+        return $this->domTable;
+    }
 
-        $this->sQuery = (new SQuery())
-            ->select()
-            ->from($this->tableName)
-            ->orderBy($this->primaryOffset, 'DESC');
-            
-        if($condition) {
-            $this->sQuery->where($condition);
+    # Inline Action Components;
+
+    public function setInlineAction(string $name, InlineActionInterface $action): self
+    {
+        $this->inlineActions[$name] = $action;
+        return $this;
+    }
+
+    public function getInlineAction(string $name): ?InlineActionInterface
+    {
+        return $this->inlineActions[$name] ?? null;
+    }
+
+    public function removeInlineAction(string $name): self
+    {
+        $inlineAction = $this->getInlineAction($name);
+        if($inlineAction) {
+            unset($this->inlineActions[$name]);
         }
+        return $this;
     }
 
-    protected function createInventoryResources(): void
+    public function getInlineActions(): array
     {
-        $this->setWidget("inventory:search", new SearchWidget());
-        $this->setWidget("inventory:global-action", new GlobalActionsWidget());
-        $this->setInlineAction('inventory:edit', new InlineEditAction());
-        $this->setInlineAction('inventory:delete', new InlineDeleteAction());
-        // $this->setInlineAction('inventory:view', new InlineViewAction());
-        $this->setGlobalAction('inventory:delete', $this->createGlobalDeleteAction());
+        return $this->inlineActions;
     }
 
-    protected function designateInventoryComponents(): void
+    public function disableInlineAction(bool $disable = true): self
     {
-        $this->paginatorContainer = $this->createElement(UssElement::NODE_DIV, 'paginator-container my-2');
-        $this->baseContainer->appendChild($this->paginatorContainer);
-        $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
+        $this->inlineActionDisabled = $disable;
+        return $this;
     }
 
-    protected function createGlobalDeleteAction(): Action
+    public function isInlineActionDisabled(): bool
     {
-        $action = new Action();
-        $action->setValue('delete');
-        $action->setAttribute('data-ui-confirm', "You are about to delete {items} items");
-        return $action;
+        return $this->inlineActionDisabled;
+    }
+
+    public function setInlineActionAsDropdown(bool $status = true): self
+    {
+        $this->inlineActionDropdownActive = $status;
+        return $this;
+    }
+
+    public function isInlineActionAsDropdown(): bool
+    {
+        return $this->inlineActionDropdownActive;
+    }
+
+    # Global Action Components;
+
+    public function setGlobalAction(string $name, Action $action): self
+    {
+        $this->globalActions[$name] = $action;
+        return $this;
+    }
+
+    public function removeGlobalAction(string $name): self
+    {
+        if(array_key_exists($name, $this->globalActions)) {
+            unset($this->globalActions[$name]);
+        }
+        return $this;
+    }
+
+    public function getGlobalAction(string $name): ?Action
+    {
+        return $this->globalActions[$name] ?? null;
+    }
+
+    public function disableGlobalActions(bool $status = true): self
+    {
+        $this->globalActionsDisabled = $status;
+        return $this;
+    }
+
+    public function isGlobalActionsDisabled(): bool
+    {
+        return $this->globalActionsDisabled;
+    }
+
+    public function getGlobalActions(): array
+    {
+        return $this->globalActions;
+    }
+
+    # Entity Mutation Components;
+
+    public function addEntityMutationIterator(string $name, ?DOMTableIteratorInterface $entityIterator): self
+    {
+        $this->entityMutationIterators[$name] = $entityIterator;
+        return $this;
+    }
+
+    public function getEntityMutationIterator(string $name): ?DOMTableIteratorInterface
+    {
+        return $this->entityMutationIterators[$name] ?? null;
+    }
+
+    public function removeEntityMutationIterator(string $name): self
+    {
+        if($this->hasEntityMutationIterator($name)) {
+            unset($this->entityMutationIterators[$name]);
+        }
+        return $this;
+    }
+
+    public function hasEntityMutationIterator(string $name): bool
+    {
+        return array_key_exists($name, $this->entityMutationIterators);
+    }
+
+    public function getEntityMutationIterators(): array
+    {
+        return $this->entityMutationIterators;
+    }
+
+    # DOMTable Components;
+
+    public function setColumn(string $key, ?string $displayText = null): self
+    {
+        $this->domTable->setColumn($key, $displayText);
+        return $this;
+    }
+
+    public function setColumns(array $columns): self
+    {
+        $this->domTable->setColumns($columns);
+        return $this;
+    }
+
+    public function getColumns(): array
+    {
+        return $this->domTable->getColumns();
+    }
+
+    public function removeColumn(string $key): self
+    {
+        $this->domTable->removeColumn($key);
+        return $this;
+    }
+
+    public function setItemsPerPage(int $chunks): self
+    {
+        $this->domTable->setItemsPerPage($chunks);
+        return $this;
+    }
+
+    public function setCurrentPage(int $page): self
+    {
+        $this->domTable->setCurrentPage($page);
+        return $this;
+    }
+
+    public function sortColumns(callable $sorter, bool $keySort = false): self
+    {
+        $columns = $this->getColumns();
+        $keySort ? uksort($columns, $sorter) : uasort($columns, $sorter);
+        $this->setColumns($columns);
+        return $this;
+    }
+
+    # UssElement Components;
+
+    public function getPaginatorContainer(): UssElement
+    {
+        return $this->paginatorContainer;
     }
 }

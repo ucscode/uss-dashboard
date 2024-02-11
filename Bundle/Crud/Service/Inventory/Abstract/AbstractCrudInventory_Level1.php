@@ -2,90 +2,71 @@
 
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Abstract;
 
-use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\InlineActionInterface;
 use Module\Dashboard\Bundle\Crud\Component\Action;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineDeleteAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineEditAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Action\InlineViewAction;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Compact\CrudInventoryBuilder;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction\GlobalActionsWidget;
+use Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\SearchWidget;
+use Ucscode\DOMTable\DOMTable;
+use Ucscode\SQuery\Condition;
+use Ucscode\SQuery\SQuery;
+use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventory_Level2
+# This class initializes the CrudInventory Properties;
+
+abstract class AbstractCrudInventory_Level1 extends AbstractCrudInventoryFoundation
 {
-    public function setInlineAction(string $name, InlineActionInterface $action): self
+    public function __construct(string $tableName, ?Condition $condition = null)
     {
-        $this->inlineActions[$name] = $action;
-        return $this;
+        parent::__construct($tableName);
+        $this->DOMTableFactory();
+        $this->SQueryFactory($condition);
+        $this->createInventoryResources();
+        $this->designateInventoryComponents();
     }
 
-    public function getInlineAction(string $name): ?InlineActionInterface
+    protected function DOMTableFactory(): void
     {
-        return $this->inlineActions[$name] ?? null;
+        $this->domTable = new DOMTable($this->tableName);
+        $this->domTable->setColumns($this->tableColumnsLabelled);
+        $this->domTable->setCurrentPage($_GET[CrudInventoryBuilder::PAGE_INDICATOR] ?? 1);
+        $this->domTable->getTableElement()->setAttribute("data-ui-table", "inventory");
     }
 
-    public function removeInlineAction(string $name): self
+    protected function SQueryFactory(?Condition $condition): void
     {
-        $inlineAction = $this->getInlineAction($name);
-        if($inlineAction) {
-            unset($this->inlineActions[$name]);
-        }
-        return $this;
+        $this->sQuery = (new SQuery())
+            ->select()
+            ->from($this->tableName)
+            ->orderBy($this->primaryOffset, 'DESC');
+
+        !$condition ?: $this->sQuery->where($condition);
     }
 
-    public function getInlineActions(): array
+    protected function createInventoryResources(): void
     {
-        return $this->inlineActions;
+        $this->setWidget("inventory:search", new SearchWidget());
+        $this->setWidget("inventory:global-action", new GlobalActionsWidget());
+        $this->setInlineAction('inventory:edit', new InlineEditAction());
+        $this->setInlineAction('inventory:delete', new InlineDeleteAction());
+        // $this->setInlineAction('inventory:view', new InlineViewAction());
+        $this->setGlobalAction('inventory:delete', $this->createGlobalDeleteAction());
     }
 
-    public function disableInlineAction(bool $disable = true): self
+    protected function designateInventoryComponents(): void
     {
-        $this->inlineActionDisabled = $disable;
-        return $this;
+        $this->paginatorContainer = $this->createElement(UssElement::NODE_DIV, 'paginator-container my-2');
+        $this->baseContainer->appendChild($this->paginatorContainer);
+        $this->domTable->getTableElement()->addAttributeValue('class', 'table-striped table-hover');
     }
 
-    public function isInlineActionDisabled(): bool
+    protected function createGlobalDeleteAction(): Action
     {
-        return $this->inlineActionDisabled;
-    }
-
-    public function setInlineActionAsDropdown(bool $status = true): self
-    {
-        $this->inlineActionDropdownActive = $status;
-        return $this;
-    }
-
-    public function isInlineActionAsDropdown(): bool
-    {
-        return $this->inlineActionDropdownActive;
-    }
-
-    public function setGlobalAction(string $name, Action $action): self
-    {
-        $this->globalActions[$name] = $action;
-        return $this;
-    }
-
-    public function removeGlobalAction(string $name): self
-    {
-        if(array_key_exists($name, $this->globalActions)) {
-            unset($this->globalActions[$name]);
-        }
-        return $this;
-    }
-
-    public function getGlobalAction(string $name): ?Action
-    {
-        return $this->globalActions[$name] ?? null;
-    }
-
-    public function disableGlobalActions(bool $status = true): self
-    {
-        $this->globalActionsDisabled = $status;
-        return $this;
-    }
-
-    public function isGlobalActionsDisabled(): bool
-    {
-        return $this->globalActionsDisabled;
-    }
-
-    public function getGlobalActions(): array
-    {
-        return $this->globalActions;
+        return (new Action())
+            ->setValue('delete')
+            ->setAttribute('data-ui-confirm', "You are about to delete {items} items")
+        ;
     }
 }

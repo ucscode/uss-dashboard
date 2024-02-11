@@ -10,6 +10,7 @@ use Module\Dashboard\Bundle\User\Service\Roles;
 use Ucscode\Pairs\ForeignConstraint;
 use Ucscode\Pairs\Pairs;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Manager\Entity;
 
 abstract class AbstractUserFoundation implements UserInterface
 {
@@ -18,17 +19,17 @@ abstract class AbstractUserFoundation implements UserInterface
     public readonly Notification $notification;
     public readonly Href $href;
 
-    protected array $user;
+    protected Entity $entity;
     private ?Pairs $pairsInstance = null;
 
     public function __construct(?int $id = null)
     {
         $this->configureUser();
+        $this->entity = $this->obtainUserEntity($id);
         $this->meta = new Meta($this, $this->pairsInstance);
         $this->roles = new Roles($this);
         $this->notification = new Notification($this);
         $this->href = new Href($this);
-        $this->user = $this->acquireUser($id) ?? [];
     }
 
     /**
@@ -37,7 +38,7 @@ abstract class AbstractUserFoundation implements UserInterface
     public function __debugInfo()
     {
         return [
-            'user:protected' => $this->user,
+            'user:protected' => $this->entity,
             'meta' => $this->objectize($this->meta::class),
             'roles' => $this->objectize($this->roles::class),
             'notification' => $this->objectize($this->notification::class),
@@ -48,10 +49,11 @@ abstract class AbstractUserFoundation implements UserInterface
     /**
      * @method acquireUser
      */
-    protected function acquireUser(?int $id, ?string $column = null): array|string|null
+    protected function obtainUserEntity(?int $id, ?string $column = null): Entity|string|null
     {
         $user = !is_null($id) ? Uss::instance()->fetchItem(self::TABLE_USER, abs($id)) : null;
-        return $user && $column ? ($user[$column] ?? null) : $user;
+        $entity = new Entity(self::TABLE_META, $user ?? []);
+        return $column === null ? $entity : $entity->get($column);
     }
 
     /**

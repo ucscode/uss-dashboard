@@ -4,13 +4,12 @@ namespace Module\Dashboard\Bundle\Crud\Kernel\Abstract;
 
 use Ucscode\UssElement\UssElement;
 
-abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
+abstract class AbstractCrudKernel_Level1 extends AbstractCrudKernelFoundation
 {
     public function __construct($tableName)
     {
         parent::__construct($tableName);
         $this->createGraphicalResource();
-        $this->orientGraphicalResource();
     }
 
     protected function createGraphicalResource(): void
@@ -19,10 +18,7 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
         $this->widgetsContainer = $this->createElement(UssElement::NODE_DIV, 'widgets-container row my-1');
         $this->dividerElement = $this->createElement(UssElement::NODE_DIV, 'widget-entity-boundary border-top');
         $this->entitiesContainer = $this->createElement(UssElement::NODE_DIV, 'entities-container my-1');
-    }
 
-    protected function orientGraphicalResource(): void
-    {
         $this->baseContainer->appendChild($this->widgetsContainer);
         $this->baseContainer->appendChild($this->dividerElement);
         $this->baseContainer->appendChild($this->entitiesContainer);
@@ -32,12 +28,7 @@ abstract class AbstractCrudKernel_Level2 extends AbstractCrudKernelFoundation
     {
         $element = new UssElement($nodeName);
         $className ? $element->setAttribute('class', $className) : null;
-        !$content ? null :
-            (
-                $content instanceof UssElement ? 
-                $element->appendChild($element) : 
-                $element->setContent($content)
-            );
+        !$content ?: ($content instanceof UssElement ? $element->appendChild($element) : $element->setContent($content));
         return $element;
     }
 }

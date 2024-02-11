@@ -7,14 +7,12 @@ use Ucscode\Pairs\Pairs;
 
 class Meta
 {
-    public function __construct(
-        protected User $user,
-        protected Pairs $pairs
-    ){}
+    public function __construct(protected User $user, protected Pairs $pairs)
+    {}
 
     public function set(string $key, mixed $value): bool
     {
-        return $this->pairs->set($key, $value, $this->user->getId());
+        return !empty($this->user->getId()) ? $this->pairs->set($key, $value, $this->user->getId()) : false;
     }
 
     public function get(string $key, bool $epoch = false): mixed

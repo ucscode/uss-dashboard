@@ -13,6 +13,7 @@ use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Manager\Entity;
 
 class CrudEditor extends AbstractCrudEditor
 {
@@ -24,10 +25,10 @@ class CrudEditor extends AbstractCrudEditor
         return $this->baseContainer;
     }
 
-    public function setEntity(array $entity): self
+    public function setEntity(array|Entity $entity): self
     {
-        $this->entity = $entity;
-        $this->getForm()->populate($entity);
+        $this->entity = is_array($entity) ? new Entity($this->tableName, $entity) : $entity;
+        $this->getForm()->populate($this->entity->getAll());
         $this->getForm()->getFieldPedigree(CrudEditorForm::SUBMIT_KEY)
             ?->widget->setButtonContent("Save Changes");
         return $this;
@@ -39,23 +40,21 @@ class CrudEditor extends AbstractCrudEditor
         return $entity ? !!$this->setEntity($entity) : false;
     }
 
-    public function getEntity(bool $filtered = false): array
+    public function getEntity(): Entity
     {
-        return !$filtered ? $this->entity : array_filter($this->entity, function($value, $key) {
-            return in_array($key, array_keys($this->tableColumns));
-        }, ARRAY_FILTER_USE_BOTH);
+        return $this->entity;
     }
 
     public function hasEntity(): bool
     {
-        return !!$this->getEntity();
+        return !empty($this->getEntity()->getAll());
     }
 
     public function isPersistable(): bool
     {
         $offset = $this->getPrimaryOffset();
         if($this->entity && !empty($offset)) {
-            $value = $this->entity[$offset] ?? null;
+            $value = $this->entity->get($offset);
             return in_array($offset, array_keys($this->tableColumns));
         }
         return false;
@@ -87,39 +86,42 @@ class CrudEditor extends AbstractCrudEditor
     {
         if($this->isPersistable()) {
 
-            $this->entity = array_filter(
-                $this->castEntity($this->entity), 
-                fn ($value, $key) => array_key_exists($key, $this->tableColumns), 
-                ARRAY_FILTER_USE_BOTH
+            $entityProperties = array_map(
+                fn($value) => $value !== null ? Uss::instance()->sanitize($value, true) : $value,
+                $this->filterCastedEntity()
             );
-            
-            $entity = array_map(function($value) {
-                return $value !== null ? Uss::instance()->sanitize($value, true) : $value;
-            }, $this->entity);
 
             $sQuery = new SQuery();
 
-            if($this->isEntityInDatabase()) {
-                $objective = CrudEnum::UPDATE;
-                $sQuery
-                    ->update($this->tableName, $entity)
-                    ->where($this->getEntityCondition());
-            } else {
-                $objective = CrudEnum::CREATE;
-                $sQuery->insert($this->tableName, $entity);
-            }
-
-            $SQL = $sQuery->build();
-
             try {
-                $upsert = Uss::instance()->mysqli->query($SQL);
 
-                if($upsert) {
+                if($this->isEntityInDatabase()) {
+
+                    $objective = CrudEnum::UPDATE;
+
+                    $SQL = $sQuery
+                        ->update($this->tableName, $entityProperties)
+                        ->where($this->getEntityCondition())
+                        ->build();
+
+                } else {
+
+                    $objective = CrudEnum::CREATE;
+
+                    $SQL = $sQuery
+                        ->insert($this->tableName, $entityProperties)
+                        ->build();
+                }
+
+                $persisted = Uss::instance()->mysqli->query($SQL);
+
+                if($persisted) {
+                    $this->lastPersistenceId = $objective === CrudEnum::UPDATE ? null : Uss::instance()->mysqli->insert_id;
                     $this->lastPersistenceType = $objective;
-                    $this->getForm()->populate($this->entity);
+                    $this->getForm()->populate($this->entity->getAll());
                 }
                 
-                return $upsert;
+                return $persisted;
 
             } catch(mysqli_sql_exception $e) {
                 //
@@ -133,19 +135,6 @@ class CrudEditor extends AbstractCrudEditor
     {
         $this->entity[$columnName] = $value;
         $this->getForm()->populate([$columnName => $value]);
-        return $this;
-    }
-
-    public function getEntityValue(string $columnName): ?string
-    {
-        return $this->entity[$columnName] ?? null;
-    }
-
-    public function removeEntityValue(string $columnName): self
-    {
-        if(array_key_exists($columnName, $this->entity)) {
-            unset($this->entity[$columnName]);
-        }
         return $this;
     }
 

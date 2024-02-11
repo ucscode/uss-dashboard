@@ -10,13 +10,15 @@ abstract class AbstractCrudKernelFoundation implements CrudKernelInterface
 {
     public readonly array $tableColumns;
     public readonly array $tableColumnsLabelled;
+
     protected UssElement $baseContainer;
     protected UssElement $widgetsContainer;
     protected UssElement $entitiesContainer;
     protected UssElement $dividerElement;
+
+    protected string $primaryOffset = 'id';
     protected array $widgets = [];
     protected bool $widgetsDisabled = false;
-    protected string $primaryOffset = 'id';
 
     public function __construct(public readonly string $tableName) 
     {

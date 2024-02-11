@@ -8,14 +8,18 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\SQuery\SQuery;
 use Ucscode\UssElement\UssElement;
 
+# This class defines the initial CrudInventory Properties;
+
 abstract class AbstractCrudInventoryFoundation extends AbstractCrudKernel implements CrudInventoryInterface
 {
-    protected array $globalActions = [];
-    protected array $inlineActions = [];
     protected bool $globalActionsDisabled = false;
     protected bool $inlineActionDisabled = false;
     protected bool $inlineActionDropdownActive = true;
+    
+    protected array $globalActions = [];
+    protected array $inlineActions = [];
     protected array $entityMutationIterators = [];
+
     protected DOMTable $domTable;
     protected SQuery $sQuery;
     protected UssElement $paginatorContainer;

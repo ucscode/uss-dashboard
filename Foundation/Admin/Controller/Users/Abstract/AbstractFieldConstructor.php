@@ -210,7 +210,7 @@ abstract class AbstractFieldConstructor extends AbstractUsersController
             $this->crudEditor->setEntityByOffset($_GET['entity'] ?? '');
             if($this->crudEditor->hasEntity()) {
                 $entity = $this->crudEditor->getEntity();
-                $this->client = new User($entity['id']);
+                $this->client = new User($entity->get('id'));
             }
         }
         $this->crudEditor->getForm()->populate([

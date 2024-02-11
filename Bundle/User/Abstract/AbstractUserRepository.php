@@ -11,15 +11,21 @@ use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Kernel\Uss;
+use Uss\Component\Manager\Entity;
 
 abstract class AbstractUserRepository extends AbstractUserFoundation
 {
+    public function getEntity(): Entity
+    {
+        return $this->entity;
+    }
+
     /**
      * @method getId
      */
     public function getId(): ?int
     {
-        return $this->user['id'] ?? null;
+        return $this->entity->get('id');
     }
 
     /**
@@ -32,7 +38,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
                 "The provided email address is invalid."
             );
         };
-        $this->user['email'] = strtolower(trim($email));
+        $this->entity->set('email', strtolower(trim($email)));
         return $this;
     }
 
@@ -41,7 +47,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getEmail(): ?string
     {
-        return $this->user['email'] ?? null;
+        return $this->entity->get('email');
     }
 
     /**
@@ -56,7 +62,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
                 );
             }
         }
-        $this->user['username'] = $username !== null ? strtolower(trim($username)) : $username;
+        $this->entity->set('username', $username !== null ? strtolower(trim($username)) : $username);
         return $this;
     }
 
@@ -65,7 +71,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getUsername(): ?string
     {
-        return $this->user['username'] ?? null;
+        return $this->entity->get('username');
     }
 
     /**
@@ -75,7 +81,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     {
         $context = is_string($context) ? new Password($context) : $context;
         $password = $hash ? $context->getHash() : $context->getInput();
-        $this->user['password'] = $password;
+        $this->entity->set('password', $password);
         return $this;
     }
 
@@ -84,7 +90,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getPassword(): ?string
     {
-        return $this->user['password'] ?? null;
+        return $this->entity->get('password');
     }
 
     /**
@@ -104,7 +110,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function setRegisterTime(DateTime $dateTime): self
     {
         $registerTime = $dateTime->format('Y-m-d H:i:s');
-        $this->user['register_time'] = $registerTime;
+        $this->entity->set('register_time', $registerTime);
         return $this;
     }
 
@@ -113,10 +119,8 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getRegisterTime(): ?DateTime
     {
-        $registerTime = $this->user['register_time'] ?? null;
-        if($registerTime) {
-            $registerTime = new DateTime($registerTime);
-        }
+        $registerTime = $this->entity->get('register_time');
+        !$registerTime ?: $registerTime = new DateTime($registerTime);
         return $registerTime;
     }
 
@@ -130,7 +134,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
                 "Usercode cannot contain special character"
             );
         }
-        $this->user['usercode'] = $usercode;
+        $this->entity->set('usercode', $usercode);
         return $this;
     }
 
@@ -139,7 +143,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getUsercode(): ?string
     {
-        return $this->user['usercode'] ?? null;
+        return $this->entity->get('usercode');
     }
 
     /**
@@ -148,7 +152,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
     public function setLastSeen(DateTime $dateTime): self
     {
         $lastSeen = $dateTime->format('Y-m-d H:i:s');
-        $this->user['last_seen'] = $lastSeen;
+        $this->entity->set('last_seen', $lastSeen);
         return $this;
     }
 
@@ -157,10 +161,8 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getLastSeen(): ?DateTime
     {
-        $lastSeen = $this->user['last_seen'] ?? null;
-        if($lastSeen) {
-            $lastSeen = new DateTime($lastSeen);
-        };
+        $lastSeen = $this->entity->get('last_seen');
+        !$lastSeen ?: $lastSeen = new DateTime($lastSeen);
         return $lastSeen;
     }
 
@@ -172,7 +174,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
         if($parent instanceof User) {
             $parent = $parent->getId();
         };
-        $this->user['parent'] = $parent;
+        $this->entity->set('parent', $parent);
         return $this;
     }
 
@@ -181,7 +183,7 @@ abstract class AbstractUserRepository extends AbstractUserFoundation
      */
     public function getParent(bool $getUserInstance = false): UserInterface|int|null
     {
-        $parent = $this->user['parent'] ?? null;
+        $parent = $this->entity->get('parent');
         if($parent && $getUserInstance) {
             $parent = new User($parent);
             if(!$parent->isAvailable()) {

@@ -8,6 +8,7 @@ use Module\Dashboard\Bundle\User\Service\Href;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
 use Ucscode\SQuery\Condition;
+use Uss\Component\Manager\Entity;
 
 class User extends AbstractUserRepository
 {
@@ -16,15 +17,9 @@ class User extends AbstractUserRepository
      */
     public function isAvailable(): bool
     {
-        return !empty($this->acquireUser($this->getId()));
-    }
-
-    /**
-     * Get the user raw information
-     */
-    public function getRawInfo(): array
-    {
-        return $this->user;
+        $userId = $this->getId(); // get assigned
+        $entity = $this->obtainUserEntity($userId); // Fetch from database
+        return !empty($entity->get('id')); // check existence
     }
 
     /**
@@ -49,10 +44,9 @@ class User extends AbstractUserRepository
         if(!$this->isAvailable() && !empty($sessionValue) && is_string($sessionValue)) {
             $detail = explode(":", $sessionValue);
             if(count($detail) === 2 && is_numeric($detail[0])) {
-                $user = $this->acquireUser($detail[0]);
-                if($user && hash('sha256', $user['password'] . $user['usercode']) === $detail[1]) {
-                    $this->user = $user;
-                };
+                $entity = $this->obtainUserEntity($detail[0]);
+                $approved = $entity->get('id') && hash('sha256', $entity->get('password') . $entity->get('usercode')) === $detail[1];
+                !$approved ?: $this->entity = $entity;
             };
         }
         return $this;
@@ -79,14 +73,14 @@ class User extends AbstractUserRepository
         if(!$this->isAvailable()) {
 
             $SQL = (new SQuery())
-                ->insert(self::TABLE_USER, $this->user)
+                ->insert(self::TABLE_USER, $this->entity->getAll())
                 ->build();
 
             $upsert = $uss->mysqli->query($SQL);
 
             if($upsert) {
                 $userId = $uss->mysqli->insert_id;
-                $this->user = $this->acquireUser($userId);
+                $this->entity = $this->obtainUserEntity($userId);
             };
 
         } else {
@@ -94,7 +88,7 @@ class User extends AbstractUserRepository
             $condition = (new Condition())->add('id', $this->getId());
 
             $SQL = (new SQuery())
-                ->update(self::TABLE_USER, $this->user)
+                ->update(self::TABLE_USER, $this->entity->getAll())
                 ->where($condition)
                 ->build()
             ;
@@ -115,10 +109,9 @@ class User extends AbstractUserRepository
             $allocationError = "Allocation is only possible if user does not already exist";
             throw new \Exception($allocationError);
         };
-        
-        if($user = Uss::instance()->fetchItem(self::TABLE_USER, $value, $key)) {
-            $this->user = $user;
-        }
+
+        $user = Uss::instance()->fetchItem(self::TABLE_USER, $value, $key);
+        !$user ?: $this->entity = new Entity(self::TABLE_USER, $user);
 
         return $this;
     }
