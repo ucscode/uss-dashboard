@@ -58,7 +58,7 @@ new class () {
     {
         $appControl = (new AppControl())
             ->setBase("/admin")
-            ->setThemeFolder('classic')
+            ->setThemeFolder('douglas')
             ->setPermissions([
                 RoleImmutable::ROLE_SUPER_ADMIN,
                 RoleImmutable::ROLE_ADMIN,

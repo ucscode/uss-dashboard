@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\User;
 
 use Module\Dashboard\Bundle\User\Abstract\AbstractUserRepository;
-use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\Service\Href;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
