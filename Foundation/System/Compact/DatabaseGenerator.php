@@ -86,10 +86,10 @@ final class DatabaseGenerator
     private function setDatabaseOptions(): void
     {
         $configuration = [
-            'company:logo' => $this->uss->twigContext['page_icon'],
-            'company:name' => $this->uss->twigContext['page_title'],
-            'company:slogan' => $this->uss->twigContext['page_slogan'],
-            'company:description' => $this->uss->twigContext['page_description'],
+            'company:logo' => $this->uss->templateContext['page_icon'],
+            'company:name' => $this->uss->templateContext['page_title'],
+            'company:slogan' => $this->uss->templateContext['page_slogan'],
+            'company:description' => $this->uss->templateContext['page_description'],
             'company:email' => 'admin@example.com',
             'company:email-alt' => null,
             'user:disable-signup' => 0,

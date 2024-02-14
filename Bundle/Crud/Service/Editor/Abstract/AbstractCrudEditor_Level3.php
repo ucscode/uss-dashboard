@@ -9,7 +9,7 @@ use Ucscode\SQuery\SQuery;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 // This is the repository to manage crud editor 
 

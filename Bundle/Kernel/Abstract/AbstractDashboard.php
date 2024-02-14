@@ -8,7 +8,7 @@ use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardRenderLogic;
 use Module\Dashboard\Bundle\User\User;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
-use Uss\Component\Manager\UrlGenerator;
+use Uss\Component\Common\UrlGenerator;
 use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\Resource\Enumerator;

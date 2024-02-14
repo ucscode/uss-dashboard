@@ -11,7 +11,7 @@
         <div class="row">
             {% block settings_content %}
                 <!-- [settings]:content -->
-                {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+                {{ __uss.app.renderBlocks('dashboard_content', _context)|raw }}
                 <!-- [/settings]:content -->
             {% endblock %}
         </div>

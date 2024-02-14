@@ -15,7 +15,7 @@
                             <div class="title text-center">
 
                                 {% block contentLeftIcon %}
-                                    {% set companyIcon = __uss.option('company:logo') ?? page_icon %}
+                                    {% set companyIcon = __uss.app.option('company:logo') ?? page_icon %}
                                     {% if companyIcon is not empty %}
                                         <div class='mb-2'>
                                             <img src='{{ companyIcon }}' class='img-fluid user-select-none'>
@@ -25,13 +25,13 @@
 
                                 {% block contentLeftTitle %}
                                     <h1 class="text-white mb-2">
-                                        {{ __uss.option('company:name') ?? page_title }}
+                                        {{ __uss.app.option('company:name') ?? page_title }}
                                     </h1>
                                 {% endblock %}
 
                                 {% block contentLeftSlogan %}
                                     <p class="text-light">
-                                        {{ __uss.option('company:slogan') ?? page_slogan }}
+                                        {{ __uss.app.option('company:slogan') ?? page_slogan }}
                                     </p>
                                 {% endblock %}
 

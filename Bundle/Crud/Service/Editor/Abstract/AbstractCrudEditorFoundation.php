@@ -6,7 +6,7 @@ use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Kernel\Abstract\AbstractCrudKernel;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Interface\CrudEditorInterface;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 // This defines the initial properties
 

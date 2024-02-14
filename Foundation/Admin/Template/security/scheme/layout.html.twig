@@ -29,18 +29,18 @@
                                 {% block contentLeft %}
 
                                     {% block contentLeftIcon %}
-                                        {% set logo = __uss.option('company:logo') ?? page_icon %}
+                                        {% set logo = __uss.app.option('company:logo') ?? page_icon %}
                                         {% if logo %}
                                             <figure class='mb-1'><img src='{{ logo }}' height='60px'></figure>
                                         {% endif %}
                                     {% endblock %}
 
                                     {% block contentLeftTitle %}
-                                        <h1 class="display-5 fw-bold ls-tight">{{ __uss.option('company:name') ?? page_title }}</h1>
+                                        <h1 class="display-5 fw-bold ls-tight">{{ __uss.app.option('company:name') ?? page_title }}</h1>
                                     {% endblock %}
 
                                     {% block contentLeftDescription %}
-                                        <p class="line-clamp clamp-4">{{ __uss.option('company:slogan') ?? page_slogan }}</p>
+                                        <p class="line-clamp clamp-4">{{ __uss.app.option('company:slogan') ?? page_slogan }}</p>
                                     {% endblock %}
 
                                 {% endblock %}

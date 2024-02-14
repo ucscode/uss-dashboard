@@ -10,7 +10,6 @@ class AppControl implements AppControlInterface
     protected string $base;
     protected string $themeFolder;
     protected array $permissions = [];
-    protected ?string $permissionDeniedTemplate = null;
 
     /**
      * @method setBase
@@ -85,22 +84,5 @@ class AppControl implements AppControlInterface
             $this->permissions = array_values($this->permissions);
         }
         return $this;
-    }
-
-    /**
-     * @method setPermissionDeniedTemplate
-     */
-    public function setPermissionDeniedTemplate(string $template): self
-    {
-        $this->permissionDeniedTemplate = $template;
-        return $this;
-    }
-
-    /**
-     * @method getPermissionDeniedTemplate
-     */
-    public function getPermissionDeniedTemplate(): ?string
-    {
-        return $this->permissionDeniedTemplate;
     }
 }

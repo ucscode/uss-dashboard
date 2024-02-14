@@ -5,7 +5,7 @@ namespace Module\Dashboard\Bundle\Document;
 use Module\Dashboard\Bundle\Document\Abstract\AbstractDocument;
 use Module\Dashboard\Bundle\Document\Interface\DocumentInterface;
 use Ucscode\TreeNode\TreeNode;
-use Uss\Component\Manager\UrlGenerator;
+use Uss\Component\Common\UrlGenerator;
 use Uss\Component\Route\RouteInterface;
 use Uss\Component\Kernel\Uss;
 

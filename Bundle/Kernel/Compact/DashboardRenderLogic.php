@@ -9,6 +9,7 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Event\EventInterface;
+use Uss\Component\Kernel\Resource\Enumerator;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 
@@ -90,9 +91,13 @@ final class DashboardRenderLogic implements EventInterface
             $matchingRoles = array_intersect($permissions, $roles ?? []);
 
             if(empty($matchingRoles)) {
-                $this->template =
-                    $this->dashboard->appControl->getPermissionDeniedTemplate() ?:
-                    $this->dashboard->getTheme('pages/403.html.twig');
+                $error403 = 'pages/error/403.html.twig';
+                if(is_file($this->dashboard->getTheme($error403, Enumerator::FILE_SYSTEM))) {
+                    $this->template = $this->dashboard->getTheme($error403);
+                    return;
+                }
+                $this->template = 'error.html.twig';
+                $this->options['image'] = $this->uss->pathToUrl(UssImmutable::ASSETS_DIR . "/images/errors/403.webp");
             };
 
         };
@@ -104,8 +109,8 @@ final class DashboardRenderLogic implements EventInterface
     protected function createUserInterface(): void
     {
         //$this->remodelMenu($this->dashboard->menu->children);
-        $this->uss->twigEnvironment->addExtension(new DashboardExtension($this->dashboard));
-        $this->uss->twigContext['user'] = $this->options['user'] = $this->user;
+        $this->uss->twig->addExtension(new DashboardExtension($this->dashboard));
+        $this->uss->templateContext['user'] = $this->options['user'] = $this->user;
 
         $this->uss->jsCollection['dashboard'] = [
             'url' => $this->dashboard->urlGenerator()->getResult(),

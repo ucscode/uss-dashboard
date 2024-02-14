@@ -4,7 +4,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Abstract;
 
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\FormManager;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 # This initializes the Crud Editor properties;
 

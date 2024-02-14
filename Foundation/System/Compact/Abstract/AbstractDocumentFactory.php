@@ -14,17 +14,24 @@ use Uss\Component\Kernel\UssImmutable;
 abstract class AbstractDocumentFactory
 {
     protected string $base;
+    protected string $themeNamespaceAuth;
+    protected string $themeNamespaceError;
+    protected string $themeNamespaceSystem;
+    protected string $foundationNamespaceSystem = '@Foundation/System/Template';
 
     public function __construct(protected DashboardInterface $dashboard, protected string $namespace)
     {
         $this->base = $this->dashboard->appControl->getBase();
+        $this->themeNamespaceAuth = $this->dashboard->getTheme('/pages/auth');
+        $this->themeNamespaceError = $this->dashboard->getTheme('/pages/error');
+        $this->themeNamespaceSystem = $this->dashboard->getTheme('/pages/system');
     }
 
     public function createLoginDocument(): Document
     {
         return (new Document())
             ->setName('login')
-            ->setTemplate('/security/login.html.twig', $this->namespace)
+            ->setTemplate('/login.html.twig', $this->themeNamespaceAuth)
             // ->setCustom('app.form', LoginForm())
         ;
     }
@@ -56,7 +63,7 @@ abstract class AbstractDocumentFactory
              ->setName("notifications")
              ->setRoute("/notifications", $this->base)
              ->setController(new NotificationController())
-             ->setTemplate('/pages/notifications.html.twig', $this->dashboard->getTheme(''))
+             ->setTemplate('/notifications.html.twig', $this->foundationNamespaceSystem)
         ;
     }
 
@@ -65,7 +72,7 @@ abstract class AbstractDocumentFactory
         return (new Document())
             ->setName('recovery')
             ->setRoute('/reset-password', $this->base)
-            ->setTemplate("/security/recovery.html.twig", $this->namespace)
+            ->setTemplate("/reset-password.html.twig", $this->themeNamespaceAuth)
             ->setController(new RecoveryController())
             ->setCustom('app.form', new RecoveryForm())
         ;

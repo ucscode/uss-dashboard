@@ -7,7 +7,7 @@ use Module\Dashboard\Bundle\User\Service\Href;
 use Uss\Component\Kernel\Uss;
 use Ucscode\SQuery\SQuery;
 use Ucscode\SQuery\Condition;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 class User extends AbstractUserRepository
 {

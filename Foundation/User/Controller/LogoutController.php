@@ -4,7 +4,7 @@ namespace Module\Dashboard\Foundation\User\Controller;
 
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\User\User;
-use Uss\Component\Manager\UrlGenerator;
+use Uss\Component\Common\UrlGenerator;
 
 class LogoutController extends AbstractDashboardController
 {

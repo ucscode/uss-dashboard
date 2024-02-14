@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Form\Settings\Abstract;
 
-use Module\Dashboard\Bundle\Common\AppStore;
+use Uss\Component\Common\AppStore;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardForm;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Resource\Service\Pedigree\FieldPedigree;

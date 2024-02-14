@@ -9,7 +9,7 @@ use Ucscode\DOMTable\DOMTable;
 use Ucscode\UssElement\UssElement;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
-use Uss\Component\Manager\CountryManager;
+use Uss\Component\Common\CountryManager;
 
 class SystemInfoController extends AbstractDashboardController
 {

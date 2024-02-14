@@ -11,7 +11,7 @@ use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\User\Interface\UserInterface;
 use Module\Dashboard\Bundle\User\User;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 abstract class AbstractUserRepository extends AbstractUserFoundation
 {

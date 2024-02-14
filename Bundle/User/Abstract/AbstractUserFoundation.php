@@ -10,7 +10,7 @@ use Module\Dashboard\Bundle\User\Service\Roles;
 use Ucscode\Pairs\ForeignConstraint;
 use Ucscode\Pairs\Pairs;
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 abstract class AbstractUserFoundation implements UserInterface
 {

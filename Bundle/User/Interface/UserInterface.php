@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\User\Interface;
 
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 interface UserInterface extends UserRepositoryInterface, UserConstInterface
 {

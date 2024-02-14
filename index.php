@@ -40,7 +40,7 @@ new class () {
         new DashboardEnvironment($uss);
         BlockManager::instance()->addBlock("dashboard_content", new Block(true));
         $userAvatar = DashboardImmutable::GUI_DIR . '/assets/images/user.png';
-        $uss->twigContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
+        $uss->templateContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
         new NotificationApi();
     }
 

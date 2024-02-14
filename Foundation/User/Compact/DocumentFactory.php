@@ -25,7 +25,7 @@ final class DocumentFactory extends AbstractDocumentFactory
         return (new Document())
             ->setName('register')
             ->setRoute('/register', $this->base)
-            ->setTemplate('/security/register.html.twig', $this->namespace)
+            ->setTemplate('/register.html.twig', $this->themeNamespaceAuth)
             ->setCustom('app.form', new RegisterForm())
             ->setController(new RegisterController())
         ;

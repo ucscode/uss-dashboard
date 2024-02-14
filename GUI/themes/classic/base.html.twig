@@ -14,7 +14,7 @@
             {% block sidebar_logo %}
                 <div class="navbar-logo">
                     <a href="{{ __dashboard.meths.urlGenerator('/') }}">
-                        <img src="{{ __uss.option('company:logo') ?? page_icon }}" alt="logo" />
+                        <img src="{{ __uss.app.option('company:logo') ?? page_icon }}" alt="logo" />
                     </a>
                 </div>
             {% endblock %}
@@ -73,7 +73,7 @@
                             
                             {% block dashboard_content %} {# content ------------------------------> important #}
                                 <!-- [dashboard]:content -->
-                                {{ __uss.renderBlockElements('dashboard_content', _context)|raw }}
+                                {{ __uss.app.renderBlocks('dashboard_content', _context)|raw }}
                                 <!-- [/dashboard]:content -->
                             {% endblock %}
                             
@@ -83,7 +83,7 @@
             {% endblock %} 
 
             {% block footer %} 
-                {{ __uss.renderBlockElements('dashboard_footer', _context)|raw }}
+                {{ __uss.app.renderBlocks('dashboard_footer', _context)|raw }}
             {% endblock %} 
 
         </main>

@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Foundation\Admin\Controller\Users\Abstract;
 
-use Module\Dashboard\Bundle\Common\AppStore;
+use Uss\Component\Common\AppStore;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Module\Dashboard\Bundle\Crud\Service\Editor\Compact\CrudEditorForm;
 use Module\Dashboard\Bundle\Crud\Service\Editor\CrudEditor;

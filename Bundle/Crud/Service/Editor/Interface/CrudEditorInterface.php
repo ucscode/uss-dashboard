@@ -5,7 +5,7 @@ namespace Module\Dashboard\Bundle\Crud\Service\Editor\Interface;
 use Module\Dashboard\Bundle\Crud\Component\CrudEnum;
 use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
-use Uss\Component\Manager\Entity;
+use Uss\Component\Common\Entity;
 
 interface CrudEditorInterface extends FormManagerInterface
 {

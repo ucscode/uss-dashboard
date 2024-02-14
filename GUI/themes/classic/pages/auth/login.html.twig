@@ -1,6 +1,5 @@
-{% extends '@Foundation/User/Template/security/scheme/layout.html.twig' %}
-
-{% import '@Foundation/User/Template/security/scheme/macros.lib.twig' as macros %}
+{% extends __uss.app.dirname(_self) ~ '/partials/layout.html.twig' %}
+{% import __uss.app.dirname(_self) ~ '/partials/macros.lib.twig' as macros %}
 
 {% block contentMain %}
 

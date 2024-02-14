@@ -10,6 +10,9 @@ use Module\Dashboard\Foundation\User\Form\Abstract\AbstractEmailResolver;
 
 class EmailResolver extends AbstractEmailResolver
 {
+    protected const MAIL_NAMESPACE_AUTH = '@Foundation/User/Template/auth/mails';
+    protected const MAIL_NAMESPACE_PROFILE = '@Foundation/User/Template/profile/mails';
+
     /**
      * Registration page email
      *
@@ -20,7 +23,7 @@ class EmailResolver extends AbstractEmailResolver
         $indexDocument = $this->dashboardInterface->getDocument('index');
 
         $this->properties['email:subject'] ??= 'Your Confirmation Link';
-        $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/register.email.twig';
+        $this->properties['email:template'] ??= self::MAIL_NAMESPACE_AUTH . '/register.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
 
         $this->properties['email:template.context'] += [
@@ -69,7 +72,7 @@ class EmailResolver extends AbstractEmailResolver
         $recoveryDocument = $this->dashboardInterface->getDocument('recovery');
 
         $this->properties['email:subject'] ??= 'Reset Your Password';
-        $this->properties['email:template'] ??= '@Foundation/User/Template/security/mails/recovery.email.twig';
+        $this->properties['email:template'] ??= self::MAIL_NAMESPACE_AUTH . '/reset-password.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
 
         $this->properties['email:template.context'] += [
@@ -135,7 +138,7 @@ class EmailResolver extends AbstractEmailResolver
         $userProfileDocument = $this->dashboardInterface->getDocument('user.profile');
 
         $this->properties['email:subject'] ??= 'Confirm Your new email';
-        $this->properties['email:template'] ??= '@Foundation/User/Template/profile/mails/reconfirm.email.twig';
+        $this->properties['email:template'] ??= self::MAIL_NAMESPACE_PROFILE . '/reconfirm.email.twig';
         $this->properties['email:template.context'] ??= $this->getSystemContext($user);
 
         $this->properties['email:template.context'] += [

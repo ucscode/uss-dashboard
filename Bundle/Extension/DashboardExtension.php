@@ -44,17 +44,19 @@ final class DashboardExtension extends AbstractExtension implements GlobalsInter
     protected function initializeAccessibleProperties(): void
     {
         $properties = array_keys(get_object_vars($this->dashboard));
-        $this->accessibleProperties = new AccessibleProperties($this->dashboard, $properties);
+        $this->accessibleProperties = new AccessibleProperties($properties, $this->dashboard);
     }
 
     protected function initializeAccessibleMethods(): void
     {
-        $this->accessibleMethods = new AccessibleMethods($this->dashboard, [
-            'getDocument',
-            'getDocuments',
-            'urlGenerator',
-            'isFirewallEnabled',
-            'getTheme',
-        ]);
+        $this->accessibleMethods = new AccessibleMethods([
+                'getDocument',
+                'getDocuments',
+                'urlGenerator',
+                'isFirewallEnabled',
+                'getTheme',
+            ],
+            $this->dashboard
+        );
     }
 }

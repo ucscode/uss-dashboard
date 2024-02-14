@@ -134,7 +134,7 @@ class NotificationApiController implements RouteInterface
                 $item['period'] = $this->uss->relativeTime($item['period']);
                 unset($item['internal_note']);
                 if(empty($item['avatar_url'])) {
-                    $item['avatar_url'] = $this->uss->twigContext['default_user_avatar'];
+                    $item['avatar_url'] = $this->uss->templateContext['default_user_avatar'];
                 }
                 return $item;
             }, $entity);
