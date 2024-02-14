@@ -109,7 +109,7 @@ final class DashboardRenderLogic implements EventInterface
 
         $this->uss->jsCollection['dashboard'] = [
             'url' => $this->dashboard->urlGenerator()->getResult(),
-            'nonce' => $this->uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
+            'nonce' => $this->uss->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]),
             'loggedIn' => $this->isLoggedIn
         ];
         

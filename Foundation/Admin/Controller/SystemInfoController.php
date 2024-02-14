@@ -83,11 +83,11 @@ class SystemInfoController extends AbstractDashboardController
             'Database Password' => str_repeat('*', 6),
             'Database Name' => $_ENV['DB_NAME'],
             'Database Table Prefix' => $_ENV['DB_PREFIX'],
-            'Author Name' => UssImmutable::AUTHOR,
+            'Author Name' => UssImmutable::AUTHOR_NAME,
             'Author Website' => $this->printUrl(UssImmutable::AUTHOR_WEBSITE),
             'Author Email' => $this->printUrl(UssImmutable::AUTHOR_EMAIL, null, 'mailto:'),
             'Project Name' => UssImmutable::PROJECT_NAME,
-            'Project Repository' => $this->printUrl(UssImmutable::GITHUB_REPO),
+            'Project Repository' => $this->printUrl(UssImmutable::PROJECT_REPOSITORY),
             'Project Website' => $this->printUrl(UssImmutable::PROJECT_WEBSITE),
         ];
     }

@@ -151,8 +151,9 @@ class Notification
      */
     protected function filter(array $originalItem): array
     {
-        $keysToExtract = Uss::instance()->getTableColumns(self::TABLE_NAME);
-        unset($keysToExtract['userid']);
+        $tableColumns = Uss::instance()->getTableColumns(self::TABLE_NAME);
+        unset($tableColumns['userid']);
+        $keysToExtract = array_keys($tableColumns);
         $filteredArray = array_intersect_key($originalItem, array_flip($keysToExtract));
         $result = array_filter($filteredArray, function ($value) {
             return is_scalar($value) || is_null($value);

@@ -24,7 +24,7 @@ class SystemSettingsForm extends AbstractSystemSettingsForm
     protected function validateResource(array $filteredResource): ?array
     {
         $validNonce = Uss::instance()->nonce(
-            $_SESSION[UssImmutable::SESSION_KEY], 
+            $_SESSION[UssImmutable::APP_SESSION_KEY], 
             $filteredResource['nonce'] ?? ''
         );
         

@@ -3,11 +3,9 @@
 namespace Module\Dashboard\Bundle\Crud\Service\Inventory\Widgets\GlobalAction;
 
 use Module\Dashboard\Bundle\Crud\Component\Action;
-use Module\Dashboard\Bundle\Crud\Kernel\Interface\ActionInterface;
 use Module\Dashboard\Bundle\Crud\Service\Inventory\Interface\CrudInventoryInterface;
 use Ucscode\DOMTable\Interface\DOMTableIteratorInterface;
 use Ucscode\UssElement\UssElement;
-use Ucscode\UssForm\Collection\Collection;
 use Ucscode\UssForm\Field\Field;
 use Ucscode\UssForm\Form\Form;
 use Ucscode\UssForm\Resource\Interface\WidgetContextInterface;
@@ -103,7 +101,7 @@ abstract class AbstractGlobalActionsWidget extends AbstractGlobalActionsWidgetFo
 
     protected function createNonceField(): Field
     {
-        $nonce = Uss::instance()->nonce(UssImmutable::SESSION_KEY);
+        $nonce = Uss::instance()->nonce(UssImmutable::APP_SESSION_KEY);
         $field = new Field(Field::NODE_INPUT, Field::TYPE_HIDDEN);
         $field->getElementContext()->widget
             ->setValue($nonce)

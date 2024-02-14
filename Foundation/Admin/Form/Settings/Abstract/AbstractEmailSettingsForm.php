@@ -131,7 +131,7 @@ abstract class AbstractEmailSettingsForm extends AbstractDashboardForm
 
     protected function createOtherFields(): void
     {
-        $nonce = $this->uss->nonce($_SESSION[UssImmutable::SESSION_KEY]);
+        $nonce = $this->uss->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]);
 
         $this->generateField('nonce', [
             'nodeType' => Field::TYPE_HIDDEN,

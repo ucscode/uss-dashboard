@@ -39,7 +39,7 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
         $this->createField([
             'name' => 'nonce',
             'nodeType' => 'hidden',
-            'value' => $uss->nonce($_SESSION[UssImmutable::SESSION_KEY]),
+            'value' => $uss->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]),
         ]);
 
         $this->createField([

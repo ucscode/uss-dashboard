@@ -20,7 +20,7 @@ class EmailSettingsForm extends AbstractEmailSettingsForm
     protected function validateResource(array $filteredResource): ?array
     {
         if($filteredResource) {
-            $key = $_SESSION[UssImmutable::SESSION_KEY];
+            $key = $_SESSION[UssImmutable::APP_SESSION_KEY];
             $validNonce = Uss::instance()->nonce($key, $filteredResource['nonce']);
             if($validNonce) {
                 unset($filteredResource['nonce']);

@@ -28,7 +28,7 @@ class NotificationApiController implements RouteInterface
         $isValid = 
             $this->payload && 
             $this->uss->nonce(
-                $_SESSION[UssImmutable::SESSION_KEY], 
+                $_SESSION[UssImmutable::APP_SESSION_KEY], 
                 $this->payload['nonce'] ?? ''
             );
         

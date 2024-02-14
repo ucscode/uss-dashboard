@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Foundation\System\Compact;
 
 use Uss\Component\Kernel\Uss;
-use Uss\Component\Kernel\UssImmutable;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
 use Exception;

@@ -31,7 +31,7 @@ class CrudInventoryInlineActionController
     {
         $nonce = $_GET['nonce'] ?? false;
         if($nonce) {
-            $entry = $_SESSION[UssImmutable::SESSION_KEY];
+            $entry = $_SESSION[UssImmutable::APP_SESSION_KEY];
             $this->nonceApproved = Uss::instance()->nonce($entry, $nonce);
         }
     }

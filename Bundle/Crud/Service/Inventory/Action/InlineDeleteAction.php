@@ -16,7 +16,7 @@ class InlineDeleteAction extends AbstractInlineAction implements InlineActionInt
     {
         $this->crudInventory = $crudInventory;
         
-        $nonce = Uss::instance()->nonce($_SESSION[UssImmutable::SESSION_KEY]);
+        $nonce = Uss::instance()->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]);
 
         $action = new Action();
         $action
