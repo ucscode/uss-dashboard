@@ -17,11 +17,6 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
 {
     private bool $rendered = false;
 
-    public function __construct(AppControlInterface $appControl)
-    {
-        parent::__construct($appControl);
-    }
-
     /**
      * Add a new document to the dashboard application
      */
@@ -117,10 +112,10 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     /**
      * @method themeFile
      */
-    public function getTheme(string $path = '', Enumerator $enum = Enumerator::THEME): string
+    public function getTheme(?string $path = null, Enumerator $enum = Enumerator::THEME): string
     {
         $uss = Uss::instance();
-        $path = $uss->filterContext($path);
+        $path = $uss->filterContext($path ?? '');
 
         switch($enum) {
             case Enumerator::FILE_SYSTEM:

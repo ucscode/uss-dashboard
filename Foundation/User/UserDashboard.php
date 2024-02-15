@@ -5,7 +5,6 @@ namespace Module\Dashboard\Foundation\User;
 use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
-use Module\Dashboard\Bundle\Kernel\Compact\ThemeLoader;
 use Module\Dashboard\Foundation\User\Compact\AjaxDocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\DocumentFactory;
 use Module\Dashboard\Foundation\User\Compact\Interface\UserDashboardInterface;
@@ -26,12 +25,11 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         parent::__construct($appControl);
 
         $this->profileBatch = new TreeNode('profileBatch');
+
         BlockManager::instance()->addBlock("profile_content", new Block(true));
 
         $this->createLocalDocuments();
         $this->createAjaxDocuments();
-
-        new ThemeLoader($this);
         
         (new Event())->addListener('modules:loaded', function() {
             new DashboardMenuFormation(

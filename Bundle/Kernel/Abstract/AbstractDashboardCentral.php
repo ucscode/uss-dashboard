@@ -4,6 +4,7 @@ namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
+use Module\Dashboard\Bundle\Kernel\Compact\ThemeLoader;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Foundation\System\Compact\DocumentController;
 use Ucscode\TreeNode\TreeNode;
@@ -41,9 +42,10 @@ abstract class AbstractDashboardCentral implements DashboardInterface
     private function observeApplication(): void
     {
         $appStore = AppStore::instance();
-        $appStore->add('app:instances', $this);
+        $appStore->add('app:instances', $this, self::class);
+
         foreach($this->appControl->getPermissions() as $permission) {
-            is_scalar($permission) ? $appStore->add('app:permissions', $permission) : null;
+            !is_scalar($permission) ?: $appStore->add('app:permissions', $permission);
         }
     }
 

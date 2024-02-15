@@ -25,11 +25,10 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
         parent::__construct($appControl);
 
         $this->settingsBatch = new TreeNode('settingsBatch');
+        
         BlockManager::instance()->addBlock("settings_content", new Block(true));
 
         $this->createAdminDocuments();
-
-        new ThemeLoader($this);
 
         (new Event())->addListener('modules:loaded', function() {
             new DashboardMenuFormation(

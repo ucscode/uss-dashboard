@@ -19,5 +19,5 @@ interface DashboardInterface
     public function isFirewallEnabled(): bool;
     public function urlGenerator(string $path = '/', array $queries = []): UrlGenerator;
     public function getCurrentUser(): ?User;
-    public function getTheme(string $path, Enumerator $enum = Enumerator::THEME): string;
+    public function getTheme(?string $path, Enumerator $enum = Enumerator::THEME): string;
 }
