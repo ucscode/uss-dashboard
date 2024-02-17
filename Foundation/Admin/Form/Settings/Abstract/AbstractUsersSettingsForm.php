@@ -74,7 +74,7 @@ abstract class AbstractUsersSettingsForm extends AbstractDashboardForm
 
     protected function createDefaultRoleField(): void
     {
-        $permissions = AppStore::instance()->get('app:permissions');
+        $permissions = AppStore::instance()->get('dashboard:permissions');
         sort($permissions);
         $this->generateField('user[default-role]', [
             'label' => 'Default Registration Role',

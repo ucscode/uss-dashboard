@@ -160,7 +160,7 @@ abstract class AbstractUserEditorRepository extends AbstractUsersController
         $this->form->addCollection('roles', $rolesCollection);
         $field = new Field(Field::NODE_INPUT, Field::TYPE_CHECKBOX);
 
-        $permissions = AppStore::instance()->get('app:permissions');
+        $permissions = AppStore::instance()->get('dashboard:permissions');
         sort($permissions);
 
         $role = array_shift($permissions);

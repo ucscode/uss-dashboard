@@ -2,7 +2,9 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Service;
 
+use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
+use Symfony\Component\Yaml\Yaml;
 use Uss\Component\Kernel\Uss;
 
 class AppControl implements AppControlInterface
@@ -84,5 +86,16 @@ class AppControl implements AppControlInterface
             $this->permissions = array_values($this->permissions);
         }
         return $this;
+    }
+
+    /**
+     * @method getThemeConfig
+     */
+    public function getThemeConfig(): array
+    {
+        $filePlaceholder = DashboardImmutable::THEMES_DIR . "/%s/theme.%s";
+        $configFile = sprintf($filePlaceholder, $this->getThemeFolder(), 'yml');
+        is_file($configFile) ?: $configFile = sprintf($filePlaceholder, $this->getThemeFolder(), 'yaml');
+        return is_file($configFile) ? Yaml::parseFile($configFile) : [];
     }
 }
