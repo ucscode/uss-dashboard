@@ -1,0 +1,24 @@
+{% set title = title ?? "Welcome Back!" %}
+{% set subTitle = subTitle ?? "Sign in to your account to continue" %}
+
+{% extends __uss.app.dirname(_self) ~ '/partials/layout.html.twig' %}
+
+{% block authForm %}
+	{{ form.export|raw }}
+{% endblock %}
+
+{% block authRedirect %}
+
+	{% set registerDocument = __dashboard.meths.document('register') %}
+
+	{% if registerDocument %}
+		<div class="text-center mb-3">
+			Don't have an account? <a href='{{ registerDocument.url }}'>Sign up</a>
+		</div>
+	{% endif %}
+
+	<div class='text-center'>
+		Forgot Password? <a href="{{ __dashboard.meths.document('recovery').url }}">Reset Password</a>
+	</div>
+	
+{% endblock %}
