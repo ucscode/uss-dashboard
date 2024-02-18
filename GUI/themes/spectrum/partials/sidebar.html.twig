@@ -1,0 +1,48 @@
+{% import __uss.app.dirname(_self) ~ '/macros.twig' as macros %}
+
+<nav id="sidebar" class="sidebar js-sidebar">
+	<div class="sidebar-content js-simplebar">
+		<div class='text-center'>
+			<a class='sidebar-brand' href='{{ __dashboard.meths.urlGenerator('/') }}'>
+				<img src='{{ __uss.app.option('company:logo') }}' height='54px'>
+			</a>
+		</div>
+
+		<div class="sidebar-user bg-secondary">
+			<div class="d-flex justify-content-center">
+				<div class="flex-shrink-0 ">
+					<img src="{{ user.avatar }}" class="avatar img-fluid rounded me-1" alt="{{ user.username ?? user.email }}" />
+				</div>
+				<div class="flex-grow-1 ps-2">
+					<a class="sidebar-user-title dropdown-toggle" href="#" data-bs-toggle="dropdown">
+						{{ user.username ?? user.email }}
+					</a>
+					<div class="dropdown-menu dropdown-menu-start">
+						{{ macros.user_dropdown() }}
+					</div>
+					<div class="sidebar-user-subtitle">
+						{{ userPrimaryValue ?? 'Professional' }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<ul class="sidebar-nav">
+			<li><hr></li>
+			{% include __uss.app.dirname(_self) ~ '/sidebar-menu.html.twig' %}
+		</ul>
+
+		<div class="sidebar-cta">
+			<div class="sidebar-cta-content">
+				<strong class="d-inline-block mb-2">Weekly Sales Report</strong>
+				<div class="mb-3 text-sm">
+					Your weekly sales report is ready for download!
+				</div>
+
+				<div class="d-grid">
+					<a href="https://adminkit.io/" class="btn btn-outline-primary" target="_blank">Download</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>

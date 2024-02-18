@@ -6,6 +6,7 @@
         {% set expandable = (item.children|length) and (item.level < 4) %}
         {% set isActive = item.getAttribute('active') %}
         {% set isExpanded = isActive or item.getAttribute('expanded') %}
+        
         {% set itemClass = [
             item.level is same as(1) ? "nav-item" : "nav-sub-item",
             expandable ? "nav-item-has-children" : null,

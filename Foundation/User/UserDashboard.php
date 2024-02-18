@@ -25,7 +25,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         parent::__construct($appControl);
 
         $this->profileBatch = new TreeNode('profileBatch');
-
+        
         BlockManager::instance()->addBlock("profile_content", new Block(true));
 
         $this->createLocalDocuments();

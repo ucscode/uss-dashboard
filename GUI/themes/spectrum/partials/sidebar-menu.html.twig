@@ -1,0 +1,44 @@
+{# <li class="sidebar-header">
+    Pages
+</li> #}
+
+{% macro buildMenuItems(children) %}
+
+    {% for item in children %}
+        
+        {% set itemId = 'menu_item_' ~ item.index %}
+        {% set isActive = item.getAttribute('active') %}
+        {% set canExpand = item.children|length and (item.level < 2) %}
+
+        {% if canExpand %}
+
+            {% set item_attr = {
+                'data-bs-target': '#' ~ itemId,
+                'data-bs-toggle': 'collapse'
+            } %}
+
+        {% else %}
+
+            {% set item_attr = {
+                'href': item.getAttribute('href')
+            } %}
+
+        {% endif %}
+            
+        <li class="sidebar-item {{ isActive ? "active" : null }} text-capitalize">
+            <a class="sidebar-link {{ canExpand ? 'collapsed' : null }}" {{ __uss.meths.arrayToHtmlAttrs(item_attr)|raw }}>
+                <i class="{{ item.getAttribute('icon') }}"></i>
+                <span class="align-middle">{{ item.getAttribute('label')|raw }}</span>
+            </a>
+            {% if canExpand %}
+                <ul id="{{ itemId }}" class="sidebar-dropdown list-unstyled collapse {{ isActive ? 'show' : null }}" data-bs-parent="#sidebar">
+                    {{ _self.buildMenuItems(item.children) }}
+                </ul>
+            {% endif %}
+        </li>
+
+    {% endfor %}
+
+{% endmacro %}
+
+{{ _self.buildMenuItems(__dashboard.props.menu.children) }}
