@@ -183,7 +183,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
 
         $pedigree = $this->getFieldPedigree($field);
 
-        foreach(($context['widget-attributes'] ?? []) as $key => $value) {
+        foreach(($context['attributes'] ?? []) as $key => $value) {
             $fieldContext->widget->setAttribute($key, $value);
         }
 
@@ -193,7 +193,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         
         $pedigree->widget
             ->setValue($context['value'] ?? null)
-            ->setRequired($context['required'] ?? true)
+            ->setRequired($context['required'] ?? !$pedigree->widget->isHidden())
             ->setDisabled($context['disabled'] ?? false)
             ->setReadonly($context['readonly'] ?? false)
         ;
@@ -239,7 +239,7 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         }
 
         if(!empty($context['prefix'])) {
-            $fieldContext->suffix->setValue($context['prefix']);
+            $fieldContext->prefix->setValue($context['prefix']);
         }
 
         return $pedigree;

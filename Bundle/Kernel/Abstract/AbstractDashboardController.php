@@ -2,7 +2,7 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
-use Module\Dashboard\Bundle\Document\Document;
+use Module\Dashboard\Bundle\Document\Interface\DocumentInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Uss\Component\Route\RouteInterface;
@@ -10,7 +10,7 @@ use Uss\Component\Route\RouteInterface;
 class AbstractDashboardController implements RouteInterface
 {
     protected DashboardInterface $dashboard;
-    protected Document $document;
+    protected DocumentInterface $document;
     protected ?DashboardFormInterface $form;
 
     /**
@@ -24,7 +24,7 @@ class AbstractDashboardController implements RouteInterface
      * If you intend to enforce your own render logic, you can use the `$this->dashboard->render()` method!
      *
      * @param DashboardInterface          $dashboard      The dashboard component to be updated.
-     * @param Document                    $document       The document component to be updated.
+     * @param DocumentInterface           $document       The document component to be updated.
      * @param DashboardFormInterface|null $form           The optional dashboard form to handle submissions.
      *
      * @return void

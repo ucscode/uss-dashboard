@@ -34,7 +34,7 @@ abstract class AbstractCrudEditor_Level2 extends AbstractCrudEditor_Level1
         $castedEntity = [];
         foreach($this->tableColumns as $key => $dataset) {
             $value = $entityProperties[$key] ?? null;
-            $castedEntity[$key] = is_null($value) ? null : $this->refactorEntityValue(trim($value), $dataset);
+            $castedEntity[$key] = is_null($value) ? $dataset['COLUMN_DEFAULT'] : $this->refactorEntityValue($key, $value, $dataset);
         };
         return $castedEntity;
     }
@@ -59,18 +59,18 @@ abstract class AbstractCrudEditor_Level2 extends AbstractCrudEditor_Level1
         return $groups;
     }
 
-    protected function refactorEntityValue(string $value, array $info): ?string
+    protected function refactorEntityValue(string $key, ?string $value, array $info): ?string
     {
         $mysqlDataTypeGroup = $this->mysqlDataTypeGroup();
 
-        if(empty($value) && $info['nullable']) {
+        if(empty($value) && $info['IS_NULLABLE']) {
             return null;
         }
 
         $groupName = null;
 
         foreach($mysqlDataTypeGroup as $groupName => $datatypes) {
-            if(in_array($info['datatype'], $datatypes)) {
+            if(in_array($info['DATA_TYPE'], $datatypes)) {
                 break;
             }
         }

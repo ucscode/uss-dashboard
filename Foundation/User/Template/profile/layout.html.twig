@@ -15,7 +15,7 @@
                     {% set icon = menuItem.getAttribute('icon') %}
 
                     <a 
-                        class="nav-link me-1 {{ menuItem.getAttribute('active') ? 'active' : '' }}" 
+                        class="nav-link me-1 text-capitalize {{ menuItem.getAttribute('active') ? 'active' : '' }}" 
                         href="{{ menuItem.getAttribute('href') }}" 
                         target="{{ menuItem.getAttribute('target') }}"
                     >

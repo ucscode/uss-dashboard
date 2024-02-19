@@ -38,7 +38,7 @@ abstract class AbstractCrudInventoryMutationIterator
             ->setAttribute('type', 'button')
             ->setAttribute('data-bs-toggle', 'dropdown')
             ->setAttribute('aria-expanded', false)
-            ->setContent("<span>&horbar;<br>&horbar;<br/>&horbar;</span>");
+            ->setContent("<span class='bi bi-list'></span>");
 
         $ul->setAttribute('class', 'dropdown-menu');
 

@@ -2,8 +2,6 @@
 
 namespace Module\Dashboard\Bundle\Kernel\Interface;
 
-use Ucscode\Promise\Promise;
-
 interface DashboardFormInterface
 {
     public function build(): void;
