@@ -87,7 +87,7 @@ class SystemInfoController extends AbstractDashboardController
             'Author Website' => $this->printUrl(UssImmutable::AUTHOR_WEBSITE),
             'Author Email' => $this->printUrl(UssImmutable::AUTHOR_EMAIL, null, 'mailto:'),
             'Project Name' => UssImmutable::PROJECT_NAME,
-            'Project Repository' => $this->printUrl(UssImmutable::PROJECT_REPOSITORY),
+            'Project Repository' => $this->printUrl(UssImmutable::PROJECT_GITHUB_REPOSITORY),
             'Project Website' => $this->printUrl(UssImmutable::PROJECT_WEBSITE),
         ];
     }

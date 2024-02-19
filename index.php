@@ -48,7 +48,7 @@ new class () {
     {
         $appControl = (new AppControl())
             ->setBase('/dashboard')
-            ->setThemeFolder('classic')
+            ->setThemeFolder('spectrum')
             ->addPermission(RoleImmutable::ROLE_USER);
 
         UserDashboard::instance($appControl); // One-time Instantiation

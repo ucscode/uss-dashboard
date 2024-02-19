@@ -4,7 +4,7 @@ new class {
 	
 	constructor() {
 		this.toggleSidebar();
-		(new Notification()).applyGlobalLogic();
+		(new AppNotification()).applyGlobalLogic();
 	}
 	
 	toggleSidebar() {

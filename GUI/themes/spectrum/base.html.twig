@@ -1,3 +1,21 @@
+{% 
+	set system_resource = {
+		'head_resource': [
+			'bootstrap'
+		],
+		'body_javascript': [
+			'jquery',
+			'bootstrap-bundle'
+		]
+	} 
+%}
+
+{% for block_name, resource in system_resource %}
+	{% for resource_name in resource %}
+		{% do __uss.app.removeSystemBlockContent(block_name, resource_name) %}
+	{% endfor %}
+{% endfor %}
+
 {% extends 'base.html.twig' %}
 
 {% set themeBase = __dashboard.meths.theme(null, __uss.ENUM.URL) %}
@@ -83,8 +101,16 @@
 
 {% block body_javascript %}
 
-	{# {{ parent() }} #}
-
 	<script src="{{ themeBase }}/js/app.js"></script>
+
+	{{ parent() }}
+
+    <script src="{{ __uss.meths.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/data-magic.js') }}"></script>
+
+	{% if user.isAvailable %}
+    	<script src="{{ __uss.meths.pathToUrl(__dashboard.immutable.ASSETS_DIR ~ '/js/app-notification.js') }}"></script>
+	{% endif %}
+
+    <script src="{{ __dashboard.meths.theme('/js/main.js', __uss.ENUM.URL) }}"></script>
 
 {% endblock %}

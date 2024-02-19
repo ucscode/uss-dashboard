@@ -1,6 +1,6 @@
 "use strict";
 
-class Notification {
+class AppNotification {
 
     API_ENDPOINT = Uss.url + "/api/notification";
 
