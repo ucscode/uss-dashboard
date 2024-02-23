@@ -61,6 +61,9 @@ abstract class AbstractFormManager implements FormManagerInterface
                 $recentPedigree->gadget->label->addClass('--required');
             }
         }
+
+        !($context['prefix'] ?? null) ?: $recentPedigree->field->getElementContext()->prefix->setValue($context['prefix']);
+        !($context['suffix'] ?? null) ?: $recentPedigree->field->getElementContext()->suffix->setValue($context['suffix']);
     }
 
     protected function restrictedAttributes(): array
