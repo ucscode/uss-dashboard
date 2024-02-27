@@ -112,6 +112,18 @@ final class DashboardRenderLogic implements EventInterface
         $this->uss->twig->addExtension(new DashboardExtension($this->dashboard));
         $this->uss->templateContext['user'] = $this->options['user'] = $this->user;
 
+        $globalContext = [
+            'page_title' => 'company:name',
+            'page_description' => 'company:description',
+            'page_logo' => 'company:logo',
+            'page_slogan' => 'company:slogan'
+        ];
+
+        foreach($globalContext as $key => $databaseKey) {
+            $value = $this->uss->options->get($databaseKey);
+            is_null($value) ?: $this->uss->templateContext[$key] = $value;
+        }
+        
         $this->uss->jsCollection['dashboard'] = [
             'url' => $this->dashboard->urlGenerator()->getResult(),
             'nonce' => $this->uss->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]),

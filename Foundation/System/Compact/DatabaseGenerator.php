@@ -86,7 +86,7 @@ final class DatabaseGenerator
     private function setDatabaseOptions(): void
     {
         $configuration = [
-            'company:logo' => $this->uss->templateContext['page_icon'],
+            'company:logo' => $this->uss->templateContext['page_logo'],
             'company:name' => $this->uss->templateContext['page_title'],
             'company:slogan' => $this->uss->templateContext['page_slogan'],
             'company:description' => $this->uss->templateContext['page_description'],

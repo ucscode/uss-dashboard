@@ -29,7 +29,7 @@
                                 {% block contentLeft %}
 
                                     {% block contentLeftIcon %}
-                                        {% set logo = __uss.app.option('company:logo') ?? page_icon %}
+                                        {% set logo = __uss.app.option('company:logo') ?? page_logo %}
                                         {% if logo %}
                                             <figure class='mb-1'><img src='{{ logo }}' height='60px'></figure>
                                         {% endif %}
