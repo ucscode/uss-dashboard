@@ -43,19 +43,24 @@ class SystemSettingsForm extends AbstractSystemSettingsForm
     protected function persistResource(?array $validatedResource): mixed
     {
         if($validatedResource) {
+
             $uss = Uss::instance();
             $persisted = [];
+
             foreach($validatedResource as $key => $value) {
                 $name = 'company:' . $key;
                 $persisted[] = $uss->options->set($name, $value);
             };
+            
             if(in_array(false, $persisted, true)) {
                 throw new DashboardException("One or more data could not be saved!");
             }
+
             $toast = (new Toast())
                 ->setBackground(Toast::BG_SUCCESS)
                 ->setMessage("Updated was successful")
             ;
+
             Flash::instance()->addToast($toast);
         }
         return null;
