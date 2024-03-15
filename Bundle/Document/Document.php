@@ -24,7 +24,7 @@ class Document extends AbstractDocument implements DocumentInterface
     
     public function setRoute(?string $route, ?string $base = null): self
     {
-        $this->route = Uss::instance()->filterContext($base . $route);
+        $this->route = Uss::instance()->filterContext($base . '/' . $route);
         return $this;
     }
 
