@@ -1,5 +1,6 @@
 {
     "name": "uss-dashboard",
+    "enabled": true,
     "version": "5.56.3",
     "license": "MIT",
     "meta": {

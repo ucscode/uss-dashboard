@@ -2,10 +2,10 @@
 
 namespace Module\Dashboard\Bundle\Mailer\Abstract;
 
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractSandbox;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
+use Uss\Component\Kernel\Abstract\AbstractSandbox;
 use Uss\Component\Kernel\Uss;
 
 abstract class AbstractMailerFoundation extends AbstractSandbox
