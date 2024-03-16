@@ -35,7 +35,13 @@ class Document extends AbstractDocument implements DocumentInterface
 
     public function getUrl(bool $ignoreHost = false): ?string
     {
-        return ($this->route) ? (new UrlGenerator($this->route))->getResult($ignoreHost) : null;
+        $route = $this->route;
+        preg_match("/[^a-z0-9\-\/]+/", $route, $matches, PREG_OFFSET_CAPTURE);
+        if(!empty($matches)) {
+            $offset = $matches[0][1];
+            $route = substr($route, 0, $offset);
+        };
+        return ($route) ? (new UrlGenerator($route))->getResult($ignoreHost) : null;
     }
 
     public function setTemplate(?string $template, ?string $prefix = null): self
