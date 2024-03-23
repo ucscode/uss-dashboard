@@ -31,7 +31,7 @@ class UserDashboard extends AbstractDashboard implements UserDashboardInterface
         $this->createLocalDocuments();
         $this->createAjaxDocuments();
         
-        (new Event())->addListener('modules:loaded', function() {
+        Event::instance()->addListener('modules:loaded', function() {
             new DashboardMenuFormation(
                 $this->profileBatch,
                 $this->getDocument('user.profile')?->getMenuItem('main:profile')

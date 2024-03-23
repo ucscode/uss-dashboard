@@ -87,7 +87,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
     public function render(string $template, array $options = []): void
     {
         if(!$this->rendered) {
-            (new Event())->addListener(
+            Event::instance()->addListener(
                 'dashboard:render',
                 new DashboardRenderLogic($this, $template, $options)
             );

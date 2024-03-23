@@ -30,7 +30,7 @@ class AdminDashboard extends AbstractDashboard implements AdminDashboardInterfac
 
         $this->createAdminDocuments();
 
-        (new Event())->addListener('modules:loaded', function() {
+        Event::instance()->addListener('modules:loaded', function() {
             new DashboardMenuFormation(
                 $this->settingsBatch,
                 $this->getDocument('settings')?->getMenuItem('main:settings')

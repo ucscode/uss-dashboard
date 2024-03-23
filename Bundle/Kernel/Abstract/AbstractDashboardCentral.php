@@ -38,7 +38,7 @@ abstract class AbstractDashboardCentral implements DashboardInterface
         $this->menu = new TreeNode('Main Menu');
         $this->userMenu = new TreeNode('User Menu');
         $this->observeApplication();
-        (new Event())->addListener('modules:loaded', fn () => $this->createGUI(), -1024);
+        Event::instance()->addListener('modules:loaded', fn () => $this->createGUI(), -1024);
     }
 
     private function observeApplication(): void

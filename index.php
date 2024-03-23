@@ -25,7 +25,7 @@ new class () {
         $this->createSystemApplication($this->uss);
         $this->createUserApplication();
         $this->createAdminApplication();
-        (new Event())->addListener('modules:loaded', fn () => Event::emit('dashboard:render'), 1024);
+        Event::instance()->addListener('modules:loaded', fn () => Event::instance()->dispatch('dashboard:render'), 1024);
     }
 
     protected function defineAppConstants(): void
