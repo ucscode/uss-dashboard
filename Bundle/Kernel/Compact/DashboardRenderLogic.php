@@ -32,7 +32,7 @@ final class DashboardRenderLogic implements EventInterface
     /**
      * @method eventAction
      */
-    public function eventAction(array|object $data): void
+    public function eventAction(mixed $data): void
     {
         !$this->isLoggedIn &&
         $this->dashboard->isFirewallEnabled() ?

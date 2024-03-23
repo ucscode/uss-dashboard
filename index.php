@@ -21,11 +21,17 @@ new class () {
     public function __construct()
     {
         $this->uss = Uss::instance();
+        
         $this->defineAppConstants();
         $this->createSystemApplication($this->uss);
         $this->createUserApplication();
         $this->createAdminApplication();
-        Event::instance()->addListener('modules:loaded', fn () => Event::instance()->dispatch('dashboard:render'), 1024);
+
+        Event::instance()->addListener(
+            'modules:loaded', 
+            fn () => Event::instance()->dispatch('dashboard:render'), 
+            1024
+        );
     }
 
     protected function defineAppConstants(): void
