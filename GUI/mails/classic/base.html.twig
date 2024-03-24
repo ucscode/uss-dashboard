@@ -211,6 +211,7 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
     {% block message %}
 
       {% if message is empty %}
+
         {% set message %}
           <p style="line-height: 160%;"><strong>Dear <span style="line-height: 22.4px;">Developer</span>,</strong></p>
           <p style="line-height: 160%;"><br></p>
@@ -220,6 +221,7 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
           <p style="line-height: 160%;"><br></p>
           <p style="line-height: 160%;"><strong>Best wishes &amp; Happy Coding!</strong></p>
         {% endset %}
+        
       {% endif %}
 
       <p>{{ client_name|trim ? 'Hi ' ~ client_name|trim : 'Dear user' }},</p> <br>

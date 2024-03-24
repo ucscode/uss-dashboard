@@ -5,13 +5,14 @@ namespace Module\Dashboard\Bundle\Mailer\Abstract;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
+use Twig\TemplateWrapper;
 use Uss\Component\Kernel\Abstract\AbstractSandbox;
 use Uss\Component\Kernel\Uss;
 
 abstract class AbstractMailerFoundation extends AbstractSandbox
 {
     protected array $context = [];
-    protected ?string $template = null;
+    protected string|TemplateWrapper|null $template = null;
     protected PHPMailer $PHPMailer;
     protected ?PHPMailerException $PHPMailerException = null;
 

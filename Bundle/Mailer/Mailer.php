@@ -5,6 +5,7 @@ namespace Module\Dashboard\Bundle\Mailer;
 use Module\Dashboard\Bundle\Mailer\Abstract\AbstractMailerFoundation;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Twig\TemplateWrapper;
 
 class Mailer extends AbstractMailerFoundation
 {
@@ -26,7 +27,7 @@ class Mailer extends AbstractMailerFoundation
             $this->configureSMTP();
     }
 
-    public function setTemplate(string $template, ?array $context = null): self
+    public function setTemplate(string|TemplateWrapper|null $template, ?array $context = null): self
     {
         $this->template = $template;
         $this->setContext($context ?? $this->context);
