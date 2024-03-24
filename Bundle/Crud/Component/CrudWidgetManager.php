@@ -4,8 +4,8 @@ namespace Module\Dashboard\Bundle\Crud\Component;
 
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudKernelInterface;
 use Module\Dashboard\Bundle\Crud\Kernel\Interface\CrudWidgetInterface;
-use Module\Dashboard\Bundle\Kernel\Abstract\AbstractSandbox;
 use Uss\Component\Block\BlockTemplate;
+use Uss\Component\Kernel\Abstract\AbstractSandbox;
 use Uss\Component\Kernel\Uss;
 
 class CrudWidgetManager

@@ -4,7 +4,7 @@ namespace Module\Dashboard\Foundation\System\Compact\Abstract;
 
 use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Foundation\User\Controller\RecoveryController;
 use Module\Dashboard\Foundation\User\Controller\LogoutController;
 use Module\Dashboard\Foundation\User\Controller\NotificationController;
@@ -19,9 +19,9 @@ abstract class AbstractDocumentFactory
     protected string $themeNamespaceSystem;
     protected string $foundationNamespaceSystem = '@Foundation/System/Template';
 
-    public function __construct(protected DashboardInterface $dashboard, protected string $namespace)
+    public function __construct(protected AbstractDashboard $dashboard, protected string $namespace)
     {
-        $this->base = $this->dashboard->appControl->getBase();
+        $this->base = $this->dashboard->appControl->getUrlBasePath();
         $this->themeNamespaceAuth = $this->dashboard->getTheme('/pages/auth');
         $this->themeNamespaceError = $this->dashboard->getTheme('/pages/error');
         $this->themeNamespaceSystem = $this->dashboard->getTheme('/pages/system');

@@ -3,16 +3,16 @@
 namespace Module\Dashboard\Foundation\User\Compact;
 
 use Module\Dashboard\Bundle\Document\Document;
-use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
+use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboard;
 use Module\Dashboard\Foundation\User\Controller\Ajax\ReconfirmRegisterEmail;
 
 class AjaxDocumentFactory
 {
     protected string $base;
 
-    public function __construct(protected DashboardInterface $dashboard)
+    public function __construct(protected AbstractDashboard $dashboard)
     {
-        $this->base = $dashboard->appControl->getBase();
+        $this->base = $dashboard->appControl->getUrlBasePath();
     }
 
     public function createResendRegisterEmailDocument(): Document

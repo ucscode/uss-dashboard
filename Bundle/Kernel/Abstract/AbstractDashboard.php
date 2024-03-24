@@ -3,7 +3,6 @@
 namespace Module\Dashboard\Bundle\Kernel\Abstract;
 
 use Module\Dashboard\Bundle\Document\Document;
-use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardRenderLogic;
 use Module\Dashboard\Bundle\User\User;
@@ -59,7 +58,7 @@ abstract class AbstractDashboard extends AbstractDashboardCentral
      */
     public function urlGenerator(string $path = '/', array $query = []): UrlGenerator
     {
-        return new UrlGenerator($path, $query, $this->appControl->getBase());
+        return new UrlGenerator($path, $query, $this->appControl->getUrlBasePath());
     }
 
     /**

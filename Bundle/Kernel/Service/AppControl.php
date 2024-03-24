@@ -16,7 +16,7 @@ class AppControl implements AppControlInterface
     /**
      * @method setBase
      */
-    public function setBase(string $base): self
+    public function setUrlBasePath(string $base): self
     {
         $this->base = Uss::instance()->filterContext($base);
         return $this;
@@ -25,7 +25,7 @@ class AppControl implements AppControlInterface
     /**
      * @method getBase
      */
-    public function getBase(): string
+    public function getUrlBasePath(): string
     {
         return $this->base;
     }

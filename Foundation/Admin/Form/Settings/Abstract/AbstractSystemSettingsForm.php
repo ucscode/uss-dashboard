@@ -37,6 +37,22 @@ abstract class AbstractSystemSettingsForm extends AbstractDashboardForm
         ]);
 
         $this->createField([
+            'name' => 'company[phone]',
+            'value' => $uss->options->get('company:phone'),
+            'required' => false,
+        ]);
+
+        $this->createField([
+            'nodeName' => Field::NODE_TEXTAREA,
+            'name' => 'company[address]',
+            'value' => $uss->options->get('company:address'),
+            'attributes' => [
+                'rows' => 5,
+            ],
+            'required' => false,
+        ]);
+
+        $this->createField([
             'name' => 'nonce',
             'nodeType' => 'hidden',
             'value' => $uss->nonce($_SESSION[UssImmutable::APP_SESSION_KEY]),

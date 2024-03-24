@@ -53,7 +53,7 @@ new class () {
     protected function createUserApplication(): void
     {
         $appControl = (new AppControl())
-            ->setBase('/dashboard')
+            ->setUrlBasePath('/dashboard')
             ->setThemeFolder('classic')
             ->addPermission(RoleImmutable::ROLE_USER);
 
@@ -63,7 +63,7 @@ new class () {
     public function createAdminApplication(): void
     {
         $appControl = (new AppControl())
-            ->setBase("/admin")
+            ->setUrlBasePath("/admin")
             ->setThemeFolder('spectrum')
             ->setPermissions([
                 RoleImmutable::ROLE_SUPER_ADMIN,
