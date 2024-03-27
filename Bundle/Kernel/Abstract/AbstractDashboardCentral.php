@@ -7,9 +7,9 @@ use Module\Dashboard\Bundle\Kernel\Service\Interface\AppControlInterface;
 use Module\Dashboard\Bundle\Kernel\Compact\DashboardMenuFormation;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\ThemeInterface;
+use Module\Dashboard\Bundle\Kernel\Service\DashboardCollection;
 use Module\Dashboard\Foundation\System\Compact\DocumentController;
 use Ucscode\TreeNode\TreeNode;
-use Uss\Component\Common\AppStore;
 use Uss\Component\Event\Event;
 use Uss\Component\Route\Route;
 
@@ -43,10 +43,12 @@ abstract class AbstractDashboardCentral implements DashboardInterface
 
     private function observeApplication(): void
     {
-        $appStore = AppStore::instance();
-        $appStore->add('dashboard:instances', $this, $this::class);
+        DashboardCollection::instance()->set($this::class, $this);
+
         foreach($this->appControl->getPermissions() as $permission) {
-            !is_scalar($permission) ?: $appStore->add('dashboard:permissions', $permission);
+            if(is_scalar($permission)) {
+                DashboardCollection::instance()->addPermission($permission);
+            }
         }
     }
 

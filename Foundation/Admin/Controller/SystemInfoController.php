@@ -10,12 +10,14 @@ use Ucscode\UssElement\UssElement;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
 use Uss\Component\Common\CountryManager;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class SystemInfoController extends AbstractDashboardController
 {
     protected DOMTable $domTable;
 
-    public function onload(array $context): void
+    public function onload(ParameterBag $container): Response
     {
         parent::onload($context);
 

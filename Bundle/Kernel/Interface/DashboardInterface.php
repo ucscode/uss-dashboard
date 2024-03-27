@@ -4,12 +4,13 @@ namespace Module\Dashboard\Bundle\Kernel\Interface;
 
 use Module\Dashboard\Bundle\Document\Document;
 use Module\Dashboard\Bundle\User\User;
+use Symfony\Component\HttpFoundation\Response;
 use Uss\Component\Kernel\Resource\Enumerator;
 use Uss\Component\Common\UrlGenerator;
 
 interface DashboardInterface
 {
-    public function render(string $template, array $options = []): void;
+    public function render(string $template, array $options = []): Response;
     public function isRendered(): bool;
     public function addDocument(string $name, Document $document): self;
     public function getDocument(string $name): ?Document;

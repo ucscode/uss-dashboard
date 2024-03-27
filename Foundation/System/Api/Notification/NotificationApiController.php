@@ -3,6 +3,9 @@
 namespace Module\Dashboard\Foundation\System\Api\Notification;
 
 use Module\Dashboard\Bundle\User\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 use Ucscode\SQuery\Condition;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Kernel\UssImmutable;
@@ -10,20 +13,24 @@ use Uss\Component\Route\RouteInterface;
 
 class NotificationApiController implements RouteInterface
 {
+    const PAYLOAD_MARK_AS_READ = 'mark-as-read';
+    const PAYLOAD_MARK_AS_HIDDEN = 'mark-as-hidden';
+    const PAYLOAD_GET = 'get';
+    const PAYLOAD_REMOVE = 'remove';
+
     protected ?array $payload;
     protected Uss $uss;
     protected User $user;
 
-    public function onload(array $routeContext): void
+    public function onload(ParameterBag $container): Response
     {
         $this->payload = json_decode(file_get_contents("php://input"), true);
         $this->uss = Uss::instance();
         $this->user = (new User())->acquireFromSession();
-        $this->verifyNonce();
-        $this->handleRequest();
+        return $this->verifyNonce() ?? $this->handleRequest();
     }
 
-    protected function verifyNonce(): void
+    protected function verifyNonce(): ?Response
     {
         $isValid = 
             $this->payload && 
@@ -32,42 +39,30 @@ class NotificationApiController implements RouteInterface
                 $this->payload['nonce'] ?? ''
             );
         
-        if(!$isValid) {
-            $this->uss->terminate(false, "Cannot validate security token");
-        }
+        return !$isValid ? $this->createJsonResponse(false, "Cannot validate security token") : null;
     }
 
-    protected function handleRequest(): void
+    protected function handleRequest(): Response
     {
         $data = $this->uss->sanitize($this->payload['data'], true);
         
-        switch($this->payload['request']) 
-        {
-            case 'mark-as-read':
-                [$status, $message, $response] = $this->markAsRead($data);
-                break;
+        $jsonResponse = match($this->payload['request']) {
 
-            case 'mark-as-hidden': 
-                [$status, $message, $response] = $this->markAsHidden($data);
-                break;
+            self::PAYLOAD_MARK_AS_READ => $this->markAsRead($data),
 
-            case 'get':
-                [$status, $message, $response] = $this->getEntity($data, $this->payload['count']);
-                break;
+            self::PAYLOAD_MARK_AS_HIDDEN => $this->markAsHidden($data),
 
-            case 'remove':
-                [$status, $message, $response] = $this->removeEntity($data, $this->payload['count']);
-                break;
-            
-            default:
-                $status = !!($response = null);
-                $message = "Invalid Notification Request";
-        }
+            self::PAYLOAD_GET => $this->getEntity($data, $this->payload['count']),
 
-        $this->uss->terminate($status, $message, $response);
+            self::PAYLOAD_REMOVE => $this->removeEntity($data, $this->payload['count']),
+
+            default => $this->createJsonResponse(false, "Invalid Notification Request")
+        };
+
+        return $jsonResponse;
     }
 
-    protected function markAsRead(array $data): array
+    protected function markAsRead(array $data): JsonResponse
     {
         $response = $this->markEntityAs(array('seen' => $data['read']), $data['indexes']);
         $status = $response !== null;
@@ -75,10 +70,10 @@ class NotificationApiController implements RouteInterface
             $status ? "Notification successfully marked as %s" : "Notification could not be marked as %s",
             empty($data['read']) ? 'unread' : 'read'
         );
-        return [$status, $message, $response];
+        return $this->createJsonResponse($status, $message, $response);
     }
 
-    protected function markAsHidden(array $data): array
+    protected function markAsHidden(array $data): JsonResponse
     {
         $response = $this->markEntityAs(array('hidden' => $data['hidden']), $data['indexes']);
         $status = $response !== null;
@@ -86,25 +81,25 @@ class NotificationApiController implements RouteInterface
             $status ? "Notification successfully marked as %s" : "Notification could not be marked as %s",
             empty($data['hidden']) ? 'not hidden' : 'hidden'
         );
-        return [$status, $message, $response];
+        return $this->createJsonResponse($status, $message, $response);
     }
 
-    protected function getEntity(array $data, int $count): array
+    protected function getEntity(array $data, int $count): JsonResponse
     {
         $response = $this->user->notification->{$count ? "count" : "get"}($data, 0, null);
         $status = !empty($response);
         $message = $status ? "Notification items retrieved" : "No items found";
-        return [$status, $message, $this->refactor($response)];
+        return $this->createJsonResponse($status, $message, $this->refactor($response));
     }
 
-    protected function removeEntity(array $data, int $count): array
+    protected function removeEntity(array $data, int $count): JsonResponse
     {
         $response = $this->user->notification->{$count ? "count" : "get"}($data, 0, null);
         $status = $this->user->notification->remove($data);
         $message = $status ? 
             "Notification items successfully removed" : 
             "Notification items removal failed";
-        return [$status, $message, $this->refactor($response)];
+        return $this->createJsonResponse($status, $message, $this->refactor($response));
     }
 
     protected function markEntityAs(array $query, array $indexes): ?array
@@ -140,5 +135,14 @@ class NotificationApiController implements RouteInterface
             }, $entity);
         };
         return $entity;
+    }
+
+    protected function createJsonResponse(bool $status, string $message, array $data = []): JsonResponse
+    {
+        return new JsonResponse([
+            'status' => $status,
+            'message' => $message,
+            'data' => $data,
+        ]);
     }
 }

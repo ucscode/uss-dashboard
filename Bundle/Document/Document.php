@@ -7,6 +7,8 @@ use Module\Dashboard\Bundle\Document\Interface\DocumentInterface;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Common\UrlGenerator;
 use Uss\Component\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 use Uss\Component\Kernel\Uss;
 
 class Document extends AbstractDocument implements DocumentInterface

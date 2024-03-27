@@ -7,28 +7,24 @@ use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Uss\Component\Block\BlockManager;
 use Uss\Component\Block\BlockTemplate;
 use Uss\Component\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class DocumentController implements RouteInterface
 {
     public function __construct(protected DashboardInterface $dashboard, protected DocumentInterface $document)
     {}
 
-    public function onload(array $routeContext): void
+    public function onload(ParameterBag $container): Response
     {
-        $controller = $this->document->getController();
+        $container->add([
+            'dashboard' => $this->dashboard,
+            'document' => $this->document
+        ]);
 
-        if($controller) {
-            $controller->onload($routeContext + [
-                'dashboard' => $this->dashboard,
-                'document' => $this->document
-            ]);
-        }
+        $response = $this->document->getController()?->onload($container);
 
-        $this->enableMatchingMenus();
-
-        if(!$this->dashboard->isRendered()) {
-            $this->renderTemplateContext();
-        }
+        return $this->getResponse($response);
     }
     
     protected function enableMatchingMenus(): void
@@ -42,8 +38,10 @@ class DocumentController implements RouteInterface
         };
     }
 
-    protected function renderTemplateContext(): void
+    protected function getResponse(?Response $response): Response
     {
+        $this->enableMatchingMenus();
+        
         $hasThemeIntegration = $this->document->hasThemeIntegration();
         $template = $this->document->getTemplate();
         $context = $this->document->getContext();
@@ -60,6 +58,6 @@ class DocumentController implements RouteInterface
             $contentBlock->addTemplate("document_content", $blockTemplate);
         }
 
-        $this->dashboard->render($baseLayout, $hasThemeIntegration ? [] : $context);
+        return $this->dashboard->render($baseLayout, $hasThemeIntegration ? [] : $context);
     }
 }

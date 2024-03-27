@@ -5,6 +5,8 @@ namespace Module\Dashboard\Bundle\Document\Abstract;
 use Module\Dashboard\Bundle\Exception\DashboardException;
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractDocument
 {

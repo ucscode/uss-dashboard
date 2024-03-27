@@ -7,12 +7,14 @@ use Module\Dashboard\Foundation\User\Form\Service\EmailResolver;
 use Module\Dashboard\Foundation\User\UserDashboard;
 use Uss\Component\Kernel\Uss;
 use Uss\Component\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class ReconfirmRegisterEmail implements RouteInterface
 {
     protected Uss $uss;
 
-    public function onload(array $context): void
+    public function onload(ParameterBag $container): Response
     {
         $this->uss = Uss::instance();
 

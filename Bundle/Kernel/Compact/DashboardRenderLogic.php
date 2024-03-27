@@ -3,11 +3,12 @@
 namespace Module\Dashboard\Bundle\Kernel\Compact;
 
 use Exception;
-use Module\Dashboard\Bundle\Extension\DashboardExtension;
+use Module\Dashboard\Bundle\Extension\ExtensionModel;
 use Module\Dashboard\Bundle\Flash\Flash;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\User\User;
+use Symfony\Component\HttpFoundation\Response;
 use Uss\Component\Event\EventInterface;
 use Uss\Component\Kernel\Resource\Enumerator;
 use Uss\Component\Kernel\Uss;
@@ -18,6 +19,7 @@ final class DashboardRenderLogic implements EventInterface
     protected Uss $uss;
     protected User $user;
     protected bool $isLoggedIn;
+    protected Response $response;
 
     public function __construct(
         protected DashboardInterface $dashboard,
@@ -32,7 +34,7 @@ final class DashboardRenderLogic implements EventInterface
     /**
      * @method eventAction
      */
-    public function eventAction(mixed $data): void
+    public function eventAction(mixed $data = null): void
     {
         !$this->isLoggedIn &&
         $this->dashboard->isFirewallEnabled() ?
@@ -40,6 +42,11 @@ final class DashboardRenderLogic implements EventInterface
 
         $this->examineUserPermission();
         $this->createUserInterface();
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 
     /**
@@ -108,8 +115,8 @@ final class DashboardRenderLogic implements EventInterface
      */
     protected function createUserInterface(): void
     {
-        //$this->remodelMenu($this->dashboard->menu->children);
-        $this->uss->twig->addExtension(new DashboardExtension($this->dashboard));
+        ExtensionModel::instance()->initialize($this->dashboard);
+
         $this->uss->templateContext['user'] = $this->options['user'] = $this->user;
 
         $globalContext = [
@@ -132,6 +139,6 @@ final class DashboardRenderLogic implements EventInterface
         
         Flash::instance()->dump();
 
-        $this->uss->render($this->template, $this->options);
+        $this->response = $this->uss->render($this->template, $this->options);
     }
 }

@@ -4,6 +4,8 @@ namespace Module\Dashboard\Bundle\Document\Interface;
 
 use Ucscode\TreeNode\TreeNode;
 use Uss\Component\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 interface DocumentInterface
 {

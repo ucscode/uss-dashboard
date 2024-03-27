@@ -2,6 +2,7 @@
 
 namespace Module\Dashboard;
 
+use Module\Dashboard\Bundle\Extension\DashboardExtension;
 use Module\Dashboard\Bundle\Immutable\DashboardImmutable;
 use Module\Dashboard\Bundle\Kernel\Service\AppControl;
 use Module\Dashboard\Bundle\Immutable\RoleImmutable;
@@ -16,14 +17,11 @@ use Uss\Component\Event\Event;
 use Uss\Component\Kernel\Uss;
 
 new class () {
-    protected Uss $uss;
 
     public function __construct()
     {
-        $this->uss = Uss::instance();
-        
         $this->defineAppConstants();
-        $this->createSystemApplication($this->uss);
+        $this->createSystemApplication();
         $this->createUserApplication();
         $this->createAdminApplication();
 
@@ -40,14 +38,19 @@ new class () {
         defined('ENV_DB_PREFIX') ?: define('ENV_DB_PREFIX', $_ENV['DB_PREFIX'] ?? '');
     }
 
-    protected function createSystemApplication(Uss $uss): void
+    protected function createSystemApplication(): void
     {
-        new DatabaseGenerator($uss);
-        new DashboardEnvironment($uss);
+        new DatabaseGenerator(Uss::instance());
+        new DashboardEnvironment(Uss::instance());
+
         BlockManager::instance()->addBlock("dashboard_content", new Block(true));
+
         $userAvatar = DashboardImmutable::GUI_DIR . '/assets/images/user.png';
-        $uss->templateContext['default_user_avatar'] = $uss->pathToUrl($userAvatar);
+        Uss::instance()->templateContext['default_user_avatar'] = Uss::instance()->pathToUrl($userAvatar);
+
         new NotificationApi();
+
+        Uss::instance()->twig->addExtension(new DashboardExtension());
     }
 
     protected function createUserApplication(): void

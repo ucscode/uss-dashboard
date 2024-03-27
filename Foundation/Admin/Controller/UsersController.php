@@ -10,10 +10,12 @@ use Module\Dashboard\Foundation\Admin\Controller\Users\Interface\UserControllerI
 use Module\Dashboard\Foundation\Admin\Controller\Users\InventoryController;
 use Module\Dashboard\Foundation\Admin\Controller\Users\UpdateController;
 use Uss\Component\Kernel\Uss;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends AbstractDashboardController
 {
-    public function onload(array $context): void
+    public function onload(ParameterBag $container): Response
     {
         parent::onload($context);
 

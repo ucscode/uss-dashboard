@@ -8,13 +8,15 @@ use Module\Dashboard\Bundle\Kernel\Abstract\AbstractDashboardController;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardInterface;
 use Module\Dashboard\Bundle\Kernel\Interface\DashboardFormInterface;
 use Module\Dashboard\Bundle\User\User;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Response;
 
 class NotificationController extends AbstractDashboardController
 {
     public const PAGINATOR_KEY = 'index';
     public const ITEMS_PER_PAGE = 10;
 
-    public function onload(array $context): void
+    public function onload(ParameterBag $container): Response
     {
         parent::onload($context);
 
