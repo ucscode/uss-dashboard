@@ -10,8 +10,11 @@ class ProfileController extends AbstractProfileController
 {    
     public function onload(ParameterBag $container): Response
     {
-        parent::onload($context);
-        $this->form->build();
-        $this->form->handleSubmission();
+        parent::initialize($container);
+
+        $this->form
+            ->handleSubmission()
+            ->build()
+        ;
     }
 }

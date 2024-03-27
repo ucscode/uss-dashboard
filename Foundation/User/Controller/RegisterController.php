@@ -13,8 +13,11 @@ class RegisterController extends AbstractDashboardController
         parent::initialize($container);
 
         $this->dashboard->enableFirewall(false);
-        $this->form->build();
-        $this->form->handleSubmission();
+        
+        $this->form
+            ->handleSubmission()
+            ->build()
+        ;
 
         return $this->dashboard->render($this->document->getTemplate(), [
             'form' => $this->form

@@ -24,7 +24,7 @@ class DocumentController implements RouteInterface
 
         $response = $this->document->getController()?->onload($container);
 
-        return $this->getResponse($response);
+        return $response ?? $this->getResponse();
     }
     
     protected function enableMatchingMenus(): void
@@ -38,7 +38,7 @@ class DocumentController implements RouteInterface
         };
     }
 
-    protected function getResponse(?Response $response): Response
+    protected function getResponse(): Response
     {
         $this->enableMatchingMenus();
         
