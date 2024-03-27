@@ -1,75 +1,58 @@
 {% import __uss.app.dirname(_self) ~ '/macros.twig' as macros %}
 
-<nav class="navbar navbar-expand navbar-light navbar-bg">
-	<a class="sidebar-toggle js-sidebar-toggle">
-		<i class="hamburger align-self-center"></i>
-	</a>
+<div class="navbar-collapse collapse">
+	<ul class="navbar-nav navbar-align">
+		
+		{% block header_notification %}
+			{% include __uss.app.dirname(_self) ~ '/notification.html.twig' %}
+		{% endblock %}
 
-	{% block header_search %}
-		<form class="d-none d-sm-inline-block">
-			<div class="input-group input-group-navbar">
-				<input type="text" class="form-control" placeholder="Search…" aria-label="Search">
-				<button class="btn" type="button">
-					<i class="align-middle" data-feather="search"></i>
-				</button>
+		{# language section #}
+
+		<li class="nav-item dropdown">
+			<a class="nav-flag dropdown-toggle" href="pages-blank.html#" id="languageDropdown" data-bs-toggle="dropdown">
+				<img src="{{ themeBase }}/img/flags/us.png" alt="English" />
+			</a>
+			<div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+				<a class="dropdown-item" href="pages-blank.html#">
+					<img src="{{ themeBase }}/img/flags/us.png" alt="English" width="20" class="align-middle me-1" />
+					<span class="align-middle">English</span>
+				</a>
+				<a class="dropdown-item" href="pages-blank.html#">
+					<img src="{{ themeBase }}/img/flags/es.png" alt="Spanish" width="20" class="align-middle me-1" />
+					<span class="align-middle">Spanish</span>
+				</a>
+				<a class="dropdown-item" href="pages-blank.html#">
+					<img src="{{ themeBase }}/img/flags/ru.png" alt="Russian" width="20" class="align-middle me-1" />
+					<span class="align-middle">Russian</span>
+				</a>
+				<a class="dropdown-item" href="pages-blank.html#">
+					<img src="{{ themeBase }}/img/flags/de.png" alt="German" width="20" class="align-middle me-1" />
+					<span class="align-middle">German</span>
+				</a>
 			</div>
-		</form>
-	{% endblock %}
+		</li>
 
-	<div class="navbar-collapse collapse">
-		<ul class="navbar-nav navbar-align">
-			
-			{% block header_notification %}
-				{% include __uss.app.dirname(_self) ~ '/notification.html.twig' %}
-			{% endblock %}
+		{# Maximize Section #}
 
-			{# language section #}
-
-			<li class="nav-item dropdown">
-				<a class="nav-flag dropdown-toggle" href="pages-blank.html#" id="languageDropdown" data-bs-toggle="dropdown">
-					<img src="{{ themeBase }}/img/flags/us.png" alt="English" />
-				</a>
-				<div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-					<a class="dropdown-item" href="pages-blank.html#">
-						<img src="{{ themeBase }}/img/flags/us.png" alt="English" width="20" class="align-middle me-1" />
-						<span class="align-middle">English</span>
-					</a>
-					<a class="dropdown-item" href="pages-blank.html#">
-						<img src="{{ themeBase }}/img/flags/es.png" alt="Spanish" width="20" class="align-middle me-1" />
-						<span class="align-middle">Spanish</span>
-					</a>
-					<a class="dropdown-item" href="pages-blank.html#">
-						<img src="{{ themeBase }}/img/flags/ru.png" alt="Russian" width="20" class="align-middle me-1" />
-						<span class="align-middle">Russian</span>
-					</a>
-					<a class="dropdown-item" href="pages-blank.html#">
-						<img src="{{ themeBase }}/img/flags/de.png" alt="German" width="20" class="align-middle me-1" />
-						<span class="align-middle">German</span>
-					</a>
+		<li class="nav-item">
+			<a class="nav-icon js-fullscreen d-none d-lg-block" href="#">
+				<div class="position-relative">
+					<i class="align-middle" data-feather="maximize"></i>
 				</div>
-			</li>
+			</a>
+		</li>
 
-			{# Maximize Section #}
+		{# Profile Section #}
 
-			<li class="nav-item">
-				<a class="nav-icon js-fullscreen d-none d-lg-block" href="#">
-					<div class="position-relative">
-						<i class="align-middle" data-feather="maximize"></i>
-					</div>
-				</a>
-			</li>
+		<li class="nav-item dropdown">
+			<a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
+				<img src="{{ user.avatar }}" class="avatar img-fluid rounded" alt="{{ user.username ?? user.email }}" />
+			</a>
+			<div class="dropdown-menu dropdown-menu-end">
+				{{ macros.user_dropdown() }}
+			</div>
+		</li>
 
-			{# Profile Section #}
-
-			<li class="nav-item dropdown">
-				<a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
-					<img src="{{ user.avatar }}" class="avatar img-fluid rounded" alt="{{ user.username ?? user.email }}" />
-				</a>
-				<div class="dropdown-menu dropdown-menu-end">
-					{{ macros.user_dropdown() }}
-				</div>
-			</li>
-
-		</ul>
-	</div>
-</nav>
+	</ul>
+</div>
