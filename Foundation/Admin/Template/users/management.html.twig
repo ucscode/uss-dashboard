@@ -1,0 +1,158 @@
+<div class="col-12">
+
+    {% if channel in ['create', 'update'] %}
+
+        {% block form_section %}
+
+            {{ form.element.openingTag|raw }}
+
+                {% block form_column_left %}
+
+                    <div class='{{ column_1 ?? 'col-lg-6' }} mb-2'>
+                        <div class="row">
+
+                            {% block form_column_left_section_1 %}
+
+                                <div class="col-md-7 col-lg-12">
+                                    <div class="card p-3 mb-2">
+                                        <div class="row">
+
+                                            {% block form_column_left_section_1_content %}
+
+                                                <div class="col-sm-4 col-md-3 col-lg-4 mb-3 text-center">
+                                                    <div class="image mb-1 border p-1 rounded">
+                                                        <figure class='image-central m-auto' style='--image-central-width: 120px;'>
+                                                            <img src="{{ client.meta.get('user.avatar') ?? default_user_avatar }}" class="rounded img-fluid" width="135" id='avatar-image'>
+                                                        </figure>
+                                                    </div>
+                                                    <div class='mb-3 small'>
+                                                        {{ form.collection('avatar').field('avatar').elementContext.container.export|raw }}
+                                                        <a href='javascript:void(0)' class='small border px-2 rounded d-inline-block' data-ui-transfer-click-event-to='#avatar-input'>
+                                                            <i class="bi bi-upload"></i> Change
+                                                        </a>
+                                                    </div>
+                                                    {% if client.isAvailable %}
+                                                        <div class="">
+                                                            <div class="input-group input-group-sm">
+                                                                <input class='form-control form-control-sm' value='{{ client.usercode }}' readonly id='usercode'>
+                                                                <button class='btn btn-outline-secondary btn-sm' type='button' data-ui-copy='#usercode'>
+                                                                    <i class='bi bi-copy'></i>
+                                                                </button>
+                                                            </div>
+                                                            <span class="fs-12px text-muted">Referral Code</span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="ml-3d col-sm-8 col-md-9 col-lg-8">
+                                                    <div class='border rounded p-3'>
+                                                        <div class='border-bottom pb-1 mb-1'>
+                                                            <h4 class="mb-0 mt-0 text-capitalize">{{ hint.clientUsername }} </h4>
+                                                            <span class="text-muted">{{ client.email|default('anonymous@email') }}</span>
+                                                        </div>
+                                                        <div class='border-bottom pb-1 mb-1'>
+                                                            <div class="p-2 rounded border small">{{ hint.roles|raw }}</div>
+                                                        </div>
+
+                                                        {% if client.isAvailable %}
+
+                                                            <div class='d-flex py-2 border-bottom mb-2'>
+                                                                <div class='upline-icon me-2 fs-26px'>
+                                                                    <i class='bi bi-person-fill-up'></i> 
+                                                                </div>
+                                                                <div class='upline-info border-start ps-2 small'>
+                                                                    <div class='small text-muted'>Invited By</div>
+                                                                    <a href='{{ hint.parent.href }}' data-ui-size='small' 
+                                                                        {% if client.parent %}
+                                                                            data-ui-confirm="You will be redirected to <span class='text-info'>{{ client.parent(true).email }}</span> profile!"
+                                                                        {% endif %}>
+                                                                        {{ hint.parent.identity }}
+                                                                    </a>
+                                                                    <div class='small text-muted'>
+                                                                        <i class='small'>{{ hint.parent.code }}</i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="small">
+                                                                <table class='small w-100'>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>Registered On:</td>
+                                                                            <td>{{ client.registerTime.format('jS, M Y') }}</td>
+                                                                        <tr>
+                                                                        <tr>
+                                                                            <td>Last Seen:</td>
+                                                                            <td>{{ __uss.meths.relativeTime(client.lastSeen, true) }}</td>
+                                                                        <tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                        {% endif %}
+
+                                                    </div>
+                                                </div>
+
+                                            {% endblock %}
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endblock %}
+
+                            {% block form_column_left_section_2 %}
+
+                                <div class="col-md-5 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="m-0">
+                                                Role Management <i class="bi bi-tags ms-1"></i>
+                                            </h6>
+                                            <hr/>
+                                            <div class="small">
+                                                {{ form.collection('roles').elementContext.export|raw }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endblock %}
+
+                        </div>
+                    </div>
+
+                {% endblock %}
+
+                {% block form_column_right %}
+
+                    <div class='{{ column_2 ?? 'col-lg-6' }}'>
+                        <div class='card'>
+                            <div class='card-body'>
+
+                                {% block form_column_right_section_1_content %}
+
+                                    <div class='px-2 px-md-3'>
+                                        {{ form.collection('primary').elementContext.export|raw }}
+                                    </div>
+
+                                {% endblock %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% endblock %}
+
+            {{ form.element.closingTag|raw }}
+
+        {% endblock %}
+
+    {% else %}
+
+        {{ crudKernel.build.html(true)|raw }}
+
+    {% endif %}
+
+</div>
