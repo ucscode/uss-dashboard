@@ -19,13 +19,13 @@ class CrudInventoryInlineActionController
     {
         $this->checkNonceApproval();
         $this->getEntityId();
-
-        if($this->crudInventory->getChannel() === CrudEnum::DELETE) {
-            $this->crudInventory->getInlineAction('inventory:delete') && 
-            $this->entityId &&
-            $this->deleteEntityOnRequest();
+        
+            if($this->crudInventory->getChannel() === CrudEnum::DELETE) {
+                $this->crudInventory->getInlineAction('inventory:delete') && 
+                $this->entityId &&
+                $this->deleteEntityOnRequest();
+            }
         }
-    }
 
     protected function checkNonceApproval(): void
     {
