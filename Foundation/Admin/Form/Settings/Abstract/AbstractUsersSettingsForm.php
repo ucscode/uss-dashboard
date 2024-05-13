@@ -20,6 +20,21 @@ abstract class AbstractUsersSettingsForm extends AbstractDashboardForm
         $this->uss = Uss::instance();
     }
 
+    public function createUserOptionField(string $key, array $options): FieldPedigree
+    {
+        $split = explode(":", $key);
+        $name = sprintf("%s[%s]", $split[0], $split[1]);
+
+        return $this->generateField($name, $options + [
+            'nodeType' => Field::TYPE_SWITCH,
+            'required' => false,
+            'value.alt' => 0,
+            'value' => 1,
+            'class' => self::RULER_CLASS,
+            'checked' => !empty($this->uss->options->get($key)),
+        ]);
+    }
+
     protected function createSignupDisabledField(): void
     {
         $this->createUserOptionField("user:disable-signup", [
@@ -106,21 +121,6 @@ abstract class AbstractUsersSettingsForm extends AbstractDashboardForm
             ],
             'nodeType' => Field::TYPE_SUBMIT,
             'content' => 'Save Changes',
-        ]);
-    }
-
-    protected function createUserOptionField(string $key, array $options): FieldPedigree
-    {
-        $split = explode(":", $key);
-        $name = sprintf("%s[%s]", $split[0], $split[1]);
-
-        return $this->generateField($name, $options + [
-            'nodeType' => Field::TYPE_SWITCH,
-            'required' => false,
-            'value.alt' => 0,
-            'value' => 1,
-            'class' => self::RULER_CLASS,
-            'checked' => !empty($this->uss->options->get($key)),
         ]);
     }
 }

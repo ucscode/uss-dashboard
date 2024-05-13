@@ -156,22 +156,9 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         BlockManager::instance()
             ->getBlock("body_javascript")
             ->addContent("history.state", $stateReplacement);
-    }
-
-    protected function filterResource(): array
-    {
-        return match($_SERVER['REQUEST_METHOD']) {
-            'POST' => $_POST,
-            'GET' => $_GET,
-            default => call_user_func(function (): ?string {
-                $input = file_get_contents("php://input");
-                $jsonValue = json_decode($input, true);
-                return json_last_error() === JSON_ERROR_NONE ? $jsonValue : ['input' => $input];
-            }),
-        };
-    }
-
-    protected function generateField(string $key, array $context, ?Collection $collection = null): FieldPedigree
+    }    
+    
+    public function generateField(string $key, array $context, ?Collection $collection = null): FieldPedigree
     {
         $field = new Field($context['nodeName'] ?? Field::NODE_INPUT, $context['nodeType'] ?? Field::TYPE_TEXT);
         $fieldContext = $field->getElementContext();
@@ -243,5 +230,18 @@ abstract class AbstractDashboardForm extends Form implements DashboardFormInterf
         }
 
         return $pedigree;
+    }
+
+    protected function filterResource(): array
+    {
+        return match($_SERVER['REQUEST_METHOD']) {
+            'POST' => $_POST,
+            'GET' => $_GET,
+            default => call_user_func(function (): ?string {
+                $input = file_get_contents("php://input");
+                $jsonValue = json_decode($input, true);
+                return json_last_error() === JSON_ERROR_NONE ? $jsonValue : ['input' => $input];
+            }),
+        };
     }
 }

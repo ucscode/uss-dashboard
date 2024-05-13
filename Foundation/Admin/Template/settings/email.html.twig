@@ -34,7 +34,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             $(function() {
                 const field = {
-                    item: $('#smtp-enable-checker').on('change', (e) => field.disabled(!e.target.checked)),
+                    item: $('input[type="checkbox"][name="smtp\\[enabled\\]"]').on('change', (e) => field.disabled(!e.target.checked)),
                     disabled: (status) => $('#collection-smtp').prop('disabled', status)
                 }
                 field.disabled(!field.item.prop('checked')); 
