@@ -22,9 +22,8 @@ class Mailer extends AbstractMailerFoundation
     public function useMailHogTesting(bool $enabled = true): self
     {
         $this->configurePHPMailer();
-        return $enabled ?
-            $this->configureMailHogTesting() :
-            $this->configureSMTP();
+
+        return $enabled ? $this->configureMailHogTesting() : $this->configureSMTP();
     }
 
     public function setTemplate(string|TemplateWrapper|null $template, ?array $context = null): self

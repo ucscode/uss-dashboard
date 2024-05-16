@@ -12,16 +12,10 @@ use Module\Dashboard\Foundation\User\UserDashboard;
 
 abstract class AbstractEmailResolver
 {
-    protected bool $isLocalhost;
     protected DashboardInterface $dashboardInterface;
 
     public function __construct(protected array $properties, ?DashboardInterface $dashboardInterface = null)
     {
-        $this->isLocalhost = in_array($_SERVER['SERVER_NAME'], [
-            'localhost',
-            '127.0.0.1',
-            '::1'
-        ]);
         $this->dashboardInterface = $dashboardInterface ?? UserDashboard::instance();
     }
 
@@ -29,7 +23,7 @@ abstract class AbstractEmailResolver
     {
         $mailer = new Mailer();
 
-        $this->isLocalhost ? $mailer->useMailHogTesting() : null;
+        $mailer->useMailHogTesting($mailer->isLocalhost());
         $mailer->addAddress($recipent instanceof User ? $recipent->getEmail() : $recipent);
         $mailer->setSubject($this->properties['email:subject']);
         $mailer->setTemplate($this->properties['email:template']);

@@ -59,7 +59,7 @@ abstract class AbstractMailerFoundation extends AbstractSandbox
             $this->PHPMailer->Username = $memory->get('company:username');
             $this->PHPMailer->Password = $memory->get('company:password');
             $this->PHPMailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $this->PHPMailer->SMTPDebug = $this->isLocalhost ? SMTP::DEBUG_SERVER : SMTP::DEBUG_OFF;
+            $this->PHPMailer->SMTPDebug = $this->isLocalhost() ? SMTP::DEBUG_SERVER : SMTP::DEBUG_OFF;
         }
 
         return $this;

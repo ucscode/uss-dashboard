@@ -32,16 +32,21 @@ class OnCreateSubmit extends AbstractUserFormSubmit
     protected function sendUserCreationEmail(?string $redirectUrl): void
     {
         $template = '@Foundation/Admin/Template/users/mails/create-user.html.twig';
+
         $mailer = new Mailer();
-        $mailer->setTemplate($template, [
-            'companyName' => Uss::instance()->options->get('company:name'),
-            'loginEmail' => $this->client->getEmail(),
-            'loginPassword' => $this->postContext['password'],
-            'redirectUrl' => $redirectUrl,
-        ]);
-        $mailer->setSubject('New Account Created');
-        $mailer->addAddress($this->client->getEmail());
-        $mailer->useMailHogTesting();
+
+        $mailer
+            ->setTemplate($template, [
+                'companyName' => Uss::instance()->options->get('company:name'),
+                'loginEmail' => $this->client->getEmail(),
+                'loginPassword' => $this->postContext['password'],
+                'redirectUrl' => $redirectUrl,
+            ])
+            ->setSubject('New Account Created')
+            ->addAddress($this->client->getEmail())
+            ->useMailHogTesting($mailer->isLocalhost())
+        ;
+
         if(!$mailer->sendMail()) {
             $this->easyToast("Notification email not sent", null, 1000);
         }
