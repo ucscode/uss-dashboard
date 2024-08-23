@@ -77,7 +77,7 @@ class RegisterForm extends AbstractUserAccountForm
     public function persistResource(?array $validatedResource): mixed
     {
         if($validatedResource !== null) {
-
+            
             $uss = Uss::instance();
             $user = new User();
             $resource = $uss->sanitize($validatedResource, true);
@@ -88,9 +88,13 @@ class RegisterForm extends AbstractUserAccountForm
             $user->setPassword($resource['password'], true);
             $user->setUsercode(Uss::instance()->keygen(7));
             $user->setParentByReferralLink();
-
+            
             $user->persist();
             $user->roles->add($defaultUserRole);
+
+            if ($user->isLonely()) {
+                $user->roles->add(RoleImmutable::ROLE_ADMIN);
+            }
 
             return $user;
         }
