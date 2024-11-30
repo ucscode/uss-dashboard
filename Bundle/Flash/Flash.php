@@ -39,7 +39,7 @@ class Flash extends AbstractFlash
                 'timestamp' => time(),
                 'content' => $content,
             ];
-
+            
             $this->flash->{$key} ??= [];
             $this->flash->{$key}['created'] ??= time();
             $this->flash->{$key}['modal'] ??= [];

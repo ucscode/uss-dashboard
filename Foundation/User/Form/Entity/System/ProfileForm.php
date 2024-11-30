@@ -46,15 +46,16 @@ class ProfileForm extends AbstractUserAccountForm
 
             $resource['user']['email'] = $email = trim(strtolower($resource['user']['email']));
             $resource['meta'] ??= [];
-
+            
             $validator = new Validator();
             $isValidEmail = $validator->validateEmail($this->collection, $email);
-
+            
             if($isValidEmail) {
 
                 try {
 
                     $file = $this->getUploadedAvatarValue();
+                    
                     if($file !== null) {
                         $resource['meta']['avatar'] = $uss->pathToUrl($file);
                     };
@@ -84,7 +85,7 @@ class ProfileForm extends AbstractUserAccountForm
                 }
 
             } // valid email
-
+            
         }; // resource
 
         return null;

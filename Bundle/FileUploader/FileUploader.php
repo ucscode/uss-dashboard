@@ -138,7 +138,9 @@ class FileUploader extends AbstractFileUploader
         try {
             $this->validateFileAvailability();
             $this->validateMimeType();
+            $this->validateFileExtension();
             $this->validateFileSize();
+            $this->validateFileContent();
         } catch(\Exception $e) {
             $this->error = $e->getMessage();
             return false;

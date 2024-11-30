@@ -71,6 +71,24 @@ abstract class AbstractFileUploader
     }
 
     /**
+     * @method validateFileExtension
+     */
+    protected function validateFileExtension(): void
+    {
+        $validExtensions = explode('/', (new finfo(FILEINFO_EXTENSION))->file($this->file['tmp_name']));
+        $fileExtension = pathinfo($this->file['name'], PATHINFO_EXTENSION);
+       
+        if (!in_array($fileExtension, $validExtensions, true)) {
+            throw new \Exception(
+                sprintf(
+                    "Unsupported File! \n Please ensure your file matches one of the following formats: \n %s",
+                    Uss::instance()->implodeReadable($this->mimeTypes, 'or')
+                )
+            );
+        };
+    }
+
+    /**
      * @method validateFileSize
      */
     protected function validateFileSize(): void
@@ -78,6 +96,18 @@ abstract class AbstractFileUploader
         if($this->maxFileSize) {
             if ($this->file['size'] > $this->maxFileSize) {
                 throw new \Exception("The uploaded file exceeds the maximum allowed upload size");
+            }
+        }
+    }
+
+    protected function validateFileContent(): void
+    {
+        $fileExtension = pathinfo($this->file['name'], PATHINFO_EXTENSION);
+
+        if (!in_array($fileExtension, ['txt', 'md', 'php'], true)) {
+            $fileContent = file_get_contents($this->file['tmp_name']);
+            if (preg_match('/<\?(php|=)/i', $fileContent)) {
+                throw new \Exception('There was an issue uploading the file!');
             }
         }
     }

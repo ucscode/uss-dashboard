@@ -24,7 +24,7 @@ abstract class AbstractFlash implements FlashInterface
     {
         $allContext = $this->flash->getContext();
         $timeLimit = 0.01;
-
+        
         foreach($allContext as $session_id => $context) 
         {
             $isFlashForCurrentUser = session_id() == $session_id;
