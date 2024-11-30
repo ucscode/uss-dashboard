@@ -63,7 +63,7 @@ abstract class AbstractFileUploader
                 throw new \Exception(
                     sprintf(
                         "Unsupported File Type! \n Please ensure your file matches one of the following formats: \n %s",
-                        Uss::instance()->implodeReadable($this->mimeTypes, 'or')
+                        $this->describeMimeTypes()
                     )
                 );
             };
@@ -82,7 +82,7 @@ abstract class AbstractFileUploader
             throw new \Exception(
                 sprintf(
                     "Unsupported File! \n Please ensure your file matches one of the following formats: \n %s",
-                    Uss::instance()->implodeReadable($this->mimeTypes, 'or')
+                    $this->describeMimeTypes()
                 )
             );
         };
@@ -169,5 +169,15 @@ abstract class AbstractFileUploader
             $this->error = "Failed to move uploaded file";
         };
         return $this->isUploaded;
+    }
+
+    private function describeMimeTypes(): string
+    {
+        $types = array_map(function($mimeType) {
+            $split = explode("/", $mimeType);
+            return $split[1] ?? $split[0];
+        }, $this->mimeTypes);
+
+        return Uss::instance()->implodeReadable($types, 'or');
     }
 }
